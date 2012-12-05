@@ -23,13 +23,16 @@ def find_z3depot():
         else:
             raise Exception("Environment variable Z3DIR does not seem to contain the correct path to the Z3 repository.\nZ3DIR=%s" % c)
     p = os.getcwd()
-    l = p.split(os.sep)
-    n = len(l)
-    for i in range(n):
-        c = os.path.join(os.sep, os.path.join(*l[:n-i]), "z3")
+    if is_z3depot(p):
+        return p
+    while True:
+        new_p, h = os.path.split(p)
+        if new_p == p:
+            raise Exception("Failed to find path to the Z3 repository, try to set the environment variable Z3DIR")
+        c = os.path.join(new_p, 'z3')
         if is_z3depot(c):
             return c
-    raise Exception("Failed to find path to the Z3 repository, try to set the environment variable Z3DIR")
+        p = new_p
 
 if __name__ == "__main__":
     print find_z3depot()
