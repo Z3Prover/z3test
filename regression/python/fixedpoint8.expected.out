@@ -1,0 +1,8 @@
+unsat
+And(ForAll([A, B], mc(A, B) == (B >= 91)),
+    ForAll([A, B], query!0(A, B) == False))
+unsat
+And(ForAll([A, B], mc(A, B) == (B >= 91)),
+    ForAll([A, B], query!16(A, B) == False))
+sat
+And(query!32(91, 101), mc(101, 91))

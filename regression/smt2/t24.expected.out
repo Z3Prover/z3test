@@ -1,0 +1,12 @@
+10
+(f 30 (f 50 20))
+v
+v
+(select (store b i j v) j i)
+(store b i j w1)
+(store b i j w2)
+(store (store (store b i j v) j i w1) i j w2)
+b
+a
+(store a i (select a j))
+(store b i j (select b j i))

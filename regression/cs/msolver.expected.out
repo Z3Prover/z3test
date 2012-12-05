@@ -1,0 +1,4 @@
+(solver)
+(solver
+  (> x 10)
+  (> y 10))

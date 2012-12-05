@@ -1,0 +1,7 @@
+SATISFIABLE
+(define-fun y () (_ BitVec 16)
+  #x200d)
+(define-fun x () (_ BitVec 16)
+  #x0700)
+(bvadd (bvmul x #x0020) y) == 13
+(bvand x y) == 0

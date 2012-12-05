@@ -1,0 +1,7 @@
+sat
+(model 
+  (define-fun b () (_ BitVec 4)
+    #xe)
+  (define-fun a () (_ BitVec 4)
+    #x0)
+)

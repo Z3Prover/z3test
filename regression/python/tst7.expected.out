@@ -1,0 +1,44 @@
+And(p, q)
+Or(p, q)
+And(p, True)
+Or(q, False)
+Not(p)
+Implies(p, q)
+p == q
+p == q
+p != q != r
+p != q != r
+p == True
+p == False
+p
+Not(p)
+True
+p == q
+And(p, q, r)
+Or(p, q, r)
+False
+True
+True
+True
+False
+False
+False
+True
+True
+False
+False
+True
+False
+False
+True
+True
+True
+False
+Bool
+True
+Bool
+True
+False
+True
+False
+True

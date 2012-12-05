@@ -1,0 +1,21 @@
+unsat
+unsat
+sat
+(model 
+  (define-fun b () (Array Int Bool)
+    (_ as-array k!1))
+  (define-fun a () (Array Int Bool)
+    (_ as-array k!0))
+  (define-fun x () Int
+    0)
+  (define-fun k!0 ((x!1 Int)) Bool
+    (ite (= x!1 0) false
+      false))
+  (define-fun k!1 ((x!1 Int)) Bool
+    (ite (= x!1 0) true
+      false))
+  (define-fun k!2 ((x!1 Int)) Bool
+    (ite (= x!1 0) true
+      false))
+)
+unsat

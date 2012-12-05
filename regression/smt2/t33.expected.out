@@ -1,0 +1,11 @@
+sat
+(model 
+  (define-fun b () Int
+    0)
+  (define-fun a () Int
+    1)
+  (define-fun f ((x!1 Int)) Int
+    (ite (= x!1 0) 1
+      1))
+)
+true

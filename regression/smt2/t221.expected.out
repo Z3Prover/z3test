@@ -1,0 +1,16 @@
+(goals
+(goal
+  |- a3
+  (>= y 0)
+  |- a2 a1
+  (<= y 8)
+  |- a1
+  (<= (f (+ 2 y)) 0)
+  |-
+  (<= (f y) 2)
+  |- a2 a1
+  (<= (f (+ 2 y)) 3)
+  |- a4
+  (not (<= (* w w) 4))
+  :precision precise :depth 2)
+)

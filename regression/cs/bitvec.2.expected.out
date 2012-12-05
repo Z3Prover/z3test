@@ -1,0 +1,18 @@
+(and (= (bvadd x y) #x00000002) (bvsgt x #x00000000) (bvsgt y #x00000000))
+SATISFIABLE
+(define-fun y () (_ BitVec 32)
+  #x00000001)
+(define-fun x () (_ BitVec 32)
+  #x00000001)
+(= (bvand x y) (bvneg y))
+SATISFIABLE
+(define-fun y () (_ BitVec 32)
+  #xf8000000)
+(define-fun x () (_ BitVec 32)
+  #x0fffffff)
+(bvslt x #x00000000)
+SATISFIABLE
+(define-fun x () (_ BitVec 32)
+  #xffffffff)
+(bvult x #x00000000)
+UNSATISFIABLE

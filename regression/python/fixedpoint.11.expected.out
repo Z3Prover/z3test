@@ -1,0 +1,9 @@
+unsat
+ForAll([A, B, C], Eval(A, B, C) == Or(C, Not(I(i(B)) == B)))
+unsat
+ForAll([A, B, C],
+       Eval(A, B, C) ==
+       And(Or(C, Not(G == fn(App(fn(A), arg(A))))),
+           Or(C, Not(H == B)),
+           Not(H == fn(A)),
+           Or(C, Not(H == fn(arg(A))))))

@@ -1,0 +1,8 @@
+(goals
+(goal
+  false
+  :precision under :depth 4)
+)
+unknown
+unknown
+sat

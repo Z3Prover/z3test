@@ -1,0 +1,44 @@
+tst7.cs(37,31): warning CS0184: The given expression is never of the provided ('Microsoft.Z3.BoolExpr') type
+tst7.cs(41,31): warning CS0184: The given expression is never of the provided ('Microsoft.Z3.BoolExpr') type
+(and p q)
+(or p q)
+(and p true)
+(or p false)
+(not p)
+(=> p q)
+(= p q)
+(= p q)
+(not (= p (not (= q r))))
+(not (= (not (= p q)) r))
+(= p true)
+(= p false)
+p
+(not p)
+true
+(= p q)
+(and p q r)
+(or p q r)
+False
+True
+True
+True
+False
+False
+True
+True
+False
+False
+(not p)
+False
+False
+True
+True
+
+true
+false
+Bool
+true
+Bool
+True
+False
+True

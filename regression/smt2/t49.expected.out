@@ -1,0 +1,25 @@
+c2
+(bvxor c1 c2)
+(bvxor c1 c2 c3)
+(bvxor #xff c1 c2 c3)
+c1
+(bvnot c1)
+(bvnot c1)
+(concat (bvnot ((_ extract 7 7) c1))
+        ((_ extract 6 6) c1)
+        (bvnot ((_ extract 5 5) c1))
+        ((_ extract 4 4) c1)
+        (bvnot ((_ extract 3 3) c1))
+        ((_ extract 2 2) c1)
+        (bvnot ((_ extract 1 1) c1))
+        ((_ extract 0 0) c1))
+#xfafafafafafafafafafafafafafafafa
+(f (bvxor c1 c3) (bvxor c1 c3))
+(bvxor c1 (bvnot c2) c3)
+(bvxor #xff c1 (bvnot c2) c3)
+(bvxor c1 c3 c2)
+#x00
+(bvxor c1 #xfa c2)
+(bvxor c1 #xfa c2)
+(bvxor #xfa c2)
+(bvxor c2 c3)

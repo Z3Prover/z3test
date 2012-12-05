@@ -1,0 +1,12 @@
+sat
+(model 
+  (define-fun b () Int
+    2)
+  (define-fun a () Int
+    1)
+  (define-fun f ((x!1 Int) (x!2 Int)) Int
+    (ite (and (= x!1 1) (= x!2 2)) 0
+      (+ 1 x!1)))
+)
+evaluating (f (+ a 10) 20)...
+12

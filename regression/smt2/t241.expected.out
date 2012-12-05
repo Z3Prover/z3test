@@ -1,0 +1,6 @@
+(goals
+(goal
+  (= (* (root-obj (+ (^ x 5) (* (- 1) x) (- 1)) 1) a) 1.0)
+  (= (* (root-obj (+ (^ x 2) (- 2)) 2) b) 1.0)
+  :precision precise :depth 4)
+)

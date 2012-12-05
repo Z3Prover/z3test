@@ -1,0 +1,2 @@
+UNSATISFIABLE
+(unit-resolution (asserted p) (asserted (not p)) false)

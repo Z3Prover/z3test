@@ -1,0 +1,3 @@
+(f (f (g x) (g (g x))) (g (g y)))
+(f (f (g x) y) (g (+ x 1)))
+(f (f (g x) y) (g (g y)))

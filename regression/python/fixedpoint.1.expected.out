@@ -1,0 +1,48 @@
+(declare-rel state (Int Int Int Int))
+(declare-rel step1 (Int Int Int Int Int))
+(declare-rel step (Int Int Int Int Int Int Int Int))
+(declare-var A Int)
+(declare-var B Int)
+(declare-var C Int)
+(declare-var D Int)
+(declare-var E Int)
+(declare-var F Int)
+(declare-var G Int)
+(declare-var H Int)
+(rule (state 0 0 0 0))
+(rule (=> (= C (+ 1 B)) (step1 0 1 A B C)))
+(rule (=> (or (<= A B) (= B 0)) (step1 1 2 A B A)))
+(rule (step1 2 0 A B 0))
+(rule (=> (step1 A E C D F) (step A E B B C F D D)))
+(rule (=> (step1 B E D C F) (step A A B E C C D F)))
+(rule (=> (and (step A E B F C G D H) (state A B C D)) (state E F G H)))
+
+unsat
+And(ForAll([A, B, C, D],
+           state(A, B, C, D) ==
+           And(C >= 0,
+               Or(B <= 0, D >= 1),
+               Or(A <= 0, C >= 1),
+               Or(-1*C + D <= -1, C <= 0, C + -1*D <= -1),
+               Or(-1*C + D <= -1, B <= 1, C <= 0),
+               Or(C + -1*D <= -1, D <= 0, A <= 1),
+               Or(D >= 0, C <= -1))),
+    ForAll([A, B, C, D, E],
+           step1(A, B, C, D, E) ==
+           And(Or(-1*E + C <= 0, -1*E + D <= -1, E >= 0),
+               A >= 0,
+               Or(E >= 0, D <= -1, -1*E + C <= 0),
+               Or(A >= 1, B <= 1),
+               Or(B <= 1, E + -1*C <= 0),
+               Or(E >= 0, C + -1*D <= 0, B <= 1),
+               Or(Not(Or(Not(D >= 0), Not(D <= 0))),
+                  -1*D + E <= 0,
+                  B <= 1),
+               Or(A >= 1, -1*E + D <= -1),
+               Or(A >= 1, E + -1*D <= 1),
+               Or(B >= 2, A <= 0, A >= 2),
+               Or(E + -1*C <= 0, -1*E + D <= -1, E <= 0),
+               Or(B >= 2, -1*E + D <= -1, B <= 0),
+               Or(-1*E + C <= 0, -1*E + D <= -1, E <= 0),
+               Or(B <= 1, -1*E + C <= 0))))
+done

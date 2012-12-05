@@ -1,0 +1,25 @@
+(goals
+(goal
+  (= (^ k!1 3.0) y)
+  (or (= x 0.0) (= (* k!0 x) 1.0))
+  (or (not (= x 0.0)) (= k!0 (/0 1.0)))
+  (or (not (>= k!0 0.0)) (and (= k!0 (^ k!1 2.0)) (>= k!1 0.0)))
+  (or (>= k!0 0.0) (= k!1 (neg-root k!0 2.0)))
+  :precision precise :depth 4)
+)
+(goals
+(goal
+  (= (* k!3 k!3 k!3) y)
+  (or (= x 0.0) (= (* k!2 x) 1.0))
+  (or (not (= x 0.0)) (= k!2 (/0 1.0)))
+  (or (not (>= k!2 0.0)) (and (= k!2 (* k!3 k!3)) (>= k!3 0.0)))
+  (or (>= k!2 0.0) (= k!3 (neg-root k!2 2.0)))
+  :precision precise :depth 4)
+)
+(goals
+(goal
+  (= (* k!5 k!5 k!5) y)
+  (or (= x 0.0) (= (* k!4 x) 1.0))
+  (or (not (>= k!4 0.0)) (and (= k!4 (* k!5 k!5)) (>= k!5 0.0)))
+  :precision precise :depth 4)
+)

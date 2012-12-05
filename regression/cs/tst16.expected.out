@@ -1,0 +1,13 @@
+SATISFIABLE
+b -> U!val!2
+a -> U!val!0
+c -> U!val!4
+f -> [U!val!0 -> U!val!1, U!val!1 -> U!val!2, U!val!2 -> U!val!3, U!val!4 -> U!val!4, else -> U!val!1]
+1
+U
+U
+U!val!1
+U!val!0
+U!val!4
+U!val!3
+U!val!2

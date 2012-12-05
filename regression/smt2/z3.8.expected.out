@@ -1,0 +1,13 @@
+sat
+(model 
+  (define-fun c () Int
+    0)
+  (define-fun e () Real
+    2.0)
+  (define-fun d () Real
+    (/ 1.0 2.0))
+  (define-fun a () Int
+    0)
+  (define-fun b () Int
+    (- 1))
+)

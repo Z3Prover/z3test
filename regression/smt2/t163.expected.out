@@ -1,0 +1,5 @@
+(goals
+(goal
+  (or (p 10) (= (forall ((x2 Int)) (p (+ 1 x2))) (p 20)))
+  :precision precise :depth 2)
+)

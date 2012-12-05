@@ -1,0 +1,37 @@
+success
+success
+(error "line 6 column 28: datatype is not well-founded")
+success
+success
+success
+success
+success
+success
+success
+success
+success
+sat
+(model 
+  (define-fun t4 () (Tree (Tree Int))
+    (node (cons (leaf (leaf 0)) (as nil (TreeList (Tree Int))))))
+  (define-fun t3 () (Tree (Tree Int))
+    (node (as nil (TreeList (Tree Int)))))
+)
+success
+(error "line 26 column 19: unknown sort 'Tree'")
+(error "line 27 column 11: unknown constant t3")
+success
+success
+success
+success
+(error "line 36 column 10: model is not available")
+sat
+(model 
+  (define-fun s () (Array Int Bool)
+    (_ as-array k!1))
+  (define-fun k!0 ((x!1 Int)) Bool
+    true)
+  (define-fun k!1 ((x!1 Int)) Bool
+    (ite (= x!1 10) false
+      true))
+)

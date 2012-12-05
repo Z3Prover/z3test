@@ -1,0 +1,32 @@
+(concat ((_ extract 7 6) x) #b11 ((_ extract 3 3) x) #b111)
+(concat ((_ extract 7 6) x) #b11 ((_ extract 3 3) x) #b111)
+(concat ((_ extract 7 6) x) #b111111)
+(concat ((_ extract 7 6) x) #b111 ((_ extract 2 0) x))
+(concat (ite b ((_ extract 7 6) x) ((_ extract 7 6) y))
+        #b111
+        (ite b ((_ extract 2 0) x) ((_ extract 2 0) y)))
+(concat #b11111 ((_ extract 2 0) x))
+(concat #b1
+        ((_ extract 6 6) x)
+        #b1
+        ((_ extract 4 4) x)
+        #b1
+        ((_ extract 2 2) x)
+        #b1
+        ((_ extract 0 0) x))
+(concat ((_ extract 7 7) x)
+        #b1
+        ((_ extract 5 5) x)
+        #b1
+        ((_ extract 3 3) x)
+        #b1
+        ((_ extract 1 1) x)
+        #b1)
+(concat #b0
+        ((_ extract 6 6) x)
+        #b0
+        ((_ extract 4 4) x)
+        #b0
+        ((_ extract 2 2) x)
+        #b0
+        ((_ extract 0 0) x))

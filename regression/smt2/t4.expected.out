@@ -1,0 +1,24 @@
+sat
+(error "line 8 column 10: model is not available")
+(error "line 11 column 10: model is not available")
+sat
+(model 
+  (define-fun l1 () (List Int)
+    (insert 10 nil))
+  (define-fun l2 () (List Int)
+    nil)
+)
+sat
+(model 
+  (define-fun l1 () (List Int)
+    (insert 10 (insert 0 nil)))
+  (define-fun l2 () (List Int)
+    (insert 0 nil))
+)
+sat
+(model 
+  (define-fun l1 () (List Int)
+    (insert 10 (insert 101 nil)))
+  (define-fun l2 () (List Int)
+    (insert 101 nil))
+)

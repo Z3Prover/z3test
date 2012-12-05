@@ -1,0 +1,15 @@
+(goals
+(goal
+  (p k!3)
+  k!3
+  :precision precise :depth 1)
+)
+(concat-model-converter
+(filter-model-converter k!0 k!1 k!2 k!3)
+(extension-model-converter
+  (b (bvsub k!0 #x01))
+  (a (ite (or k!1 (= k!0 #xff)) k!0 (bvadd k!0 #x01)))
+  (k!0 (ite k!2 #xff (bvnot #xff)))
+  (k!1 k!3)
+  (k!2 false))
+)

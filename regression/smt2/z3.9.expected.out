@@ -1,0 +1,10 @@
+sat
+(model 
+  (define-fun a () Int
+    (- 8))
+)
+Z3 will fail in the next example...
+unknown
+Z3 can solve some nontrivial nonlinear problems...
+unsat
+sat

@@ -1,0 +1,85 @@
+(goals
+(goal
+  (p y z)
+  k!1
+  :precision precise :depth 1)
+)
+(concat-model-converter
+(filter-model-converter k!0 k!1)
+(extension-model-converter
+  (x (ite k!0 (* y z) (+ (* y z) 1)))
+  (k!0 (not k!1)))
+)
+(goals
+(goal
+  (p y z)
+  k!1
+  :precision precise :depth 1)
+)
+(concat-model-converter
+(filter-model-converter k!0 k!1)
+(extension-model-converter
+  (x (ite k!0 (* y z) (+ (* y z) 1.0)))
+  (k!0 (not k!1)))
+)
+(goals
+(goal
+  (p y y)
+  k!1
+  :precision precise :depth 1)
+)
+(concat-model-converter
+(filter-model-converter k!0 k!1)
+(extension-model-converter
+  (x (let ((a!1 (store (store y 3 6) 0 (+ (select (store y 3 6) 0) 1))))
+       (ite k!0 (store y 3 6) a!1)))
+  (k!0 (not k!1)))
+)
+(goals
+(goal
+  (p y z)
+  k!1
+  :precision precise :depth 1)
+)
+(concat-model-converter
+(filter-model-converter k!0 k!1)
+(extension-model-converter
+  (x (ite k!0 (insert y z) (insert 0 (insert y z))))
+  (k!0 (not k!1)))
+)
+(goals
+(goal
+  (p y z)
+  k!1
+  :precision precise :depth 1)
+)
+(concat-model-converter
+(filter-model-converter k!0 k!1)
+(extension-model-converter
+  (x (ite k!0 (bvmul y z) (bvnot (bvmul y z))))
+  (k!0 (not k!1)))
+)
+(goals
+(goal
+  (p y z)
+  k!1
+  :precision precise :depth 2)
+)
+(concat-model-converter
+(filter-model-converter k!0 k!1)
+(extension-model-converter
+  (x (not k!0))
+  (k!0 (ite k!1 (or y z) (not (or y z)))))
+)
+(goals
+(goal
+  (p y z)
+  (not (= x (f y z)))
+  :precision precise :depth 1)
+)
+(goals
+(goal
+  (p y y)
+  (not (= x (store y 3 v)))
+  :precision precise :depth 1)
+)

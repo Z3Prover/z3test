@@ -1,0 +1,11 @@
+#b1
+#b0
+#b0
+#b0
+#b1
+#b1
+#b0
+#b1
+(ite (= c1 c2) #b1 #b0)
+(bvredor c1)
+(bvredand c2)

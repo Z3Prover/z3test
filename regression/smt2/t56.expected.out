@@ -1,0 +1,13 @@
+c1
+c1
+#x0000
+#x0000
+#x0000
+#x0000
+bvmul...
+c1
+(concat ((_ extract 14 0) c1) #b0)
+(bvmul #x0003 c1)
+(concat ((_ extract 13 0) c1) #b00)
+(concat ((_ extract 12 0) c1) #b000)
+unsat

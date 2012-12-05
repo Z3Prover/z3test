@@ -1,0 +1,5 @@
+SATISFIABLE
+(define-fun y () Int
+  (- 2))
+(define-fun x () Int
+  0)

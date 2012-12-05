@@ -1,0 +1,11 @@
+(goals
+(goal
+  (= k!0 (bvnot k!0))
+  :precision precise :depth 1)
+)
+(concat-model-converter
+(filter-model-converter k!0)
+(extension-model-converter
+  (x k!0)
+  (y #x1))
+)

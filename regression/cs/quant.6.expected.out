@@ -1,0 +1,6 @@
+(solver
+  (forall ((x Int)) (! (= (f (g x)) x) :pattern ((f (g x)))))
+  (= a (g b))
+  (= b c)
+  (distinct (f a) c))
+UNSATISFIABLE

@@ -1,0 +1,12 @@
+(error "line 11 column 26: repeat expects one nonzero integer parameter")
+(concat c1 c1)
+c1
+(concat c1 c1 c1)
+#b010101
+c1
+(concat ((_ extract 3 3) c1) ((_ extract 3 3) c1) c1)
+#b11101
+(concat ((_ extract 3 3) c2) ((_ extract 3 3) c2) ((_ extract 3 3) c2) c2)
+c1
+(concat #b0000000000 c1)
+#x0a

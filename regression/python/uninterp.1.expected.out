@@ -1,0 +1,8 @@
+sat
+[y = A!val!1,
+ x = A!val!0,
+ f = [A!val!0 -> A!val!1,
+      A!val!1 -> A!val!0,
+      else -> A!val!1]]
+interpretation assigned to A:
+[A!val!0, A!val!1]

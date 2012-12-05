@@ -1,0 +1,57 @@
+(goals
+(goal
+  k!0
+  :precision precise :depth 1)
+)
+(concat-model-converter
+(filter-model-converter k!0)
+(extension-model-converter
+  (p (not k!0)))
+)
+-----
+(goals
+(goal
+  (not p1)
+  (or p1 p2)
+  (or p1 (not p2))
+  :precision precise :depth 0)
+)
+-----
+(goals
+(goal
+  (p k!0)
+  :precision precise :depth 1)
+)
+(concat-model-converter
+(filter-model-converter k!0)
+(extension-model-converter
+  (p1 k!0)
+  (p2 true))
+)
+-----
+(goals
+(goal
+  (p (and p1 p2))
+  p1
+  :precision precise :depth 1)
+)
+-----
+(goals
+(goal
+  (p k!0)
+  :precision precise :depth 1)
+)
+(concat-model-converter
+(filter-model-converter k!0)
+(extension-model-converter
+  (p1 k!0)
+  (p2 false))
+)
+-----
+(goals
+(goal
+  (p (or p1 p2))
+  p1
+  :precision precise :depth 1)
+)
+-----

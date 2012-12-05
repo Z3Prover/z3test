@@ -1,0 +1,8 @@
+(theories arithmetic)
+sat
+(theories arithmetic)
+sat
+(theories arithmetic array bit-vector datatype datalog seq-empty)
+sat
+(theories arithmetic)
+sat

@@ -1,0 +1,25 @@
+(factors
+1
+(^ (+ a 2) 2)
+(+ b (- 2))
+(+ b 2))
+(goals
+(goal
+  (or (= a (- 2)) (= b 2) (= b (- 2)))
+  :precision precise :depth 3)
+)
+(goals
+(goal
+  (= (* (+ (- 2) b) (+ 2 a) (+ 2 b)) 0)
+  :precision precise :depth 3)
+)
+(goals
+(goal
+  (or (= a (- 2)) (>= (* (+ (- 2) b) (+ 2 b)) 0))
+  :precision precise :depth 3)
+)
+(goals
+(goal
+  (>= (* (+ (- 2) b) (+ 2 b) (^ (+ 2 a) 2)) 0)
+  :precision precise :depth 3)
+)

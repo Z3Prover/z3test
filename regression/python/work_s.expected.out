@@ -1,0 +1,6 @@
+[register_modified_in_this_step = B,
+ unk_op = plus,
+ reg1 = B,
+ constant = 1,
+ reg2 = B,
+ register_or_constant = True]

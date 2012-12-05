@@ -1,0 +1,25 @@
+(goals
+(goal
+  (p x!0)
+  (forall ((y Int)) (not (q x!0 y)))
+  :precision precise :depth 1)
+)
+(goals
+(goal
+  (exists ((x Int)) (and (p x) (forall ((y Int)) (not (q x y)))))
+  :precision precise :depth 1)
+)
+(goals
+(goal
+  (or (not (p x!1)) (q x!3 y!2))
+  (or (forall ((x Int)) (! (p x) :pattern ((p x))))
+      (forall ((x Int) (y Int)) (not (q x y))))
+  :precision precise :depth 1)
+)
+(goals
+(goal
+  (or (exists ((x Int)) (not (p x))) (exists ((x Int) (y Int)) (q x y)))
+  (or (forall ((x Int)) (! (p x) :pattern ((p x))))
+      (forall ((x Int) (y Int)) (not (q x y))))
+  :precision precise :depth 1)
+)

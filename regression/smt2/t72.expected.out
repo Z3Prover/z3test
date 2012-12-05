@@ -1,0 +1,13 @@
+p1
+(or p1 p3)
+(or p1 p3)
+(or p1 p3 p4)
+(or p1 p2 p3)
+true
+(or p1 p2 p3)
+(or p1 p2 p3)
+(or (not p1) p2)
+(not p1)
+(not p1)
+(or (not p1) p2)
+(or p1 p2 p3 p4)

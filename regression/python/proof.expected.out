@@ -1,0 +1,2 @@
+unsat
+unit-resolution(asserted(p), asserted(Not(p)), False)

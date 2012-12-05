@@ -1,0 +1,6 @@
+(solver
+  (not (= a1 a2))
+  (= (f a1) b)
+  (= (f a2) b)
+  (forall ((x A) (y A)) (! (=> (= (f x) (f y)) (= x y)) :pattern ((f x) (f y)))))
+UNSATISFIABLE

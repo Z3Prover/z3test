@@ -1,0 +1,10 @@
+sat
+[x = -1.4142135623?, y = -0.7454321246?]
+(:nlsat-conflicts              1
+ :nlsat-irrational-assignments 2
+ :nlsat-propagations           6
+ :nlsat-stages                 4)
+['nlsat conflicts', 'nlsat propagations', 'nlsat stages', 'nlsat irrational assignments']
+NLSAT stages: 4
+NLSAT stages: 4
+done

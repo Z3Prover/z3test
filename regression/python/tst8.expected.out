@@ -1,0 +1,7 @@
+U
+And(a == b, a == c)
+False
+True
+False
+Distinct(a, b, c)
+f(a, b) == b

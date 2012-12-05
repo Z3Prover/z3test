@@ -1,0 +1,11 @@
+false
+0
+0.0
+#x00000000
+nil
+((as const (Array Int (Array Int (List Int))))
+  ((as const (Array Int (List Int))) nil))
+(mk-tuple 0 0.0)
+(mk-tuple 0
+          ((as const (Array Int (Tuple Bool (_ BitVec 16))))
+            (mk-tuple false #x0000)))

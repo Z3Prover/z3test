@@ -1,0 +1,12 @@
+(goals
+(goal
+  a
+  (or b (and d a))
+  :precision precise :depth 1)
+)
+(goals
+(goal
+  a
+  (or b (and d a))
+  :precision precise :depth 1)
+)

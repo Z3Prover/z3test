@@ -1,0 +1,17 @@
+(goals
+(goal
+  (= k!0 y)
+  (not (= x 0.0))
+  (or (= x 0.0) (= (* k!0 x) 1.0))
+  (or (not (= x 0.0)) (= k!0 (/0 1.0)))
+  :precision precise :depth 4)
+)
+(filter-model-converter k!0)
+(goals
+(goal
+  (= k!1 y)
+  (not (= x 0.0))
+  (= (* k!1 x) 1.0)
+  :precision precise :depth 5)
+)
+(filter-model-converter k!1)

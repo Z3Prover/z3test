@@ -1,0 +1,20 @@
+(goals
+(goal
+  true
+  :precision precise :depth 1)
+)
+(goals
+(goal
+  (not (= (+ a (- 1.0)) 0.0))
+  :precision precise :depth 1)
+)
+(goals
+(goal
+  false
+  :precision precise :depth 1)
+)
+(goals
+(goal
+  (= (+ a (- 1.0)) 0.0)
+  :precision precise :depth 1)
+)

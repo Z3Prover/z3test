@@ -1,0 +1,29 @@
+(goals
+(goal
+  (or (<= transition_0_n 0) (>= transition_0_n 2))
+  (or (<= transition_8_n 0) (>= transition_0_n 2))
+  :precision precise :depth 0)
+)
+sat
+(goals
+(goal
+  (<= transition_41_n (- 1))
+  (<= transition_40_n (- 1))
+  (<= transition_39_n (- 1))
+  (<= transition_2_n 0)
+  (<= transition_42_n (- 1))
+  (>= transition_0_n 17)
+  (<= transition_36_n (- 1))
+  (<= transition_37_n (- 1))
+  (<= transition_38_n (- 1))
+  :precision precise :depth 0)
+)
+sat
+(goals
+(goal
+  (or (<= transition_8_n 0) (>= transition_0_n 2))
+  (or (>= transition_5_n 5) (>= transition_0_n 2) (<= transition_0_n 0))
+  (or (<= transition_0_n 0) (not (>= transition_5_n 5)) (>= transition_0_n 2))
+  :precision precise :depth 0)
+)
+sat

@@ -1,0 +1,16 @@
+sat
+(model 
+  (define-fun fresh_2@0 () Int
+    1)
+  (define-fun c@1 () Bool
+    false)
+  (define-fun a@1 () Bool
+    true)
+  (define-fun c@0 () Bool
+    false)
+  (define-fun a@0 () Bool
+    true)
+  (define-fun xxx_init@0 () Bool
+    false)
+)
+true

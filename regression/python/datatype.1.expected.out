@@ -1,0 +1,7 @@
+True
+True
+True
+cons(10, cons(20, nil))
+cons(20, nil)
+10
+False

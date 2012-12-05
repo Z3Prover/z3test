@@ -1,0 +1,5 @@
+sat
+(model 
+  (define-fun a () Int
+    3)
+)

@@ -1,0 +1,12 @@
+(* (- 1) a)
+a
+a
+2
+1.0
+1
+a
+(to_real (to_int r1))
+(= (to_real (to_int r1)) r1)
+true
+false
+true

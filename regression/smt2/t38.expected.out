@@ -1,0 +1,5 @@
+(store (store (store a1 2 v2) 0 v0) 1 v1)
+(store (store (store a1 0 v0) 1 v1) 2 v2)
+(select (store (store (store a1 2 v2) 0 v0) 1 v1) i)
+(ite (= 1 i) v1 (ite (= 0 i) v0 (ite (= 2 i) v2 (select a1 i))))
+(ite (= 2 i) v2 (ite (= 1 i) v1 (ite (= 0 i) v0 (select a1 i))))

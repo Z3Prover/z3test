@@ -1,0 +1,21 @@
+SATISFIABLE
+;; universe for A:
+;;   A!val!0 A!val!1 
+;; -----------
+;; definitions for universe elements:
+(declare-fun A!val!0 () A)
+(declare-fun A!val!1 () A)
+;; cardinality constraint:
+(forall ((x A)) (or (= x A!val!0) (= x A!val!1)))
+;; -----------
+(define-fun y () A
+  A!val!1)
+(define-fun x () A
+  A!val!0)
+(define-fun f ((x!1 A)) A
+  (ite (= x!1 A!val!0) A!val!1
+  (ite (= x!1 A!val!1) A!val!0
+    A!val!1)))
+interpretation assigned to A: 
+A!val!0
+A!val!1

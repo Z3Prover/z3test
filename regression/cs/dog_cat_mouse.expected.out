@@ -1,0 +1,7 @@
+SATISFIABLE
+(define-fun cat () Int
+  41)
+(define-fun mouse () Int
+  56)
+(define-fun dog () Int
+  3)

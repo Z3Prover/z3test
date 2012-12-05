@@ -1,0 +1,12 @@
+(concat ((_ extract 4 0) c1) ((_ extract 7 5) c1))
+c1
+c1
+c1
+#b01011
+(concat ((_ extract 2 0) c1) ((_ extract 7 3) c1))
+(concat ((_ extract 2 0) c1) ((_ extract 7 3) c1))
+(concat ((_ extract 4 0) c1) ((_ extract 7 5) c1))
+(concat ((_ extract 4 0) c1) ((_ extract 7 5) c1))
+(ext_rotate_left c1 c2)
+(concat ((_ extract 2 0) c1) ((_ extract 7 3) c1))
+(ext_rotate_right c1 c2)

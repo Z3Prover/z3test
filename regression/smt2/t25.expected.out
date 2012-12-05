@@ -1,0 +1,15 @@
+(and (= a1 b1)
+     (= a2 b2)
+     (= a3 b3)
+     (= a4 (+ (- 1) b4))
+     (= (+ a5 c5) b5)
+     (= a6 b6))
+false
+a1
+l2
+a2
+(insert a2 l2)
+true
+false
+false
+true

@@ -1,0 +1,8 @@
+(not (or (not p1) (not p2)))
+(or p1 (not p2))
+false
+false
+(or (not p1) (not p2))
+false
+(not (or (not p1) p2))
+(not (or (not p1) (not p2)))

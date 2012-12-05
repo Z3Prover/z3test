@@ -1,0 +1,3 @@
+And(p, q, True)
+And(p, q)
+False

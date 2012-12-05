@@ -1,0 +1,14 @@
+sat
+(model 
+  (define-fun x2 () Real
+    1.0)
+  (define-fun x1 () Real
+    1.0)
+)
+sat
+(model 
+  (define-fun x1 () Real
+    1.0)
+  (define-fun x2 () Real
+    1.0)
+)

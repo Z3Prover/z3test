@@ -1,0 +1,4 @@
+(or (not p1) (not p2) p3)
+(or (not p3) (not p2) p1)
+b
+(or (and p1 p2) p3)

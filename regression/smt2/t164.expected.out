@@ -1,0 +1,5 @@
+(goals
+(goal
+  (forall ((x1 Int) (x2 Int) (x3 Int) (x4 Int)) (p (f (f x1 x2) (f x3 x4))))
+  :precision precise :depth 2)
+)

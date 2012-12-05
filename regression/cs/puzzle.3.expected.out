@@ -1,0 +1,17 @@
+SATISFIABLE
+(define-fun Q_5 () Int
+  6)
+(define-fun Q_8 () Int
+  7)
+(define-fun Q_3 () Int
+  5)
+(define-fun Q_2 () Int
+  2)
+(define-fun Q_6 () Int
+  1)
+(define-fun Q_4 () Int
+  8)
+(define-fun Q_7 () Int
+  3)
+(define-fun Q_1 () Int
+  4)

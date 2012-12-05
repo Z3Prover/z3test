@@ -1,0 +1,6 @@
+(goals
+(goal
+  (or (not (p 0)) (and (f x!0 2.0) (sk_hack (p x!0)) (sk_hack (q x!0 true))))
+  (or (p 0) (forall ((x Int)) (! (not (f x 2.0)) :pattern ((f x 2.0)))))
+  :precision precise :depth 1)
+)

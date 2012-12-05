@@ -1,0 +1,43 @@
+(goals
+(goal
+  (= (f!0 a) 0)
+  (= (f!1 a) 1)
+  (= (f!2 a) 2)
+  (= (f!3 a) 3)
+  :precision precise :depth 1)
+)
+(concat-model-converter
+(filter-model-converter f!0 f!1 f!3 f!2)
+(extension-model-converter
+  (f (ite (and (= (:var 1) 1) (= (:var 2) 1))
+          (f!2 (:var 0))
+          (ite (and (= (:var 1) 1) (= (:var 2) 2))
+               (f!3 (:var 0))
+               (ite (and (= (:var 1) 0) (= (:var 2) 1))
+                    (f!1 (:var 0))
+                    (f!0 (:var 0)))))))
+)
+(goals
+(goal
+  (= (f!4 a 0) 0)
+  (= (f!4 a 1) 1)
+  (= (f!5 a 1) 2)
+  (= (f!5 a 2) 3)
+  (= (f!4 a b) 10)
+  :precision precise :depth 1)
+)
+(concat-model-converter
+(filter-model-converter f!4 f!5)
+(extension-model-converter
+  (f (ite (= (:var 1) 1) (f!5 (:var 0) (:var 2)) (f!4 (:var 0) (:var 2)))))
+)
+(goals
+(goal
+  (= (f a 0 0) 0)
+  (= (f a 0 1) 1)
+  (= (f a 1 1) 2)
+  (= (f a 1 2) 3)
+  (= (f a 0 b) 10)
+  (= (f a b b) 10)
+  :precision precise :depth 1)
+)

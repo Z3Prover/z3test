@@ -1,0 +1,6 @@
+sat yes we can reach v4 from v1
+unsat no we cannot reach v4 from v3
+unsat no we cannot reach v4 from v3
+sat no we can reach it
+unsat no we cannot reach v3-v4
+unsat now we cannot reach v4. We did not pose queries this time

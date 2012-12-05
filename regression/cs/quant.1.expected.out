@@ -1,0 +1,10 @@
+(forall ((x Int) (y Int)) (= (f x y) 0))
+(exists ((x Int)) (>= (f x x) 0))
+SATISFIABLE
+(define-fun b () Int
+  2)
+(define-fun a () Int
+  0)
+(define-fun f ((x!1 Int) (x!2 Int)) Int
+  (ite (and (= x!1 0) (= x!2 2)) 1
+    0))

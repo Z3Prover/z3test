@@ -1,0 +1,25 @@
+sat
+(model 
+  (define-fun A ((x!1 (_ BitVec 32))) (_ BitVec 32)
+    #x00000001)
+)
+sat
+(model 
+  (define-fun A ((x!1 (_ BitVec 32))) (_ BitVec 32)
+    (ite (= x!1 #x00000000)
+         #x00000001
+         (ite (= x!1 #x00000003) #x00000000 #x00000002)))
+)
+true
+true
+true
+true
+sat
+(model 
+  (define-fun A ((x!1 (_ BitVec 32))) (_ BitVec 32)
+    (ite (= x!1 #x00000000) #x00000001
+    (ite (= x!1 #x00000001) #x00000002
+    (ite (= x!1 #x00000002) #x00000002
+    (ite (= x!1 #x00000003) #x00000000
+      #x00000002)))))
+)

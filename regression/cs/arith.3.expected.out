@@ -1,0 +1,4 @@
+(params :som 1)
+(+ (* x x x) (* 3.0 x x y) (* 3.0 x y y) (* y y y))
+(params :mul-to-power 1)
+(+ (^ x 3.0) (* 3.0 (^ x 2.0) y) (* 3.0 x (^ y 2.0)) (^ y 3.0))

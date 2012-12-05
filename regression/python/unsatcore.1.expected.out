@@ -1,0 +1,8 @@
+[Implies(p1, x > 10),
+ Implies(p1, y > x),
+ Implies(p2, y < 5),
+ Implies(p3, y > 0)]
+unsat
+[p1, p2]
+sat
+[p3 = True, y = 12, p1 = True, p2 = False, x = 11]

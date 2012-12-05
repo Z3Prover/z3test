@@ -1,0 +1,19 @@
+(solver)
+(solver
+  (> x 10)
+  (= y (+ x 2)))
+solving s
+SATISFIABLE
+creating new scope
+(solver
+  (> x 10)
+  (= y (+ x 2))
+  (< y 11))
+solving updated constraints
+UNSATISFIABLE
+restoring
+(solver
+  (> x 10)
+  (= y (+ x 2)))
+solving restored constraints
+SATISFIABLE

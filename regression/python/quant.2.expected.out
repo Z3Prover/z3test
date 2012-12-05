@@ -1,0 +1,3 @@
+f(Var(1), Var(0)) == 0
+Var(1)
+True

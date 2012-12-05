@@ -1,0 +1,4 @@
+(bvadd x #x0002)
+(bvadd #xffff x y)
+true
+false

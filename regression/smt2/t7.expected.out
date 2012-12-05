@@ -1,0 +1,7 @@
+(error "line 5 column 23: unknown sort 'T'")
+(error "line 7 column 17: invalid sort, unexpected ')'")
+sat
+((s1 (_ as-array k!2))
+ (s2 (_ as-array k!0)))
+(((select s1 nil) true)
+ ((select s2 nil) true))

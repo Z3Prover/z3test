@@ -1,0 +1,60 @@
+(goals
+(goal
+  :precision precise :depth 3)
+)
+(concat-model-converter
+(filter-model-converter k!0)
+(fm-model-converter
+(b
+  (<= (+ (* (- 1) b) a) (- 2))
+  (<= (+ (* (- 1) b) (* 2 c)) (- 6)))
+(c
+  (<= (+ (* (- 1) c) a) (- 3)))
+(a
+  (or k!0 (<= (* (- 1) a) (- 2)))
+  (or (not k!0) (<= a (- 2)))))
+)
+sat
+(model 
+  (define-fun a () Int
+    2)
+  (define-fun c () Int
+    5)
+  (define-fun b () Int
+    16)
+)
+unsat
+(ax2 ax3 ax1)
+(goals
+(goal
+  |- ax1
+  (> a (+ b 1))
+  |- ax2
+  (> d a)
+  |- ax3
+  (> c (+ a 2))
+  |- ax4
+  (> c (+ a 3))
+  |- ax5
+  (or (> c b) (< c b))
+  |- ax6
+  (or (> c d) (< c d))
+  :precision precise :depth 1)
+)
+(goals
+(goal
+  |- ax5
+  (or (not (<= (+ c (* (- 1) b)) 0)) (not (<= (+ b (* (- 1) c)) 0)))
+  |- ax6
+  (or (not (<= (+ c (* (- 1) d)) 0)) (not (<= (+ d (* (- 1) c)) 0)))
+  |- ax1 ax2
+  (<= (+ b (* (- 1) d)) (- 3))
+  |- ax1 ax4
+  (<= (+ b (* (- 1) c)) (- 6))
+  :precision precise :depth 3)
+)
+(fm-model-converter
+(a
+  (<= (+ (* (- 1) a) b) (- 2))
+  (<= (+ (* (- 1) d) a) (- 1))
+  (<= (+ (* (- 1) c) a) (- 4))))

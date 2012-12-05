@@ -1,0 +1,19 @@
+(goals
+(goal
+  (not (<= k!0 (- 1)))
+  (not (<= z (+ 14 k!0))))
+)
+SATISFIABLE
+subgoal model
+(define-fun k!0 () Int
+  0)
+(define-fun z () Int
+  15)
+converted model
+(define-fun z () Int
+  15)
+(define-fun y () Int
+  14)
+(define-fun x () Int
+  11)
+11

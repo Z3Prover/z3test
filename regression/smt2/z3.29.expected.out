@@ -1,0 +1,3 @@
+sat
+unsat
+(error "line 19 column 8: unknown constant p")

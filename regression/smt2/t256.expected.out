@@ -1,0 +1,35 @@
+(+ a a)
+--->
+(+ a a)
+(+ a 2.0)
+--->
+(+ a 2.0)
+(+ a (/ 1.0 2.0))
+--->
+(+ a (/ 1.0 2.0))
+(select (store A 0 20) 10)
+--->
+(select (store A 0 20) 10)
+((as const (Array Int Int)) 10)
+--->
+((as const (Array Int Int)) 10)
+((_ map (+ (Int Int) Int)) A A)
+--->
+((_ map (+ (Int Int) Int)) A A)
+(= s1 s2)
+--->
+(= s1 s2)
+(cons 20 (cons 10 nil))
+--->
+(cons 20 (cons 10 nil))
+(root-obj (+ (^ x 2) (- 2)) 1)
+(root-obj (+ (^ x 2) (- 2)) 1)
+--->
+(root-obj (+ (^ x 2) (- 2)) 1)
+(- 1.4142135623?)
+(- 1.4142135623?)
+--->
+(- 1.4142135623?)
+(as NaN (_ FP 11 53))
+--->
+(as NaN (_ FP 11 53))

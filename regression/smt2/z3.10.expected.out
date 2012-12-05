@@ -1,0 +1,21 @@
+sat
+(model 
+  (define-fun r2 () Int
+    2)
+  (define-fun b () Real
+    (/ 20.0 3.0))
+  (define-fun a () Int
+    10)
+  (define-fun r3 () Int
+    2)
+  (define-fun r4 () Int
+    (- 2))
+  (define-fun r5 () Int
+    2)
+  (define-fun c () Real
+    20.0)
+  (define-fun r1 () Int
+    2)
+  (define-fun r6 () Int
+    (- 2))
+)

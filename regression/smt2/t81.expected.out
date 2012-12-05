@@ -1,0 +1,55 @@
+" (simplify <term> (<keyword> <value>)*)
+    simplify the given term using builtin theory simplification rules.
+    The following options are available:
+      :algebraic-number-evaluator (bool) (default: true) simplify/evaluate expressions containing (algebraic) irrational numbers.
+      :arith-lhs (bool) (default: false) all monomials are moved to the left-hand-side, and the right-hand-side is just a constant.
+      :bit2bool (bool) (default: true) try to convert bit-vector terms of size 1 into Boolean terms.
+      :blast-distinct (bool) (default: false) expand a distinct predicate into a quadratic number of disequalities.
+      :blast-eq-value (bool) (default: false) blast (some) Bit-vector equalities into bits.
+      :cache-all (bool) (default: false) cache all intermediate results.
+      :elim-and (bool) (default: false) conjunctions are rewritten using negation and disjunctions.
+      :elim-rem (bool) (default: false) replace (rem x y) with (ite (>= y 0) (mod x y) (- (mod x y))).
+      :elim-sign-ext (bool) (default: true) expand sign-ext operator using concat and extract.
+      :elim-to-real (bool) (default: false) eliminate to_real from arithmetic predicates that contain only integers.
+      :eq2ineq (bool) (default: false) split arithmetic equalities into two inequalities.
+      :expand-power (bool) (default: false) expand (^ t k) into (* t ... t) if  1 < k <= :max-degree.
+      :expand-select-store (bool) (default: false) replace a (select (store ...) ...) term by an if-then-else term.
+      :expand-tan (bool) (default: false) replace (tan x) with (/ (sin x) (cos x)).
+      :flat (bool) (default: true) create nary applications for and,or,+,*,bvadd,bvmul,bvand,bvor,bvxor.
+      :gcd-rounding (bool) (default: false) use gcd rounding on integer arithmetic atoms.
+      :hi-div0 (bool) (default: true) use the 'hardware interpretation' for division by zero (for bit-vector terms).
+      :hoist-cmul (bool) (default: false) hoist constant multiplication over summation to minimize number of multiplications
+      :hoist-mul (bool) (default: false) hoist multiplication over summation to minimize number of multiplications
+      :ite-extra-rules (bool) (default: false) extra ite simplifications, these additional simplifications may reduce size locally but increase globally.
+      :local-ctx (bool) (default: false) perform local (i.e., cheap) context simplifications.
+      :local-ctx-limit (unsigned int) (default: inf) limit for applying local context simplifier.
+      :max-degree (unsigned int) (default: 64) max degree of algebraic numbers (and power operators) processed by simplifier.
+      :max-memory (unsigned int) (default: infty) maximum amount of memory in megabytes.
+      :max-steps (unsigned int) (default: infty) maximum number of steps.
+      :mkbv2num (bool) (default: false) convert (mkbv [true/false]*) into a numeral
+      :mul-to-power (bool) (default: false) collpase (* t ... t) into (^ t k), it is ignored if :expand-power is true.
+      :mul2concat (bool) (default: false) replace multiplication by a power of two into a concatenation.
+      :print (bool) (default: true)  print the simplified term.
+      :print-proofs (bool) (default: false) print a proof showing the original term is equal to the resultant one.
+      :print-statistics (bool) (default: false) print statistics.
+      :pull-cheap-ite (bool) (default: false) pull if-then-else terms when cheap.
+      :push-ite-arith (bool) (default: false) push if-then-else over arithmetic terms.
+      :push-ite-bv (bool) (default: false) push if-then-else over bit-vector terms.
+      :push-to-real (bool) (default: true) distribute to_real over * and +.
+      :som (bool) (default: false) put polynomials in som-of-monomials form.
+      :som-blowup (unsigned int) (default: infty) maximum number of monomials generated when putting a polynomial in sum-of-monomials normal form
+      :sort-store (bool) (default: false) sort nested stores when the indices are known to be different.
+      :sort-sums (bool) (default: false) sort the arguments of + application.
+      :split-concat-eq (bool) (default: false) split equalities of the form (= (concat t1 t2) t3).
+      :timeout (unsigned int) (default: infty) timeout in milliseconds.
+      :udiv2mul (bool) (default: false) convert constant udiv to mul.
+"
+" (eval <term> (<keyword> <value>)*)
+    evaluate the given term in the current model.
+    The following options are available:
+      :cache (bool) (default: true) cache intermediate results.
+      :max-memory (unsigned int) (default: infty) maximum amount of memory in megabytes.
+      :max-steps (unsigned int) (default: infty) maximum number of steps.
+      :model-completion (bool) (default: false) assigns an interpretation to symbols that are not intepreted by the model.
+      :timeout (unsigned int) (default: infty) timeout in milliseconds.
+"

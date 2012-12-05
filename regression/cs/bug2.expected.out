@@ -1,0 +1,4 @@
+((_ extract 12 2) b)
+((_ sign_extend 10) b)
+((_ zero_extend 10) b)
+((_ repeat 3) b)

@@ -1,0 +1,14 @@
+sat
+(model 
+  (define-fun x () Real
+    (root-obj (+ (^ x 2) (- 3)) 2))
+  (define-fun y () Real
+    1.0)
+)
+sat
+(model 
+  (define-fun x () Real
+    1.7320508075?)
+  (define-fun y () Real
+    1.0)
+)

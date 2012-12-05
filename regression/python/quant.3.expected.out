@@ -1,0 +1,24 @@
+[ForAll(x, subtype(x, x)),
+ ForAll([x, y, z],
+        Implies(And(subtype(x, y), subtype(y, z)),
+                subtype(x, z))),
+ ForAll([x, y],
+        Implies(And(subtype(x, y), subtype(y, x)), x == y)),
+ ForAll([x, y, z],
+        Implies(And(subtype(x, y), subtype(x, z)),
+                Or(subtype(y, z), subtype(z, y)))),
+ ForAll([x, y],
+        Implies(subtype(x, y),
+                subtype(array_of(x), array_of(y)))),
+ ForAll(x, subtype(root, x))]
+sat
+Interpretation for Type:
+[Type!val!1, Type!val!0]
+Model:
+[root = Type!val!0,
+ elem!0 = Type!val!1,
+ k!27 = [Type!val!1 -> Type!val!1, else -> Type!val!0],
+ subtype!28 = [(Type!val!1, Type!val!0) -> False,
+               else -> True],
+ subtype = [else -> subtype!28(k!27(Var(0)), k!27(Var(1)))],
+ array_of = [else -> Type!val!1]]

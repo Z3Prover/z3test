@@ -1,0 +1,4 @@
+(error "line 4 column 35: logic does not support reals")
+(error "line 5 column 19: unknown sort 'Array'")
+(error "line 11 column 18: unknown sort 'Int'")
+(error "line 17 column 19: unknown sort 'List'")

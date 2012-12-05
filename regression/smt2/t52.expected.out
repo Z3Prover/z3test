@@ -1,0 +1,8 @@
+(not (bvsle c2 c1))
+(bvsle c1 c2)
+(bvsle c2 c1)
+(not (bvsle c1 c2))
+(not (bvule c2 c1))
+(bvule c1 c2)
+(bvule c2 c1)
+(not (bvule c1 c2))

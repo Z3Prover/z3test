@@ -1,0 +1,27 @@
+Testing ite...
+(ite p1 a c)
+(ite p1 a d)
+(ite p1 a e)
+(ite p1 b c)
+(ite p1 a b)
+a
+b
+a
+(or p1 p2)
+(and (not p1) p2)
+(or (not p1) p2)
+(and p1 p2)
+(or p1 p2)
+(and p1 p2)
+(= p1 p2)
+(= p1 (not p2))
+(ite (and p1 (not p2)) b a)
+(ite (and p1 p2) a b)
+(ite p1 b a)
+(ite p1 c b)
+(ite (or (and p1 p2) (and (not p1) (and p2 p3))) a b)
+(ite (or (and p1 p2) (and (not p1) p2 p3)) a b)
+(ite (and p1 p2) a b)
+(ite (or (and p1 p2) (and (not p1) (and p1 p3))) a b)
+(ite (or (and p1 p2) (and (not p1) p3)) a b)
+(ite (or (and p1 p2) (and (not p1) (not p3))) a b)

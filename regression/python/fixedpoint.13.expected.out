@@ -1,0 +1,22 @@
+unsat
+ForAll([A, B, C],
+       Eval(A, B, C) ==
+       And(Or(Not(fn(arg(A)) == G),
+              -1*i(C) + i(arg(arg(A))) <= 0,
+              Not(Neg == arg(App(fn(fn(A)), arg(fn(A))))),
+              Not(fn(A) == App(fn(fn(A)), arg(fn(A))))),
+           Or(Not(fn(App(fn(A), arg(A))) == G),
+              -1*i(C) + i(arg(A)) <= 0),
+           Or(Not(Neg == fn(App(fn(A), arg(A)))),
+              i(C) + i(arg(arg(A))) <= 0,
+              Not(fn(arg(A)) == G)),
+           Or(Not(fn(App(fn(A), arg(A))) == Neg),
+              -1*i(C) + i(arg(arg(arg(A)))) <= 0,
+              Not(fn(arg(arg(A))) == G),
+              Not(Neg == fn(arg(A))))))
+sat
+And(query!33(1, 1),
+    Eval(App(App(Twice, Neg), App(G, I(1))), Unit, I(1)),
+    Eval(App(Neg, App(Neg, App(G, I(1)))), Unit, I(1)),
+    Eval(App(Neg, App(G, I(1))), Unit, I(-1)),
+    Eval(App(G, I(1)), Unit, I(1)))

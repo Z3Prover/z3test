@@ -1,0 +1,12 @@
+((_ map f) a)
+True
+False
+False
+True
+True
+(store ((_ map f) a) 0 1)
+False
+(declare-fun map ((Array Int Int)) (Array Int Int))
+(declare-fun f (Int) Int)
+(f 0)
+(select ((_ map f) a) 10)

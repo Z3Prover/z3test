@@ -1,0 +1,6 @@
+is expression: True
+is application: True
+decl: (declare-fun + (Int Int) Int)
+num args: 2
+arg(0) -> x
+arg(1) -> 1

@@ -1,0 +1,64 @@
+(declare-rel Eval (Expr Expr Expr Bool))
+(declare-var E Expr)
+(declare-var H Bool)
+(declare-var K Expr)
+(declare-var L Expr)
+(declare-var M Expr)
+(declare-var N Bool)
+(declare-var O Int)
+(declare-var P Expr)
+(declare-var Q Expr)
+(declare-var R Bool)
+(rule (Eval C E Unit true))
+(rule (=> (and (Eval L (I 1) E H) (= M (App B L))) (Eval M K E H)))
+(rule (let ((a!1 (and (Eval L (I 1) E H)
+                (Eval M (I 0) K N)
+                (= R (and N H (= O 0)))
+                (= Q (I O))
+                (= P (App (App A M) L)))))
+  (=> a!1 (Eval P Q Unit R))))
+(rule (let ((a!1 (= M (App (App F (I O)) L))))
+  (=> (and (Eval L K E H) a!1 (<= O 0)) (Eval M K E H))))
+(rule (let ((a!1 (App (App F (I (+ (- 1) O))) (App B L)))
+      (a!2 (= M (App (App F (I O)) L))))
+(let ((a!3 (and (Eval P K E H) (= P (App (App A L) a!1)) a!2 (not (<= O 0)))))
+  (=> a!3 (Eval M K E H)))))
+
+unsat
+ForAll([A, B, C, D],
+       Eval(A, B, C, D) ==
+       And(Or(D, Not(is_C(A))),
+           Or(Not(i(arg(fn(A))) == 0),
+              D,
+              Not(is_C(arg(A))),
+              Not(is_F(fn(fn(A)))))))
+sat
+And(query!36!slice!37(I(2), 1),
+    Eval!slice!38(App(App(F, I(1)), C), I(2), False),
+    Eval!slice!38(App(App(A, C),
+                      App(App(F, I(0)), App(B, C))),
+                  I(2),
+                  False),
+    Eval!slice!38(C, I(0), True),
+    Eval!slice!38(App(App(F, I(0)), App(B, C)), I(1), True),
+    Eval!slice!38(App(B, C), I(1), True),
+    Eval!slice!38(C, I(1), True))
+unsat
+ForAll([A, B, E, H],
+       Eval(A, B, E, H) ==
+       And(Or(Not(C == A), Not(Or(Not(A == C), Not(H)))),
+           Or(Not(fn(fn(A)) == F),
+              Not(arg(A) == C),
+              H,
+              i(arg(fn(A))) >= 1)))
+sat
+And(query!103!slice!104(I(-1), 1),
+    Eval!slice!105(App(App(F, I(1)), C), I(-1), False),
+    Eval!slice!105(App(App(A, C),
+                       App(App(F, I(0)), App(B, C))),
+                   I(-1),
+                   False),
+    Eval!slice!105(C, I(0), True),
+    Eval!slice!105(App(App(F, I(0)), App(B, C)), I(1), True),
+    Eval!slice!105(App(B, C), I(1), True),
+    Eval!slice!105(C, I(1), True))

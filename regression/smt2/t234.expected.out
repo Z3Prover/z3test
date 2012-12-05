@@ -1,0 +1,18 @@
+(goals
+(goal
+  (= k!0 y)
+  (= k!1 y)
+  (or (= x 0.0) (= k!0 1.0))
+  (or (not (= x 0.0)) (= k!0 |0^0-real|))
+  (or (= z 0.0) (= k!1 1.0))
+  (or (not (= z 0.0)) (= k!1 |0^0-real|))
+  :precision precise :depth 4)
+)
+(goals
+(goal
+  (= k!2 y)
+  (= k!3 y)
+  (or (= x 0.0) (= k!2 1.0))
+  (or (= z 0.0) (= k!3 1.0))
+  :precision precise :depth 4)
+)

@@ -1,0 +1,6 @@
+Kinematic equations:
+[d == v__i*t + (a*t**2)/2, v__f == v__i + a*t]
+Problem:
+[v__i == 30, v__f == 0, a == -8]
+Solution:
+[a = -8, v__f = 0, v__i = 30, t = 15/4, d = 225/4]

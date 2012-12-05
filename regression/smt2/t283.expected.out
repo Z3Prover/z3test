@@ -1,0 +1,14 @@
+unknown
+(model 
+  (define-fun x () Real
+    0.0)
+)
+sat
+(model 
+  (define-fun x () Real
+    (root-obj (+ (^ x 2) (- 2)) 1))
+)
+(model 
+  (define-fun x () Real
+    (- 1.4142135623?))
+)

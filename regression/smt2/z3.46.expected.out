@@ -1,0 +1,112 @@
+sat
+(model 
+  ;; universe for Ptr:
+  ;;   Ptr!val!1 Ptr!val!2 Ptr!val!0 
+  ;; -----------
+  ;; definitions for universe elements:
+  (declare-fun Ptr!val!1 () Ptr)
+  (declare-fun Ptr!val!2 () Ptr)
+  (declare-fun Ptr!val!0 () Ptr)
+  ;; cardinality constraint:
+  (forall ((x Ptr)) (or (= x Ptr!val!1) (= x Ptr!val!2) (= x Ptr!val!0)))
+  ;; -----------
+  (define-fun RUN () Int
+    1)
+  (define-fun p!0 () Ptr
+    Ptr!val!2)
+  (define-fun SLP () Int
+    2)
+  (define-fun x () Ptr
+    Ptr!val!0)
+  (define-fun null () Ptr
+    Ptr!val!1)
+  (define-fun next ((x!1 Ptr)) Ptr
+    (ite (= x!1 Ptr!val!0) Ptr!val!2
+    (ite (= x!1 Ptr!val!2) Ptr!val!0
+      Ptr!val!1)))
+  (define-fun new-next ((x!1 Ptr)) Ptr
+    (ite (= x!1 Ptr!val!0) Ptr!val!1
+    (ite (= x!1 Ptr!val!2) Ptr!val!2
+      (next x!1))))
+  (define-fun prio ((x!1 Ptr)) Int
+    0)
+  (define-fun new-prio ((x!1 Ptr)) Int
+    (ite (= x!1 Ptr!val!0) 0
+    (ite (= x!1 Ptr!val!2) 0
+      (prio x!1))))
+  (define-fun prev ((x!1 Ptr)) Ptr
+    (ite (= x!1 Ptr!val!0) Ptr!val!2
+    (ite (= x!1 Ptr!val!2) Ptr!val!0
+      Ptr!val!1)))
+  (define-fun state ((x!1 Ptr)) Int
+    1)
+  (define-fun new-state ((x!1 Ptr)) Int
+    (ite (= x!1 Ptr!val!0) 2
+    (ite (= x!1 Ptr!val!2) 1
+      (state x!1))))
+  (define-fun new-prev ((x!1 Ptr)) Ptr
+    (ite (= x!1 Ptr!val!0) Ptr!val!2
+    (ite (= x!1 Ptr!val!2) Ptr!val!0
+      (prev x!1))))
+)
+Why it is not valid?
+Trying again using a fresh constant bad-ptr as an witness for the failure...
+sat
+(model 
+  ;; universe for Ptr:
+  ;;   Ptr!val!1 Ptr!val!2 Ptr!val!0 
+  ;; -----------
+  ;; definitions for universe elements:
+  (declare-fun Ptr!val!1 () Ptr)
+  (declare-fun Ptr!val!2 () Ptr)
+  (declare-fun Ptr!val!0 () Ptr)
+  ;; cardinality constraint:
+  (forall ((x Ptr)) (or (= x Ptr!val!1) (= x Ptr!val!2) (= x Ptr!val!0)))
+  ;; -----------
+  (define-fun bad-ptr () Ptr
+    Ptr!val!2)
+  (define-fun RUN () Int
+    1)
+  (define-fun SLP () Int
+    2)
+  (define-fun x () Ptr
+    Ptr!val!0)
+  (define-fun null () Ptr
+    Ptr!val!1)
+  (define-fun next ((x!1 Ptr)) Ptr
+    (ite (= x!1 Ptr!val!0) Ptr!val!2
+    (ite (= x!1 Ptr!val!2) Ptr!val!0
+      Ptr!val!1)))
+  (define-fun new-next ((x!1 Ptr)) Ptr
+    (ite (= x!1 Ptr!val!0) Ptr!val!1
+    (ite (= x!1 Ptr!val!2) Ptr!val!2
+      (next x!1))))
+  (define-fun prio ((x!1 Ptr)) Int
+    0)
+  (define-fun new-prio ((x!1 Ptr)) Int
+    (ite (= x!1 Ptr!val!0) 0
+    (ite (= x!1 Ptr!val!2) 0
+      (prio x!1))))
+  (define-fun prev ((x!1 Ptr)) Ptr
+    (ite (= x!1 Ptr!val!0) Ptr!val!2
+    (ite (= x!1 Ptr!val!2) Ptr!val!0
+      Ptr!val!1)))
+  (define-fun state ((x!1 Ptr)) Int
+    1)
+  (define-fun new-state ((x!1 Ptr)) Int
+    (ite (= x!1 Ptr!val!0) 2
+    (ite (= x!1 Ptr!val!2) 1
+      (state x!1))))
+  (define-fun new-prev ((x!1 Ptr)) Ptr
+    (ite (= x!1 Ptr!val!0) Ptr!val!2
+    (ite (= x!1 Ptr!val!2) Ptr!val!0
+      (prev x!1))))
+)
+null is
+Ptr!val!1
+bad-ptr is
+Ptr!val!2
+In the new state, bad-ptr.next is
+Ptr!val!2
+In the new state, bad-ptr.next.prev is
+Ptr!val!0

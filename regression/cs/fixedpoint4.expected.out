@@ -1,0 +1,5 @@
+SATISFIABLE
+(and (query!0 101 111) (mc 111 101))
+UNSATISFIABLE
+(and (forall ((A Int) (B Int)) (= (mc A B) (>= B 91)))
+     (forall ((A Int) (B Int)) (= (query!12 A B) false)))

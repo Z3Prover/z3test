@@ -1,0 +1,101 @@
+(error "tactic failed: goal is in a fragment unsupported by lia2pb")
+(goals
+(goal
+  (<= (+ k!0 (* 2 k!1) (* 4 k!2) (* 8 k!3)) 10)
+  (<= 0 (+ k!0 (* 2 k!1) (* 4 k!2) (* 8 k!3)))
+  (<= (+ k!0 (* 2 k!1) (* 4 k!2) (* 8 k!3) b) 3)
+  (<= 0 k!0)
+  (<= k!0 1)
+  (<= 0 k!1)
+  (<= k!1 1)
+  (<= 0 k!2)
+  (<= k!2 1)
+  (<= 0 k!3)
+  (<= k!3 1)
+  :precision precise :depth 1)
+)
+(goals
+(goal
+  (<= (+ k!4 (* 2 k!5) (* 4 k!6) (* 8 k!7)) 10)
+  (<= 0 (+ k!4 (* 2 k!5) (* 4 k!6) (* 8 k!7)))
+  (<= (+ k!4 (* 2 k!5) (* 4 k!6) (* 8 k!7) k!8 (* 2 k!9)) 3)
+  (<= (+ k!8 (* 2 k!9)) 3)
+  (<= 0 (+ k!8 (* 2 k!9)))
+  (not (= (+ k!4 (* 2 k!5) (* 4 k!6) (* 8 k!7)) (+ k!8 (* 2 k!9))))
+  (<= 0 k!4)
+  (<= k!4 1)
+  (<= 0 k!5)
+  (<= k!5 1)
+  (<= 0 k!6)
+  (<= k!6 1)
+  (<= 0 k!7)
+  (<= k!7 1)
+  (<= 0 k!8)
+  (<= k!8 1)
+  (<= 0 k!9)
+  (<= k!9 1)
+  :precision precise :depth 1)
+)
+sat
+(model 
+  (define-fun b () Int
+    0)
+  (define-fun a () Int
+    2)
+)
+(error "tactic failed: goal is in a fragment unsupported by lia2pb")
+(goals
+(goal
+  (<= a 10)
+  (<= 0 a)
+  (<= (+ a b) 3)
+  (<= b 3)
+  (<= 0 b)
+  (not (= a b))
+  (= (* a a) 4)
+  :precision precise :depth 0)
+)
+(goals
+(goal
+  |- ax1 ax2
+  (<= (+ k!0 (* 2 k!1) (* 4 k!2) (* 8 k!3)) 10)
+  |- ax2 ax1
+  (<= 0 (+ k!0 (* 2 k!1) (* 4 k!2) (* 8 k!3)))
+  |- ax3 ax2 ax1 ax5 ax4
+  (<= (+ k!0 (* 2 k!1) (* 4 k!2) (* 8 k!3) k!4 (* 2 k!5)) 3)
+  |- ax4 ax5
+  (<= (+ k!4 (* 2 k!5)) 3)
+  |- ax5 ax4
+  (<= 0 (+ k!4 (* 2 k!5)))
+  |- ax6 ax5 ax4
+  (not (= (+ k!4 (* 2 k!5)) 3))
+  |- ax7 ax5 ax4
+  (not (= (+ k!4 (* 2 k!5)) 4))
+  |- ax8 ax2 ax1
+  (not (= (+ k!0 (* 2 k!1) (* 4 k!2) (* 8 k!3)) 2))
+  |-
+  (<= 0 k!0)
+  |-
+  (<= k!0 1)
+  |-
+  (<= 0 k!1)
+  |-
+  (<= k!1 1)
+  |-
+  (<= 0 k!2)
+  |-
+  (<= k!2 1)
+  |-
+  (<= 0 k!3)
+  |-
+  (<= k!3 1)
+  |-
+  (<= 0 k!4)
+  |-
+  (<= k!4 1)
+  |-
+  (<= 0 k!5)
+  |-
+  (<= k!5 1)
+  :precision precise :depth 2)
+)

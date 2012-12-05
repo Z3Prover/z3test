@@ -1,0 +1,8 @@
+(goals
+(goal
+  (or (and (forall ((X Int) (Y Int)) (! (> (f X X) 0) :pattern ((f X Y))))
+           (forall ((X Int) (Y Int)) (! (= (f X Y) Y) :pattern ((f X Y)))))
+      (= (f 0 0) 0))
+  (forall ((X Int) (Y Int)) (= (f X Y) 0))
+  :precision precise :depth 1)
+)

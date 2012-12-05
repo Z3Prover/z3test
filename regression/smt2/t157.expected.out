@@ -1,0 +1,7 @@
+sat
+(model 
+  (define-fun a () Int
+    0)
+  (define-fun l () (List Int)
+    (insert 0 nil))
+)

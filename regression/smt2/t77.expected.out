@@ -1,0 +1,8 @@
+(goals
+(goal
+  (p 2)
+  :precision precise :depth 2)
+)
+(extension-model-converter
+  (z (+ (- 2) x))
+  (y 2))

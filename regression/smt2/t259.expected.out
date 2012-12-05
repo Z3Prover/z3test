@@ -1,0 +1,5 @@
+(goals
+(goal
+  (= x (as +1p-1 (_ FP 11 53)))
+  :precision precise :depth 1)
+)

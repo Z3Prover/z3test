@@ -1,0 +1,35 @@
+(goals
+(goal
+  (or (not (= (p 0) (p 1))) (forall ((x Int)) (= (p x) (q x true))))
+  (or (= (p 0) (p 1)) (not (= (p x!0) (q x!0 true))))
+  :precision precise :depth 1)
+)
+---
+(goals
+(goal
+  (or (not (= (p 0) (p 1)))
+      (forall ((x Int))
+        (and (or (not (p x)) (q x true)) (or (p x) (not (q x true))))))
+  (or (= (p 0) (p 1)) (not (= (p x!1) (q x!1 true))))
+  :precision precise :depth 1)
+)
+---
+(goals
+(goal
+  (or (and (or (p 0) (p 1)) (or (not (p 0)) (not (p 1))))
+      (forall ((x Int))
+        (and (or (not (p x)) (q x true)) (or (p x) (not (q x true))))))
+  (or (and (or (not (p 0)) (p 1)) (or (p 0) (not (p 1))))
+      (and (or (p x!2) (q x!2 true)) (or (not (p x!2)) (not (q x!2 true)))))
+  :precision precise :depth 1)
+)
+---
+(goals
+(goal
+  (or (and (or (p 0) (p 1)) (or (not (p 0)) (not (p 1))))
+      (forall ((x Int))
+        (and (or (not (p x)) (q x true)) (or (p x) (not (q x true))))))
+  (or (and (or (not (p 0)) (p 1)) (or (p 0) (not (p 1))))
+      (and (or (p x!3) (q x!3 true)) (or (not (p x!3)) (not (q x!3 true)))))
+  :precision precise :depth 1)
+)

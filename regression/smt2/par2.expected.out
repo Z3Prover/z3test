@@ -1,0 +1,11 @@
+(goals
+(goal
+  :precision precise :depth 4)
+)
+sat
+(model 
+  (define-fun b () Int
+    3)
+  (define-fun a () Int
+    1)
+)

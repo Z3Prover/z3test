@@ -1,0 +1,6 @@
+num args:  2
+children:  [x + y, 3]
+1st child: x + y
+2nd child: 3
+operator:  >=
+op name:   >=

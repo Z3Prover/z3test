@@ -1,0 +1,7 @@
+sat
+(model 
+  (define-fun y () Int
+    0)
+  (define-fun x () Int
+    1)
+)

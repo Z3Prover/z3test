@@ -1,0 +1,8 @@
+ABSolver benchmark
+sat
+(model 
+  (define-fun b () Int
+    1)
+  (define-fun a () Int
+    2)
+)

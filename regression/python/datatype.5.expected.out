@@ -1,0 +1,5 @@
+node(cons(leaf(10), nil), nil)
+10
+[t2 = cons(leaf(0), nil),
+ t1 = nil,
+ t3 = cons(leaf(0), cons(leaf(0), nil))]

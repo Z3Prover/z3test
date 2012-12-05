@@ -1,0 +1,29 @@
+sat
+(model 
+  (define-fun var4 () Int
+    0)
+  (define-fun var3 () Int
+    0)
+  (define-fun var3_post () Int
+    0)
+  (define-fun var2_post () Int
+    0)
+  (define-fun var4_post () Int
+    1)
+  (define-fun var1_post () Int
+    2)
+  (define-fun var2 () Int
+    0)
+  (define-fun var1 () Int
+    0)
+)
+true
+true
+true
+true
+true
+true
+true
+true
+true
+true

@@ -1,0 +1,9 @@
+(node (cons (leaf 10) nil) nil)
+10
+SATISFIABLE
+(define-fun t2 () TreeList
+  (cons (leaf 0) nil))
+(define-fun t1 () TreeList
+  nil)
+(define-fun t3 () TreeList
+  (cons (leaf 0) (cons (leaf 0) nil)))

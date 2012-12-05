@@ -1,0 +1,112 @@
+(goals
+(goal
+  |- a1
+  (or (p 0) (p 3))
+  |- a1
+  (or (p 1) (p 3))
+  |- a1
+  (or (p 2) (p 3))
+  |- a1
+  (or (p 0) (p 4))
+  |- a1
+  (or (p 1) (p 4))
+  |- a1
+  (or (p 2) (p 4))
+  |- a1
+  (or (p 0) (p 5))
+  |- a1
+  (or (p 1) (p 5))
+  |- a1
+  (or (p 2) (p 5))
+  |- a2
+  (or (p 8) k!0)
+  |- a2
+  (or (p 9) k!0)
+  |- a2
+  (or (not (p 8)) (not (p 9)) (not k!0))
+  |- a2
+  (or (p 6) k!0)
+  |- a2
+  (or (not (p 6)) (not k!0))
+  |- a3
+  (or (p 0) (p 10))
+  |- a3
+  (or (p 1) (p 10))
+  |- a3
+  (or (p 2) (p 10))
+  |-
+  (or (p 11) (p 12) (p 13))
+  |-
+  (or (p 20) (p 23))
+  |-
+  (or (p 21) (p 23))
+  |-
+  (or (p 22) (p 23))
+  |-
+  (or (p 20) (p 24))
+  |-
+  (or (p 21) (p 24))
+  |-
+  (or (p 22) (p 24))
+  |-
+  (or (p 20) (p 25))
+  |-
+  (or (p 21) (p 25))
+  |-
+  (or (p 22) (p 25))
+  :precision precise :depth 3)
+)
+(goals
+(goal
+  |- a1
+  (or (p 3) k!1)
+  |- a1
+  (or (p 4) k!1)
+  |- a1
+  (or (p 5) k!1)
+  |- a1
+  (or (not (p 3)) (not (p 4)) (not (p 5)) (not k!1))
+  |- a1
+  (or (p 0) k!2)
+  |- a1
+  (or (p 1) k!2)
+  |- a1
+  (or (p 2) k!2)
+  |- a1
+  (or (not (p 0)) (not (p 1)) (not (p 2)) (not k!2))
+  |- a1
+  (or (not k!2) (not k!1))
+  |- a2
+  (or (p 8) k!3)
+  |- a2
+  (or (p 9) k!3)
+  |- a2
+  (or (not (p 8)) (not (p 9)) (not k!3))
+  |- a2
+  (or (p 6) k!3)
+  |- a2
+  (or (not (p 6)) (not k!3))
+  |- a3
+  (or (not k!2) (p 10))
+  |-
+  (or (p 11) (p 12) (p 13))
+  |-
+  (or (p 23) k!4)
+  |-
+  (or (p 24) k!4)
+  |-
+  (or (p 25) k!4)
+  |-
+  (or (not (p 23)) (not (p 24)) (not (p 25)) (not k!4))
+  |-
+  (or (p 20) k!5)
+  |-
+  (or (p 21) k!5)
+  |-
+  (or (p 22) k!5)
+  |-
+  (or (not (p 20)) (not (p 21)) (not (p 22)) (not k!5))
+  |-
+  (or (not k!5) (not k!4))
+  :precision precise :depth 3)
+)

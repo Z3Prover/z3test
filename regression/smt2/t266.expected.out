@@ -1,0 +1,22 @@
+(goals
+(goal
+  (or (and (forall ((X Int)) (> (f X X) 0))
+           (forall ((X Int) (Y Int)) (= (f X Y) Y)))
+      (= (f 0 0) 0))
+  (forall ((X Int) (Y Int)) (= (f X Y) 0))
+  :precision precise :depth 1)
+)
+(goals
+(goal
+  (or (and (forall ((X Int)) (not (not (> (f X X) 0))))
+           (forall ((X Int) (Y Int)) (not (= (f X Y) Y))))
+      (> (f 0 0) 0))
+  :precision precise :depth 1)
+)
+(goals
+(goal
+  (or (and (forall ((X Int)) (not (<= (f X X) 0)))
+           (forall ((X Int) (Y Int)) (not (= (f X Y) Y))))
+      (not (<= (f 0 0) 0)))
+  :precision precise :depth 2)
+)

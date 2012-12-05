@@ -1,0 +1,42 @@
+(goals
+(goal
+  (= (+ (* (- 1.0) (to_real k!0)) (* (- 3.0) (to_real k!1)) b) 16.0)
+  (= (+ (* (- 1.0) (to_real k!0)) (* (- 3.0) (to_real k!1)) c) 6.0)
+  (<= 0 k!0)
+  (<= k!0 1)
+  (<= 0 k!1)
+  (<= k!1 1)
+  :precision precise :depth 2)
+)
+(concat-model-converter
+(filter-model-converter k!0 k!1)
+(extension-model-converter
+  (p1 (= k!0 1))
+  (p2 (= k!1 1))
+  (a (+ (* 1.0 (- 1.0 (to_real k!0))) (* 3.0 (- 1.0 (to_real k!1))))))
+)
+(goals
+(goal
+  (= (+ a b) 20.0)
+  (= (+ a c) 10.0)
+  :precision precise :depth 1)
+)
+(goals
+(goal
+  (= (+ (* 3.0 (to_real k!0)) (to_real k!1) b) 20.0)
+  (= (+ (* 3.0 (to_real k!0)) (to_real k!1) c) 10.0)
+  (<= 0 k!0)
+  (<= k!0 1)
+  (<= 0 k!1)
+  (<= k!1 1)
+  :precision precise :depth 2)
+)
+(concat-model-converter
+(filter-model-converter k!0 k!1)
+(extension-model-converter
+  (p1 (= k!0 1))
+  (p2 (= k!1 1))
+  (a (+ (* 3.0 (to_real k!0)) (* 1.0 (to_real k!1)))))
+)
+(error "tactic failed: recover-01 does not support proof production")
+(error "tactic failed: recover-01 does not support unsat core production")

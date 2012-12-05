@@ -1,0 +1,42 @@
+(goals
+(goal
+  k!1
+  (p i)
+  :precision precise :depth 1)
+)
+(concat-model-converter
+(filter-model-converter k!0 k!1)
+(extension-model-converter
+  (a ((as const (Array Int Int)) k!0))
+  (k!0 (ite k!1 0 (+ 0 (- 1)))))
+)
+----
+(goals
+(goal
+  (>= (select a i) 0)
+  (p i)
+  (q a)
+  :precision precise :depth 0)
+)
+----
+(goals
+(goal
+  (q k!0)
+  (p i)
+  :precision precise :depth 1)
+)
+(concat-model-converter
+(filter-model-converter k!0)
+(extension-model-converter
+  (v (select a i))
+  (a k!0))
+)
+----
+(goals
+(goal
+  (q (store a i v))
+  (p i)
+  (p v)
+  :precision precise :depth 1)
+)
+----

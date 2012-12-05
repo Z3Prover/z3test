@@ -1,0 +1,25 @@
+(goals
+(goal
+  (p k!0)
+  :precision precise :depth 1)
+)
+(concat-model-converter
+(filter-model-converter k!0)
+(extension-model-converter
+  (v (head k!0))
+  (a (tail k!0)))
+)
+-----------
+(goals
+(goal
+  (p (insert v a))
+  (p a)
+  :precision precise :depth 1)
+)
+-----------
+(goals
+(goal
+  (p nil)
+  :precision precise :depth 0)
+)
+-----------

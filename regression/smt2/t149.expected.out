@@ -1,0 +1,15 @@
+sat
+(model 
+  ;; universe for S:
+  ;;   S!val!0 
+  ;; -----------
+  ;; definitions for universe elements:
+  (declare-fun S!val!0 () S)
+  ;; cardinality constraint:
+  (forall ((x S)) (= x S!val!0))
+  ;; -----------
+  (define-fun l1 () (lst S)
+    nil)
+  (define-fun l2 () (lst S)
+    (cons S!val!0 nil))
+)

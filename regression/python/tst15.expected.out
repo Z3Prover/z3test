@@ -1,0 +1,11 @@
+Map(f, a)
+True
+False
+False
+True
+True
+Store(Map(f, a), 0, 1)
+False
+f
+f(10)
+Map(f, a)[10]

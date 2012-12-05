@@ -1,0 +1,18 @@
+(goals
+(goal
+  (= (to_real k!0) x)
+  (= k!1 c)
+  (= k!2 d)
+  (= k!1 e)
+  (= k!1 k!0)
+  (not (<= (ite (>= b 0) k!2 (* (- 1) k!2)) 0))
+  (>= (+ (to_real k!0) (* (- 1.0) x)) 0.0)
+  (not (>= (+ (to_real k!0) (* (- 1.0) x)) 1.0))
+  (or (= b 0) (= a (+ (* k!1 b) k!2)))
+  (or (= b 0) (<= 0 k!2))
+  (or (<= b 0) (not (<= b k!2)))
+  (or (>= b 0) (not (<= (* (- 1) b) k!2)))
+  (or (not (= b 0)) (= k!1 (div0 a)))
+  (or (not (= b 0)) (= k!2 (mod0 a)))
+  :precision precise :depth 4)
+)

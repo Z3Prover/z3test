@@ -1,0 +1,22 @@
+(goals
+(goal
+  (bvsle #xfffffffe ((_ sign_extend 29) k!0))
+  (bvsle ((_ sign_extend 29) k!0) #x00000002)
+  (= ((_ sign_extend 29) k!0) (bvadd #x0000000a (bvmul #xffffffff b)))
+  :precision precise :depth 2)
+)
+(extension-model-converter
+  (a ((_ sign_extend 29) k!0)))
+(goals
+(goal
+  (bvsle #xfffffffe ((_ sign_extend 29) k!2))
+  (bvsle ((_ sign_extend 29) k!2) #x00000002)
+  (= ((_ sign_extend 29) k!2)
+     (bvadd #x0000000a (bvmul #xffffffff ((_ sign_extend 28) k!1))))
+  (bvsle #xfffffffb ((_ sign_extend 28) k!1))
+  (bvsle ((_ sign_extend 28) k!1) #x00000005)
+  :precision precise :depth 2)
+)
+(extension-model-converter
+  (b ((_ sign_extend 28) k!1))
+  (a ((_ sign_extend 29) k!2)))

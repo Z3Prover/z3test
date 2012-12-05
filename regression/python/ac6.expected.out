@@ -1,0 +1,6 @@
+And(x, And(y, z))
+And(And(x, y), z)
+Or(x, Or(y, z))
+Or(Or(x, y), z)
+And(Or(x, y), z)
+Or(And(x, y), z)

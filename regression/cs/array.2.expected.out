@@ -1,0 +1,2 @@
+(>= (+ (select A 0) (select A 1) (select A 2)) 0)
+(>= (+ (select A 0) (select A 1) (select A 2)) 0)

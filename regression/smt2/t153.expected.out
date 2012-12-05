@@ -1,0 +1,25 @@
+sat
+(model 
+  (define-fun b () (_ BitVec 32)
+    #x00000003)
+  (define-fun a () (_ BitVec 32)
+    #x80000001)
+  (define-fun f ((x!1 (_ BitVec 32))) (_ BitVec 32)
+    (bvadd #x00000001 x!1))
+)
+#x00000001
+#x00000002
+#x00000004
+sat
+(model 
+  (define-fun b () (_ BitVec 32)
+    #x00000003)
+  (define-fun a () (_ BitVec 32)
+    #x80000001)
+  (define-fun f!else!0 ((x!1 (_ BitVec 32)) (x!2 (_ BitVec 32))) (_ BitVec 32)
+    #x00000000)
+  (define-fun f ((x!1 (_ BitVec 32)) (x!2 (_ BitVec 32))) (_ BitVec 32)
+    (ite (= x!2 x!1) (bvadd #x00000001 x!1) #x00000000))
+)
+#x00000001
+#x00000002

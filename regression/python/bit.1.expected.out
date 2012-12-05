@@ -1,0 +1,5 @@
+And(x != 0, x & x - 1 == 0)
+proved
+trying to prove buggy version...
+counterexample
+[x = 0]

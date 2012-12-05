@@ -1,0 +1,7 @@
+(goals
+(goal
+  (distinct a b c)
+  (or (= v a) (= v b) (= v c))
+  (or (= v b))
+  :precision precise :depth 1)
+)

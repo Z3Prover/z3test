@@ -1,0 +1,18 @@
+sat
+(model 
+  (define-fun x1 () Real
+    (/ 1.0 8.0))
+  (define-fun x3 () Real
+    (- (/ 9.0 7.0)))
+  (define-fun x2 () Real
+    (/ 7.0 8.0))
+)
+sat
+(model 
+  (define-fun x3 () Int
+    0)
+  (define-fun x2 () Int
+    2)
+  (define-fun x1 () Int
+    (- 1))
+)

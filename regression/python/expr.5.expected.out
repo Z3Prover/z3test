@@ -1,0 +1,15 @@
+is_expr(x_d):      False
+is_func_decl(x_d): True
+x_d.name():        x
+x_d.range():       Int
+x_d.arity():       0
+eq(x_d(), x):      True
+
+
+f.name():          f
+f.range():         Bool
+f.arity():         2
+domain( 0 ):  Int
+domain( 1 ):  Real
+f(x, ToReal(x))
+True

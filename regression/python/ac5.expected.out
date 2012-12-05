@@ -1,0 +1,6 @@
+x &and; y &and; z
+x &and; y &and; z
+x &or; y &or; z
+x &or; y &or; z
+(x &or; y) &and; z
+x &and; y &or; z

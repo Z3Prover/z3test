@@ -1,0 +1,6 @@
+(rem x (+ 1 x))
+(rem x y)
+(rem x 0)
+(ite (>= x (- 1)) (mod x (+ 1 x)) (* (- 1) (mod x (+ 1 x))))
+(ite (>= y 0) (mod x y) (* (- 1) (mod x y)))
+(mod x 0)

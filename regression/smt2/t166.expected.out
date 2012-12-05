@@ -1,0 +1,17 @@
+sat
+(model 
+  (define-fun f ((x!1 Int) (x!2 Int)) Int
+    (+ 10 (* 3 x!2) (* 2 x!1)))
+)
+90
+80
+sat
+4
+4
+4
+5
+7
+9
+9
+9
+8

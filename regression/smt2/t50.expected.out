@@ -1,0 +1,13 @@
+(bvor c1 c2)
+(bvor c1 c2)
+(bvor c1 c2 c3)
+#xff
+(bvor (bvnot c1) c2 c3)
+#xfafafafafafafafafafafafafafafafa
+#b11011101110111
+#b10011001100110
+(bvor c1 c2)
+c1
+c1
+(bvor c1 c2)
+(f (bvor c1 c2 c3) (bvor c1 c2 c3))

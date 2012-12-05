@@ -1,0 +1,18 @@
+asserted constraints...
+x > 1
+y > 1
+Or(x + y > 3, x - y < 2)
+sat
+statistics for the last check method...
+(:add-rows     1
+ :assert-lower 3
+ :assert-upper 1
+ :decisions    2
+ :final-checks 1
+ :pivots       1)
+decisions : 2
+final checks : 1
+add rows : 1
+pivots : 1
+assert lower : 3
+assert upper : 1

@@ -1,0 +1,25 @@
+Kinematic equations: 
+(let ((a!1 (+ (* v_i t) (/ (* a (^ t 2.0)) 2.0))))
+  (= d a!1))
+(= v_f (+ v_i (* a t)))
+Problem: 
+(= v_i 0.0)
+(= t (/ 41.0 10.0))
+(= a 6.0)
+Solution: 
+(define-fun a () Real
+  6.0)
+(define-fun t () Real
+  (/ 41.0 10.0))
+(define-fun v_i () Real
+  0.0)
+(define-fun v_f () Real
+  (/ 123.0 5.0))
+(define-fun d () Real
+  (/ 5043.0 100.0))
+Decimal Solution: 
+a = 6
+t = 4.1
+v_i = 0
+v_f = 24.6
+d = 50.43

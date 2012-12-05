@@ -1,0 +1,3 @@
+And(p, q) == Not(Or(Not(p), Not(q)))
+Proving demorgan...
+proved

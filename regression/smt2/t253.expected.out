@@ -1,0 +1,7 @@
+(= a (as NaN (_ FP 11 53)))
+(< a a)
+(+ roundNearestTiesToEven
+   ((_ asFloat 11 53) roundNearestTiesToEven (/ 3.0 25.0))
+   a)
+(< b 1.0)
+(+ b b)

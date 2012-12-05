@@ -1,0 +1,7 @@
+sat
+(model 
+  (define-fun s1 ((x!1 (_ BitVec 16))) (_ BitVec 16)
+    x!1)
+)
+#x0000
+#x0010

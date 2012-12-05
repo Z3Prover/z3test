@@ -1,0 +1,48 @@
+(goals
+(goal
+  (p (bvadd #x01 (bvadd (bvadd (bvadd a c) (bvadd e b)) d))
+     (bvadd #x10 (bvadd (bvadd (bvadd a c) (bvadd e b)) d)))
+  :precision precise :depth 2)
+)
+----
+(goals
+(goal
+  (p (bvadd (bvadd (bvadd a c) (bvadd e b)) d)
+     (bvadd #x10 (bvadd (bvadd (bvadd a c) (bvadd e b)) d)))
+  :precision precise :depth 2)
+)
+----
+(goals
+(goal
+  (p (bvadd #x03 (bvadd (bvadd (bvadd (bvmul #x02 a) c) (bvadd e b)) d))
+     (bvadd #x10 (bvadd (bvadd d c) (bvadd a (bvadd e b)))))
+  :precision precise :depth 2)
+)
+----
+(goals
+(goal
+  (p (bvmul (bvmul (bvmul a b) (bvmul c d)) e)
+     (bvmul #x10 (bvmul (bvmul (bvmul a b) (bvmul c d)) e)))
+  :precision precise :depth 2)
+)
+----
+(goals
+(goal
+  (p (bvmul a c) (bvmul #x10 (bvmul (bvmul a c) d)))
+  :precision precise :depth 2)
+)
+----
+(goals
+(goal
+  (p (bvor #x01 (bvor (bvor (bvor a c) (bvor e b)) d))
+     (bvor #x10 (bvor (bvor (bvor a c) (bvor e b)) d)))
+  :precision precise :depth 2)
+)
+----
+(goals
+(goal
+  (p (bvxor #x01 (bvxor (bvxor (bvxor a c) (bvxor e b)) d))
+     (bvxor #x10 (bvxor (bvxor (bvxor a c) (bvxor e b)) d)))
+  :precision precise :depth 2)
+)
+----

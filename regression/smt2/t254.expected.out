@@ -1,0 +1,39 @@
+(ite (= a (as NaN (_ FP 11 53)))
+     b
+     (ite (= b (as NaN (_ FP 11 53))) a (ite (< a b) a b)))
+(ite (= a (as NaN (_ FP 11 53)))
+     b
+     (ite (= b (as NaN (_ FP 11 53))) a (ite (< b a) a b)))
+(ite (< a (as +0.0 (_ FP 11 53))) (- a) a)
+(- a)
+a
+a
+a
+a
+a
+(as NaN (_ FP 11 53))
+(as NaN (_ FP 11 53))
+false
+false
+false
+false
+false
+false
+false
+false
+(and (not (= a (as plusInfinity (_ FP 11 53))))
+     (not (= a (as NaN (_ FP 11 53)))))
+false
+false
+(and (not (= a (as plusInfinity (_ FP 11 53))))
+     (not (= a (as NaN (_ FP 11 53)))))
+false
+(and (not (= a (as minusInfinity (_ FP 11 53))))
+     (not (= a (as NaN (_ FP 11 53)))))
+(and (not (= a (as minusInfinity (_ FP 11 53))))
+     (not (= a (as NaN (_ FP 11 53)))))
+false
+(< b a)
+(<= b a)
+(as plusInfinity (_ FP 11 53))
+(as minusInfinity (_ FP 11 53))

@@ -1,0 +1,13 @@
+(goals
+(goal
+  (= x 10)
+  (= y 30)
+  (= z 30)
+  (>= (f 0 0) 0)
+  (= (f 10 30) 0)
+  (or (p true) (= (f 1 1) 0))
+  (q 0)
+  (not (q 1))
+  (or (p true) (p false))
+  :precision precise :depth 1)
+)

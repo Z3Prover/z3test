@@ -1,0 +1,5 @@
+sat
+Exists(k!0,
+       And(Var(2)%2 == 0,
+           k!0 == cons(0, cons(0, cons(0, nil))),
+           k!0 == cons(0, cons(0, Var(1)))))

@@ -1,0 +1,33 @@
+(goals
+(goal
+  (not (<= x 10.0))
+  (= y (+ 1.0 x))
+  (not (<= y 1.0)))
+)
+3
+(goal
+  (not (<= x 10.0))
+  (= y (+ 1.0 x))
+  (not (<= y 1.0)))
+Old goal: 
+(goal
+  (> x 10.0)
+  (= y (+ x 1.0))
+  (> y 1.0))
+(goals
+(goal
+  (not (<= x 10.0))
+  (not (<= x 0.0)))
+)
+(solver
+  (not (<= x 10.0))
+  (not (<= x 0.0)))
+SATISFIABLE
+(define-fun x () Real
+  11.0)
+applying model convert
+(define-fun x () Real
+  11.0)
+(define-fun y () Real
+  12.0)
+done

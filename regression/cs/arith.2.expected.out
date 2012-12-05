@@ -1,0 +1,11 @@
+SATISFIABLE
+(define-fun c () Int
+  (- 5))
+(define-fun a () Int
+  0)
+(define-fun b () Int
+  (- 3))
+(define-fun d () Real
+  0.0)
+(define-fun e () Real
+  0.0)

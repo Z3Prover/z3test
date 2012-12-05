@@ -1,0 +1,4 @@
+(select A x)
+(store A x 10)
+(select (store A 2 (+ x 1)) 2)
+(+ 1 x)

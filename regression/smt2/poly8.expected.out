@@ -1,0 +1,18 @@
+(factors
+-1
+skoX
+(+ (* 29.0 (^ skoX 2.0)) (- 90000000.0)))
+(factors
+1
+skoX
+(+ (* 29.0 (^ skoX 2.0)) (- 90000000.0)))
+(goals
+(goal
+  (not (>= (* skoX (+ (* 29.0 (^ skoX 2.0)) (- 90000000.0))) 0.0))
+  :precision precise :depth 2)
+)
+(goals
+(goal
+  (not (<= (* skoX (+ (* 29.0 (^ skoX 2.0)) (- 90000000.0))) 0.0))
+  :precision precise :depth 2)
+)

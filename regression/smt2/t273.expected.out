@@ -1,0 +1,51 @@
+(goals
+(goal
+  (= ((_ zero_extend 1)
+       (bvadd ((_ zero_extend 1) (bvmul #x003 ((_ zero_extend 6) a!2)))
+              ((_ zero_extend 1) (bvmul #x006 ((_ zero_extend 6) b!3)))))
+     (bvadd ((_ zero_extend 1)
+              (bvadd ((_ zero_extend 1) (bvmul #x003 #x020))
+                     ((_ zero_extend 1) (bvmul #x006 #x020))))
+            #b00000000010101))
+  :precision under :depth 2)
+)
+(goals
+(goal
+  (= (bvadd ((_ zero_extend 1)
+              ((_ zero_extend 4)
+                (bvmul #b000011
+                       ((_ zero_extend 3) (bvadd ((_ zero_extend 1) a!6) #b001)))))
+            ((_ zero_extend 1)
+              (bvmul #b0000000110
+                     ((_ zero_extend 5) (bvadd ((_ zero_extend 1) b!7) #b00010)))))
+     #b00000010101)
+  (bvule #b001 (bvadd ((_ zero_extend 1) a!6) #b001))
+  (bvule (bvadd ((_ zero_extend 1) a!6) #b001) #b011)
+  (bvule #b00010 (bvadd ((_ zero_extend 1) b!7) #b00010))
+  (bvule (bvadd ((_ zero_extend 1) b!7) #b00010) #b01100)
+  :precision precise :depth 2)
+)
+(goals
+(goal
+  (= (bvadd ((_ zero_extend 1)
+              ((_ zero_extend 4)
+                (bvmul #b000011
+                       ((_ zero_extend 3)
+                         (bvadd ((_ zero_extend 1) a!10) #b001)))))
+            ((_ zero_extend 1)
+              (bvmul #b0000000110
+                     ((_ zero_extend 5)
+                       (bvadd ((_ zero_extend 1) b!11) #b00010)))))
+     #b00000010101)
+  (bvule #b001 (bvadd ((_ zero_extend 1) a!10) #b001))
+  (bvule (bvadd ((_ zero_extend 1) a!10) #b001) #b011)
+  (bvule #b00010 (bvadd ((_ zero_extend 1) b!11) #b00010))
+  (bvule (bvadd ((_ zero_extend 1) b!11) #b00010) #b01100)
+  :precision precise :depth 2)
+)
+(concat-model-converter
+(filter-model-converter a!10 b!11 <!!8 <=!!9)
+(extension-model-converter
+  (a (+ (bv2int a!10) 1))
+  (b (+ (bv2int b!11) 2)))
+)

@@ -1,0 +1,17 @@
+(and p1 p2)
+(and p1 p2)
+false
+false
+(and p1 p2)
+false
+(and p1 (and p2 p1))
+(and p1 p2)
+(or p1 p2)
+true
+(or p1 p2)
+p2
+true
+(or p1 p2)
+true
+(or p1 (or p2 p1))
+(or p1 p2)

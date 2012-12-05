@@ -1,0 +1,23 @@
+(goals
+(goal
+  :precision precise :depth 2)
+)
+(extension-model-converter
+  (x (+ 1 y)))
+----
+(goals
+(goal
+  (>= (- 1) z)
+  :precision precise :depth 2)
+)
+(extension-model-converter
+  (x (+ 1 y)))
+----
+(goals
+(goal
+  (>= (f (ite (<= x 0) (+ 2 z) (+ 1 z))) 0)
+  :precision precise :depth 2)
+)
+(extension-model-converter
+  (y (ite (<= x 0) (+ 2 z) (+ 1 z))))
+----

@@ -1,0 +1,10 @@
+(goals
+(goal
+  (>= x 0)
+  (>= x 1)
+  (>= x 100)
+  (>= x 2)
+  (>= x 5)
+  (not (>= x 3))
+  :precision precise :depth 1)
+)

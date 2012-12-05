@@ -1,0 +1,38 @@
+(goals
+(goal
+  (forall ((x Int)) (or (not (= x (f (f x x) (f x (f x x))))) (= x (f x x))))
+  :precision precise :depth 2)
+)
+(goals
+(goal
+  (forall ((x Int) (y Int)) (or (not (= x (f x y))) (p x)))
+  (forall ((x Int) (y Int)) (not (= x (f y x))))
+  :precision precise :depth 2)
+)
+(goals
+(goal
+  false
+  :precision precise :depth 2)
+)
+(goals
+(goal
+  (p (f (f (g 0) (g 0)) (g (g 0))))
+  (forall ((x3 Int)) (or (not (= x3 (f (f (g 0) x3) (g (g 0))))) (p x3)))
+  :precision precise :depth 2)
+)
+(goals
+(goal
+  (p (f (f (g 0) (g 0)) (g (g 0))))
+  :precision precise :depth 2)
+)
+(goals
+(goal
+  (p (f (f (g 0) (g 0)) (g (g 0))))
+  :precision precise :depth 2)
+)
+(goals
+(goal
+  (forall ((x1 Int) (x2 Int))
+    (or (not (= x2 (ite (forall ((y Int)) (= (g y) x1)) 1 0))) (p x2)))
+  :precision precise :depth 2)
+)

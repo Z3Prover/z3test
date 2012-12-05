@@ -1,0 +1,54 @@
+(goals
+(goal
+  (>= y 0)
+  (>= z 0)
+  (>= x 0)
+  (= (+ y x (* 2 z)) 20)
+  :precision precise :depth 0)
+)
+-----
+(goals
+(goal
+  (>= y 0.0)
+  (>= z 0.0)
+  (>= x 0.0)
+  (= (+ y x (* 2.0 z)) 20.0)
+  :precision precise :depth 0)
+)
+-----
+(goals
+(goal
+  (= (h (bvmul #x03 a1)) 0)
+  (bvsle a1 #x05)
+  (= (* x1 x2) 20)
+  (= x1 20)
+  (= (* 10.0 y1) (g #x0001))
+  (>= y1 3.0)
+  (= (f (concat x y z)) 0)
+  (= y ((_ extract 3 0) x))
+  (= ((_ extract 3 0) x) ((_ extract 7 4) x))
+  (= ((_ extract 7 4) x) y)
+  :precision precise :depth 2)
+)
+-----
+(goals
+(goal
+  (p ((_ extract 6 2) x))
+  (bvsle x #x05)
+  :precision precise :depth 0)
+)
+-----
+(goals
+(goal
+  (p ((_ extract 4 0) x))
+  (bvsle x #x05)
+  :precision precise :depth 0)
+)
+-----
+(goals
+(goal
+  (p ((_ extract 7 3) x))
+  (bvsle x #x05)
+  :precision precise :depth 0)
+)
+-----

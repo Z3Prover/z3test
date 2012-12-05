@@ -1,0 +1,32 @@
+(goals
+(goal
+  (>= k!0 10)
+  (or (not (= a1 10)) (= k!0 a2))
+  (or (= a1 10) (= k!0 (+ 1 a2)))
+  :precision precise :depth 3)
+)
+----------
+(goals
+(goal
+  (>= k!2 10)
+  (or (not (= a1 20)) (= k!1 a2))
+  (or (= a1 20) (= k!1 0))
+  (or (not (= a1 10)) (= k!2 k!1))
+  (or (= a1 10) (= k!2 (+ 1 a2)))
+  :precision precise :depth 3)
+)
+----------
+(goals
+(goal
+  (forall ((a1 Int) (a2 Int)) (>= (k!1 a2 a1) 10))
+  (forall ((x!1 Int) (x!2 Int))
+    (! (or (not (= x!1 20)) (= (k!0 x!2 x!1) x!2)) :pattern ((k!0 x!2 x!1))))
+  (forall ((x!1 Int) (x!2 Int))
+    (! (or (= x!1 20) (= (k!0 x!2 x!1) 0)) :pattern ((k!0 x!2 x!1))))
+  (forall ((x!1 Int) (x!2 Int))
+    (! (or (not (= x!1 10)) (= (k!1 x!2 x!1) (k!0 x!2 x!1)))
+       :pattern ((k!1 x!2 x!1))))
+  (forall ((x!1 Int) (x!2 Int))
+    (! (or (= x!1 10) (= (k!1 x!2 x!1) (+ 1 x!2))) :pattern ((k!1 x!2 x!1))))
+  :precision precise :depth 3)
+)

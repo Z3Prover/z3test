@@ -1,0 +1,4 @@
+(and (not (= x #x00000000)) (= (bvand x (bvsub x #x00000001)) #x00000000))
+UNSATISFIABLE
+buggy version
+SATISFIABLE

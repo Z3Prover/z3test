@@ -1,0 +1,10 @@
+(goals
+(goal
+  (not (= (+ (* 5.0 a) (* 3.0 b) 30.0) 0.0))
+  :precision precise :depth 2)
+)
+(goals
+(goal
+  (not (= (+ (* 2.0 a) (* 5.0 b) 60.0) 0.0))
+  :precision precise :depth 2)
+)

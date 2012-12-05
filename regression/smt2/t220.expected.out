@@ -1,0 +1,14 @@
+(goals
+(goal
+  |- a1
+  (= (f 0) 1)
+  |- a2 a1
+  (= (f 2) 10)
+  |-
+  (= x 20)
+  |- a1 a2
+  (= (f 31) 3)
+  |- a1
+  (= (f 21) 3)
+  :precision precise :depth 2)
+)

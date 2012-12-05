@@ -1,0 +1,5 @@
+x + 2
+(bvadd x #x0002)
+65535 + x + y
+True
+False

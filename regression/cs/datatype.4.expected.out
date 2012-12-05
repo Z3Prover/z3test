@@ -1,0 +1,5 @@
+(= green blue)
+false
+SATISFIABLE
+(define-fun c () Color
+  red)

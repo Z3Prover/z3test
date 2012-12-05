@@ -1,0 +1,13 @@
+sat
+(model 
+  (define-fun all1 () (Array Int Int)
+    (_ as-array k!0))
+  (define-fun i () Int
+    0)
+  (define-fun a () Int
+    1)
+  (define-fun k!0 ((x!1 Int)) Int
+    (ite (= x!1 0) 1
+      1))
+)
+unsat

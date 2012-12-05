@@ -1,0 +1,20 @@
+asserted constraints: 
+(> x 1.0)
+(> y 1.0)
+(or (> (+ x y) 1.0) (< (- x y) 2.0))
+SATISFIABLE
+(:assert-lower 3
+ :assert-upper 1
+ :bound-prop   1
+ :decisions    1
+ :del-clause   1
+ :final-checks 1
+ :mk-clause    1)
+stats for last check: 
+decisions: 1
+final checks: 1
+mk clause: 1
+del clause: 1
+assert lower: 3
+assert upper: 1
+bound prop: 1

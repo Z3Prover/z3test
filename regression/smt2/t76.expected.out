@@ -1,0 +1,18 @@
+(goals
+(goal
+  (= x5 (f (+ 5 x5) (+ 5 x5)))
+  (= x6 (+ 1 (f x6 0)))
+  :precision precise :depth 2)
+)
+(extension-model-converter
+  (x3 (+ 1 x5))
+  (x2 (+ 2 x5))
+  (x1 (+ 3 x5))
+  (x4 (+ 4 x5))
+  (x7 (+ 1 (f (+ 2 x5) (+ 2 x5)))))
+----
+(goals
+(goal
+  (>= x1 0)
+  :precision precise :depth 2)
+)

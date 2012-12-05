@@ -1,0 +1,15 @@
+(goals
+(goal
+  (or (and (or (not (p 10)) (p 11)) (or (p 10) (not (p 11)))) (q 10 z3name!0))
+  (or (not z3name!0) (forall ((x Int)) (f x 2.0)))
+  (or z3name!0 (not (f x!1 2.0)))
+  :precision precise :depth 1)
+)
+----
+(goals
+(goal
+  (or (= (p 10) (p 11)) (q 10 z3name!2))
+  (or (not z3name!2) (forall ((x Int)) (f x 2.0)))
+  (or z3name!2 (not (f x!3 2.0)))
+  :precision precise :depth 1)
+)

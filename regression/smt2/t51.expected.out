@@ -1,0 +1,31 @@
+true
+true
+true
+false
+----
+true
+false
+false
+true
+----
+false
+false
+false
+true
+----
+false
+true
+true
+false
+----
+false
+true
+true
+false
+false
+true
+true
+false
+----
+(and (= c1 #x00) (bvule c2 c3))
+(and (= c1 #x00) (bvule c3 c2))

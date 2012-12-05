@@ -1,0 +1,27 @@
+(:authors "Leonardo de Moura and Nikolaj Bjorner")
+(:name "Z3")
+(:error-behavior continued-execution)
+success
+hello
+success
+success
+success
+success
+(error "line 25 column 11: the logic has already been set")
+(+ 10 20)
+(error "line 29 column 28: error setting ':produce-proofs', option value cannot be modified after initialization")
+(error "line 31 column 0: unexpected character")
+ok
+success
+success
+" (help <symbol>*)
+    print this help.
+"
+(error "line 39 column 6: unknown command 'foo'")
+" (set-logic <symbol>)
+    set the background logic.
+ (help <symbol>*)
+    print this help.
+"
+(error "line 41 column 16: unknown command 'foo'")
+success

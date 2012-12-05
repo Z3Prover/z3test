@@ -1,0 +1,92 @@
+(goals
+(goal
+  (= k!3 k!7)
+  (= k!2 k!6)
+  (= k!1 k!5)
+  (= k!0 k!4)
+  :precision precise :depth 1)
+)
+(bit-blaster-model-converter
+  (z (concat k!0 k!1 k!2 k!3))
+  (y (concat k!6 k!7))
+  (x (concat k!4 k!5)))
+----
+(goals
+(goal
+  (= k!1 y)
+  (= k!0 x)
+  :precision precise :depth 1)
+)
+(bit-blaster-model-converter
+  (z (concat k!0 k!1)))
+----
+(goals
+(goal
+  (= k!1 k!4)
+  (= k!0 k!3)
+  :precision precise :depth 1)
+)
+(bit-blaster-model-converter
+  (z (concat k!0 k!1))
+  (x (concat k!2 k!3 k!4 k!5)))
+----
+(goals
+(goal
+  (= k!2 k!5)
+  (= k!1 k!4)
+  (= k!0 k!3)
+  :precision precise :depth 1)
+)
+(bit-blaster-model-converter
+  (z (concat k!0 k!1 k!2))
+  (x (concat k!3 k!4 k!5 k!6)))
+----
+(goals
+(goal
+  (= k!1 (ite c k!3 k!5))
+  (= k!0 (ite c k!2 k!4))
+  :precision precise :depth 1)
+)
+(bit-blaster-model-converter
+  (z (concat k!0 k!1))
+  (y (concat k!4 k!5))
+  (x (concat k!2 k!3)))
+----
+(goals
+(goal
+  (= k!1 ((_ extract 0 0) (f (concat k!0 k!1))))
+  (= k!0 ((_ extract 1 1) (f (concat k!0 k!1))))
+  :precision precise :depth 1)
+)
+(bit-blaster-model-converter
+  (x (concat k!0 k!1)))
+----
+(goals
+(goal
+  (= k!1
+     ((_ extract 0 0)
+       (f (concat ((_ extract 1 1) (f (concat k!0 k!1)))
+                  ((_ extract 0 0) (f (concat k!0 k!1)))))))
+  (= k!0
+     ((_ extract 1 1)
+       (f (concat ((_ extract 1 1) (f (concat k!0 k!1)))
+                  ((_ extract 0 0) (f (concat k!0 k!1)))))))
+  :precision precise :depth 1)
+)
+(bit-blaster-model-converter
+  (x (concat k!0 k!1)))
+----
+(error "tactic failed: bv1 blaster cannot be applied to goal")
+(goals
+(goal
+  (= x (bvor x y))
+  :precision precise :depth 0)
+)
+----
+(error "tactic failed: bv1 blaster cannot be applied to goal")
+(goals
+(goal
+  (forall ((x (_ BitVec 2))) (= (f x) x))
+  :precision precise :depth 0)
+)
+----

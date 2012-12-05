@@ -1,0 +1,13 @@
+(= x y)
+(not (= x y))
+True
+True
+False
+(> (f a (to_real a)) b)
+Int
+2
+Int
+Real
+True
+True
+False

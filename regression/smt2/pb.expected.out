@@ -1,0 +1,72 @@
+(goals
+(goal
+  |- a-lower
+  (<= 0 a)
+  |- a-upper
+  (<= a 1)
+  |- b-lower
+  (<= 0 b)
+  |- b-upper
+  (<= b 1)
+  |- c-lower
+  (<= 0 c)
+  |- c-upper
+  (<= c 1)
+  |-
+  (<= 0 d)
+  |-
+  (<= d 1)
+  |- at-most-one
+  (<= (+ a b d) 1)
+  |- complex
+  (or (= (+ (* 2 a) c) 1) (= (+ a (* 2 d)) 1))
+  :precision precise :depth 1)
+)
+after solving...
+(goals
+(goal
+  |- a-lower
+  (<= 0 a)
+  |- a-upper
+  (<= a 1)
+  |- b-lower
+  (<= 0 b)
+  |- b-upper
+  (<= b 1)
+  |- c-lower
+  (<= 0 c)
+  |- c-upper
+  (<= c 1)
+  |-
+  (<= 0 d)
+  |-
+  (<= d 1)
+  |- at-most-one
+  (<= (+ a b d) 1)
+  |- complex
+  (or (= (+ (* 2 a) c) 1) (= (+ a (* 2 d)) 1))
+  :precision precise :depth 2)
+)
+with pb2bv
+(goals
+(goal
+  |- at-most-one b-upper b-lower a-lower a-upper
+  (or (not k!0) (not k!1))
+  |- complex a-upper a-lower c-upper c-lower
+  (let ((a!1 (not (or (not (or k!0 k!3)) k!0)))
+        (a!2 (not (or (not (or k!2 k!0)) k!2))))
+    (or a!1 a!2))
+  |- at-most-one b-upper b-lower a-lower a-upper
+  (or (not k!0) (not k!2))
+  |- at-most-one b-upper b-lower a-lower a-upper
+  (or (not k!1) (not k!2))
+  :precision precise :depth 4)
+)
+(concat-model-converter
+(filter-model-converter k!1 k!0 k!2 k!3)
+(pb2bv-model-converter
+  (b k!1)
+  (a k!0)
+  (d k!2)
+  (c k!3))
+)

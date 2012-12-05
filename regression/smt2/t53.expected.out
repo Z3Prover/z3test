@@ -1,0 +1,51 @@
+#x0ff0
+#xff00
+#x00ff
+#x00aa00bb00cc00dd
+#xaa00bb00cc00dd00
+#x00bb00cc00dd0000
+#x00cc00dd00000000
+#x00dd000000000000
+#x0000000000000000
+----
+#x000f
+#x0000
+#x00ff
+#x00aa00bb00cc00dd
+#x0000aa00bb00cc00
+#x000000aa00bb00cc
+#x0000000000aa00bb
+#x00000000000000aa
+#x0000000000000000
+----
+#x000f
+#x0000
+#x00ff
+#x00aa00bb00cc00dd
+#x0000aa00bb00cc00
+#x000000aa00bb00cc
+#x0000000000aa00bb
+#x00000000000000aa
+#x0000000000000000
+----
+#xf80f
+#xff80
+#x80ff
+#x80aa00bb00cc00dd
+#xff80aa00bb00cc00
+#xffff80aa00bb00cc
+#xffffffff80aa00bb
+#xffffffffffff80aa
+#xffffffffffffffff
+----
+(bvashr c1 #x0005)
+(bvashr c1 #x0010)
+c1
+(concat #b00000 ((_ extract 15 5) c1))
+#x0000
+#x0000
+c1
+(concat ((_ extract 10 0) c1) #b00000)
+#x0000
+#x0000
+c1

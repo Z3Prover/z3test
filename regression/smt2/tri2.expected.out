@@ -1,0 +1,13 @@
+trigonometric...
+a
+(cos (asin a))
+a
+a
+hyperbolic...
+a
+(cosh (asinh a))
+a
+a
+(* (- 1.0) (sinh a))
+(cosh a)
+(* (- 1.0) (tanh a))

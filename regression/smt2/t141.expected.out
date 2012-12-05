@@ -1,0 +1,15 @@
+sat
+(model 
+  (define-fun p1 () Bool
+    true)
+  (define-fun p2 () Bool
+    true)
+)
+sat
+(model 
+  (define-fun p1 () Bool
+    false)
+  (define-fun p2 () Bool
+    false)
+)
+unsat

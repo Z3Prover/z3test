@@ -1,0 +1,31 @@
+Testing basic...
+true
+false
+true
+Testing eq...
+true
+(= a b)
+false
+p1
+(not p1)
+false
+(= p2 p1)
+(= p2 p1)
+(= p1 p2)
+(= (not p1) p2)
+p2
+(not p2)
+false
+Testing distinct...
+true
+(not (= a b))
+false
+(distinct a b c)
+false
+false
+false
+(distinct a b c d)
+Testing syntax sugar...
+(= (not p1) p2)
+(= (not p1) (= (not p2) p3))
+(or (not p1) p2)

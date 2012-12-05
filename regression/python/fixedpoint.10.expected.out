@@ -1,0 +1,21 @@
+unsat
+ForAll([A, B, C],
+       Eval(A, B, C) ==
+       And(Not(Max == C),
+           Or(Not(Max == arg(App(fn(A), arg(A)))),
+              Not(f == fn(App(fn(A), arg(A))))),
+           Or(Not(f == arg(App(fn(A), arg(A)))),
+              Not(f == fn(App(fn(A), arg(A))))),
+           Or(-1*i(B) + i(C) <= 0,
+              i(C) + -1*i(arg(A)) <= 0,
+              Not(f == fn(App(fn(A), arg(A))))),
+           Not(B == f),
+           Not(f == C),
+           i(B) + -1*i(C) <= 0,
+           Not(App(fn(B), arg(B)) == B),
+           Not(App(fn(C), arg(C)) == C),
+           Not(Max == B),
+           -1*i(C) + i(arg(A)) <= 0,
+           Or(Not(App(fn(fn(A)), arg(fn(A))) ==
+                  fn(App(fn(A), arg(A)))),
+              -1*i(C) + i(arg(fn(A))) <= 0)))

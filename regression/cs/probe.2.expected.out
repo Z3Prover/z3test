@@ -1,0 +1,7 @@
+num-consts: 3
+Tactic failed: fail-if tactic
+trying again...
+(goals
+(goal
+  (> (+ x y) 0.0))
+)

@@ -1,0 +1,17 @@
+sat
+(model 
+  (define-fun s2 () (Array (List Int) Bool)
+    (_ as-array k!1))
+  (define-fun a () Int
+    0)
+  (define-fun l () (List Int)
+    nil)
+  (define-fun s1 () (Array Int Bool)
+    (_ as-array k!0))
+  (define-fun k!0 ((x!1 Int)) Bool
+    (ite (= x!1 0) true
+      true))
+  (define-fun k!1 ((x!1 (List Int))) Bool
+    (ite (= x!1 nil) false
+      false))
+)

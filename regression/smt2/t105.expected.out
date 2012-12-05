@@ -1,0 +1,61 @@
+(goals
+(goal
+  (or a b)
+  (or a c)
+  :precision precise :depth 2)
+)
+----
+(goals
+(goal
+  (or a b)
+  (or a c)
+  (or b a)
+  (or b c)
+  :precision precise :depth 2)
+)
+----
+(goals
+(goal
+  (or (not a) k!0)
+  (or (not b) (not c) k!0)
+  (or a b (not k!0))
+  (or a c (not k!0))
+  (or c b)
+  (or (not c) (not d) k!0)
+  (or (not c) d a)
+  :precision precise :depth 2)
+)
+(filter-model-converter k!0)
+----
+(goals
+(goal
+  (or (not b) (not c) k!0)
+  (or (not a) (not c) k!0)
+  (or (not a) (not d) k!0)
+  (or b a (not k!0))
+  (or c a (not k!0))
+  (or b c a (not k!0))
+  (or b a d (not k!0))
+  (or c a d (not k!0))
+  (or b c d (not k!0))
+  (or c d (not k!0))
+  (or a (not k!0))
+  (or (not a) k!0)
+  :precision precise :depth 2)
+)
+(filter-model-converter k!0)
+----
+(goals
+(goal
+  (or (not k!0) (not a) (not b) c)
+  (or (not k!0) (not a) b (not c))
+  (or (not k!0) a (not b) (not c))
+  (or (not k!0) a b c)
+  (or k!0 a b (not c))
+  (or k!0 a (not b) c)
+  (or k!0 (not a) b c)
+  (or k!0 (not a) (not b) (not c))
+  (or d k!0)
+  :precision precise :depth 2)
+)
+(filter-model-converter k!0)

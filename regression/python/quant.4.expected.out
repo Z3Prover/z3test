@@ -1,0 +1,6 @@
+(solver
+  (forall ((x Int)) (! (= (f (g x)) x) :pattern ((f (g x)))))
+  (= (g a) c)
+  (= (g b) c)
+  (distinct a b))
+unknown

@@ -1,0 +1,4 @@
+(= a1 (ite (bvsle c1 #x0000) #b1 #b0))
+(= a1 (ite (bvsle c1 #x0000) #b1 #b0))
+(= a1 (ite (bvsle c1 #x0000) #b0 #b1))
+(= a1 (ite (bvsle c1 #x0000) #b0 #b1))

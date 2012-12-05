@@ -1,0 +1,13 @@
+is_expr(x_d): False
+is_func_decl(x_d): True
+x_d.Name: x
+x_d.Range: Int
+x_d.Arity: 0
+x_d() == x: True
+f.Name: f
+f.Range: Bool
+f.Arity: 2
+domain(0): Int
+domain(1): Real
+(f x (to_real x))
+True

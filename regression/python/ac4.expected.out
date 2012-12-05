@@ -1,0 +1,9 @@
+x - y - x - z
+x - y - (x - z)
+x - (y - x) - z
+x - y + x - z
+x - y + x - z
+x - (y + x) - z
+x<sup>y<sup>z</sup></sup>
+x<sup>y<sup>z</sup></sup>
+(x<sup>y</sup>)<sup>z</sup>

@@ -1,0 +1,13 @@
+(solver
+  (= (select A x) x)
+  (= (store A x y) A))
+SATISFIABLE
+(define-fun A () (Array Int Int)
+  (_ as-array k!0))
+(define-fun y () Int
+  1)
+(define-fun x () Int
+  1)
+(define-fun k!0 ((x!1 Int)) Int
+  (ite (= x!1 1) 1
+    0))

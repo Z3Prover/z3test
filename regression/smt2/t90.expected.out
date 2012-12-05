@@ -1,0 +1,45 @@
+(goals
+(goal
+  (bvsle x #x0a)
+  (or k!0 (= x #x7f))
+  :precision precise :depth 1)
+)
+(concat-model-converter
+(filter-model-converter k!0)
+(extension-model-converter
+  (y (ite (or k!0 (= x #x7f)) x (bvadd x #x01))))
+)
+(goals
+(goal
+  (bvsle x #x0a)
+  (or k!0 (= x #x80))
+  :precision precise :depth 1)
+)
+(concat-model-converter
+(filter-model-converter k!0)
+(extension-model-converter
+  (y (ite (or k!0 (= x #x80)) x (bvsub x #x01))))
+)
+(goals
+(goal
+  (bvsle x #x0a)
+  (or k!0 (= x #xff))
+  :precision precise :depth 1)
+)
+(concat-model-converter
+(filter-model-converter k!0)
+(extension-model-converter
+  (y (ite (or k!0 (= x #xff)) x (bvadd x #x01))))
+)
+(goals
+(goal
+  (bvsle x #x0a)
+  (or k!0 (= x #x00))
+  :precision precise :depth 1)
+)
+(concat-model-converter
+(filter-model-converter k!0)
+(extension-model-converter
+  (y (ite (or k!0 (= x #x00)) x (bvsub x #x01))))
+)
+true

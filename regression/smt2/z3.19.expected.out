@@ -1,0 +1,12 @@
+sat
+(model 
+  (define-fun y () Int
+    1)
+  (define-fun a1 () (Array Int Int)
+    (_ as-array k!0))
+  (define-fun x () Int
+    1)
+  (define-fun k!0 ((x!1 Int)) Int
+    (ite (= x!1 1) 1
+      0))
+)

@@ -1,0 +1,8 @@
+x == x + 1
+1.4142135623?
+1.4142135623?
+[x == 2]
+sat
+[x = 2]
+sat
+failed: 'model is not available'

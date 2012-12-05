@@ -1,0 +1,55 @@
+tst10.cs(61,31): warning CS0184: The given expression is never of the provided ('Microsoft.Z3.ArithExpr') type
+tst10.cs(63,31): warning CS0184: The given expression is never of the provided ('Microsoft.Z3.RatNum') type
+(+ x y (to_real a))
+(+ x 1.0)
+(+ 2.0 y)
+(* x y)
+(+ 2 3)
+(* 2.0 x)
+(+ (to_real (+ 2 3)) x)
+(+ 5.0 x)
+(+ a b 1)
+(/ x y)
+(/ x 2.0)
+(/ 2.0 y)
+(div a 2)
+(div (+ a b) 2)
+(div 3 a)
+(mod a b)
+(mod a 2)
+(mod 3 a)
+(- a 2)
+(- a)
+(- x)
+(- a b)
+False
+True
+False
+False
+True
+True
+False
+False
+True
+True
+True
+False
+
+True
+True
+True
+False
+True
+False
+2/3
+True
+True
+True
+True
+True
+True
+True
+False
+False
+(^ 2.0 (/ 1.0 2.0))
+(^ 2.0 (/ 1.0 3.0))

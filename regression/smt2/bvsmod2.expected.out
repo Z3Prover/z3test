@@ -1,0 +1,6 @@
+sat
+(model 
+  (define-fun a () (_ BitVec 2)
+    #b11)
+)
+unsat

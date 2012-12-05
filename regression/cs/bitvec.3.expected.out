@@ -1,0 +1,10 @@
+SATISFIABLE
+(define-fun x () (_ BitVec 32)
+  #x0000000c)
+UNSATISFIABLE
+SATISFIABLE
+(define-fun x () (_ BitVec 32)
+  #xc0000000)
+SATISFIABLE
+(define-fun x () (_ BitVec 32)
+  #x00000006)

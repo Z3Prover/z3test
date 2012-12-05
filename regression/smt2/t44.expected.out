@@ -1,0 +1,16 @@
+(concat #x00 c1)
+(concat ((_ extract 1 0) c1) c2 c3 ((_ extract 3 2) c4))
+((_ extract 2 0) c1)
+c1
+((_ extract 3 1) c1)
+((_ extract 2 0) c1)
+(concat ((_ extract 2 0) c1) ((_ extract 3 2) c2))
+(concat ((_ extract 2 0) c1) ((_ extract 3 2) c2))
+(concat ((_ extract 2 0) c1) c2)
+(concat c1 c2)
+(concat ((_ extract 1 0) c1) c2)
+(concat ((_ extract 2 1) c1) c2)
+#x0
+#b1110000
+#xf
+(concat #x0f0f c1)

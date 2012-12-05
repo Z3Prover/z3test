@@ -1,0 +1,11 @@
+(goals
+(goal
+  (or (not p) q (not k!0))
+  (or p r (not k!0))
+  (or (not p) (not q) k!0)
+  (or p (not r) k!0)
+  (or q r (not k!0))
+  (or (not q) (not r) k!0)
+  (not k!0)
+  :precision precise :depth 2)
+)

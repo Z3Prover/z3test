@@ -1,0 +1,6 @@
+is expression:  True
+is application: True
+decl:           +
+num args:       2
+arg( 0 ) -> x
+arg( 1 ) -> 1

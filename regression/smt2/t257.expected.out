@@ -1,0 +1,44 @@
+(goals
+(goal
+  (or (> a 1) (< a (- 1)))
+  (> b (+ a 1))
+  (> c (+ a 2))
+  (> b (+ (* 2 c) 5))
+  :precision precise :depth 0)
+)
+(goals
+(goal
+  :precision precise :depth 3)
+)
+(concat-model-converter
+(filter-model-converter k!0)
+(fm-model-converter
+(b
+  (<= (+ (* (- 1) b) a) (- 2))
+  (<= (+ (* (- 1) b) (* 2 c)) (- 6)))
+(c
+  (<= (+ (* (- 1) c) a) (- 3)))
+(a
+  (or k!0 (<= (* (- 1) a) (- 2)))
+  (or (not k!0) (<= a (- 2)))))
+)
+(goals
+(goal
+  (= a (+ a 1))
+  :precision precise :depth 0)
+)
+(goals
+(goal
+  false
+  :precision precise :depth 1)
+)
+(goals
+(goal
+  false
+  :precision precise :depth 1)
+)
+(goals
+(goal
+  (= a (+ a 1))
+  :precision precise :depth 0)
+)

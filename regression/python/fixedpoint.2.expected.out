@@ -1,0 +1,60 @@
+(declare-rel state (Int Int Int Int))
+(declare-rel step1 (Int Int Int Int Int Int))
+(declare-rel step (Int Int Int Int Int Int Int Int))
+(declare-var A Int)
+(declare-var B Int)
+(declare-var C Int)
+(declare-var D Int)
+(declare-var E Int)
+(declare-var F Int)
+(declare-var G Int)
+(declare-var H Int)
+(rule (=> (and (= C 0) (= B 0) (= A 0) (= D 0)) (state A B C D)))
+(rule (=> (and (step A B C D E F G H) (state A B C D)) (state E F G H)))
+(rule (=> (step1 A B C D E F) (step A B C D E F C D)))
+(rule (=> (step1 C D A B E F) (step A B C D A B E F)))
+(rule (=> (= D (+ 1 C)) (step1 0 A B C 1 D)))
+(rule (=> (or (<= A C) (= C 0)) (step1 1 A B C 2 A)))
+(rule (step1 2 A B C 0 0))
+
+And(state(Var(0), Var(1), Var(2), Var(3)),
+    And(Var(0) == 2, Var(2) == 2))
+unsat
+And(ForAll([A, B, C, D],
+           state(A, B, C, D) ==
+           And(Or(C <= 1, D + -1*B <= 0, B <= 0),
+               Or(B >= 1, A <= 0),
+               Or(C <= 0, D + -1*B <= -1, B + -1*D <= -1),
+               Or(A <= 1, B + -1*D <= 0, D <= 0),
+               Or(C <= 0, D >= 1),
+               B >= 0,
+               D >= 0,
+               Or(-1*B + D <= -1,
+                  B + -1*D <= -1,
+                  B <= 0,
+                  B >= 2))),
+    ForAll([A, B, C, D, E, F],
+           step1(A, B, C, D, E, F) ==
+           And(Or(A <= 0,
+                  B + -1*D <= 0,
+                  Not(Or(Not(D >= 0), Not(D <= 0))),
+                  A >= 2),
+               Or(E <= 1, B + -1*F <= 0),
+               Or(A >= 1, E <= 1),
+               Or(Not(Or(Not(A >= 2),
+                         Not(A <= 2),
+                         Not(E >= 0),
+                         Not(E <= 0),
+                         Not(F >= 0),
+                         Not(F <= 0))),
+                  -1*B + F <= 0,
+                  A <= 0),
+               Or(Not(Or(Not(A >= 2),
+                         Not(A <= 2),
+                         Not(E >= 0),
+                         Not(E <= 0),
+                         Not(F >= 0),
+                         Not(F <= 0))),
+                  -1*F + D <= -1,
+                  E >= 2))))
+done

@@ -1,0 +1,26 @@
+failed: Index was outside the bounds of the array.
+(f 1 1.0)
+Int
+2
+(+ x 1)
+1
+(+ x 1)
+True
+(f 2 (to_real (+ x 1)))
+True
+True
+True
+True
+True
+False
+False
+(:var 0)
+True
+False
+True
+False
+(ite true x (+ x 1))
+(ite true x (+ x 1))
+(ite true 1 1)
+(distinct x (+ x 1) (+ x 2))
+(and (distinct x 1) (> x 0))

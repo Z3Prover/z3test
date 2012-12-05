@@ -1,0 +1,38 @@
+(error "tactic failed: operator not supported, apply simplifier before invoking this strategy")
+(goals
+(goal
+  (or p q)
+  q
+  (or p r)
+  (or q r)
+  :precision precise :depth 2)
+)
+(goals
+(goal
+  q
+  (or p r)
+  :precision precise :depth 3)
+)
+(goals
+(goal
+  (= x (ite p 0 1))
+  :precision precise :depth 1)
+)
+(goals
+(goal
+  (= x (ite p 0 1))
+  :precision precise :depth 1)
+)
+(error "tactic failed: operator not supported, apply simplifier before invoking this strategy")
+(goals
+(goal
+  (or (not p) q)
+  :precision precise :depth 2)
+)
+(error "tactic failed: operator not supported, apply simplifier before invoking this strategy")
+(goals
+(goal
+  (or (not p) (not q))
+  (or p q)
+  :precision precise :depth 2)
+)

@@ -1,0 +1,13 @@
+(solver
+  (= (select A x) x)
+  (= (store A x y) A)
+  (not (= x y)))
+UNSATISFIABLE
+(let ((a!1 (symm (asserted (= (select A x) x)) (= x (select A x))))
+      (a!2 (monotonicity (asserted (= (store A x y) A))
+                         (= (select (store A x y) x) (select A x))))
+      (a!5 (th-lemma (= y (select (store A x y) x)))))
+(let ((a!3 (symm a!2 (= (select A x) (select (store A x y) x))))
+      (a!6 (symm a!5 (= (select (store A x y) x) y))))
+(let ((a!4 (trans a!1 a!3 (= x (select (store A x y) x)))))
+  (unit-resolution (asserted (not (= x y))) (trans a!4 a!6 (= x y)) false))))

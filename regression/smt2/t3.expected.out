@@ -1,0 +1,16 @@
+(error "line 4 column 21: invalid declaration, constant 'a' (whith the given signature) already declared")
+(error "line 6 column 21: invalid declaration, builtin symbol +")
+success
+(error "line 8 column 43: invalid macro/named expression, builtin symbol +")
+success
+(+ 10 20)
+(+ 10 20 30)
+success
+(+ 10 (+ 20 30))
+(>= (+ 1 2) (- (+ 1 2) 1))
+success
+success
+(forall ((x Int))
+  (=> (> (f x) (+ x 20))
+      (exists ((y Int))
+        (and (> (f x) (f y)) (forall ((z Int)) (= (f z) (f (+ x y))))))))

@@ -1,0 +1,10 @@
+sat
+(model 
+  (define-fun a () (_ BitVec 8)
+    #x02)
+  (define-fun f ((x!1 (_ BitVec 8))) (_ BitVec 8)
+    #x02)
+  (define-fun f1 ((x!1 (_ BitVec 8))) (_ BitVec 8)
+    (ite (= x!1 #x03) #x00
+      (f x!1)))
+)

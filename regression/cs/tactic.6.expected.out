@@ -1,0 +1,5 @@
+SATISFIABLE
+(define-fun y () (_ BitVec 16)
+  #x0001)
+(define-fun x () (_ BitVec 16)
+  #x000c)

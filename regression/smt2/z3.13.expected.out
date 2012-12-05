@@ -1,0 +1,8 @@
+sat
+(model 
+  (define-fun p1 () (Pair Int Int)
+    (mk-pair 0 21))
+  (define-fun p2 () (Pair Int Int)
+    (mk-pair 0 21))
+)
+unsat

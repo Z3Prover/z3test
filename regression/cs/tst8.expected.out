@@ -1,0 +1,7 @@
+U
+(and (= a b) (= a c))
+False
+True
+False
+(distinct a b c)
+(= (f a b) b)

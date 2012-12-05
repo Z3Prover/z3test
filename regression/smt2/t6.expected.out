@@ -1,0 +1,42 @@
+(error "line 3 column 27: option value is not a numeral")
+success
+(error "line 5 column 27: invalid option value, true/false expected")
+(error "line 6 column 27: option value is not a string")
+(error "line 8 column 23: invalid array sort definition, invalid number of parameters")
+(error "line 9 column 17: invalid array sort definition, invalid number of parameters")
+success
+success
+(error "line 13 column 23: sort constructor expects parameters")
+(error "line 14 column 25: invalid array sort definition, invalid number of parameters")
+(error "line 16 column 19: invalid indexed sort, symbol expected")
+(error "line 17 column 26: invalid indexed sort, index expected")
+(error "line 18 column 32: expecting one integer parameter to bit-vector sort")
+success
+#x5
+#b01010
+#x0000000a
+(error "line 25 column 30: invalid indexed sort, integer or ')' expected")
+(error "line 26 column 27: invalid indexed sort, index is too big to fit in an unsigned machine integer")
+(error "line 28 column 34: invalid indexed sort, symbol expected")
+(error "line 29 column 25: invalid sort, unexpected ')'")
+unsupported
+(error "line 33 column 20: invalid sort parameter, symbol or ')' expected")
+success
+success
+success
+success
+success
+success
+success
+success
+success
+success
+sat
+(model 
+  (define-fun p3 () (Pair Int Bool)
+    (mk-pair 101 false))
+  (define-fun p1 () (Pair Int Bool)
+    (mk-pair 10 false))
+  (define-fun p2 () (Pair Int Real)
+    (mk-pair 101 0.0))
+)

@@ -1,0 +1,10 @@
+(goals
+(goal
+  (>= (* 2.0 a) (+ (* 3.0 b) 5.0))
+  :precision precise :depth 0)
+)
+(goals
+(goal
+  (>= (+ (* 2.0 a) (* (- 3.0) b)) 5.0)
+  :precision precise :depth 1)
+)
