@@ -2,6 +2,7 @@
 #   Java and clang installed
 #   lots of frees space
 import util
+import config
 
 def bigtest(b="unstable"):
     # Build everything:
@@ -9,7 +10,7 @@ def bigtest(b="unstable"):
     #   - release and debug modes
     for d in [True, False]:
         for c in [True, False]:
-            util.buildz3(branch=b, everything=True, clean=True, debug=d,  java=True, static=True, jobs=16, clang=c)
+            util.buildz3(branch=b, everything=True, clean=True, debug=d,  java=True, static=True, jobs=config.NUMJOBS, clang=c)
             util.testz3py(branch=b, debug=b, clang=c)
             util.testjavaex(branch=b, debug=b, clang=c)
             util.testz3ex('cpp_example')

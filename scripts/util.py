@@ -133,7 +133,7 @@ def make(branch, debug, everything, clang, jobs):
             cmd.append('test')
             cmd.append('examples')
         if subprocess.call(cmd) != 0:
-            raise Exception("Failed to make Z3\n" % cmd)
+            raise Exception("Failed to make Z3\n%s\n" % cmd)
         
 
 def buildz3(branch="unstable", everything=False, clean=False, debug=True, java=False, clang=False, static=False, VS64=False, jobs=16):
@@ -190,4 +190,4 @@ def testz3ex(exe, branch="unstable", debug=True, clang=False):
 # buildz3(java=True, everything=True)
 # testjavaex()                
 # testz3ex('cpp_example')
-testz3ex('c_example')    
+# testz3ex('c_example')    

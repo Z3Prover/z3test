@@ -29,8 +29,10 @@ if result != 0:
                   ["out.txt", "err.txt"])
 else:
     sendmail.send(config.DEVS,
-                  "Executed at '%s' at '%s'" % (cmd, hostname),
-                  "Command was successfully executed")
+                  "Executed '%s' at '%s'" % (cmd, hostname),
+                  "Command was successfully executed",
+                  ["out.txt", "err.txt"])
+
 
 
 
