@@ -11,20 +11,26 @@ cmd      = ' '.join(sys.argv[1:])
 
 OUT=open('out.txt', 'w')
 ERR=open('err.txt', 'w')
-EMPTY=open('empty.txt', 'w')
-if subprocess.call(sys.argv[1:], stdout=OUT, stderr=ERR) != 0:
-    OUT.close()
-    ERR.close()
-    sendmail.send("Faild to execute at %s" % hostname,
-                  "See attached messages for standard output and standard error",
-                  ["out.txt", "err.txt"],
-                  [config.FROM])
+try:
+    result = subprocess.call(sys.argv[1:], stdout=OUT, stderr=ERR)
+except Exception as ex:
+    ERR.write('Python exception when trying to execute:\n%s\n' % cmd)
+    ERR.write(str(ex))
+    ERR.write('\n')
+    result = 1
+
+OUT.close()
+ERR.close()
+
+if result != 0:
+    sendmail.send(config.DEVS,
+                  "Faild to execute '%s' at '%s'" % (cmd, hostname),
+                  "See attached files for standard output and standard error",
+                  ["out.txt", "err.txt"])
 else:
-    EMPTY.write('\n')
-    EMPTY.close()
-    sendmail.send("Program executed at %s" % hostname,
-                  "Command worked",
-                  ["empty.txt"],
-                  [config.FROM])
+    sendmail.send(config.DEVS,
+                  "Executed at '%s' at '%s'" % (cmd, hostname),
+                  "Command was successfully executed")
+
 
 
