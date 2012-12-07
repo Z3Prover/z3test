@@ -189,5 +189,5 @@ def testz3ex(exe, branch="unstable", debug=True, clang=False):
 
 # buildz3(java=True, everything=True)
 # testjavaex()                
-# testz3ex('cpp_example')
+# testz3ex('cpp_example', "unstable", True, True)
 # testz3ex('c_example')    
