@@ -10,7 +10,7 @@ PASSWORD = PASSWORD.strip('\"\' \t\n')
 
 NUMJOBS=os.getenv("MAKEJOBS", 16)
 
-DEVS=["leonardo@microsoft.com"]
+DEVS=["leonardo@microsoft.com", "cwinter@microsoft.com"]
 ORIGIN="https://git01.codeplex.com/z3"
 GIT="git"
 PYTHON="python"

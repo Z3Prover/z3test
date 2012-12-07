@@ -115,6 +115,7 @@ def mk_make(branch, debug, java, clang, static, VS64):
         cmd.append('--java')
     if static:
         cmd.append('--staticlib')
+
     if clang:
         with setenv('CXX', 'clang++'):
             with setenv('CC', 'clang'):
