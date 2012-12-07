@@ -5,13 +5,11 @@
 (assert
   (and
    (> (- (* x1 x2) x3) 0)
-   (>= x1 1)
-   (<= x1 1)
+   (> x1 1)
    (>= x2 x3)
    (<= (- x2 10) x3)
    ))
 (check-sat)
-(get-model)
 
 (reset)
 (set-logic QF_NIA)
@@ -23,13 +21,11 @@
 (assert
   (and
    (> (- (* x1 x2) x3) 0)
-   (>= x1 1)
-   (<= x1 1)
+   (> x1 1)
    (>= x2 x3)
    (<= (- x2 10) x3)
    ))
 (check-sat)
-(get-model)
 
 
 

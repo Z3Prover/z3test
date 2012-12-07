@@ -2,7 +2,7 @@
 (set-option :produce-models true)
 
 (set-option :smt.mbqi true)
-(set-option :model-compact true)
+(set-option :model.compact true)
 
 ;; T is an uninterpreted sort
 (declare-sort T) 

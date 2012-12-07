@@ -245,4 +245,4 @@ def test_benchmarks_using_latest(benchdir, branch="unstable", debug=True, clang=
 # testz3ex('c_example')    
 # test_benchmarks('/home/leo/projects/z3/build/debug/z3', 'regressions/smt2')
 # test_benchmark('/home/leo/projects/z3/build/debug/z3', 'regressions/smt2/bad_patterns.smt2')
-test_benchmarks_using_latest('regressions/smt2')
+# test_benchmarks_using_latest('regressions/smt2')

@@ -1,6 +1,6 @@
 (set-option :auto-config true)
 (set-option :produce-models true)
-(set-option :soft-timeout 50)
+(set-option :timeout 100)
 
 (declare-datatypes () ((Nat zero (succ (pred Nat)))))
 (declare-fun p (Nat) Bool)
