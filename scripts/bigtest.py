@@ -14,7 +14,9 @@ def bigtest(b="unstable"):
             util.testz3py(branch=b, debug=b, clang=c)
             util.testjavaex(branch=b, debug=b, clang=c)
             util.testz3ex('cpp_example', branch=b, debug=b, clang=c)
-            util.testz3ex('c_example', branch=b, debug=b, clang=c)    
+            util.testz3ex('c_example', branch=b, debug=b, clang=c)
+            util.test_benchmarks_using_latest('regressions/smt2', branch=b, debug=b, clang=c)
+    
 
 if __name__ == "__main__":
     bigtest()

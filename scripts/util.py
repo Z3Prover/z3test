@@ -2,6 +2,7 @@ import os
 import subprocess
 import shutil
 import config 
+import filecmp
 
 def is_windows():
     return os.name == 'nt'
@@ -191,7 +192,57 @@ def testz3ex(exe, branch="unstable", debug=True, clang=False):
                     if subprocess.call([exe]) != 0:
                         raise Exception("Failed to execute '%s' at '%s'" % (exe, p))
 
+def test_benchmark(z3exe, benchmark, expected=None):
+    if not os.path.exists(benchmark):
+        raise Exception("Benchmark '%s' does not exist" % benchmark)
+    base, ext = os.path.splitext(benchmark)
+    if expected == None:
+        expected = '%s.expected.out' % base
+    if not os.path.exists(expected):
+        raise Exception("Expected answer file '%s' does not exist" % benchmark)
+    produced  = '%s.produced.out' % base
+    producedf = open(produced, 'w')
+    errcode = 0
+    try:
+        errcode = subprocess.call([z3exe, benchmark], stdout=producedf)
+    except:
+        raise Exception("Failed to start Z3: %s" % z3exe)
+    producedf.close()
+    if errcode != 0 and errcode != 1:
+        raise Exception("Z3 (%s) returned unexpected error code for %s" % (z3exe, benchmark))
+    if not filecmp.cmp(expected, produced):
+        print "EXPECTED"
+        print open(expected, 'r').read()
+        print "======================"
+        print "PRODUCED"
+        print open(produced, 'r').read()
+        print "======================"
+        raise Exception("Z3 (%s) produced unexpected output for %s" % (z3exe, benchmark))
+
+def test_benchmarks(z3exe, benchdir, ext="smt2"):
+    print "Testing benchmarks at", benchdir
+    error = False
+    for benchmark in filter(lambda f: f.endswith(ext), os.listdir(benchdir)):
+        try:
+            print "Testing", benchmark
+            test_benchmark(z3exe, os.path.join(benchdir, benchmark))
+        except Exception as ex:
+            print "Failed"
+            print ex
+            error = True
+    if error:
+        raise Exception("Found errors testing benchmarks at %s using %s" % (benchdir, z3exe))
+
+def test_benchmarks_using_latest(benchdir, branch="unstable", debug=True, clang=False, ext="smt2"):
+    z3dir = find_z3depot()
+    bdir  = get_builddir(branch, debug, clang)
+    z3exe = os.path.join(z3dir, bdir, 'z3')
+    test_benchmarks(z3exe, benchdir, ext)
+
 # buildz3(java=True, everything=True)
 # testjavaex()                
 # testz3ex('cpp_example', "unstable", True, True)
 # testz3ex('c_example')    
+# test_benchmarks('/home/leo/projects/z3/build/debug/z3', 'regressions/smt2')
+# test_benchmark('/home/leo/projects/z3/build/debug/z3', 'regressions/smt2/bad_patterns.smt2')
+test_benchmarks_using_latest('regressions/smt2')
