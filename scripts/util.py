@@ -192,6 +192,29 @@ def testz3ex(exe, branch="unstable", debug=True, clang=False):
                     if subprocess.call([exe]) != 0:
                         raise Exception("Failed to execute '%s' at '%s'" % (exe, p))
 
+
+# The duration is in seconds. It can be a float such as 0.001
+def timeout(func, args=(), kwargs={}, timeout_duration=1.0, default=None):
+    import threading
+    class InterruptableThread(threading.Thread):
+        def __init__(self):
+            threading.Thread.__init__(self)
+            self.result = None
+
+        def run(self):
+            try:
+                self.result = func(*args, **kwargs)
+            except:
+                self.result = default
+
+    it = InterruptableThread()
+    it.start()
+    it.join(timeout_duration)
+    if it.isAlive():
+        return default
+    else:
+        return it.result
+
 def test_benchmark(z3exe, benchmark, expected=None):
     if not os.path.exists(benchmark):
         raise Exception("Benchmark '%s' does not exist" % benchmark)
@@ -218,14 +241,20 @@ def test_benchmark(z3exe, benchmark, expected=None):
         print open(produced, 'r').read()
         print "======================"
         raise Exception("Z3 (%s) produced unexpected output for %s" % (z3exe, benchmark))
+    return True
 
-def test_benchmarks(z3exe, benchdir, ext="smt2"):
+def test_benchmarks(z3exe, benchdir, ext="smt2", timeout_duration=60.0):
     print "Testing benchmarks at", benchdir
     error = False
     for benchmark in filter(lambda f: f.endswith(ext), os.listdir(benchdir)):
         try:
-            print "Testing", benchmark
-            test_benchmark(z3exe, os.path.join(benchdir, benchmark))
+            bench = os.path.join(benchdir, benchmark)
+            print "Testing", bench
+            if timeout(test_benchmark, 
+                       args=(z3exe, bench), 
+                       timeout_duration=timeout_duration,
+                       default=False) == False:
+                raise Exception("Timeout executing benchmark %s using %s" % (bench, z3exe))
         except Exception as ex:
             print "Failed"
             print ex
@@ -233,11 +262,11 @@ def test_benchmarks(z3exe, benchdir, ext="smt2"):
     if error:
         raise Exception("Found errors testing benchmarks at %s using %s" % (benchdir, z3exe))
 
-def test_benchmarks_using_latest(benchdir, branch="unstable", debug=True, clang=False, ext="smt2"):
+def test_benchmarks_using_latest(benchdir, branch="unstable", debug=True, clang=False, ext="smt2", timeout_duration=60.0):
     z3dir = find_z3depot()
     bdir  = get_builddir(branch, debug, clang)
     z3exe = os.path.join(z3dir, bdir, 'z3')
-    test_benchmarks(z3exe, benchdir, ext)
+    test_benchmarks(z3exe, benchdir, ext, timeout_duration)
 
 # buildz3(java=True, everything=True)
 # testjavaex()                
