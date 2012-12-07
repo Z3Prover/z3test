@@ -6,7 +6,14 @@ import tempfile
 import config
 import socket
 
-hostname = socket.gethostbyaddr(socket.gethostname())[0]
+try:
+    hostname = socket.gethostbyaddr(socket.gethostname())[0]
+except:
+    try:
+        hostname = os.uname()[0]
+    except:
+        hostname = "unknown"
+
 cmd      = ' '.join(sys.argv[1:])
 
 OUT=open('out.txt', 'w')
