@@ -268,6 +268,39 @@ def test_benchmarks_using_latest(benchdir, branch="unstable", debug=True, clang=
     z3exe = os.path.join(z3dir, bdir, 'z3')
     test_benchmarks(z3exe, benchdir, ext, timeout_duration)
 
+def exec_script(script):
+    if subprocess.call([config.PYTHON, script]) != 0:
+        raise Exception("Script '%s' returned non-zero exit code" % script)
+    return True
+
+def test_pyscripts(z3libdir, scriptdir, ext="py", timeout_duration=60.0):
+    print "Testing scripts at", scriptdir, "using", z3libdir
+    with setenv('LD_LIBRARY_PATH', z3libdir):
+        with setenv('PYTHONPATH', z3libdir):
+            with setenv('DYLD_LIBRARY_PATH', z3libdir):
+                print "Testing python scripts at", scriptdir, "using", z3libdir
+                error = False
+                for script in filter(lambda f: f.endswith(ext), os.listdir(scriptdir)):
+                    script = os.path.join(scriptdir, script)
+                    print "Testing", script
+                    try:
+                        if timeout(exec_script,
+                                   args=[script],
+                                   timeout_duration=timeout_duration,
+                                   default=False) == False:
+                            raise Exception("Timeout executing script '%s' at '%s' using '%s'" % (script, scriptdir, z3libdir)) 
+                    except Exception as ex:
+                        print "Failed"
+                        print ex
+                        error = True
+                if error:
+                    raise Exception("Found errors testing scripts at '%s' using '%s'" % (scriptdir, z3libdir))
+    
+def test_pyscripts(scriptdir, branch="unstable", debug=True, clang=False, ext="smt2", timeout_duration=60.0):
+    z3dir = find_z3depot()
+    bdir  = get_builddir(branch, debug, clang)
+    test_pyscripts(bdir, scriptdir, ext, timeout_duration)
+
 # buildz3(java=True, everything=True)
 # testjavaex()                
 # testz3ex('cpp_example', "unstable", True, True)
@@ -275,3 +308,5 @@ def test_benchmarks_using_latest(benchdir, branch="unstable", debug=True, clang=
 # test_benchmarks('/home/leo/projects/z3/build/debug/z3', 'regressions/smt2')
 # test_benchmark('/home/leo/projects/z3/build/debug/z3', 'regressions/smt2/bad_patterns.smt2')
 # test_benchmarks_using_latest('regressions/smt2')
+# test_pyscripts('/home/leo/projects/z3/build/debug', 'regressions/python')
+
