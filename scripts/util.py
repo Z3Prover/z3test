@@ -296,10 +296,10 @@ def test_pyscripts(z3libdir, scriptdir, ext="py", timeout_duration=60.0):
                 if error:
                     raise Exception("Found errors testing scripts at '%s' using '%s'" % (scriptdir, z3libdir))
     
-def test_pyscripts_using_latest(scriptdir, branch="unstable", debug=True, clang=False, ext="smt2", timeout_duration=60.0):
+def test_pyscripts_using_latest(scriptdir, branch="unstable", debug=True, clang=False, ext="py", timeout_duration=60.0):
     z3dir = find_z3depot()
     bdir  = get_builddir(branch, debug, clang)
-    test_pyscripts(bdir, scriptdir, ext, timeout_duration)
+    test_pyscripts(os.path.join(z3dir, bdir), scriptdir, ext, timeout_duration)
 
 # buildz3(java=True, everything=True)
 # testjavaex()                
@@ -309,4 +309,4 @@ def test_pyscripts_using_latest(scriptdir, branch="unstable", debug=True, clang=
 # test_benchmark('/home/leo/projects/z3/build/debug/z3', 'regressions/smt2/bad_patterns.smt2')
 # test_benchmarks_using_latest('regressions/smt2')
 # test_pyscripts('/home/leo/projects/z3/build/debug', 'regressions/python')
-
+# test_pyscripts_using_latest('regressions/python')
