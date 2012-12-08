@@ -244,7 +244,7 @@ def test_benchmark(z3exe, benchmark, expected=None):
     return True
 
 def test_benchmarks(z3exe, benchdir, ext="smt2", timeout_duration=60.0):
-    print "Testing benchmarks at", benchdir
+    print "Testing benchmarks at", benchdir, "using", z3exe
     error = False
     for benchmark in filter(lambda f: f.endswith(ext), os.listdir(benchdir)):
         try:
