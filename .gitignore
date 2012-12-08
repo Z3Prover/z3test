@@ -1,0 +1,5 @@
+*.produced.out
+*~
+*.pyc
+.z3-trace
+a.out
