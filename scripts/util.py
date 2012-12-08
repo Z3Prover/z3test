@@ -160,6 +160,8 @@ def testz3py(branch="unstable", debug=True, clang=False):
     with cd(p):
         if subprocess.call([config.PYTHON, 'z3test.pyc']) != 0:
             raise Exception("Failed to execute Z3 python regression tests 'z3test.pyc' at '%s'" % p)
+        if subprocess.call([config.PYTHON, 'z3num.pyc']) != 0:
+            raise Exception("Failed to execute Z3 python regression tests 'z3num.pyc' at '%s'" % p)
 
 def testjavaex(branch="unstable", debug=True, clang=False):
     z3dir = find_z3depot()
