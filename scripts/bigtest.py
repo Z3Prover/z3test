@@ -11,12 +11,12 @@ def bigtest(b="unstable"):
     for d in [True, False]:
         for c in [True, False]:
             util.buildz3(branch=b, everything=True, clean=True, debug=d,  java=True, static=True, jobs=config.NUMJOBS, clang=c)
-            util.testz3py(branch=b, debug=b, clang=c)
-            util.testjavaex(branch=b, debug=b, clang=c)
-            util.testz3ex('cpp_example', branch=b, debug=b, clang=c)
-            util.testz3ex('c_example', branch=b, debug=b, clang=c)
-            util.test_benchmarks_using_latest('regressions/smt2', branch=b, debug=b, clang=c)
-            util.test_benchmarks_using_latest('regressions/smt2-extra', branch=b, debug=b, clang=c)
+            util.testz3py(branch=b, debug=d, clang=c)
+            util.testjavaex(branch=b, debug=d, clang=c)
+            util.testz3ex('cpp_example', branch=b, debug=d, clang=c)
+            util.testz3ex('c_example', branch=b, debug=d, clang=c)
+            util.test_benchmarks_using_latest('regressions/smt2', branch=b, debug=d, clang=c)
+            util.test_benchmarks_using_latest('regressions/smt2-extra', branch=b, debug=d, clang=c)
     
 
 if __name__ == "__main__":
