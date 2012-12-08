@@ -16,7 +16,6 @@
    (> x3 0)
    ))
 (check-sat)
-(get-model)
 
 
 (reset)

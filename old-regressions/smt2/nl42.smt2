@@ -11,8 +11,6 @@
    (not (= (rem x y) (- x (* (div x y) y))))
    ))
 (check-sat)
-(get-model)
-
 
 (reset)
 
@@ -27,5 +25,5 @@
    (not (= (rem x y) (- x (* (div x y) y))))
    ))
 (check-sat)
-(get-model)
+
 

@@ -1,17 +1,5 @@
 ACL2 example
 sat
-(model 
-  (define-fun b () Real
-    0.5)
-  (define-fun a () Real
-    0.0)
-)
 sat
-(model 
-  (define-fun a () Real
-    0.5)
-  (define-fun b () Real
-    0.75)
-)
 unsat
 unsat

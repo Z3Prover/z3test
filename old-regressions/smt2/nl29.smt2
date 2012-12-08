@@ -13,7 +13,6 @@
    (= (+ (* x1 x3) x2 (* (- 1.0) x3)) 2.0)
    ))
 (check-sat)
-(get-model)
 
 ;; Z3 fails when using just theory_arith.
 ;; The main problem is that theory_arith implementation is incomplete for non-linear arithmetic, and it does not have any model finding capabilities for 
@@ -32,5 +31,4 @@
    (= (+ (* x1 x3) x2 (* (- 1) x3)) 2)
    ))
 (check-sat)
-(get-model)
 

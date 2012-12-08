@@ -8,7 +8,6 @@
    (= (+ (* x1 x3) x2 (* (- 1) x3)) 2)
    (> x3 0)))
 (check-sat)
-(get-model)
 
 (reset)
 
@@ -24,4 +23,4 @@
    (= (+ (* x1 x3) x2 (* (- 1) x3)) 2)
    (> x3 0)))
 (check-sat)
-(get-model)
+

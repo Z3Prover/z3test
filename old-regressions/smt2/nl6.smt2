@@ -9,7 +9,6 @@
    (> (* x1 x2) 0.)
    ))
 (check-sat)
-(get-model)
 
 (reset)
 (set-logic QF_NRA)
@@ -24,6 +23,6 @@
    (> (* x1 x2) 0.)
    ))
 (check-sat)
-(get-model)
+
 
 

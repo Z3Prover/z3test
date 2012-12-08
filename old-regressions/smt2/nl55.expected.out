@@ -1,31 +1,3 @@
 ABSolver benchmark
 sat
-(model 
-  (define-fun f () Int
-    1)
-  (define-fun b () Int
-    1)
-  (define-fun e () Int
-    1)
-  (define-fun a () Int
-    0)
-  (define-fun d () Int
-    0)
-  (define-fun c () Int
-    1)
-)
 sat
-(model 
-  (define-fun f () Int
-    2)
-  (define-fun c () Int
-    14)
-  (define-fun d () Int
-    14)
-  (define-fun a () Int
-    14)
-  (define-fun e () Int
-    7)
-  (define-fun b () Int
-    10)
-)

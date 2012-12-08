@@ -11,7 +11,7 @@
    (< (div a b) 3)
 ))
 (check-sat)
-(get-model)
+
 (exit) ;; Investigate why the following configuration returns unknown...
 
 (reset)

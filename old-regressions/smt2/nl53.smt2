@@ -16,7 +16,6 @@
    (<= x2 10)
    ))
 (check-sat)
-(get-model)
 
 (reset)
 (set-logic QF_NIA)
@@ -39,5 +38,4 @@
    (<= x2 10)
    ))
 (check-sat)
-(get-model)
          

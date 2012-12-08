@@ -13,7 +13,6 @@
    (<= (* x1 x1 x1) 8)
    ))
 (check-sat)
-(get-model)
 
 (reset)
 (set-logic QF_NIA)
@@ -33,4 +32,3 @@
    (<= (* x1 x1 x1) 8)
    ))
 (check-sat)
-(get-model)

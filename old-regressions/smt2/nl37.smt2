@@ -53,5 +53,6 @@
 (set-option :produce-models true)
 (declare-const x Real)
 (assert (= (* x x) 2.0))
+(assert (< x 0.0))
 (check-sat)
 (get-model)

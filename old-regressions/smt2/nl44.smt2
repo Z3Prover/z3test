@@ -10,7 +10,6 @@
          (< (- 0 y) (mod x y))))
         ))
 (check-sat)
-(get-model)
 
 (reset)
 
@@ -28,4 +27,4 @@
          (< (- 0 y) (mod x y))))
         ))
 (check-sat)
-(get-model)
+

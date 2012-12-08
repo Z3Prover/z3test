@@ -26,7 +26,6 @@
    (>= f 0)
    ))
 (check-sat)
-(get-model)
 
 (reset)
 (set-logic QF_NIA)
@@ -58,5 +57,5 @@
    (>= f 0)
    ))
 (check-sat)
-(get-model)
+
 

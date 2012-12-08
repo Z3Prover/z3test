@@ -20,4 +20,7 @@
    (<= x5 (* 2.0 x4))
    ))
 (check-sat)
-(get-model)
+(eval (= x2 (+ x3 1.0)))
+(eval (= x2 (+ x6 x7)))
+(eval (= x7 (+ x8 1.0)))
+

@@ -11,7 +11,6 @@
    (not (<= (+ a 1.0) (+ (* a b) b)))
    ))
 (check-sat)
-(get-model)
 
 (reset)
 (set-logic QF_NRA)
@@ -27,8 +26,6 @@
    (not (<= (+ a 1.0) (+ (* a b) b)))
    ))
 (check-sat)
-(get-model)
-
 
 (reset)
 (set-option :auto-config false)

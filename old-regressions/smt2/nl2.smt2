@@ -20,4 +20,3 @@
    (<= x2 10.0)
    ))
 (check-sat)
-(get-model)

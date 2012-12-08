@@ -8,7 +8,7 @@
    (= (f (- 1)) 0)
    ))
 (check-sat)
-(eval x1)
+(eval (or (= x1 1) (= x1 -1)))
 (assert (not (= x1 1)))
 (check-sat)
 (eval x1)
