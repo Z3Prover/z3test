@@ -296,7 +296,7 @@ def test_pyscripts(z3libdir, scriptdir, ext="py", timeout_duration=60.0):
                 if error:
                     raise Exception("Found errors testing scripts at '%s' using '%s'" % (scriptdir, z3libdir))
     
-def test_pyscripts(scriptdir, branch="unstable", debug=True, clang=False, ext="smt2", timeout_duration=60.0):
+def test_pyscripts_using_latest(scriptdir, branch="unstable", debug=True, clang=False, ext="smt2", timeout_duration=60.0):
     z3dir = find_z3depot()
     bdir  = get_builddir(branch, debug, clang)
     test_pyscripts(bdir, scriptdir, ext, timeout_duration)

@@ -17,7 +17,7 @@ def bigtest(b="unstable"):
             util.testz3ex('c_example', branch=b, debug=d, clang=c)
             util.test_benchmarks_using_latest('regressions/smt2', branch=b, debug=d, clang=c)
             util.test_benchmarks_using_latest('regressions/smt2-extra', branch=b, debug=d, clang=c)
-            util.test_pyscripts('regressions/python', branch=b, debug=d, clang=c)
+            util.test_pyscripts_using_latest('regressions/python', branch=b, debug=d, clang=c)
 
 if __name__ == "__main__":
     bigtest()

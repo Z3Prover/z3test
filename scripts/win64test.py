@@ -9,7 +9,7 @@ def win64test(b="unstable"):
         util.testz3py(branch=b, debug=d, clang=False)
         util.test_benchmarks_using_latest('regressions/smt2', branch=b, debug=d, clang=False)
         util.test_benchmarks_using_latest('regressions/smt2-extra', branch=b, debug=d, clang=False)
-        util.test_pyscripts('regressions/python', branch=b, debug=d, clang=False)
+        util.test_pyscripts_using_latest('regressions/python', branch=b, debug=d, clang=False)
 
 if __name__ == "__main__":
     win64test()
