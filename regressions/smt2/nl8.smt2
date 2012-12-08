@@ -5,10 +5,9 @@
   (and
    (> x1 0)
    (> x2 0)
-   (> (* x1 x2) 0)
+   (> (* x1 x2) 4)
    ))
 (check-sat)
-(get-model)
 
 (reset)
 (set-logic QF_NIA)
@@ -20,9 +19,8 @@
   (and
    (> x1 0)
    (> x2 0)
-   (> (* x1 x2) 0)
+   (> (* x1 x2) 4)
    ))
 (check-sat)
-(get-model)
 
 
