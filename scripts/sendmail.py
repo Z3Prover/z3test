@@ -10,9 +10,6 @@ from email import Encoders
 import config
 
 def send(recipients, subject, body, files=[]):
-    """
-    Send happy bithday mail
-    """
     smtp = smtplib.SMTP(config.SMTPSERVER, config.SMTPPORT)
     smtp.ehlo()
     smtp.starttls()
@@ -37,13 +34,6 @@ def send(recipients, subject, body, files=[]):
     smtp.quit()  
     print "Sent to ", 
     print recipients
-
-def send_happybirthday(recipients):
-    body = """Happy birthday to you!
-            \n<br/>From C2k8pro with love
-          """
-    subject ='[BirthReminder] Happy birthday to you! from leo'
-    send(recipients, subject, body, [ "test.py" ])
 
 if __name__ == "__main__":
     send_happybirthday(["leonardo@microsoft.com"])
