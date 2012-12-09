@@ -16,3 +16,4 @@ def win64test(b="unstable"):
 
 if __name__ == "__main__":
     win64test()
+    exit(0)

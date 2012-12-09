@@ -21,3 +21,4 @@ def bigtest(b="unstable"):
 
 if __name__ == "__main__":
     bigtest()
+    exit(0)

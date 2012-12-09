@@ -14,3 +14,4 @@ def smalltest(b="unstable"):
 
 if __name__ == "__main__":
     smalltest()
+    exit(0)

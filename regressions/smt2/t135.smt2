@@ -1,3 +1,8 @@
+;; NOTE: we disable model validation in this example because
+;; we don't store the interpretation of division by 0 produced by
+;; Z3. So, the model validation will fail when a division by 0 is found
+(set-option :model-validate false)
+
 (set-option :auto-config true)
 (set-option :rewriter.hi-div0 true)
 (set-option :old_simplify.bv.hi-div0 true)

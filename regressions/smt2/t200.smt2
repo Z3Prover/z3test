@@ -1,6 +1,6 @@
 (set-logic AUFLIA)
 (set-option :smt.mbqi true)
-(set-option :smt.mbqi-max-iterations 10)
+(set-option :smt.mbqi.max-iterations 10)
 (set-option :print-warning false)
 (declare-sort PZ 0)
 (declare-fun MS (Int PZ) Bool)
