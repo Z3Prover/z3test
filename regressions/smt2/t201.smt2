@@ -1,4 +1,6 @@
 
+(set-option :model-validate false)
+
 (set-option :auto-config true)
 (declare-const a Real)
 (declare-const b Real)
