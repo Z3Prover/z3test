@@ -1,9 +1,12 @@
 # Test for x64 Windows machines
 import util
 import os
+import sys
+import datetime
 
 def win64test(b="unstable"):
     print "BUILD DATE:", datetime.date.today()
+    sys.stdout.flush()
     # Build debug and release modes
     for d in [True, False]:
         util.buildz3(branch=b, everything=True, clean=True, debug=d,  java=True, static=False, jobs=1, clang=False, VS64=True)

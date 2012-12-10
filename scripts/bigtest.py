@@ -4,9 +4,11 @@
 import util
 import config
 import datetime
+import sys
 
 def bigtest(b="unstable"):
     print "BUILD DATE:", datetime.date.today()
+    sys.stdout.flush()
     # Build everything:
     #   - using clang and g++
     #   - release and debug modes

@@ -3,9 +3,12 @@
 import util
 import os
 import config
+import sys
+import datetime
 
 def smalltest(b="unstable"):
     print "BUILD DATE:", datetime.date.today()
+    sys.stdout.flush()
     # Build debug and release modes
     for d in [True, False]:
         util.buildz3(branch=b, everything=False, clean=True, debug=d,  java=False, static=False, jobs=config.NUMJOBS, clang=False)
