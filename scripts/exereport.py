@@ -31,7 +31,7 @@ ERR.close()
 
 if result != 0:
     sendmail.send(config.DEVS,
-                  "Faild to execute '%s' at '%s'" % (cmd, hostname),
+                  "Failed to execute '%s' at '%s'" % (cmd, hostname),
                   "See attached files for standard output and standard error",
                   ["out.txt", "err.txt"])
 else:
