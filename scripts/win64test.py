@@ -13,7 +13,7 @@ def win64test(b="unstable"):
         util.test_benchmarks_using_latest('regressions/smt2', branch=b, debug=d, clang=False)
         util.test_benchmarks_using_latest('regressions/smt2-extra', branch=b, debug=d, clang=False)
         if d:
-            util.test_benchmarks_using_latest('regressions/smt2-debug', branch=b, debug=d, clang=c)
+            util.test_benchmarks_using_latest('regressions/smt2-debug', branch=b, debug=d, clang=False)
         util.test_pyscripts_using_latest('regressions/python', branch=b, debug=d, clang=False)
 
 if __name__ == "__main__":
