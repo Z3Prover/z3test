@@ -8,6 +8,5 @@
 )
 
 (check-sat)
-(get-model)
 
 (eval (>= (- a (ite (<= a 0) (* 3 b) b)) 2))

@@ -1,10 +1,2 @@
 sat
-(model 
-  (define-fun b () Int
-    (- 1))
-  (define-fun a () Int
-    0)
-  (define-fun z3name!0 () Int
-    (- 3))
-)
 true
