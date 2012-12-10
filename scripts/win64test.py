@@ -3,6 +3,7 @@ import util
 import os
 
 def win64test(b="unstable"):
+    print "BUILD DATE:", datetime.date.today()
     # Build debug and release modes
     for d in [True, False]:
         util.buildz3(branch=b, everything=False, clean=True, debug=d,  java=True, static=False, jobs=1, clang=False, VS64=True)

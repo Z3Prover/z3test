@@ -3,8 +3,10 @@
 #   lots of frees space
 import util
 import config
+import datetime
 
 def bigtest(b="unstable"):
+    print "BUILD DATE:", datetime.date.today()
     # Build everything:
     #   - using clang and g++
     #   - release and debug modes

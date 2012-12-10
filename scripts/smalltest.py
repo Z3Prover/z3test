@@ -5,6 +5,7 @@ import os
 import config
 
 def smalltest(b="unstable"):
+    print "BUILD DATE:", datetime.date.today()
     # Build debug and release modes
     for d in [True, False]:
         util.buildz3(branch=b, everything=False, clean=True, debug=d,  java=False, static=False, jobs=config.NUMJOBS, clang=False)
