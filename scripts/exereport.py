@@ -5,6 +5,7 @@ import subprocess
 import tempfile
 import config
 import socket
+import os
 
 try:
     hostname = socket.gethostbyaddr(socket.gethostname())[0]
