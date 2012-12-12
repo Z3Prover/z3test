@@ -17,7 +17,7 @@
 (check-sat)
 
 (reset)
-(set-option :auto-config false)
+(set-option :combined_solver.ignore_solver1 true)
 (declare-const a Real)
 (declare-const b Real)
 

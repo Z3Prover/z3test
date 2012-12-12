@@ -204,10 +204,10 @@ def timeout(func, args=(), kwargs={}, timeout_duration=1.0, default=None):
             self.result = None
 
         def run(self):
-            try:
-                self.result = func(*args, **kwargs)
-            except:
-                self.result = default
+            # try:
+            self.result = func(*args, **kwargs)
+            # except:
+            #    self.result = default
 
     it = InterruptableThread()
     it.start()
@@ -233,8 +233,8 @@ def test_benchmark(z3exe, benchmark, expected=None):
     except:
         raise Exception("Failed to start Z3: %s" % z3exe)
     producedf.close()
-    if errcode != 0 and errcode != 1:
-        raise Exception("Z3 (%s) returned unexpected error code for %s" % (z3exe, benchmark))
+    if errcode != 0 and errcode != 1 and errcode != 105:
+        raise Exception("Z3 (%s) returned unexpected error code %s for %s" % (z3exe, errcode, benchmark))
     if not filecmp.cmp(expected, produced):
         print "EXPECTED"
         print open(expected, 'r').read()

@@ -1,9 +1,2 @@
 sat
-(model 
-  (define-fun b1 () Bool
-    false)
-  (define-fun b2 () Bool
-    false)
-  (define-fun b3 () Bool
-    true)
-)
+true

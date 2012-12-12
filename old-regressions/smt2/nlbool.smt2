@@ -7,5 +7,4 @@
 (assert (or b1 b2 b3))
 
 (check-sat-using nlsat)
-
-(get-model)
+(eval (or b1 b2 b3))
