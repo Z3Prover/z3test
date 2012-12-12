@@ -10,6 +10,8 @@ from email import Encoders
 import config
 
 def send(recipients, subject, body, files=[]):
+    if config.PASSWORD == None:
+        raise Exception("You must set GMAILPASSW with the '%s' password. You can change the user by setting GMAILUSER" % SENDER)
     smtp = smtplib.SMTP(config.SMTPSERVER, config.SMTPPORT)
     smtp.ehlo()
     smtp.starttls()
