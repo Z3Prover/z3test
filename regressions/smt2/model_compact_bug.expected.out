@@ -1,0 +1,5 @@
+sat
+(model 
+  (define-fun p ((x!1 Int)) Bool
+    true)
+)
