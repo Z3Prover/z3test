@@ -21,7 +21,7 @@
 (goals
 (goal
   (= x (ite p 0 1))
-  :precision precise :depth 1)
+  :precision precise :depth 2)
 )
 (error "tactic failed: operator not supported, apply simplifier before invoking this strategy")
 (goals
