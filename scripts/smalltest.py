@@ -19,8 +19,5 @@ def smalltest(b="unstable"):
         util.test_pyscripts_using_latest('regressions/python', branch=b, debug=d, clang=False)
 
 if __name__ == "__main__":
-    try:
-        smalltest()
-    except:
-        exit(1)
+    smalltest()
     exit(0)

@@ -29,8 +29,5 @@ def bigtest():
     util.test_benchmarks_using_latest('regressions/smt2', branch='mcsat', debug=True, clang=False)
 
 if __name__ == "__main__":
-    try:
-        bigtest()
-    except:
-        exit(1)
+    bigtest()
     exit(0)
