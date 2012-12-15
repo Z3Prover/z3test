@@ -21,5 +21,8 @@ def win64test(b="unstable"):
         util.test_pyscripts_using_latest('regressions/python', branch=b, debug=d, clang=False)
 
 if __name__ == "__main__":
-    win64test()
+    try:
+        win64test()
+    except:
+        exit(1)
     exit(0)
