@@ -1,10 +1,15 @@
 
 from z3 import *
 
+ok = False
 s = Solver()
 try:
     s.pop()
+    print "FAILED"
 except Z3Exception as ex:
-    print "failed:", ex
+    ok = True
 
-print "done"
+if not ok:
+    exit(1)
+
+
