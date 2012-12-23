@@ -5,8 +5,8 @@
 '#x0badc0de'
 >>> v
 195936478
->>> v.as_long()
-195936478L
+>>> v.as_long() == 195936478
+True
 """
 
 if __name__ == "__main__":
