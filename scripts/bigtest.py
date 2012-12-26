@@ -26,7 +26,7 @@ def bigtest():
                     util.test_benchmarks_using_latest('regressions/smt2-extra', branch=b, debug=d, clang=c)
                     util.test_pyscripts_using_latest('regressions/python', branch=b, debug=d, clang=c)
     util.buildz3(branch='mcsat', everything=True, clean=True, debug=True,  java=False, static=False, jobs=config.NUMJOBS, clang=False)
-    util.test_benchmarks_using_latest('regressions/smt2', branch='mcsat', debug=True, clang=False)
+    # util.test_benchmarks_using_latest('regressions/smt2', branch='mcsat', debug=True, clang=False)
 
 if __name__ == "__main__":
     bigtest()
