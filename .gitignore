@@ -1,5 +1,9 @@
 *.produced.out
 *~
 *.pyc
+*.pyo
 .z3-trace
 a.out
+callgrind.out.*
+err.txt
+out.txt
