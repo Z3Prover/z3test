@@ -8,5 +8,5 @@
   (r 1 2)
   (r 2 2)
   (r 3 2)
-  :precision precise :depth 4)
+  :precision precise :depth 5)
 )
