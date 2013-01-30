@@ -1,0 +1,5 @@
+(goals
+(goal
+  (p 0 0)
+  :precision precise :depth 11)
+)
