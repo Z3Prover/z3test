@@ -1,0 +1,11 @@
+(goals
+(goal
+  (<= (+ 9 (* (- 1) (div x 3))) 2)
+  (or (not (<= (div x 3) 9)) (r (+ 1 (div x 3)) 23))
+  (or (not (<= (div x 3) 8)) (r (+ 2 (div x 3)) 23))
+  (or (not (<= (div x 3) 7)) (r (+ 3 (div x 3)) 23))
+  (or (not (<= (div x 3) 9)) (r (+ 1 (div x 3)) 24))
+  (or (not (<= (div x 3) 8)) (r (+ 2 (div x 3)) 24))
+  (or (not (<= (div x 3) 7)) (r (+ 3 (div x 3)) 24))
+  :precision under :depth 5)
+)

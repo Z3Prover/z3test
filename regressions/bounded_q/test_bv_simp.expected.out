@@ -1,0 +1,14 @@
+(goals
+(goal
+  (qw #x00 #x01)
+  (qw #x00 #x02)
+  (qw #x01 #x02)
+  (qw #x00 #x03)
+  (qw #x01 #x03)
+  (qw #x02 #x03)
+  (qw #x00 #x04)
+  (qw #x01 #x04)
+  (qw #x02 #x04)
+  (qw #x03 #x04)
+  :precision precise :depth 5)
+)

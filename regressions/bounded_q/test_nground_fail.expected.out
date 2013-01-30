@@ -1,0 +1,5 @@
+(goals
+(goal
+  (forall ((z Int)) (or (<= (+ z (* (- 1) (f z))) 0) (not (<= z 3)) (not (q z))))
+  :precision precise :depth 4)
+)
