@@ -1,14 +1,8 @@
-(set-option :produce-models true)
-(set-option :smt.mbqi true)
-(set-option :smt.pull-nested-quantifiers true)
-
 (declare-fun MAX_PACKET () Int)
 (declare-fun PACKET_SIZE () Int)
 (declare-fun buffer (Int) Int)
 
 (declare-fun multi_array (Int Int) Int)
-
-
 
 (define-fun _max ((x Int) (y Int)) Int (ite (>= x y) x y))
 
@@ -69,6 +63,6 @@
                           (> PACKET_SIZE 20))))) )
 
 
-(check-sat-using (then (! simplify :ule-split false) nnf der (! simplify :ule-split false :arith-lhs true) minimize_bounded_quantifiers expand_bounded_quantifiers smt))
+(check-sat-using (then nnf der minimize_bounded_quantifiers expand_bounded_quantifiers smt))
 ; (check-sat)
-(get-model)
+; (get-model)

@@ -6,10 +6,10 @@
 (assert (forall ((x W) (y W)) 
 			(implies
 				(and 
-					(bvuge x (bvadd y #x01)) (bvule x #xfd)
-					(bvuge y #xfa))
+                                 (bvuge x (bvadd y #x01)) (bvule x #xfd)
+                                 (bvuge y #xfa))
 				(qw x y))
-		))
+                        ))
 
-
-(apply (then nnf expand_bounded_quantifiers))
+(apply expand_bounded_quantifiers)
+(apply (! expand_bounded_quantifiers :max-instances 10000))

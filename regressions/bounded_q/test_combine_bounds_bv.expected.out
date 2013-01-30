@@ -1,0 +1,9 @@
+(goals
+(goal
+  true
+  (p #x01)
+  (p #x02)
+  (p #x03)
+  (p #x04)
+  :precision precise :depth 5)
+)

@@ -7,7 +7,7 @@
 
 (assert (forall ((x Int) (e Enum)) 
 			(=>
-				(and (>= x 0) (<= x 2))
-				(p e x))))
+                         (and (>= x 0) (<= x 2))
+                         (p e x))))
 
-(apply (then nnf split_datatype_quantifiers simplify expand_bounded_quantifiers))
+(apply (then split_datatype_quantifiers expand_bounded_quantifiers))

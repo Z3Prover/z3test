@@ -5,8 +5,8 @@
 
 (assert (forall ((x Pair)) 
 			(=>
-				(and (>= (first x) 0) (<= (first x) 12)
-				     (>= (second x) 1) (<= (second x) 2))
-				(p x))))
+                         (and (>= (first x) 0) (<= (first x) 12)
+                              (>= (second x) 1) (<= (second x) 2))
+                         (p x))))
 
-(apply (then nnf split_datatype_quantifiers simplify expand_bounded_quantifiers))
+(apply (then split_datatype_quantifiers expand_bounded_quantifiers))

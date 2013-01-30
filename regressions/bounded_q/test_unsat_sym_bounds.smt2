@@ -5,9 +5,10 @@
 
 (assert (forall ((x Int) (y Int))
 			(=> 
-				(and 
-					(>= x 2) (<= x (- a))
-					(>= y 0) (<= y a))
-				(p x y))))
+                         (and 
+                          (>= x 2) (<= x (- a))
+                          (>= y 0) (<= y a))
+                         (p x y))))
 
-(apply (then nnf minimize_bounded_quantifiers expand_bounded_quantifiers))
+(apply (then minimize_bounded_quantifiers expand_bounded_quantifiers))
+(apply (then expand_bounded_quantifiers simplify))

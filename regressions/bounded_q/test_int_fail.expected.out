@@ -1,0 +1,5 @@
+(goals
+(goal
+  (forall ((x Int)) (or (<= x 0) (p 0)))
+  :precision precise :depth 5)
+)

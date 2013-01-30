@@ -3,6 +3,5 @@
 
 (assert (forall ((x Int)) (=> (and (not (< x 0)) (<= x a) (not (> x 60))) (p x))))
 
-
-(apply (then (! simplify :arith-lhs true) nnf (! expand_bounded_quantifiers :max-instances 10)))
+(apply (! expand_bounded_quantifiers :max-instances 10))
 

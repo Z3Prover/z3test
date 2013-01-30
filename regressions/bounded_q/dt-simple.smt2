@@ -5,9 +5,9 @@
 
 
 (assert (forall ((x Int) (d D))
-			(=> 
-				(and 
-					(>= x 2) (<= x 10))
-				(p x d))))
+                (=> 
+                 (and 
+                  (>= x 2) (<= x 10))
+                 (p x d))))
 
-(apply (then nnf split_datatype_quantifiers expand_bounded_quantifiers))
+(apply (then split_datatype_quantifiers expand_bounded_quantifiers))

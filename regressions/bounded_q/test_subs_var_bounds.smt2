@@ -5,12 +5,12 @@
 
 
 (assert (forall ((x Int) (y Int) (z Int)) 
-			(implies
-				(and 
-					(>= x 10) (<= x 11)
-					(>= y x) (<= y 12)
-					(>= z (+ x y)) (<= z 25))
-				(p x y z))
+                (implies
+                 (and 
+                  (>= x 10) (<= x 11)
+                  (>= y x) (<= y 12)
+                  (>= z (+ x y)) (<= z 25))
+                 (p x y z))
 		))
 
-(apply (then simplify nnf expand_bounded_quantifiers))
+(apply expand_bounded_quantifiers)

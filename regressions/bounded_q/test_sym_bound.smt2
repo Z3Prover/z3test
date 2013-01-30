@@ -5,11 +5,10 @@
 (declare-fun b () Int)
 
 (assert (forall ((x Int) (y Int)) 
-			(implies
-				(and 
-					(>= x 0) (<= x a)
-					(>= y 0) (<= y (+ (* 3 x) b)))
-				(p x y))
-		))
+                (=> (and 
+                     (>= x 0) (<= x a)
+                     (>= y 0) (<= y (+ (* 3 x) b)))
+                    (p x y))
+                ))
 
-(apply (then nnf expand_bounded_quantifiers))
+(apply expand_bounded_quantifiers)
