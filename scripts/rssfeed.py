@@ -22,8 +22,11 @@ print '<pubDate>', s, '</pubDate>'
 z3dir = util.find_z3depot()
 with util.cd(z3dir):
     NULL=open(os.devnull, 'wb')
-    if subprocess.call(['git', 'pull', '--all'], stdout=NULL, stderr=NULL) != 0:
-        raise Exception("Failed to update git depot")
+    for branch in config.RSSFEED_BRANCHES:
+        if subprocess.call(['git', 'checkout', branch], stdout=NULL, stderr=NULL) != 0:
+            raise Exception("Failed to checkout %s" % branch)
+        if subprocess.call(['git', 'pull'], stdout=NULL, stderr=NULL) != 0:
+            raise Exception("Failed to update git depot")
     output = subprocess.Popen(['git', 'log', '--branches', '--pretty=format:%an | %cD | %s | %H', '-100'], stdout=subprocess.PIPE, stderr=NULL).communicate()[0]
     for line in output.splitlines():
         fields = line.split('|')
