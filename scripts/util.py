@@ -110,6 +110,8 @@ def mk_make(branch, debug, java, clang, static, VS64):
     cmd = ['python', os.path.join('scripts', 'mk_make.py'), '-b', get_builddir(branch, debug, clang) ]
     if debug:
         cmd.append('-d')
+    if is_windows():
+        cmd.append('--parallel=24')
     if VS64 and is_windows():
         cmd.append('-x')
     if java:
