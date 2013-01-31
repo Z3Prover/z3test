@@ -1,4 +1,5 @@
 
+(set-option :pp.max-depth 100)
 
 (declare-fun p (Int Real) Bool)
 (declare-fun q (Int) Bool)
