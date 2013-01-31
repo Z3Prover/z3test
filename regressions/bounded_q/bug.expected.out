@@ -1,0 +1,10 @@
+(goals
+(goal
+  (p #x53 #x53)
+  (p #x54 #x53)
+  (p #x54 #x54)
+  (p #x55 #x53)
+  (p #x55 #x54)
+  (p #x55 #x55)
+  :precision precise :depth 5)
+)

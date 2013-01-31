@@ -1,4 +1,4 @@
-(define-sort W () (_ BitVec 16))
+(define-sort W () (_ BitVec 10))
 (declare-fun p (W) Bool)
 
 (assert (forall ((x W)) (p x)))

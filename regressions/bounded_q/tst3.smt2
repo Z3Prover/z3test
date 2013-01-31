@@ -8,5 +8,5 @@
                             (=> (and (<= 0 y) (<= y x))
                                 (r x y))))))
 
-(apply (then (! simplify :arith-lhs true :elim-and true) nnf normalize_bounded_quantifiers (! expand_bounded_quantifiers :domain 100)))
+(apply expand_bounded_quantifiers)
 
