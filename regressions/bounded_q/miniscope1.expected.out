@@ -1,0 +1,5 @@
+(goals
+(goal
+  (forall ((x Int) (y Real)) (=> (q x) (and (p x y) (exists ((z Bool)) (r x z)))))
+  :precision precise :depth 1)
+)
