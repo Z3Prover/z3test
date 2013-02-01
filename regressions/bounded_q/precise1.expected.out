@@ -1,0 +1,12 @@
+(goals
+(goal
+  (<= a 1)
+  (or (not (<= 0 a)) (p 0 0))
+  (or (not (<= 1 a)) (p 1 1))
+  :precision under :depth 5)
+)
+(goals
+(goal
+  (forall ((x Int)) (or (not (>= x 0)) (not (<= x a)) (p x x)))
+  :precision precise :depth 5)
+)
