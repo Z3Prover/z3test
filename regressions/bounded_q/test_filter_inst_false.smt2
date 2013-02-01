@@ -3,12 +3,12 @@
 
 
 (assert (forall ((x Int) (y Int))
-			(or
-				(not (>= x 0)) 
-				(not (<= x 500000))
-				(not (>= y 0))
-				(not (<= y 2))
-				(not (= (f x y) (f 2 y)))
-				)))
+                (or
+                 (not (>= x 0)) 
+                 (not (<= x 500000))
+                 (not (>= y 0))
+                 (not (<= y 2))
+                 (not (= (f x y) (f 2 y)))
+                 )))
 
-(apply (then simplify snf (! expand_bounded_quantifiers :filter_instances true)))
+(apply (! expand_bounded_quantifiers :filter_instances true))

@@ -10,4 +10,4 @@
 					(>= y 599995) (<= y x))
 				(p x y))))
 
-(apply (then nnf minimize_bounded_quantifiers expand_bounded_quantifiers))
+(apply (then minimize_bounded_quantifiers expand_bounded_quantifiers))

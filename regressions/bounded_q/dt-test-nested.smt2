@@ -13,8 +13,9 @@
             (forall ((x Pair) (z Int)) 
                     (=>
                      (and (>= z 0) (< z 4)
-                          (>= (first x) 0) (<= (first x) 2)
+                          (>= (first x) 0) (<= (first x) 1)
                           (>= (second x) 1) (<= (second x) 2))
                      (p y x))))))
 
 (apply (then split_datatype_quantifiers expand_bounded_quantifiers))
+(apply (then split_datatype_quantifiers miniscope expand_bounded_quantifiers))

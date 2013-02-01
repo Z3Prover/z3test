@@ -11,4 +11,4 @@
 				(= (f x y) (f 2 y))
 				)))
 
-(apply (then simplify snf (! expand_bounded_quantifiers :filter_instances true)))
+(apply (! expand_bounded_quantifiers :filter_instances true))

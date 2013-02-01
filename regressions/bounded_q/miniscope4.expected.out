@@ -1,0 +1,8 @@
+(goals
+(goal
+  (forall ((y Real))
+    (or (not (exists ((x1 Int)) (p x1 y))) (forall ((x2 Int)) (p (+ 1 x2) y))))
+  (forall ((y Real))
+    (or (forall ((x1 Int)) (p x1 y)) (not (exists ((x2 Int)) (p (+ 1 x2) y)))))
+  :precision precise :depth 3)
+)
