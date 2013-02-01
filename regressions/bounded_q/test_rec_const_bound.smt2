@@ -2,8 +2,10 @@
 (declare-fun a () Int)
 (declare-fun p (Int) Bool)
 
-(assert (forall ((x Int))
-			(=> (and (> x 0) (<= x (+ 7 (ite (> a 5) 5 a))))
-				(p x))))
+(set-option :pp.max-depth 100)
 
-(apply expand_bounded_quantifiers)
+(assert (forall ((x Int))
+                (=> (and (> x 0) (<= x (+ 7 (ite (> a 5) 5 a))))
+                    (p x))))
+
+(apply (then expand_bounded_quantifiers (! simplify :pull-cheap-ite true) nnf))
