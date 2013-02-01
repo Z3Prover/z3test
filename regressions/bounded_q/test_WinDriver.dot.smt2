@@ -63,6 +63,8 @@
                           (> PACKET_SIZE 20))))) )
 
 
-(check-sat-using (then nnf der minimize_bounded_quantifiers expand_bounded_quantifiers smt))
+(apply (then simplify der minimize_bounded_quantifiers expand_bounded_quantifiers))
+
+; (check-sat-using (then nnf der minimize_bounded_quantifiers expand_bounded_quantifiers smt))
 ; (check-sat)
 ; (get-model)
