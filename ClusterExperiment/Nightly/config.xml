@@ -1,0 +1,18 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<!-- Configuration for Z3 Nightly website -->
+<Configuration>
+
+  <!-- General Settings -->
+  
+  <General
+    TIMELINEFILE="D:\Nightly\timeline.csv"
+    DATADIR="D:\Nightly\data\"
+    DAYSBACK="120"
+    />
+  
+    <Developer name="cwinter@microsoft.com" />
+
+  <Tag id="1690" name="Z3 4.3.0"/>
+  <Tag id="1693" name="Z3 4.3.1"/>
+  
+</Configuration>

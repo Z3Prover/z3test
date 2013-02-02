@@ -1,0 +1,8 @@
+﻿<Window x:Class="ClusterExperiment.Submission"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Submitting jobs..." WindowStartupLocation="CenterOwner" mc:Ignorable="d" xmlns:d="http://schemas.microsoft.com/expression/blend/2008" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" d:DesignHeight="66" d:DesignWidth="300" SizeToContent="WidthAndHeight" ResizeMode="NoResize" ShowInTaskbar="False">
+    
+    <Grid Name="outerGrid" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"></Grid>
+    
+</Window>

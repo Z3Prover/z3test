@@ -7,3 +7,10 @@ a.out
 callgrind.out.*
 err.txt
 out.txt
+*.user
+*.pdb
+*.dll
+*.cache
+*.exe
+*.config
+*.manifest

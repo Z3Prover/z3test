@@ -1,0 +1,62 @@
+﻿<Window x:Class="ClusterExperiment.CompareExperiments"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="CompareExperiments" Height="440" Width="791" WindowStartupLocation="CenterOwner" Icon="/ClusterExperiment;component/Images/taskbrowse.ico">
+    <Grid>
+        <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="0,0,0,0" Name="gridOuter">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*" MinHeight="250" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+
+            <DataGrid AutoGenerateColumns="True" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="0,0,0,0" Name="dataGrid" Grid.Row="0" Grid.Column="0" IsReadOnly="True" RowHeight="23" SelectionUnit="FullRow" />
+
+            <Grid Name="radioGrid" Grid.Row="2" Grid.Column="0" HorizontalAlignment="Stretch" VerticalAlignment="Bottom">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <StackPanel Grid.Row="0" Orientation="Horizontal">
+                    <RadioButton Name="radioAll" GroupName="Option" Padding="5,0,5,0" Click="RadioButton_Click" IsChecked="True" VerticalAlignment="Center">All</RadioButton>
+                    <RadioButton Name="radioBOTHSAT" GroupName="Option" Padding="5,0,5,0" Click="RadioButton_Click" VerticalAlignment="Center">Both SAT</RadioButton>
+                    <RadioButton Name="radioBOTHUNSAT" GroupName="Option" Padding="5,0,5,0" Click="RadioButton_Click" VerticalAlignment="Center">Both UNSAT</RadioButton>
+                    <RadioButton Name="radioBOTHUNKNOWN" GroupName="Option" Padding="5,0,5,0" Click="RadioButton_Click" VerticalAlignment="Center">Both UNKNOWN</RadioButton>                    
+                </StackPanel>
+                <StackPanel Grid.Row="1" Orientation="Horizontal">
+                    <Label Content="Either is: " VerticalAlignment="Center" />
+                    <RadioButton Name="radioONESAT" GroupName="Option" Padding="5,0,5,0" Click="RadioButton_Click" VerticalAlignment="Center">SAT</RadioButton>
+                    <RadioButton Name="radioONEUNSAT" GroupName="Option" Padding="5,0,5,0" Click="RadioButton_Click" VerticalAlignment="Center">UNSAT</RadioButton>
+                    <RadioButton Name="radioONEUNKNOWN" GroupName="Option" Padding="5,0,5,0" Click="RadioButton_Click" VerticalAlignment="Center">UNKNOWN</RadioButton>
+                    <RadioButton Name="radioONEBUGS" GroupName="Option" Padding="5,0,5,0" Click="RadioButton_Click" VerticalAlignment="Center">BUG</RadioButton>
+                    <RadioButton Name="radioONEERROR" GroupName="Option" Padding="5,0,5,0" Click="RadioButton_Click" VerticalAlignment="Center">ERROR</RadioButton>
+                    <RadioButton Name="radioONEMemouts" GroupName="Option" Padding="5,0,5,0" Click="RadioButton_Click" VerticalAlignment="Center">MEMORY</RadioButton>
+                    <RadioButton Name="radioONETimeouts" GroupName="Option" Padding="5,0,5,0" Click="RadioButton_Click" VerticalAlignment="Center">TIMEOUT</RadioButton>
+                </StackPanel>
+                <StackPanel Grid.Row="2" Orientation="Horizontal">
+                    <Label Content="Discrepancies: " VerticalAlignment="Center" />
+                    <RadioButton Name="radioSATSTAR" GroupName="Option" Padding="5,0,10,0" Click="RadioButton_Click" VerticalAlignment="Center">SAT/*</RadioButton>
+                    <RadioButton Name="radioUNSATSTAR" GroupName="Option" Padding="5,0,10,0" Click="RadioButton_Click" VerticalAlignment="Center">UNSAT/*</RadioButton>
+                    <RadioButton Name="radioOKSTAR" GroupName="Option" Padding="5,0,10,0" Click="RadioButton_Click" VerticalAlignment="Center">OK/*</RadioButton>
+                    <RadioButton Name="radioSATUNSAT" GroupName="Option" Padding="5,0,10,0" Click="RadioButton_Click" VerticalAlignment="Center">SAT/UNSAT</RadioButton>                    
+                </StackPanel>
+                <StackPanel Grid.Row="3" Orientation="Horizontal">
+                    <Label Content="Filename contains: " VerticalAlignment="Center" />
+                    <RadioButton Name="radioFNSAT" GroupName="Option" Padding="5,0,5,0" Click="RadioButton_Click" VerticalAlignment="Center">"sat"</RadioButton>
+                    <RadioButton Name="radioFNUNSAT" GroupName="Option" Padding="5,0,5,0" Click="RadioButton_Click" VerticalAlignment="Center">"unsat"</RadioButton>
+                    <RadioButton Name="radioFNTEXT" GroupName="Option" Padding="5,0,5,0" Click="RadioButton_Click" VerticalAlignment="Center">Text:</RadioButton>
+                    <TextBox Name="txtFilename" Width="100" Height="20" VerticalAlignment="Center" HorizontalContentAlignment="Left" KeyUp="txtFilename_KeyUp" Text="unknown" />
+                </StackPanel>
+            </Grid>
+        </Grid>
+    </Grid>
+</Window>
