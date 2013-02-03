@@ -24,6 +24,7 @@ namespace Nightly
         Configuration config = null;
         Dictionary<string, string> _defaultParams = null;
         public DateTime _startTime = DateTime.Now;
+        string _prefix = null;
         Comparison cmp = null;
         JobSelect js = null;
 
@@ -49,6 +50,9 @@ namespace Nightly
                 try
                 {
                     _defaultParams = new Dictionary<string, string>();
+                    _prefix = Request.Params.Get("prefix");
+                    if (_prefix == null) _prefix = "";
+
                     string j1 = Request.Params.Get("jobX");
                     string j2 = Request.Params.Get("jobY");
 
@@ -80,13 +84,16 @@ namespace Nightly
                         config.Tags.Insert("Latest", Convert.ToUInt32(j2));
                     }
 
+                    _defaultParams.Add("jobX", j1);
+                    _defaultParams.Add("jobY", j2);
+
 
                     Job jX = null, jY = null;
 
                     try
                     {
-                        jX = (j1 == null) ? null : new Job(config.DATADIR, (uint)Convert.ToInt32(j1), true);
-                        jY = (j2 == null) ? null : new Job(config.DATADIR, (uint)Convert.ToInt32(j2), true);
+                        jX = new Job(config.DATADIR, (uint)Convert.ToInt32(j1), true);
+                        jY = new Job(config.DATADIR, (uint)Convert.ToInt32(j2), true);
                     }
                     catch (Exception)
                     {
@@ -105,7 +112,7 @@ namespace Nightly
                         js.TaglistX.SelectedIndex = 0;
                         js.CheckIDX();
                     }
-                    
+
                     if (config.Tags.HasTag(jY.MetaData.Id))
                     {
                         js.TaglistY.SelectedValue = jY.MetaData.Id.ToString();
@@ -120,10 +127,11 @@ namespace Nightly
                     js.IDX = j1;
                     js.IDY = j2;
 
-                    cmp = new Comparison(jX, jY, config.Tags);
+                    cmp = new Comparison(jX, jY, _prefix.Replace('|', '\\'), config.Tags);
 
                     phMain.Controls.Add(buildChartPanel(false, "CHART", ""));
                     phMain.Controls.Add(buildSummaryPanel());
+                    phMain.Controls.Add(buildFooter());
                 }
                 catch (Exception ex)
                 {
@@ -135,6 +143,81 @@ namespace Nightly
                     phMain.Controls.Add(l);
                 }
             }
+        }
+
+        protected string selfLink(string prefix = null, int jobX = 0, int jobY = 0)
+        {
+            string res = Request.FilePath;
+            Dictionary<string, string> p = new Dictionary<string, string>();
+            p.Add("prefix", (prefix != null) ? prefix : _defaultParams["prefix"]);
+            p.Add("jobX", (jobX != 0) ? jobX.ToString() : _defaultParams["jobX"]);
+            p.Add("jobY", (jobY != 0) ? jobY.ToString() : _defaultParams["jobY"]);
+            bool first = true;
+            foreach (KeyValuePair<string, string> kvp in p)
+            {
+                if (first) res += "?"; else res += "&";
+                res += kvp.Key + "=" + kvp.Value;
+                first = false;
+            }
+            return res;
+        }
+
+        public Control buildFooter()
+        {
+            Panel space = new Panel();
+            space.Height = 15;
+            phMain.Controls.Add(space);
+
+            Panel p = new Panel();
+            p.Style["text-align"] = "justify";
+
+            Label l = new Label();
+            l.Text = "Subcategories: ";
+            l.Font.Size = 8;
+            l.Font.Name = "helvetica";
+            l.ForeColor = Color.Black;
+            p.Controls.Add(l);
+
+            if (_prefix == "")
+            {
+                l = new Label();
+                l.Text = "UP";
+                l.Font.Size = 8;
+                l.Font.Name = "helvetica";
+                l.Font.Bold = true;
+                l.ForeColor = Color.Gray;
+                p.Controls.Add(l);
+            }
+            else
+            {
+                HyperLink h = new HyperLink();
+                h.Text = "UP";
+                int lio = _prefix.LastIndexOf("|");
+                h.NavigateUrl = selfLink(lio == -1 ? "" : _prefix.Substring(0, lio));
+                h.Style["text-decoration"] = "none";
+                h.Font.Size = 8;
+                h.Font.Name = "helvetica";
+                h.ForeColor = Color.Green;
+                p.Controls.Add(h);
+            }
+
+            foreach (KeyValuePair<string, ComparisonStatistics> kvp in cmp.Statistics.subdirs)
+            {
+                string postfix = kvp.Key;
+                l = new Label();
+                l.Text += "&nbsp;| ";
+                p.Controls.Add(l);
+
+                HyperLink h = new HyperLink();
+                h.Text = postfix;
+                h.NavigateUrl = selfLink((_prefix == "") ? postfix : _prefix + "|" + postfix);
+                h.Style["text-decoration"] = "none";
+                h.Font.Size = 8;
+                h.Font.Name = "helvetica";
+                p.Controls.Add(h);
+            }
+
+            return p;
         }
 
         public static System.Web.UI.WebControls.Image buildAlertImage(AlertLevel level)
@@ -202,14 +285,77 @@ namespace Nightly
             }
         }
 
-        protected TabPanel buildSummaryTab()
+        TableRow buildStatisticsRow(string cat, double val1, double val2, string unit, double diff, string diffunit, Color posColor, Color negColor)
         {
-            TabPanel tabSummary = new TabPanel();
-            string toolTip = "A summary of the comparison.";
-            TabHeaderTemplate htm = new TabHeaderTemplate(AlertLevel.None, "Summary", toolTip);
-            tabSummary.HeaderTemplate = htm;
-            tabSummary.ContentTemplate = new TabContentTemplate(new List<string>());
-            return tabSummary;
+            TableRow row = new TableRow();
+            TableCell cell = new TableCell();
+            cell.Text = cat;
+            row.Cells.Add(cell);
+            cell = new TableCell();
+            cell.HorizontalAlign = HorizontalAlign.Right;
+            cell.Text = val1.ToString("F3") + " " + unit;
+            row.Cells.Add(cell);
+            cell = new TableCell();
+            cell.HorizontalAlign = HorizontalAlign.Right;
+            cell.Text = val2.ToString("F3") + " " + unit;
+            row.Cells.Add(cell);
+            cell = new TableCell();
+            cell.HorizontalAlign = HorizontalAlign.Right;
+            cell.Text = (diff == 0.0 ? "&plusmn;" : (diff > 0.0) ? "+" : "") + diff.ToString("F3") + " " + diffunit;
+            cell.ForeColor = (diff >= 0.0) ? posColor : negColor;
+            row.Cells.Add(cell);
+            return row;
+        }
+
+        protected Control buildSummary()
+        {
+            ComparisonStatistics cs = cmp.Statistics;
+
+            Panel p = new Panel();
+            Table t = new Table();
+            t.BorderWidth = 1;
+
+            TableRow row = new TableRow();
+            TableHeaderCell thc = new TableHeaderCell();
+            thc.Text = "";
+            row.Cells.Add(thc);
+            thc = new TableHeaderCell();
+            thc.Text = cmp.ShortNameX;
+            row.Cells.Add(thc);
+            thc = new TableHeaderCell();
+            thc.Text = cmp.ShortNameY;
+            row.Cells.Add(thc);
+            thc = new TableHeaderCell();
+            thc.Text = "Relative";
+            row.Cells.Add(thc);
+            t.Rows.Add(row);
+
+            row = new TableRow();
+            TableCell tc = new TableCell();
+            row.Cells.Add(tc);
+            tc.Text = "Date";
+            tc = new TableCell();
+            tc.Text = cmp.DateX;
+            row.Cells.Add(tc);
+            tc = new TableCell();
+            tc.Text = cmp.DateY;
+            row.Cells.Add(tc);
+            tc = new TableCell();
+            tc.Text = (cmp.JobY.MetaData.SubmissionTime - cmp.JobX.MetaData.SubmissionTime).ToString();
+            row.Cells.Add(tc);
+            t.Rows.Add(row);
+            
+            t.Rows.Add(buildStatisticsRow("Results:", cs.CountX, cs.CountY, "", 100.0 * ((cs.CountY / cs.CountX) - 1.0), "%", Color.Green, Color.Red));
+            t.Rows.Add(buildStatisticsRow("Results (SAT):", cs.x_countSAT, cs.y_countSAT, "", 100.0 * ((cs.y_countSAT/ cs.x_countSAT) - 1.0), "%", Color.Green, Color.Red));
+            t.Rows.Add(buildStatisticsRow("Results (UNSAT):", cs.x_countUNSAT, cs.y_countUNSAT, "", 100.0 * ((cs.y_countUNSAT / cs.x_countUNSAT) - 1.0), "%", Color.Green, Color.Red));
+            t.Rows.Add(buildStatisticsRow("Results (UNKNOWN):", cs.x_countUNKNOWN, cs.y_countUNKNOWN, "", 100.0 * ((cs.y_countUNKNOWN / cs.x_countUNKNOWN) - 1.0), "%", Color.Red, Color.Green));
+            t.Rows.Add(buildStatisticsRow("Avg. Time/Result:", cs.TimeX / cs.CountX, cs.TimeY / cs.CountY, "sec.",   100.0 * ( ((cs.TimeY / cs.CountY) / (cs.TimeX / cs.CountX)) - 1.0), "%", Color.Red, Color.Green));
+            t.Rows.Add(buildStatisticsRow("Avg. Time/Result (SAT):", cs.x_cumulativeTimeSAT / cs.x_countSAT, cs.y_cumulativeTimeSAT / cs.y_countSAT, "sec.", 100.0 * (((cs.y_cumulativeTimeSAT / cs.y_countSAT) / (cs.x_cumulativeTimeSAT / cs.x_countSAT)) - 1.0), "%", Color.Red, Color.Green));
+            t.Rows.Add(buildStatisticsRow("Avg. Time/Result (UNSAT):", cs.x_cumulativeTimeUNSAT / cs.x_countUNSAT, cs.y_cumulativeTimeUNSAT / cs.y_countUNSAT, "sec.", 100.0 * (((cs.y_cumulativeTimeUNSAT / cs.y_countUNSAT) / (cs.x_cumulativeTimeUNSAT / cs.x_countUNSAT)) - 1.0), "%", Color.Red, Color.Green));
+            t.Rows.Add(buildStatisticsRow("Avg. Time/Result (UNKNOWN):", cs.x_cumulativeTimeUNKNOWN / cs.x_countUNKNOWN, cs.y_cumulativeTimeUNKNOWN / cs.y_countUNKNOWN, "sec.", 100.0 * (((cs.y_cumulativeTimeUNKNOWN / cs.y_countUNKNOWN) / (cs.x_cumulativeTimeUNKNOWN / cs.x_countUNKNOWN)) - 1.0), "%", Color.Red, Color.Green));
+
+            p.Controls.Add(t);
+            return p;
         }
 
         protected Control buildSummaryPanel()
@@ -218,13 +364,11 @@ namespace Nightly
             tc.Height = 200;
             tc.ScrollBars = ScrollBars.Vertical;
 
-            TabPanel tabSummary = buildSummaryTab();
-
             TabPanel tabStats = new TabPanel();
-            tabStats.HeaderTemplate = new TabHeaderTemplate(AlertLevel.None, "Statistics", "Statistical information about the job.");
+            tabStats.HeaderTemplate = new TabHeaderTemplate(AlertLevel.None, "Statistics", "Various statistical values.");
             tabStats.ContentTemplate = new TabContentTemplate(new List<string>());
-
-            tc.Tabs.Add(tabSummary);
+            tabStats.Controls.Add(buildSummary());
+            tc.Tabs.Add(tabStats);
 
             return tc;
         }
@@ -270,7 +414,7 @@ namespace Nightly
             l1.Style["float"] = "left";
             l1.Style["margin-left"] = "5px";
             l1.ForeColor = Color.Black;
-            l1.Text = cmp.Title;
+            l1.Text = cmp.Title + "  \\" + _prefix.Replace('|', '\\');
             l1.Font.Bold = true;
             p1.Controls.Add(l1);
 
@@ -350,11 +494,14 @@ namespace Nightly
         {
             Chart chart = new Chart();
 
-            chart.Height = 600;
-            chart.Width = 600;
+            Title ttle = new Title((_prefix == "") ? "Overall" : "\\" + _prefix);
+            ttle.Font = new Font(ttle.Font, FontStyle.Bold);
+            chart.Titles.Add(ttle);
 
-            ChartArea ca = new ChartArea();
-            ca.Name = "ScatterPlot";
+            chart.Height = 600;
+            chart.Width = 525;
+
+            ChartArea ca = new ChartArea("ScatterPlot");
 
             ca.AxisX.Minimum = 0.1;
             ca.AxisX.IsLogarithmic = true;
@@ -377,6 +524,14 @@ namespace Nightly
             ca.Position.Auto = true;
 
             chart.ChartAreas.Add(ca);
+
+            Legend lgnd = new Legend();
+            lgnd.Docking = Docking.Top;
+            lgnd.IsDockedInsideChartArea = false;
+            lgnd.Alignment = StringAlignment.Center;
+            lgnd.DockedToChartArea = ca.Name;
+            lgnd.Name = "StatisticsLegend";
+            chart.Legends.Add(lgnd);
 
             if (!cmp.HasJobs)
             {
@@ -429,6 +584,7 @@ namespace Nightly
                 serTimeout.Points.AddXY(ca.AxisX.Minimum, cmp.TimeOutY);
                 serTimeout.Points.AddXY(cmp.TimeOutX, cmp.TimeOutY);
                 serTimeout.Points.AddXY(cmp.TimeOutX, ca.AxisY.Minimum);
+                serTimeout.IsVisibleInLegend = false;
                 chart.Series.Add(serTimeout);
 
                 Series serMemout = new Series("Memouts");
@@ -438,6 +594,7 @@ namespace Nightly
                 serMemout.Points.AddXY(ca.AxisX.Minimum, cmp.MemOutY);
                 serMemout.Points.AddXY(cmp.MemOutX, cmp.MemOutY);
                 serMemout.Points.AddXY(cmp.MemOutX, ca.AxisY.Minimum);
+                serMemout.IsVisibleInLegend = false;
                 chart.Series.Add(serMemout);
 
                 Series serErrors = new Series("Errors");
@@ -447,6 +604,7 @@ namespace Nightly
                 serErrors.Points.AddXY(ca.AxisX.Minimum, cmp.ErrorY);
                 serErrors.Points.AddXY(cmp.ErrorX, cmp.ErrorY);
                 serErrors.Points.AddXY(cmp.ErrorX, ca.AxisY.Minimum);
+                serErrors.IsVisibleInLegend = false;
                 chart.Series.Add(serErrors);
 
                 Series serDiag = new Series("Diagonal");
@@ -455,9 +613,10 @@ namespace Nightly
                 serDiag.Color = Color.Black;
                 serDiag.Points.AddXY(ca.AxisX.Minimum, ca.AxisY.Minimum);
                 serDiag.Points.AddXY(cmp.ErrorX, cmp.ErrorY);
+                serDiag.IsVisibleInLegend = false;
                 chart.Series.Add(serDiag);
 
-                Series ser = new Series(cmp.Title);
+                Series ser = new Series("Equal outcome");
                 ser.ChartArea = ca.Name;
                 ser.ChartType = SeriesChartType.Point;
                 ser.Color = Color.Blue;
@@ -465,14 +624,37 @@ namespace Nightly
                 ser.MarkerStyle = MarkerStyle.Cross;
                 ser.MarkerBorderWidth = 0;
 
+                Series serBetter = new Series("Better outcome");
+                serBetter.ChartArea = ca.Name;
+                serBetter.ChartType = SeriesChartType.Point;
+                serBetter.Color = Color.Green;
+                serBetter.MarkerSize = 5;
+                serBetter.MarkerStyle = MarkerStyle.Cross;
+                serBetter.MarkerBorderWidth = 0;
+
+                Series serWorse = new Series("Worse outcome");
+                serWorse.ChartArea = ca.Name;
+                serWorse.ChartType = SeriesChartType.Point;
+                serWorse.Color = Color.Red;
+                serWorse.MarkerSize = 5;
+                serWorse.MarkerStyle = MarkerStyle.Cross;
+                serWorse.MarkerBorderWidth = 0;
+
                 foreach (Comparison.Point p in cmp.Datapoints)
                 {
-                    ser.Points.AddXY(p.x, p.y);
-                    if (p.isSpecial) ser.Points.Last().Color = Color.Red;
+                    switch (p.type)
+                    {
+                        case Comparison.PointType.BETTER: serBetter.Points.AddXY(p.x, p.y); ; break;
+                        case Comparison.PointType.WORSE: serWorse.Points.AddXY(p.x, p.y); ; break;
+                        default: ser.Points.AddXY(p.x, p.y); break;
+                    }
+
                     if (p.tooltip != null && p.tooltip != "") ser.Points.Last().ToolTip = p.tooltip;
                 }
 
                 chart.Series.Add(ser);
+                chart.Series.Add(serBetter);
+                chart.Series.Add(serWorse);
             }
 
             return chart;
