@@ -1,0 +1,7 @@
+(goals
+(goal
+  (forall ((x2 Real))
+    (or (not (q2 x2 (ite (<= x2 0.0) (* (- 1.0) x2) 0.0)))
+        (forall ((x1 Int)) (q1 x1 x2))))
+  :precision precise :depth 3)
+)

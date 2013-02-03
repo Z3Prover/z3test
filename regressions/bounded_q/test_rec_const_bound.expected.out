@@ -1,0 +1,16 @@
+(goals
+(goal
+  (or (and (<= a 5) (not (<= (- 6) a))) (p 1))
+  (or (and (<= a 5) (not (<= (- 5) a))) (p 2))
+  (or (and (<= a 5) (not (<= (- 4) a))) (p 3))
+  (or (and (<= a 5) (not (<= (- 3) a))) (p 4))
+  (or (and (<= a 5) (not (<= (- 2) a))) (p 5))
+  (or (and (<= a 5) (not (<= (- 1) a))) (p 6))
+  (or (and (<= a 5) (not (<= 0 a))) (p 7))
+  (or (and (<= a 5) (not (<= 1 a))) (p 8))
+  (or (and (<= a 5) (not (<= 2 a))) (p 9))
+  (or (and (<= a 5) (not (<= 3 a))) (p 10))
+  (or (and (<= a 5) (not (<= 4 a))) (p 11))
+  (or (and (<= a 5) (not (<= 5 a))) (p 12))
+  :precision precise :depth 7)
+)

@@ -1,0 +1,11 @@
+(goals
+(goal
+  (or (forall ((y Int)) (or (not (<= 0 y)) (not (<= y 4)) (q y)))
+      (forall ((x Int)) (or (not (<= 0 x)) (not (<= x 3)) (p x))))
+  :precision precise :depth 4)
+)
+(goals
+(goal
+  (or (and (q 0) (q 1) (q 2) (q 3) (q 4)) (and (p 0) (p 1) (p 2) (p 3)))
+  :precision precise :depth 9)
+)

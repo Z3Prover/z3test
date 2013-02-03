@@ -1,0 +1,83 @@
+﻿<Window x:Class="ClusterExperiment.ShowResults"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="ShowResults" Height="518" Width="877" WindowStartupLocation="CenterOwner">
+
+    <Grid>
+
+        <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="0,0,0,0" Name="gridOuter">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*" MinHeight="250" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+
+            <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="0,0,0,0" Name="grid" Grid.Row="0" Grid.Column="0">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" MinWidth="200" />
+                </Grid.ColumnDefinitions>
+                
+                <Grid Grid.Row="0" Grid.Column="0" HorizontalAlignment="Stretch">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />                        
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+
+                    <Label Content="Shared Directory: " Grid.Row="0" Grid.Column="0"/>
+                    <TextBox Name="txtSharedDir" IsReadOnly="True" Grid.Row="0" Grid.Column="1"/>
+                </Grid>
+
+                <DataGrid AutoGenerateColumns="True" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="0,0,0,0" Name="dataGrid" Grid.Row="1" Grid.Column="0" IsReadOnly="True" RowHeight="23" SelectionUnit="FullRow" MouseDoubleClick="dataGrid_MouseDoubleClick" />
+
+                <Grid Name="radioGrid" Grid.Row="2" Grid.Column="0" HorizontalAlignment="Stretch" VerticalAlignment="Bottom">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>                        
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+                    <StackPanel Grid.Row="0" Orientation="Horizontal">
+                        <RadioButton Name="radioAll" GroupName="Option" Padding="5,0,5,0" Click="RadioButton_Click" IsChecked="True" VerticalAlignment="Center">All</RadioButton>
+                        <RadioButton Name="radioSAT" GroupName="Option" Padding="5,0,5,0" Click="RadioButton_Click" VerticalAlignment="Center">SAT</RadioButton>
+                        <RadioButton Name="radioUNSAT" GroupName="Option" Padding="5,0,5,0" Click="RadioButton_Click" VerticalAlignment="Center">UNSAT</RadioButton>
+                        <RadioButton Name="radioUNKNOWN" GroupName="Option" Padding="5,0,5,0" Click="RadioButton_Click" VerticalAlignment="Center">UNKNOWN</RadioButton>                    
+                        <RadioButton Name="radioBUGS" GroupName="Option" Padding="5,0,5,0" Click="RadioButton_Click" VerticalAlignment="Center">BUG</RadioButton>
+                        <RadioButton Name="radioERROR" GroupName="Option" Padding="5,0,5,0" Click="RadioButton_Click" VerticalAlignment="Center">ERROR</RadioButton>
+                        <RadioButton Name="radioMemouts" GroupName="Option" Padding="5,0,5,0" Click="RadioButton_Click" VerticalAlignment="Center">MEMORY</RadioButton>
+                        <RadioButton Name="radioTimeouts" GroupName="Option" Padding="5,0,5,0" Click="RadioButton_Click" VerticalAlignment="Center">TIMEOUT</RadioButton>
+                    </StackPanel>
+                    <StackPanel Grid.Row="1" Orientation="Horizontal">
+                        <RadioButton Name="radioOver" GroupName="Option" Padding="5,0,5,0" Click="RadioButton_Click" VerticalAlignment="Center">Overperformed</RadioButton>
+                        <RadioButton Name="radioUnder" GroupName="Option" Padding="5,0,5,0" Click="RadioButton_Click" VerticalAlignment="Center">Underperformed</RadioButton>
+                        <RadioButton Name="radioMoreThan" GroupName="Option" Padding="5,0,5,0" Click="RadioButton_Click" VerticalAlignment="Center">More than:</RadioButton>
+                        <TextBox Name="txtSeconds" Width="50" Height="20" VerticalAlignment="Center" HorizontalContentAlignment="Right" KeyUp="txtSeconds_KeyUp" Text="100" />
+                        <Label Content="sec" VerticalAlignment="Center" />
+                        <RadioButton Name="radioOutputContains" GroupName="Option" Padding="5,0,5,0" Click="RadioButton_Click" VerticalAlignment="Center">Output contains:</RadioButton>
+                        <TextBox Name="txtOutputMatch" Width="194" Height="20" VerticalAlignment="Center" HorizontalContentAlignment="Left" KeyUp="txtOutputMatch_KeyUp" Text="text" />
+                    </StackPanel>
+                    <StackPanel Grid.Row="2" Orientation="Horizontal">
+                        <Label Content="Filename contains: " VerticalAlignment="Center" />
+                        <RadioButton Name="radioFNSAT" GroupName="Option" Padding="5,0,5,0" Click="RadioButton_Click" VerticalAlignment="Center">"sat"</RadioButton>
+                        <RadioButton Name="radioFNUNSAT" GroupName="Option" Padding="5,0,5,0" Click="RadioButton_Click" VerticalAlignment="Center">"unsat"</RadioButton>
+                        <RadioButton Name="radioFNTEXT" GroupName="Option" Padding="5,0,5,0" Click="RadioButton_Click" VerticalAlignment="Center">Text:</RadioButton>
+                        <TextBox Name="txtFilename" Width="100" Height="20" VerticalAlignment="Center" HorizontalContentAlignment="Left" KeyUp="txtFilename_KeyUp" Text="unknown" />
+                    </StackPanel>
+                </Grid>
+            </Grid>
+        </Grid>
+    </Grid>
+
+</Window>

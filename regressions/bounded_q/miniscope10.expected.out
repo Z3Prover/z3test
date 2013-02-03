@@ -1,0 +1,7 @@
+(goals
+(goal
+  (forall ((x2 Real))
+    (or (q2 x2 x2)
+        (forall ((x1 Int)) (exists ((y Int)) (and (q1 y x2) (q3 y x1 x2))))))
+  :precision precise :depth 3)
+)

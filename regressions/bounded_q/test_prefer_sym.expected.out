@@ -1,0 +1,15 @@
+(goals
+(goal
+  (<= a 1)
+  (<= (ite (<= 60000 a) 60000 a) 1)
+  (or (not (<= 0 (ite (<= 60000 a) 60000 a))) (p 0))
+  (or (not (<= 1 (ite (<= 60000 a) 60000 a))) (p 1))
+  :precision under :depth 5)
+)
+(goals
+(goal
+  (<= a 1)
+  (forall ((x Int))
+    (or (not (>= x 0)) (not (<= x (ite (<= 60000 a) 60000 a))) (p x)))
+  :precision precise :depth 5)
+)

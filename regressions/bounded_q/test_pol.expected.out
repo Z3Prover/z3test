@@ -1,0 +1,6 @@
+(goals
+(goal
+  (or (not (or (not (>= x!0 0)) (not (<= x!0 1)) (p x!0))) (p a))
+  (or (and (p 0) (p 1)) (not (p a)))
+  :precision precise :depth 5)
+)

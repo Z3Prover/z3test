@@ -5,8 +5,9 @@
 >>> s.check()
 sat
 >>> s.add(x != x)
->>> s.check()
-unknown
+>>> s.check() # doctest: +ELLIPSIS
+Traceback (most recent call last):
+Z3Exception: ...
 >>> s = MCSatCore()
 >>> s.add_tactic('simplify')
 >>> s.check()

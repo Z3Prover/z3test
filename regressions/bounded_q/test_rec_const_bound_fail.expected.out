@@ -1,0 +1,7 @@
+(goals
+(goal
+  (<= (+ (- 1) (ite (<= a 15) a 5)) 1)
+  (or (not (<= 1 (ite (<= a 15) a 5))) (p 1))
+  (or (not (<= 2 (ite (<= a 15) a 5))) (p 2))
+  :precision under :depth 5)
+)
