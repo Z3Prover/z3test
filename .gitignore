@@ -7,10 +7,17 @@ a.out
 callgrind.out.*
 err.txt
 out.txt
+
+# Visual Studio Files
 *.user
+*.suo
 *.pdb
 *.dll
 *.cache
 *.exe
-*.config
 *.manifest
+
+ClusterExperiment/*/obj/*
+ClusterExperiment/*/bin/*
+ClusterExperiment/Release/*
+ClusterExperiment/packages/*
