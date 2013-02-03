@@ -102,7 +102,7 @@ namespace Nightly
                     js.TaglistX.ClearSelection();
                     js.TaglistY.ClearSelection();
 
-                    if (config.Tags.HasTag(jX.MetaData.Id))
+                    if (jX != null && config.Tags.HasTag(jX.MetaData.Id))
                     {
                         js.TaglistX.SelectedValue = jX.MetaData.Id.ToString();
                         js.CheckTagX();
@@ -113,7 +113,7 @@ namespace Nightly
                         js.CheckIDX();
                     }
 
-                    if (config.Tags.HasTag(jY.MetaData.Id))
+                    if (jY != null && config.Tags.HasTag(jY.MetaData.Id))
                     {
                         js.TaglistY.SelectedValue = jY.MetaData.Id.ToString();
                         js.CheckTagY();
@@ -341,15 +341,16 @@ namespace Nightly
             tc.Text = cmp.DateY;
             row.Cells.Add(tc);
             tc = new TableCell();
-            tc.Text = (cmp.JobY.MetaData.SubmissionTime - cmp.JobX.MetaData.SubmissionTime).ToString();
+            if (cmp.JobY != null && cmp.JobX != null)
+                tc.Text = (cmp.JobY.MetaData.SubmissionTime - cmp.JobX.MetaData.SubmissionTime).ToString();
             row.Cells.Add(tc);
             t.Rows.Add(row);
-            
+
             t.Rows.Add(buildStatisticsRow("Results:", cs.CountX, cs.CountY, "", 100.0 * ((cs.CountY / cs.CountX) - 1.0), "%", Color.Green, Color.Red));
-            t.Rows.Add(buildStatisticsRow("Results (SAT):", cs.x_countSAT, cs.y_countSAT, "", 100.0 * ((cs.y_countSAT/ cs.x_countSAT) - 1.0), "%", Color.Green, Color.Red));
+            t.Rows.Add(buildStatisticsRow("Results (SAT):", cs.x_countSAT, cs.y_countSAT, "", 100.0 * ((cs.y_countSAT / cs.x_countSAT) - 1.0), "%", Color.Green, Color.Red));
             t.Rows.Add(buildStatisticsRow("Results (UNSAT):", cs.x_countUNSAT, cs.y_countUNSAT, "", 100.0 * ((cs.y_countUNSAT / cs.x_countUNSAT) - 1.0), "%", Color.Green, Color.Red));
             t.Rows.Add(buildStatisticsRow("Results (UNKNOWN):", cs.x_countUNKNOWN, cs.y_countUNKNOWN, "", 100.0 * ((cs.y_countUNKNOWN / cs.x_countUNKNOWN) - 1.0), "%", Color.Red, Color.Green));
-            t.Rows.Add(buildStatisticsRow("Avg. Time/Result:", cs.TimeX / cs.CountX, cs.TimeY / cs.CountY, "sec.",   100.0 * ( ((cs.TimeY / cs.CountY) / (cs.TimeX / cs.CountX)) - 1.0), "%", Color.Red, Color.Green));
+            t.Rows.Add(buildStatisticsRow("Avg. Time/Result:", cs.TimeX / cs.CountX, cs.TimeY / cs.CountY, "sec.", 100.0 * (((cs.TimeY / cs.CountY) / (cs.TimeX / cs.CountX)) - 1.0), "%", Color.Red, Color.Green));
             t.Rows.Add(buildStatisticsRow("Avg. Time/Result (SAT):", cs.x_cumulativeTimeSAT / cs.x_countSAT, cs.y_cumulativeTimeSAT / cs.y_countSAT, "sec.", 100.0 * (((cs.y_cumulativeTimeSAT / cs.y_countSAT) / (cs.x_cumulativeTimeSAT / cs.x_countSAT)) - 1.0), "%", Color.Red, Color.Green));
             t.Rows.Add(buildStatisticsRow("Avg. Time/Result (UNSAT):", cs.x_cumulativeTimeUNSAT / cs.x_countUNSAT, cs.y_cumulativeTimeUNSAT / cs.y_countUNSAT, "sec.", 100.0 * (((cs.y_cumulativeTimeUNSAT / cs.y_countUNSAT) / (cs.x_cumulativeTimeUNSAT / cs.x_countUNSAT)) - 1.0), "%", Color.Red, Color.Green));
             t.Rows.Add(buildStatisticsRow("Avg. Time/Result (UNKNOWN):", cs.x_cumulativeTimeUNKNOWN / cs.x_countUNKNOWN, cs.y_cumulativeTimeUNKNOWN / cs.y_countUNKNOWN, "sec.", 100.0 * (((cs.y_cumulativeTimeUNKNOWN / cs.y_countUNKNOWN) / (cs.x_cumulativeTimeUNKNOWN / cs.x_countUNKNOWN)) - 1.0), "%", Color.Red, Color.Green));
@@ -494,7 +495,7 @@ namespace Nightly
         {
             Chart chart = new Chart();
 
-            Title ttle = new Title((_prefix == "") ? "Overall" : "\\" + _prefix);
+            Title ttle = new Title((_prefix == "") ? "Overall" : "\\" + _prefix.Replace('|', '\\'));
             ttle.Font = new Font(ttle.Font, FontStyle.Bold);
             chart.Titles.Add(ttle);
 
@@ -506,22 +507,24 @@ namespace Nightly
             ca.AxisX.Minimum = 0.1;
             ca.AxisX.IsLogarithmic = true;
             ca.AxisX.LogarithmBase = 10;
-            ca.AxisY.LabelStyle.IsEndLabelVisible = true;
-            ca.AxisY.LabelAutoFitStyle = LabelAutoFitStyles.None;
-            ca.AxisY.LabelAutoFitMinFontSize = 8;
-            ca.AxisY.LabelAutoFitMaxFontSize = 8;
+            ca.AxisX.IsLabelAutoFit = true;
+            ca.AxisX.LabelAutoFitStyle = LabelAutoFitStyles.None;
+            ca.AxisX.LabelAutoFitMinFontSize = 8;
+            ca.AxisX.LabelAutoFitMaxFontSize = 8;
+            ca.AxisX.MajorGrid.LineDashStyle = ChartDashStyle.Dash;            
 
             ca.AxisY.Minimum = 0.1;
             ca.AxisY.IsLogarithmic = true;
             ca.AxisY.LogarithmBase = 10;
-            ca.AxisY.LabelStyle.IsEndLabelVisible = true;
+            ca.AxisY.IsLabelAutoFit = true;
             ca.AxisY.LabelAutoFitStyle = LabelAutoFitStyles.None;
             ca.AxisY.LabelAutoFitMinFontSize = 8;
             ca.AxisY.LabelAutoFitMaxFontSize = 8;
+            ca.AxisY.MajorGrid.LineDashStyle = ChartDashStyle.Dash;
 
             // ca.Position.Height = 25;
             // ca.Position.Width = 85;
-            ca.Position.Auto = true;
+            // ca.Position.Auto = true;
 
             chart.ChartAreas.Add(ca);
 
@@ -535,8 +538,8 @@ namespace Nightly
 
             if (!cmp.HasJobs)
             {
-                ca.AxisX.Maximum = 100000;
-                ca.AxisY.Maximum = 100000;
+                ca.AxisX.Maximum = 10000;
+                ca.AxisY.Maximum = 10000;
 
                 ca.AxisX.Title = cmp.NameX;
                 ca.AxisY.Title = cmp.NameY;
@@ -560,22 +563,24 @@ namespace Nightly
                 ca.AxisX.Maximum = cmp.MaxX;
                 ca.AxisY.Maximum = cmp.MaxY;
 
-                ca.AxisX.CustomLabels.Add(new CustomLabel(cmp.TimeOutX - 4, cmp.TimeOutX + 4, "T", 0, LabelMarkStyle.SideMark, GridTickTypes.All));
-                ca.AxisX.CustomLabels.Add(new CustomLabel(cmp.MemOutX - 4, cmp.MemOutX + 4, "M", 0, LabelMarkStyle.SideMark, GridTickTypes.All));
-                ca.AxisX.CustomLabels.Add(new CustomLabel(cmp.ErrorX - 4, cmp.ErrorX + 4, "E", 0, LabelMarkStyle.SideMark, GridTickTypes.All));
-                ca.AxisY.CustomLabels.Add(new CustomLabel(cmp.TimeOutY - 4, cmp.TimeOutY + 4, "T", 0, LabelMarkStyle.SideMark, GridTickTypes.All));
-                ca.AxisY.CustomLabels.Add(new CustomLabel(cmp.MemOutY - 4, cmp.MemOutY + 4, "M", 0, LabelMarkStyle.SideMark, GridTickTypes.All));
-                ca.AxisY.CustomLabels.Add(new CustomLabel(cmp.ErrorY - 4, cmp.ErrorY + 4, "E", 0, LabelMarkStyle.SideMark, GridTickTypes.All));
-
-                ca.AxisX.CustomLabels.Add(new CustomLabel(1, 1 + 8, "1", 0, LabelMarkStyle.None, GridTickTypes.Gridline));
-                ca.AxisX.CustomLabels.Add(new CustomLabel(10, 10 + 16, "10", 0, LabelMarkStyle.None, GridTickTypes.Gridline));
-                ca.AxisX.CustomLabels.Add(new CustomLabel(100, 100 + 24, "100", 0, LabelMarkStyle.None, GridTickTypes.Gridline));
-                ca.AxisX.CustomLabels.Add(new CustomLabel(1000, 1000 + 32, "1000", 0, LabelMarkStyle.None, GridTickTypes.Gridline));
-
-                ca.AxisY.CustomLabels.Add(new CustomLabel(1, 1 + 8, "1", 0, LabelMarkStyle.None, GridTickTypes.Gridline));
-                ca.AxisY.CustomLabels.Add(new CustomLabel(10, 10 + 16, "10", 0, LabelMarkStyle.None, GridTickTypes.Gridline));
-                ca.AxisY.CustomLabels.Add(new CustomLabel(100, 100 + 24, "100", 0, LabelMarkStyle.None, GridTickTypes.Gridline));
-                ca.AxisY.CustomLabels.Add(new CustomLabel(1000, 1000 + 32, "1000", 0, LabelMarkStyle.None, GridTickTypes.Gridline));
+                ca.AxisX.CustomLabels.Add(new CustomLabel(Math.Log10(cmp.TimeOutX) - 0.2, Math.Log10(cmp.TimeOutX) + 0.2, "", 0, LabelMarkStyle.None, GridTickTypes.None));
+                ca.AxisX.CustomLabels.Add(new CustomLabel(Math.Log10(cmp.MemOutX) - 0.2, Math.Log10(cmp.MemOutX) + 0.2, "M", 0, LabelMarkStyle.SideMark, GridTickTypes.None));
+                ca.AxisX.CustomLabels.Add(new CustomLabel(Math.Log10(cmp.ErrorX) - 0.2, Math.Log10(cmp.ErrorX) + 0.2, "E", 0, LabelMarkStyle.SideMark, GridTickTypes.None));
+                ca.AxisY.CustomLabels.Add(new CustomLabel(Math.Log10(cmp.TimeOutY) - 0.2, Math.Log10(cmp.TimeOutY) + 0.2, "", 0, LabelMarkStyle.None, GridTickTypes.None));
+                ca.AxisY.CustomLabels.Add(new CustomLabel(Math.Log10(cmp.MemOutY) - 0.2, Math.Log10(cmp.MemOutY) + 0.2, "M", 0, LabelMarkStyle.SideMark, GridTickTypes.None));
+                ca.AxisY.CustomLabels.Add(new CustomLabel(Math.Log10(cmp.ErrorY) - 0.2, Math.Log10(cmp.ErrorY) + 0.2, "E", 0, LabelMarkStyle.SideMark, GridTickTypes.None));
+                
+                ca.AxisX.CustomLabels.Add(new CustomLabel(-1.2, -0.8, "0.1", 0, LabelMarkStyle.SideMark, GridTickTypes.TickMark));
+                ca.AxisX.CustomLabels.Add(new CustomLabel(-0.1, 0.105, "1", 0, LabelMarkStyle.SideMark, GridTickTypes.All));                                
+                ca.AxisX.CustomLabels.Add(new CustomLabel(0.9, 1.1, "10", 0, LabelMarkStyle.SideMark, GridTickTypes.All));
+                ca.AxisX.CustomLabels.Add(new CustomLabel(1.8, 2.2, "100", 0, LabelMarkStyle.SideMark, GridTickTypes.All));
+                ca.AxisX.CustomLabels.Add(new CustomLabel(2.8, 3.2, "1K", 0, LabelMarkStyle.SideMark, GridTickTypes.All));
+                
+                ca.AxisY.CustomLabels.Add(new CustomLabel(-1.2, -0.8, "0.1", 0, LabelMarkStyle.SideMark, GridTickTypes.TickMark));
+                ca.AxisY.CustomLabels.Add(new CustomLabel(-0.1, 0.105, "1", 0, LabelMarkStyle.SideMark, GridTickTypes.All));
+                ca.AxisY.CustomLabels.Add(new CustomLabel(0.9, 1.1, "10", 0, LabelMarkStyle.SideMark, GridTickTypes.All));
+                ca.AxisY.CustomLabels.Add(new CustomLabel(1.8, 2.2, "100", 0, LabelMarkStyle.SideMark, GridTickTypes.All));
+                ca.AxisY.CustomLabels.Add(new CustomLabel(2.8, 3.2, "1K", 0, LabelMarkStyle.SideMark, GridTickTypes.All));
 
                 Series serTimeout = new Series("Timeouts");
                 serTimeout.ChartArea = ca.Name;
@@ -590,7 +595,7 @@ namespace Nightly
                 Series serMemout = new Series("Memouts");
                 serMemout.ChartArea = ca.Name;
                 serMemout.ChartType = SeriesChartType.FastLine;
-                serMemout.Color = Color.Green;
+                serMemout.Color = Color.Orange;
                 serMemout.Points.AddXY(ca.AxisX.Minimum, cmp.MemOutY);
                 serMemout.Points.AddXY(cmp.MemOutX, cmp.MemOutY);
                 serMemout.Points.AddXY(cmp.MemOutX, ca.AxisY.Minimum);

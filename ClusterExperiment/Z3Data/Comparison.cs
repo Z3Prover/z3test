@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -47,6 +48,22 @@ namespace Z3Data
         public double AvgSATTimeY { get { return x_cumulativeTimeSAT / x_countSAT; } }
         public double AvgUNSATTimeY { get { return x_cumulativeTimeSAT / x_countSAT; } }
         public double AvgUNKNOWNTimeY { get { return x_cumulativeTimeSAT / x_countSAT; } }
+
+        public ArrayList deltas = new ArrayList();
+        public bool deltas_sorted = false;
+
+        public double AvgDelta { get { double res = 0.0; foreach (double d in deltas) { res += d; } return res / deltas.Count; } }
+
+        public double PercentileDelta(uint p)
+        {
+            if (!deltas_sorted) { deltas.Sort(); deltas_sorted = true; }
+            int rank = (int) Math.Round( (((double)p) / 100.0 * deltas.Count) + 0.5);
+            return (double) deltas[rank];
+        }
+
+        public double P25 { get { return PercentileDelta(25); } }
+        public double P50 { get { return PercentileDelta(50); } }        
+        public double P75 { get { return PercentileDelta(75); } }
     };
 
     public class Comparison
@@ -162,8 +179,8 @@ namespace Z3Data
             string suffix = xr.Filename.Substring(_prefixLength, liobs - _prefixLength);           
             int subdir_inx = suffix.IndexOf("\\");
             string subdir = subdir_inx < 0 ? "" : suffix.Substring(0, subdir_inx);
-            _statistics.Count += 1.0;            
-            
+            _statistics.Count += 1.0;
+
             if (suffix.Length > 0 && !_statistics.postfixes.ContainsKey(suffix))
                 _statistics.postfixes.Add(suffix, new ComparisonStatistics());
 
@@ -233,15 +250,34 @@ namespace Z3Data
                     _statistics.subdirs[subdir].y_countUNSAT += yr.UNSAT;
                     _statistics.subdirs[subdir].y_countUNKNOWN += yr.UNKNOWN;
                 }
-            }                       
+            }
+
+            double x_rt = (xr.ResultCode == ResultCode.OK) ? xr.Runtime : _tmeX;
+            double y_rt = (yr.ResultCode == ResultCode.OK) ? yr.Runtime : _tmeY;
+            double delta = y_rt - x_rt;
+
+            _statistics.deltas.Add(delta);
+            _statistics.deltas_sorted = false;
+            if (suffix.Length > 0)
+            {
+                _statistics.postfixes[suffix].deltas.Add(delta);
+                _statistics.postfixes[suffix].deltas_sorted = false;
+            }
+            if (subdir_inx != -1)
+            {
+                _statistics.subdirs[subdir].deltas.Add(delta);
+                _statistics.subdirs[subdir].deltas_sorted = false;
+            }
         }
 
         protected void ComputeStatistics()
-        {
+        {            
             _datapoints = new List<Point>();
             _statistics = new ComparisonStatistics();
             _statistics.postfixes = new Dictionary<string, ComparisonStatistics>();
             _statistics.subdirs = new Dictionary<string, ComparisonStatistics>();
+
+            if (_jX == null || _jY == null) return;
 
             _jX.Rows.Sort(csvrow_lt);
             _jY.Rows.Sort(csvrow_lt);
