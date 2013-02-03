@@ -42,7 +42,7 @@ namespace Z3Data
         CSVData _data = null;
         MetaData _metaData = null;
         Summary _summary = null;
-        Jobcache _cache = null;
+        JobCache _cache = null;
 
         TimeSpan _downloadTime = new TimeSpan(0);
         uint _downloadBatches = 0;
@@ -66,7 +66,7 @@ namespace Z3Data
             // if the summary is rebuilt, it will load all the data,
             // which we can forget for now.
             if (_data != null) { _data.Dispose(); _data = null; }
-            _cache = new Jobcache(dataDir, this);
+            _cache = new JobCache(dataDir, this);
         }
 
         public double AverageBatchTime

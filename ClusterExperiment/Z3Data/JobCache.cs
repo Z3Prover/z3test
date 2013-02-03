@@ -7,14 +7,14 @@ using System.Diagnostics;
 
 namespace Z3Data
 {
-    public class Jobcache : IDisposable
+    public class JobCache : IDisposable
     {
         string _dataDir = null;
         string _filename = null;
         Job _j = null;
         Job _reference = null;
 
-        public Jobcache(string dataDir, Job j)
+        public JobCache(string dataDir, Job j)
         {
             _dataDir = dataDir;
             _filename = dataDir + @"\" + j.MetaData.Id.ToString() + "_cache.csv";
