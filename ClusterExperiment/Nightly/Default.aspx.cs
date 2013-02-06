@@ -38,10 +38,10 @@ namespace Nightly
                 {
                     _defaultParams = new Dictionary<string, string>();
                     string p = Request.Params.Get("days");
-                    _defaultParams.Add("days", (p == null) ? config.DAYSBACK.ToString() : p);
+                    _defaultParams.Add("days", (p == null) ? config.daysback.ToString() : p);
                     p = Request.Params.Get("cat");
                     _defaultParams.Add("cat", (p == null) ? "" : p);
-                    timeline = new Timeline(Server.MapPath("~"), config.DATADIR, config.TIMELINEFILE);
+                    timeline = new Timeline(Server.MapPath("~"), config.datadir, config.timeline);
                     buildCategoryPanels();
                 }
                 catch (Exception ex)
@@ -225,7 +225,7 @@ namespace Nightly
             ChartArea ca = new ChartArea();
             ca.Name = "Statistics";
 
-            double maxdays = config.DAYSBACK;
+            double maxdays = config.daysback;
 
             string rdays = Request.Params.Get("days");
             if (rdays != null) maxdays = Convert.ToUInt32(rdays);
@@ -292,7 +292,7 @@ namespace Nightly
             // chart.Titles.Add((name == "") ? "Overall" : name);
             ChartArea ca = new ChartArea();
             ca.Name = "Performance";
-            double maxdays = config.DAYSBACK;
+            double maxdays = config.daysback;
 
             string rdays = Request.Params.Get("days");
             if (rdays != null) maxdays = Convert.ToUInt32(rdays);
@@ -335,8 +335,8 @@ namespace Nightly
             l.DockedToChartArea = ca.Name;
             chart.Legends.Add(l);
 
-            Jobs jobs = new Jobs(config.DATADIR, true);
-            Records records = new Records(config.DATADIR);
+            Jobs jobs = new Jobs(config.datadir, true);
+            Records records = new Records(config.datadir);
             CategoryRecord virtualBest = (category == "") ? records.Overall : records.RecordsByCategory[category];
             double virtualBestAvg = (virtualBest.Time / virtualBest.Files);
             DateTime now = DateTime.Now;
@@ -479,7 +479,7 @@ namespace Nightly
         protected void buildPerformanceVectorGraph(string category, Chart chart)
         {
             ChartArea ca = new ChartArea("PerformanceVectors");
-            double maxdays = config.DAYSBACK;
+            double maxdays = config.daysback;
 
             string rdays = Request.Params.Get("days");
             if (rdays != null) maxdays = Convert.ToUInt32(rdays);
@@ -528,12 +528,12 @@ namespace Nightly
             series.MarkerSize = 4;
             series.MarkerStyle = MarkerStyle.Circle;
 
-            Records records = new Records(config.DATADIR);
+            Records records = new Records(config.datadir);
             CategoryRecord virtualBest = (category == "") ? records.Overall : records.RecordsByCategory[category];
             double virtualBestAvg = (virtualBest.Time / virtualBest.Files);
 
             DateTime now = DateTime.Now;
-            Jobs jobs = new Jobs(config.DATADIR, true);
+            Jobs jobs = new Jobs(config.datadir, true);
 
             double youngest = double.MaxValue;
             double youngest_x = 0.0;
@@ -1222,7 +1222,7 @@ namespace Nightly
                 try
                 {
                     uint jid = Convert.ToUInt32(jobid);
-                    Job j = new Job(config.DATADIR, jid, true);
+                    Job j = new Job(config.datadir, jid, true);
 
                     if (category == "" || timeline.Categories.ContainsKey(category))
                     {

@@ -21,5 +21,7 @@ namespace Nightly
         public void CheckTagY() { rbnTagY.Checked = true; }
         public void CheckIDX() { rbnIDX.Checked = true; }
         public void CheckIDY() { rbnIDY.Checked = true; }
+
+        public void setPBUrl(string url) { btnUpdate.PostBackUrl = url; }
     }
 }

@@ -34,115 +34,113 @@ namespace Nightly
         }
 
         protected void Page_Load(object sender, EventArgs e)
-        {
-            if (!IsPostBack)
+        {            
+            try
             {
                 config = Application["Configuration"] as Configuration;
-                js = (JobSelect)LoadControl("JobSelect.ascx");
+                js = (JobSelect)LoadControl("JobSelect.ascx");                
 
-                foreach (KeyValuePair<string, uint> kvp in config.Tags)
+                foreach (KeyValuePair<string, uint> kvp in config.tags)
                 {
                     ListItem li = new ListItem(kvp.Key, kvp.Value.ToString());
                     js.TaglistX.Items.Add(li);
                     js.TaglistY.Items.Add(li);
                 }
 
+                _defaultParams = new Dictionary<string, string>();
+                _prefix = Request.Params.Get("prefix");
+                if (_prefix == null) _prefix = "";
+
+                string j1 = Request.Params.Get("jobX");
+                string j2 = Request.Params.Get("jobY");
+
+                j1 = "1693";
+                j2 = "1812";
+
+                string maxm1 = (int.MaxValue - 1).ToString();
+                string max = int.MaxValue.ToString();
+
+                if (j1 == null) j1 = maxm1;
+                if (j2 == null) j2 = max;
+
+                if ((j1 == maxm1 || j1 == max) || (j2 == maxm1 || j2 == max))
+                {
+                    Timeline tl = new Timeline(Server.MapPath("~"), config.datadir, config.timeline);
+                    DataRowCollection rows = tl.Tables[0].Rows;
+
+                    if (j1 == maxm1)
+                        j1 = rows[rows.Count - 2]["ID"].ToString();
+                    if (j1 == max)
+                        j1 = rows[rows.Count - 1]["ID"].ToString();
+
+                    if (j2 == maxm1)
+                        j2 = rows[rows.Count - 2]["ID"].ToString();
+                    if (j2 == max)
+                        j2 = rows[rows.Count - 1]["ID"].ToString();
+
+                    config.tags.Insert("Penultimate", Convert.ToUInt32(j1));
+                    config.tags.Insert("Latest", Convert.ToUInt32(j2));
+                }
+
+                _defaultParams.Add("jobX", j1);
+                _defaultParams.Add("jobY", j2);
+
+
+                Job jX = null, jY = null;
+
                 try
                 {
-                    _defaultParams = new Dictionary<string, string>();
-                    _prefix = Request.Params.Get("prefix");
-                    if (_prefix == null) _prefix = "";
-
-                    string j1 = Request.Params.Get("jobX");
-                    string j2 = Request.Params.Get("jobY");
-
-                    j1 = "1693";
-                    j2 = "1812";
-
-                    string maxm1 = (int.MaxValue - 1).ToString();
-                    string max = int.MaxValue.ToString();
-
-                    if (j1 == null) j1 = maxm1;
-                    if (j2 == null) j2 = max;
-
-                    if ((j1 == maxm1 || j1 == max) || (j2 == maxm1 || j2 == max))
-                    {
-                        Timeline tl = new Timeline(Server.MapPath("~"), config.DATADIR, config.TIMELINEFILE);
-                        DataRowCollection rows = tl.Tables[0].Rows;
-
-                        if (j1 == maxm1)
-                            j1 = rows[rows.Count - 2]["ID"].ToString();
-                        if (j1 == max)
-                            j1 = rows[rows.Count - 1]["ID"].ToString();
-
-                        if (j2 == maxm1)
-                            j2 = rows[rows.Count - 2]["ID"].ToString();
-                        if (j2 == max)
-                            j2 = rows[rows.Count - 1]["ID"].ToString();
-
-                        config.Tags.Insert("Penultimate", Convert.ToUInt32(j1));
-                        config.Tags.Insert("Latest", Convert.ToUInt32(j2));
-                    }
-
-                    _defaultParams.Add("jobX", j1);
-                    _defaultParams.Add("jobY", j2);
-
-
-                    Job jX = null, jY = null;
-
-                    try
-                    {
-                        jX = new Job(config.DATADIR, (uint)Convert.ToInt32(j1), true);
-                        jY = new Job(config.DATADIR, (uint)Convert.ToInt32(j2), true);
-                    }
-                    catch (Exception)
-                    {
-                    }
-
-                    js.TaglistX.ClearSelection();
-                    js.TaglistY.ClearSelection();
-
-                    if (jX != null && config.Tags.HasTag(jX.MetaData.Id))
-                    {
-                        js.TaglistX.SelectedValue = jX.MetaData.Id.ToString();
-                        js.CheckTagX();
-                    }
-                    else
-                    {
-                        js.TaglistX.SelectedIndex = 0;
-                        js.CheckIDX();
-                    }
-
-                    if (jY != null && config.Tags.HasTag(jY.MetaData.Id))
-                    {
-                        js.TaglistY.SelectedValue = jY.MetaData.Id.ToString();
-                        js.CheckTagY();
-                    }
-                    else
-                    {
-                        js.TaglistY.SelectedIndex = 0;
-                        js.CheckIDY();
-                    }
-
-                    js.IDX = j1;
-                    js.IDY = j2;
-
-                    cmp = new Comparison(jX, jY, _prefix.Replace('|', '\\'), config.Tags);
-
-                    phMain.Controls.Add(buildChartPanel(false, "CHART", ""));
-                    phMain.Controls.Add(buildSummaryPanel());
-                    phMain.Controls.Add(buildFooter());
+                    jX = new Job(config.datadir, (uint)Convert.ToInt32(j1), true);
+                    jY = new Job(config.datadir, (uint)Convert.ToInt32(j2), true);
                 }
-                catch (Exception ex)
+                catch (Exception)
                 {
-                    Label l = new Label();
-                    l.Text = "Error loading dataset: " + ex.Message;
-                    phMain.Controls.Add(l);
-                    l = new Label();
-                    l.Text = "Stacktrace: " + ex.StackTrace;
-                    phMain.Controls.Add(l);
                 }
+
+                js.TaglistX.ClearSelection();
+                js.TaglistY.ClearSelection();
+
+                if (jX != null && config.tags.HasTag(jX.MetaData.Id))
+                {
+                    js.TaglistX.SelectedValue = jX.MetaData.Id.ToString();
+                    js.CheckTagX();
+                }
+                else
+                {
+                    js.TaglistX.SelectedIndex = 0;
+                    js.CheckIDX();
+                }
+
+                if (jY != null && config.tags.HasTag(jY.MetaData.Id))
+                {
+                    js.TaglistY.SelectedValue = jY.MetaData.Id.ToString();
+                    js.CheckTagY();
+                }
+                else
+                {
+                    js.TaglistY.SelectedIndex = 0;
+                    js.CheckIDY();
+                }
+
+                js.IDX = j1;
+                js.IDY = j2;
+
+                cmp = new Comparison(jX, jY, _prefix.Replace('|', '\\'), config.tags);
+
+                phMain.Controls.Add(buildChartPanel(false, "CHART", ""));
+                phMain.Controls.Add(buildSummaryPanel());
+                phMain.Controls.Add(buildFooter());
             }
+            catch (Exception ex)
+            {
+                Label l = new Label();
+                l.Text = "Error loading dataset: " + ex.Message;
+                phMain.Controls.Add(l);
+                l = new Label();
+                l.Text = "Stacktrace: " + ex.StackTrace;
+                phMain.Controls.Add(l);
+            }
+
         }
 
         protected string selfLink(string prefix = null, int jobX = 0, int jobY = 0)
@@ -511,7 +509,7 @@ namespace Nightly
             ca.AxisX.LabelAutoFitStyle = LabelAutoFitStyles.None;
             ca.AxisX.LabelAutoFitMinFontSize = 8;
             ca.AxisX.LabelAutoFitMaxFontSize = 8;
-            ca.AxisX.MajorGrid.LineDashStyle = ChartDashStyle.Dash;            
+            ca.AxisX.MajorGrid.LineDashStyle = ChartDashStyle.Dash;
 
             ca.AxisY.Minimum = 0.1;
             ca.AxisY.IsLogarithmic = true;
@@ -569,13 +567,13 @@ namespace Nightly
                 ca.AxisY.CustomLabels.Add(new CustomLabel(Math.Log10(cmp.TimeOutY) - 0.2, Math.Log10(cmp.TimeOutY) + 0.2, "", 0, LabelMarkStyle.None, GridTickTypes.None));
                 ca.AxisY.CustomLabels.Add(new CustomLabel(Math.Log10(cmp.MemOutY) - 0.2, Math.Log10(cmp.MemOutY) + 0.2, "M", 0, LabelMarkStyle.SideMark, GridTickTypes.None));
                 ca.AxisY.CustomLabels.Add(new CustomLabel(Math.Log10(cmp.ErrorY) - 0.2, Math.Log10(cmp.ErrorY) + 0.2, "E", 0, LabelMarkStyle.SideMark, GridTickTypes.None));
-                
+
                 ca.AxisX.CustomLabels.Add(new CustomLabel(-1.2, -0.8, "0.1", 0, LabelMarkStyle.SideMark, GridTickTypes.TickMark));
-                ca.AxisX.CustomLabels.Add(new CustomLabel(-0.1, 0.105, "1", 0, LabelMarkStyle.SideMark, GridTickTypes.All));                                
+                ca.AxisX.CustomLabels.Add(new CustomLabel(-0.1, 0.105, "1", 0, LabelMarkStyle.SideMark, GridTickTypes.All));
                 ca.AxisX.CustomLabels.Add(new CustomLabel(0.9, 1.1, "10", 0, LabelMarkStyle.SideMark, GridTickTypes.All));
                 ca.AxisX.CustomLabels.Add(new CustomLabel(1.8, 2.2, "100", 0, LabelMarkStyle.SideMark, GridTickTypes.All));
                 ca.AxisX.CustomLabels.Add(new CustomLabel(2.8, 3.2, "1K", 0, LabelMarkStyle.SideMark, GridTickTypes.All));
-                
+
                 ca.AxisY.CustomLabels.Add(new CustomLabel(-1.2, -0.8, "0.1", 0, LabelMarkStyle.SideMark, GridTickTypes.TickMark));
                 ca.AxisY.CustomLabels.Add(new CustomLabel(-0.1, 0.105, "1", 0, LabelMarkStyle.SideMark, GridTickTypes.All));
                 ca.AxisY.CustomLabels.Add(new CustomLabel(0.9, 1.1, "10", 0, LabelMarkStyle.SideMark, GridTickTypes.All));

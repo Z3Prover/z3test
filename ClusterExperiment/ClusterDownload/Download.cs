@@ -15,43 +15,14 @@ namespace ClusterDownload
 {
     class Download
     {
-        static string db = "";
-        static string username = "";
-        static string dataDir = @"data\";
-        static string alertconfig = @"alertconfig.xml";
-
-        static void LoadConfig(string configFile, List<string> devs)
-        {
-            XmlTextReader reader = new XmlTextReader(configFile);
-
-            while (reader.Read())
-            {
-                switch (reader.NodeType)
-                {
-                    case XmlNodeType.Element:
-                        {
-                            switch (reader.Name)
-                            {
-                                case "Developer":
-                                    {
-                                        devs.Add(reader.GetAttribute("name"));
-                                        break;
-                                    }
-                                default: /* nothing */ break;
-                            }
-                            break;
-                        }
-                    default: /* nothing */ break;
-                }
-            }
-        }
+        static Configuration config = new Configuration("config.xml");
 
         static void Aggregate()
         {
             if (!Directory.Exists("backup"))
                 Directory.CreateDirectory("backup");
 
-            Jobs jobs = new Jobs(dataDir, true);
+            Jobs jobs = new Jobs(config.datadir, true);
             StreamWriter w = new StreamWriter("timeline.csv");
             Timeline.Make(w, ref jobs);
             w.Close();
@@ -61,19 +32,19 @@ namespace ClusterDownload
         {
             try
             {
-                SQLInterface sql = new SQLInterface(db);
+                SQLInterface sql = new SQLInterface(config.db);
 
-                if (!Directory.Exists(dataDir))
-                    Directory.CreateDirectory(dataDir);
+                if (!Directory.Exists(config.datadir))
+                    Directory.CreateDirectory(config.datadir);
 
-                SortedSet<Job> myJobs = sql.FindJobs(dataDir, username);
+                SortedSet<Job> myJobs = sql.FindJobs(config.datadir, config.username);
                 foreach (Job j in myJobs)
                 {
                     j.Download(sql);
                     // Global.Say(string.Format("Downloaded {0} batches for job #{1}. Average batch time: {2} sec.", j.BatchCount, j.MetaData.Id, j.AverageBatchTime));
                 }
 
-                Jobs jobs = new Jobs(dataDir); // includes unfinished.
+                Jobs jobs = new Jobs(config.datadir); // includes unfinished.
 
                 if (myJobs.Count > 0)
                 {
@@ -89,9 +60,7 @@ namespace ClusterDownload
                         lastId = j.MetaData.Id;
                     }
 
-                    List<string> developers = new List<string>();
-                    LoadConfig(alertconfig, developers);
-                    Records records = new Records(dataDir);
+                    Records records = new Records(config.datadir);
 
                     foreach (Job j in myJobs)
                     {
@@ -99,7 +68,7 @@ namespace ClusterDownload
                         {
                             Report r = new Report(j);
                             if (r.IsInteresting)
-                                r.SendTo(developers);
+                                r.SendTo(config.developers);
 
                             records.Update(j);
                         }

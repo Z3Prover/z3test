@@ -38,10 +38,10 @@ namespace Z3Data
         public double TimeX { get { return x_cumulativeTimeSAT + x_cumulativeTimeUNSAT + x_cumulativeTimeUNKNOWN; } }
         public double TimeY { get { return y_cumulativeTimeSAT + y_cumulativeTimeUNSAT + y_cumulativeTimeUNKNOWN; } }
 
-        public double AvgTimeX { get { return TimeX/Count; }}
-        public double AvgTimeY { get { return TimeY/Count; }}
+        public double AvgTimeX { get { return TimeX / Count; } }
+        public double AvgTimeY { get { return TimeY / Count; } }
 
-        public double AvgSATTimeX { get { return x_cumulativeTimeSAT / x_countSAT;  } }
+        public double AvgSATTimeX { get { return x_cumulativeTimeSAT / x_countSAT; } }
         public double AvgUNSATTimeX { get { return x_cumulativeTimeSAT / x_countSAT; } }
         public double AvgUNKNOWNTimeX { get { return x_cumulativeTimeSAT / x_countSAT; } }
 
@@ -57,12 +57,12 @@ namespace Z3Data
         public double PercentileDelta(uint p)
         {
             if (!deltas_sorted) { deltas.Sort(); deltas_sorted = true; }
-            int rank = (int) Math.Round( (((double)p) / 100.0 * deltas.Count) + 0.5);
-            return (double) deltas[rank];
+            int rank = (int)Math.Round((((double)p) / 100.0 * deltas.Count) + 0.5);
+            return (double)deltas[rank];
         }
 
         public double P25 { get { return PercentileDelta(25); } }
-        public double P50 { get { return PercentileDelta(50); } }        
+        public double P50 { get { return PercentileDelta(50); } }
         public double P75 { get { return PercentileDelta(75); } }
     };
 
@@ -175,29 +175,32 @@ namespace Z3Data
         {
             int liobs = xr.Filename.LastIndexOf("\\");
             string prefix = xr.Filename.Substring(0, liobs);
-            string filename = xr.Filename.Substring(liobs+1);
-            string suffix = xr.Filename.Substring(_prefixLength, liobs - _prefixLength);           
+            string filename = xr.Filename.Substring(liobs + 1);
+            string suffix = xr.Filename.Substring(_prefixLength, liobs - _prefixLength);
             int subdir_inx = suffix.IndexOf("\\");
             string subdir = subdir_inx < 0 ? "" : suffix.Substring(0, subdir_inx);
             _statistics.Count += 1.0;
 
             if (suffix.Length > 0 && !_statistics.postfixes.ContainsKey(suffix))
-                _statistics.postfixes.Add(suffix, new ComparisonStatistics());
+                _statistics.postfixes.Add(suffix, new ComparisonStatistics());            
 
-            if (subdir_inx != -1 && !_statistics.subdirs.ContainsKey(subdir))
-                _statistics.subdirs.Add(subdir, new ComparisonStatistics());
+            if (suffix == "")
+                _statistics.files.Add(suffix + filename);
+            else
+                _statistics.postfixes[suffix].files.Add(filename);
 
-            if (xr.ResultCode == ResultCode.OK && yr.ResultCode == ResultCode.OK)
+            if (subdir_inx != -1)
+            {
+                if (!_statistics.subdirs.ContainsKey(subdir))
+                    _statistics.subdirs.Add(subdir, new ComparisonStatistics());
+                _statistics.subdirs[subdir].files.Add(suffix + "\\" + filename);
+            }
+
+            if (xr.ResultCode == ResultCode.OK)
             {
                 double x_ratio_sat = xr.SAT / (xr.SAT + xr.UNSAT + xr.UNKNOWN);
                 double x_ratio_unsat = xr.UNSAT / (xr.SAT + xr.UNSAT + xr.UNKNOWN);
                 double x_ratio_unknown = xr.UNKNOWN / (xr.SAT + xr.UNSAT + xr.UNKNOWN);
-
-                double y_ratio_sat = yr.SAT / (yr.SAT + yr.UNSAT + yr.UNKNOWN);
-                double y_ratio_unsat = yr.UNSAT / (yr.SAT + yr.UNSAT + yr.UNKNOWN);
-                double y_ratio_unknown = yr.UNKNOWN / (yr.SAT + yr.UNSAT + yr.UNKNOWN);
-
-                if (suffix == "") _statistics.files.Add(suffix + filename);
 
                 _statistics.x_cumulativeTimeSAT += x_ratio_sat * xr.Runtime;
                 _statistics.x_cumulativeTimeUNSAT += x_ratio_unsat * xr.Runtime;
@@ -205,6 +208,33 @@ namespace Z3Data
                 _statistics.x_countSAT += xr.SAT;
                 _statistics.x_countUNSAT += xr.UNSAT;
                 _statistics.x_countUNKNOWN += xr.UNKNOWN;
+
+                if (suffix.Length > 0)
+                {                 
+                    _statistics.postfixes[suffix].x_cumulativeTimeSAT += x_ratio_sat * xr.Runtime;
+                    _statistics.postfixes[suffix].x_cumulativeTimeUNSAT += x_ratio_unsat * xr.Runtime;
+                    _statistics.postfixes[suffix].x_cumulativeTimeUNKNOWN += x_ratio_unknown * xr.Runtime;
+                    _statistics.postfixes[suffix].x_countSAT += xr.SAT;
+                    _statistics.postfixes[suffix].x_countUNSAT += xr.UNSAT;
+                    _statistics.postfixes[suffix].x_countUNKNOWN += xr.UNKNOWN;
+                }
+
+                if (subdir_inx != -1)
+                {                    
+                    _statistics.subdirs[subdir].x_cumulativeTimeSAT += x_ratio_sat * xr.Runtime;
+                    _statistics.subdirs[subdir].x_cumulativeTimeUNSAT += x_ratio_unsat * xr.Runtime;
+                    _statistics.subdirs[subdir].x_cumulativeTimeUNKNOWN += x_ratio_unknown * xr.Runtime;
+                    _statistics.subdirs[subdir].x_countSAT += xr.SAT;
+                    _statistics.subdirs[subdir].x_countUNSAT += xr.UNSAT;
+                    _statistics.subdirs[subdir].x_countUNKNOWN += xr.UNKNOWN;
+                }
+            }
+
+            if (yr.ResultCode == ResultCode.OK)
+            {
+                double y_ratio_sat = yr.SAT / (yr.SAT + yr.UNSAT + yr.UNKNOWN);
+                double y_ratio_unsat = yr.UNSAT / (yr.SAT + yr.UNSAT + yr.UNKNOWN);
+                double y_ratio_unknown = yr.UNKNOWN / (yr.SAT + yr.UNSAT + yr.UNKNOWN);
 
                 _statistics.y_cumulativeTimeSAT += y_ratio_sat * yr.Runtime;
                 _statistics.y_cumulativeTimeUNSAT += y_ratio_unsat * yr.Runtime;
@@ -215,15 +245,6 @@ namespace Z3Data
 
                 if (suffix.Length > 0)
                 {
-                    _statistics.postfixes[suffix].files.Add(filename);
-
-                    _statistics.postfixes[suffix].x_cumulativeTimeSAT += x_ratio_sat * xr.Runtime;
-                    _statistics.postfixes[suffix].x_cumulativeTimeUNSAT += x_ratio_unsat * xr.Runtime;
-                    _statistics.postfixes[suffix].x_cumulativeTimeUNKNOWN += x_ratio_unknown * xr.Runtime;
-                    _statistics.postfixes[suffix].x_countSAT += xr.SAT;
-                    _statistics.postfixes[suffix].x_countUNSAT += xr.UNSAT;
-                    _statistics.postfixes[suffix].x_countUNKNOWN += xr.UNKNOWN;
-
                     _statistics.postfixes[suffix].y_cumulativeTimeSAT += y_ratio_sat * yr.Runtime;
                     _statistics.postfixes[suffix].y_cumulativeTimeUNSAT += y_ratio_unsat * yr.Runtime;
                     _statistics.postfixes[suffix].y_cumulativeTimeUNKNOWN += y_ratio_unknown * yr.Runtime;
@@ -234,15 +255,6 @@ namespace Z3Data
 
                 if (subdir_inx != -1)
                 {
-                    _statistics.subdirs[subdir].files.Add(suffix + "\\" + filename);
-
-                    _statistics.subdirs[subdir].x_cumulativeTimeSAT += x_ratio_sat * xr.Runtime;
-                    _statistics.subdirs[subdir].x_cumulativeTimeUNSAT += x_ratio_unsat * xr.Runtime;
-                    _statistics.subdirs[subdir].x_cumulativeTimeUNKNOWN += x_ratio_unknown * xr.Runtime;
-                    _statistics.subdirs[subdir].x_countSAT += xr.SAT;
-                    _statistics.subdirs[subdir].x_countUNSAT += xr.UNSAT;
-                    _statistics.subdirs[subdir].x_countUNKNOWN += xr.UNKNOWN;
-
                     _statistics.subdirs[subdir].y_cumulativeTimeSAT += y_ratio_sat * yr.Runtime;
                     _statistics.subdirs[subdir].y_cumulativeTimeUNSAT += y_ratio_unsat * yr.Runtime;
                     _statistics.subdirs[subdir].y_cumulativeTimeUNKNOWN += y_ratio_unknown * yr.Runtime;
@@ -271,7 +283,7 @@ namespace Z3Data
         }
 
         protected void ComputeStatistics()
-        {            
+        {
             _datapoints = new List<Point>();
             _statistics = new ComparisonStatistics();
             _statistics.postfixes = new Dictionary<string, ComparisonStatistics>();
@@ -286,7 +298,7 @@ namespace Z3Data
             CSVRow yr = null;
 
             foreach (CSVRow xr in _jX.Rows)
-            {                                
+            {
                 if (!xr.Filename.StartsWith(_prefix))
                     continue;
 
@@ -324,7 +336,7 @@ namespace Z3Data
         public double ErrorY { get { return _errY; } }
         public Job JobX { get { return _jX; } }
         public Job JobY { get { return _jY; } }
-        
+
         public string NameX
         {
             get

@@ -8,6 +8,8 @@ using System.IO;
 using System.Data;
 using System.Data.OleDb;
 
+using Z3Data;
+
 namespace Nightly
 {
     public class Global : System.Web.HttpApplication
@@ -16,15 +18,15 @@ namespace Nightly
         public DateTime configDate;        
 
         internal Configuration Configuration
-        {
+        {                        
             get
             {
-#if DEBUG
-                string fn = Server.MapPath("~") + "\\config_debug.xml";
-#else
-                string fn = Server.MapPath("~") + "\\config.xml";
-#endif
-
+                #if DEBUG
+                string fn = "C:\\Nightly\\config.xml";
+                #else
+                string fn = Properties.Settings.Default.config_file;
+                #endif
+                
                 if (config == null || File.GetLastWriteTime(fn) > configDate)
                 {                    
                     config = new Configuration(fn);
@@ -35,7 +37,7 @@ namespace Nightly
         }
 
         void Application_Start(object sender, EventArgs e)
-        {
+        {            
             // Code that runs on application startup            
             Application["Configuration"] = Configuration;
         }        

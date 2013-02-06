@@ -53,6 +53,7 @@
   <ItemGroup>
     <Compile Include="Comparison.cs" />
     <Compile Include="CategoryStatistics.cs" />
+    <Compile Include="Configuration.cs" />
     <Compile Include="CSVData.cs" />
     <Compile Include="Global.cs" />
     <Compile Include="Job.cs" />

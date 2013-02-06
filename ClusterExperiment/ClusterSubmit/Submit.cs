@@ -9,114 +9,17 @@ using System.Data;
 using System.Data.SqlClient;
 using System.IO;
 using System.ComponentModel;
-using System.Xml;
 
 using SubmissionLib;
+using Z3Data;
 
 namespace ClusterSubmit
 {
-
-    class Config
-    {
-        public string cluster = "";
-        public string timeout = "";
-        public string z3_drop_dir = "";
-        public string z3_release_dir = "";
-        public string z3_exe = "";
-        public HashSet<string> alternativeClusters = new HashSet<string>();
-
-        public string db = "";
-        public string category = "";
-        public string sharedDir = @"";
-        public string executor = @"";
-        public string parameters = "";
-        public string memout = "";
-
-        public string nodegroup = "";
-        public string locality = "";
-        public string username = "";
-        public int priority = 2;
-        public string extension = "";
-        public string note = "";
-    };
-
     class Submit
     {
         public static string now()
         {
             return DateTime.Now.ToShortDateString() + " " + DateTime.Now.ToShortTimeString();
-        }
-
-        public Config LoadConfig(string configFile)
-        {
-            // Console.WriteLine(now() + ": Reading configuration from " + configFile);        
-            Config res = new Config();
-
-            XmlTextReader reader = new XmlTextReader(configFile);
-
-            while (reader.Read())
-            {
-                switch (reader.NodeType)
-                {
-                    case XmlNodeType.Element:
-                        {
-                            switch (reader.Name)
-                            {
-                                case "Cluster":
-                                    {
-                                        res.cluster = reader.GetAttribute("hostname");
-                                        res.nodegroup = reader.GetAttribute("nodegroup");
-                                        res.username = reader.GetAttribute("username");
-                                        res.executor = reader.GetAttribute("executor");
-                                        if ((res.cluster == null) || (res.nodegroup == null) ||
-                                            (res.username == null) || (res.executor == null))
-                                            throw new Exception("Invalid cluster config");
-                                    }
-                                    break;
-                                case "Database":
-                                    {
-                                        res.db = reader.GetAttribute("connectionString");
-                                        if (res.db == null)
-                                            throw new Exception("Invalid database config");
-                                    }
-                                    break;
-                                case "Job":
-                                    {
-                                        res.sharedDir = reader.GetAttribute("sharedDirectory");
-                                        res.category = reader.GetAttribute("category");
-                                        res.extension = reader.GetAttribute("extension");
-                                        res.locality = reader.GetAttribute("locality");
-                                        res.timeout = reader.GetAttribute("timeLimit");
-                                        res.memout = reader.GetAttribute("memoryLimit");
-                                        if ((res.sharedDir == null) || (res.category == null) ||
-                                            (res.extension == null) || (res.locality == null) ||
-                                            (res.timeout == null) || (res.memout == null))
-                                            throw new Exception("Invalid job config");
-                                    }
-                                    break;
-                                case "Z3":
-                                    {
-                                        res.z3_drop_dir = reader.GetAttribute("drop_dir");
-                                        res.z3_release_dir = reader.GetAttribute("release_dir");
-                                        res.z3_exe = reader.GetAttribute("exe");
-                                        res.parameters = reader.GetAttribute("parameters");
-                                        if ((res.z3_drop_dir == null) || (res.z3_release_dir == null) ||
-                                            (res.z3_exe == null) || (res.parameters == null))
-                                            throw new Exception("Invalid Z3 config");
-                                    }
-                                    break;
-                                case "Note":
-                                    res.note = reader.GetAttribute("text");
-                                    break;
-                                default: /* nothing */ break;
-                            }
-                            break;
-                        }
-                    default: /* nothing */ break;
-                }
-            }
-
-            return res;
         }
 
         public void Run(string[] args)
@@ -126,7 +29,7 @@ namespace ClusterSubmit
             w.WorkerReportsProgress = true;
             w.WorkerSupportsCancellation = false;
 
-            Config config;
+            Configuration config;
 
             if (args.Count() == 1)
             {
@@ -136,10 +39,10 @@ namespace ClusterSubmit
                     return;
                 }
                 else
-                    config = LoadConfig(args[0]);
+                    config = new Configuration(args[0]);
             }
             else
-                config = LoadConfig("config.xml");
+                config = new Configuration("config.xml");
 
 
             string executable = findBinary(config.z3_drop_dir, config.z3_release_dir, config.z3_exe);
@@ -161,7 +64,7 @@ namespace ClusterSubmit
                 }
                 sr.Close();
                 lf.Close();
-            }            
+            }
 
             bool haveBinId = false;
             int binId = 0;
@@ -171,12 +74,33 @@ namespace ClusterSubmit
                 string bestCluster = SubmissionWorker.FindCluster(config.cluster, config.alternativeClusters);
                 Console.WriteLine(now() + ": Submitting job to " + bestCluster + " with the following binary: " + executable);
 
-                w.UploadBinary(config.db, executable, ref haveBinId, ref binId);                
+                w.UploadBinary(config.db, executable, ref haveBinId, ref binId);
 
                 w.SubmitJob(config.db, config.category, config.sharedDir, config.memout, config.timeout, config.executor, config.parameters,
                             bestCluster, config.nodegroup, config.locality, config.username, config.priority, config.extension, config.note, ref haveBinId, ref binId);
 
                 saveBinaryDate(executable);
+
+                uint retries = 0;
+                if (File.Exists(config.fuzzer_target))
+                {
+                retry:
+                    if (File.GetLastWriteTime(executable) > File.GetLastWriteTime(config.fuzzer_target))
+                    {
+                        try
+                        {
+                            File.Copy(executable, config.fuzzer_target, true);
+                        }
+                        catch (Exception ex)
+                        {
+                            retries++;
+                            if (retries < config.fuzzer_max_retries)
+                                goto retry;
+                            else
+                                throw ex;
+                        }
+                    }
+                }
             }
             catch (Exception ex)
             {

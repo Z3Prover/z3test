@@ -67,15 +67,13 @@
       <Project>{796C58CF-0D64-42C3-BE17-E52EAF3CE03C}</Project>
       <Name>SubmissionLib</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Z3Data\Z3Data.csproj">
+      <Project>{3774d1e2-2fda-48aa-bafd-26511990cc1b}</Project>
+      <Name>Z3Data</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="config.xml">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <SubType>Designer</SubType>
-    </None>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
