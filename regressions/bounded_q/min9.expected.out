@@ -1,0 +1,6 @@
+(goals
+(goal
+  (>= b 6)
+  (<= a 5)
+  :precision precise :depth 4)
+)

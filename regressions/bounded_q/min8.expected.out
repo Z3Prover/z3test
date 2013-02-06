@@ -1,0 +1,12 @@
+(error "line 11 column 17: invalid command, '(' expected")
+(goals
+(goal
+  (>= b 2)
+  (forall ((x Int))
+    (or (not (<= (+ b (* (- 1) x)) 0))
+        (not (<= (+ x (* (- 1) (f x))) 0))
+        (not (<= (+ (f x) (* (- 1) a)) (- 1)))
+        (p x)))
+  (<= a 5)
+  :precision precise :depth 4)
+)

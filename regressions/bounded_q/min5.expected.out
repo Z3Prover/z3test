@@ -1,0 +1,13 @@
+(goals
+(goal
+  (<= b 10)
+  (forall ((x Int))
+    (or (not (>= x 0))
+        (not (<= (+ x (* (- 1) (f x))) 0))
+        (not (<= (+ (f x) (* (- 1) a)) 0))
+        (p x)
+        (not (<= x 5))))
+  (forall ((x Int)) (or (not (>= x 0)) (not (<= (+ x (* (- 1) (f x))) 0)) (p x)))
+  (<= (+ a (* (- 1) b)) (- 5))
+  :precision precise :depth 4)
+)
