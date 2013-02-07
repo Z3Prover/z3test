@@ -12,8 +12,9 @@ namespace Z3Data
 {
     public class ComparisonStatistics
     {
-        public double Count = 0;
+        public double Count = 0.0;
 
+        public double x_files;
         public double x_countSAT = 0.0;
         public double x_countUNSAT = 0.0;
         public double x_countUNKNOWN = 0.0;
@@ -21,6 +22,7 @@ namespace Z3Data
         public double x_cumulativeTimeUNSAT = 0.0;
         public double x_cumulativeTimeUNKNOWN = 0.0;
 
+        public double y_files;
         public double y_countSAT = 0.0;
         public double y_countUNSAT = 0.0;
         public double y_countUNKNOWN = 0.0;
@@ -28,7 +30,6 @@ namespace Z3Data
         public double y_cumulativeTimeUNSAT = 0.0;
         public double y_cumulativeTimeUNKNOWN = 0.0;
 
-        public HashSet<string> files = new HashSet<string>();
         public Dictionary<string, ComparisonStatistics> postfixes = null;
         public Dictionary<string, ComparisonStatistics> subdirs = null;
 
@@ -38,8 +39,8 @@ namespace Z3Data
         public double TimeX { get { return x_cumulativeTimeSAT + x_cumulativeTimeUNSAT + x_cumulativeTimeUNKNOWN; } }
         public double TimeY { get { return y_cumulativeTimeSAT + y_cumulativeTimeUNSAT + y_cumulativeTimeUNKNOWN; } }
 
-        public double AvgTimeX { get { return TimeX / Count; } }
-        public double AvgTimeY { get { return TimeY / Count; } }
+        public double AvgTimeX { get { return TimeX / CountX; } }
+        public double AvgTimeY { get { return TimeY / CountY; } }
 
         public double AvgSATTimeX { get { return x_cumulativeTimeSAT / x_countSAT; } }
         public double AvgUNSATTimeX { get { return x_cumulativeTimeSAT / x_countSAT; } }
@@ -52,18 +53,78 @@ namespace Z3Data
         public ArrayList deltas = new ArrayList();
         public bool deltas_sorted = false;
 
-        public double AvgDelta { get { double res = 0.0; foreach (double d in deltas) { res += d; } return res / deltas.Count; } }
+        public double DeltaMean
+        {
+            get
+            {
+                double res = 0.0;
+                foreach (double d in deltas) { res += d; }
+                return deltas.Count > 0 ? res / deltas.Count : 0.0;
+            }
+        }
 
-        public double PercentileDelta(uint p)
+        public double DeltaP(uint p)
         {
             if (!deltas_sorted) { deltas.Sort(); deltas_sorted = true; }
-            int rank = (int)Math.Round((((double)p) / 100.0 * deltas.Count) + 0.5);
+            if (deltas.Count == 0) return 0.0;            
+            int rank = (int)Math.Round((((double)p) / 100.0 * deltas.Count) - 0.5);
             return (double)deltas[rank];
         }
 
-        public double P25 { get { return PercentileDelta(25); } }
-        public double P50 { get { return PercentileDelta(50); } }
-        public double P75 { get { return PercentileDelta(75); } }
+        public double DeltaP1 { get { return DeltaP(1); } }
+        public double DeltaP25 { get { return DeltaP(25); } }
+        public double DeltaP50 { get { return DeltaP(50); } }
+        public double DeltaP75 { get { return DeltaP(75); } }
+        public double DeltaP99 { get { return DeltaP(99); } }
+
+        public double DeltaSTD
+        {
+            get
+            {
+                double mean = DeltaMean;
+                double sum = 0.0;
+                double N = deltas.Count;
+                foreach (double d in deltas)
+                    sum += (d - mean) * (d - mean);
+                return N > 1 ? Math.Sqrt((1 / (N - 1)) * sum) : 0.0;
+            }
+        }
+
+        public List<uint> Histogramm(double lost, double gained)
+        {
+            // [Lost] [>Timeout;-500] [-500;-50] [-50; -5] [-5;-1] [-.5;+.5] [+1;+5] [+5; +50] [+50; +500] [+500;<Timeout] [Gained]
+            List<uint> res = new List<uint>();
+            for (uint i = 0; i < 11; i++)
+                res.Add(0);
+
+            foreach (double d in deltas)
+            {
+                if (d <= lost)
+                    res[0]++;
+                else if (d < -500.0)
+                    res[1]++;
+                else if (d < -50.0)
+                    res[2]++;
+                else if (d < -5.0)
+                    res[3]++;
+                else if (d < -0.5)
+                    res[4]++;
+                else if (d < +0.5)
+                    res[5]++;
+                else if (d < +5.0)
+                    res[6]++;
+                else if (d < +50.0)
+                    res[7]++;
+                else if (d < +500.0)
+                    res[8]++;
+                else if (d < gained)
+                    res[9]++;
+                else
+                    res[10]++;
+            }
+
+            return res;
+        }
     };
 
     public class Comparison
@@ -129,6 +190,16 @@ namespace Z3Data
             }
         }
 
+        public List<uint> Histogramm
+        {
+            get
+            {
+                if (_statistics == null)
+                    ComputeStatistics();
+                return _statistics.Histogramm(-_tmeX, _tmeY);
+            }
+        }
+
         public ComparisonStatistics Statistics
         {
             get
@@ -171,114 +242,151 @@ namespace Z3Data
             _datapoints.Add(p);
         }
 
-        protected void AddStatistics(CSVRow xr, CSVRow yr)
+        protected string Suffix(CSVRow row)
         {
-            int liobs = xr.Filename.LastIndexOf("\\");
-            string prefix = xr.Filename.Substring(0, liobs);
-            string filename = xr.Filename.Substring(liobs + 1);
-            string suffix = xr.Filename.Substring(_prefixLength, liobs - _prefixLength);
+            int liobs = row.Filename.LastIndexOf("\\");
+            if (liobs <= _prefixLength) return "";
+            string prefix = row.Filename.Substring(0, liobs);
+            string suffix = row.Filename.Substring(_prefixLength, liobs - _prefixLength);
+            if (suffix.Length > 0 && !_statistics.postfixes.ContainsKey(suffix))
+                _statistics.postfixes.Add(suffix, new ComparisonStatistics());
+            return suffix;
+        }
+
+        protected string Subdir(CSVRow row)
+        {
+            string suffix = Suffix(row);
             int subdir_inx = suffix.IndexOf("\\");
             string subdir = subdir_inx < 0 ? "" : suffix.Substring(0, subdir_inx);
-            _statistics.Count += 1.0;
-
-            if (suffix.Length > 0 && !_statistics.postfixes.ContainsKey(suffix))
-                _statistics.postfixes.Add(suffix, new ComparisonStatistics());            
-
-            if (suffix == "")
-                _statistics.files.Add(suffix + filename);
-            else
-                _statistics.postfixes[suffix].files.Add(filename);
-
-            if (subdir_inx != -1)
+            if (subdir.Length > 0)
             {
                 if (!_statistics.subdirs.ContainsKey(subdir))
                     _statistics.subdirs.Add(subdir, new ComparisonStatistics());
-                _statistics.subdirs[subdir].files.Add(suffix + "\\" + filename);
             }
+            return subdir;
+        }
 
-            if (xr.ResultCode == ResultCode.OK)
+        protected void AddStatisticsX(CSVRow row)
+        {
+            _statistics.x_files++;
+
+            if (row.ResultCode == ResultCode.OK)
             {
-                double x_ratio_sat = xr.SAT / (xr.SAT + xr.UNSAT + xr.UNKNOWN);
-                double x_ratio_unsat = xr.UNSAT / (xr.SAT + xr.UNSAT + xr.UNKNOWN);
-                double x_ratio_unknown = xr.UNKNOWN / (xr.SAT + xr.UNSAT + xr.UNKNOWN);
+                double results = (row.SAT + row.UNSAT + row.UNKNOWN);
+                double x_ratio_sat = results == 0 ? 0 : row.SAT / results;
+                double x_ratio_unsat = results == 0 ? 0 : row.UNSAT / results;
+                double x_ratio_unknown = results == 0 ? 0 : row.UNKNOWN / results;
 
-                _statistics.x_cumulativeTimeSAT += x_ratio_sat * xr.Runtime;
-                _statistics.x_cumulativeTimeUNSAT += x_ratio_unsat * xr.Runtime;
-                _statistics.x_cumulativeTimeUNKNOWN += x_ratio_unknown * xr.Runtime;
-                _statistics.x_countSAT += xr.SAT;
-                _statistics.x_countUNSAT += xr.UNSAT;
-                _statistics.x_countUNKNOWN += xr.UNKNOWN;
+                _statistics.x_cumulativeTimeSAT += x_ratio_sat * row.Runtime;
+                _statistics.x_cumulativeTimeUNSAT += x_ratio_unsat * row.Runtime;
+                _statistics.x_cumulativeTimeUNKNOWN += x_ratio_unknown * row.Runtime;
+                _statistics.x_countSAT += row.SAT;
+                _statistics.x_countUNSAT += row.UNSAT;
+                _statistics.x_countUNKNOWN += row.UNKNOWN;
 
-                if (suffix.Length > 0)
-                {                 
-                    _statistics.postfixes[suffix].x_cumulativeTimeSAT += x_ratio_sat * xr.Runtime;
-                    _statistics.postfixes[suffix].x_cumulativeTimeUNSAT += x_ratio_unsat * xr.Runtime;
-                    _statistics.postfixes[suffix].x_cumulativeTimeUNKNOWN += x_ratio_unknown * xr.Runtime;
-                    _statistics.postfixes[suffix].x_countSAT += xr.SAT;
-                    _statistics.postfixes[suffix].x_countUNSAT += xr.UNSAT;
-                    _statistics.postfixes[suffix].x_countUNKNOWN += xr.UNKNOWN;
-                }
-
-                if (subdir_inx != -1)
-                {                    
-                    _statistics.subdirs[subdir].x_cumulativeTimeSAT += x_ratio_sat * xr.Runtime;
-                    _statistics.subdirs[subdir].x_cumulativeTimeUNSAT += x_ratio_unsat * xr.Runtime;
-                    _statistics.subdirs[subdir].x_cumulativeTimeUNKNOWN += x_ratio_unknown * xr.Runtime;
-                    _statistics.subdirs[subdir].x_countSAT += xr.SAT;
-                    _statistics.subdirs[subdir].x_countUNSAT += xr.UNSAT;
-                    _statistics.subdirs[subdir].x_countUNKNOWN += xr.UNKNOWN;
-                }
-            }
-
-            if (yr.ResultCode == ResultCode.OK)
-            {
-                double y_ratio_sat = yr.SAT / (yr.SAT + yr.UNSAT + yr.UNKNOWN);
-                double y_ratio_unsat = yr.UNSAT / (yr.SAT + yr.UNSAT + yr.UNKNOWN);
-                double y_ratio_unknown = yr.UNKNOWN / (yr.SAT + yr.UNSAT + yr.UNKNOWN);
-
-                _statistics.y_cumulativeTimeSAT += y_ratio_sat * yr.Runtime;
-                _statistics.y_cumulativeTimeUNSAT += y_ratio_unsat * yr.Runtime;
-                _statistics.y_cumulativeTimeUNKNOWN += y_ratio_unknown * yr.Runtime;
-                _statistics.y_countSAT += yr.SAT;
-                _statistics.y_countUNSAT += yr.UNSAT;
-                _statistics.y_countUNKNOWN += yr.UNKNOWN;
+                string suffix = Suffix(row);
+                string subdir = Subdir(row);
 
                 if (suffix.Length > 0)
                 {
-                    _statistics.postfixes[suffix].y_cumulativeTimeSAT += y_ratio_sat * yr.Runtime;
-                    _statistics.postfixes[suffix].y_cumulativeTimeUNSAT += y_ratio_unsat * yr.Runtime;
-                    _statistics.postfixes[suffix].y_cumulativeTimeUNKNOWN += y_ratio_unknown * yr.Runtime;
-                    _statistics.postfixes[suffix].y_countSAT += yr.SAT;
-                    _statistics.postfixes[suffix].y_countUNSAT += yr.UNSAT;
-                    _statistics.postfixes[suffix].y_countUNKNOWN += yr.UNKNOWN;
+                    _statistics.postfixes[suffix].x_files++;
+                    _statistics.postfixes[suffix].x_cumulativeTimeSAT += x_ratio_sat * row.Runtime;
+                    _statistics.postfixes[suffix].x_cumulativeTimeUNSAT += x_ratio_unsat * row.Runtime;
+                    _statistics.postfixes[suffix].x_cumulativeTimeUNKNOWN += x_ratio_unknown * row.Runtime;
+                    _statistics.postfixes[suffix].x_countSAT += row.SAT;
+                    _statistics.postfixes[suffix].x_countUNSAT += row.UNSAT;
+                    _statistics.postfixes[suffix].x_countUNKNOWN += row.UNKNOWN;
                 }
 
-                if (subdir_inx != -1)
+                if (subdir.Length > 0)
                 {
-                    _statistics.subdirs[subdir].y_cumulativeTimeSAT += y_ratio_sat * yr.Runtime;
-                    _statistics.subdirs[subdir].y_cumulativeTimeUNSAT += y_ratio_unsat * yr.Runtime;
-                    _statistics.subdirs[subdir].y_cumulativeTimeUNKNOWN += y_ratio_unknown * yr.Runtime;
-                    _statistics.subdirs[subdir].y_countSAT += yr.SAT;
-                    _statistics.subdirs[subdir].y_countUNSAT += yr.UNSAT;
-                    _statistics.subdirs[subdir].y_countUNKNOWN += yr.UNKNOWN;
+                    _statistics.subdirs[subdir].x_files++;
+                    _statistics.subdirs[subdir].x_cumulativeTimeSAT += x_ratio_sat * row.Runtime;
+                    _statistics.subdirs[subdir].x_cumulativeTimeUNSAT += x_ratio_unsat * row.Runtime;
+                    _statistics.subdirs[subdir].x_cumulativeTimeUNKNOWN += x_ratio_unknown * row.Runtime;
+                    _statistics.subdirs[subdir].x_countSAT += row.SAT;
+                    _statistics.subdirs[subdir].x_countUNSAT += row.UNSAT;
+                    _statistics.subdirs[subdir].x_countUNKNOWN += row.UNKNOWN;
                 }
             }
+        }
 
-            double x_rt = (xr.ResultCode == ResultCode.OK) ? xr.Runtime : _tmeX;
-            double y_rt = (yr.ResultCode == ResultCode.OK) ? yr.Runtime : _tmeY;
-            double delta = y_rt - x_rt;
+        protected void AddStatisticsY(CSVRow row)
+        {
+            _statistics.y_files++;
 
-            _statistics.deltas.Add(delta);
-            _statistics.deltas_sorted = false;
-            if (suffix.Length > 0)
+            if (row.ResultCode == ResultCode.OK)
             {
-                _statistics.postfixes[suffix].deltas.Add(delta);
-                _statistics.postfixes[suffix].deltas_sorted = false;
+                double results = (row.SAT + row.UNSAT + row.UNKNOWN);
+                double y_ratio_sat = (results == 0) ? 0 : row.SAT / results;
+                double y_ratio_unsat = (results == 0) ? 0 : row.UNSAT / results;
+                double y_ratio_unknown = (results == 0) ? 0 : row.UNKNOWN / results;
+
+                _statistics.y_cumulativeTimeSAT += y_ratio_sat * row.Runtime;
+                _statistics.y_cumulativeTimeUNSAT += y_ratio_unsat * row.Runtime;
+                _statistics.y_cumulativeTimeUNKNOWN += y_ratio_unknown * row.Runtime;
+                _statistics.y_countSAT += row.SAT;
+                _statistics.y_countUNSAT += row.UNSAT;
+                _statistics.y_countUNKNOWN += row.UNKNOWN;
+
+                string suffix = Suffix(row);
+                string subdir = Subdir(row);
+
+                if (suffix.Length > 0)
+                {
+                    _statistics.postfixes[suffix].y_files++;
+                    _statistics.postfixes[suffix].y_cumulativeTimeSAT += y_ratio_sat * row.Runtime;
+                    _statistics.postfixes[suffix].y_cumulativeTimeUNSAT += y_ratio_unsat * row.Runtime;
+                    _statistics.postfixes[suffix].y_cumulativeTimeUNKNOWN += y_ratio_unknown * row.Runtime;
+                    _statistics.postfixes[suffix].y_countSAT += row.SAT;
+                    _statistics.postfixes[suffix].y_countUNSAT += row.UNSAT;
+                    _statistics.postfixes[suffix].y_countUNKNOWN += row.UNKNOWN;
+                }
+
+                if (subdir.Length > 0)
+                {
+                    _statistics.subdirs[subdir].y_files++;
+                    _statistics.subdirs[subdir].y_cumulativeTimeSAT += y_ratio_sat * row.Runtime;
+                    _statistics.subdirs[subdir].y_cumulativeTimeUNSAT += y_ratio_unsat * row.Runtime;
+                    _statistics.subdirs[subdir].y_cumulativeTimeUNKNOWN += y_ratio_unknown * row.Runtime;
+                    _statistics.subdirs[subdir].y_countSAT += row.SAT;
+                    _statistics.subdirs[subdir].y_countUNSAT += row.UNSAT;
+                    _statistics.subdirs[subdir].y_countUNKNOWN += row.UNKNOWN;
+                }
             }
-            if (subdir_inx != -1)
+        }
+
+        protected void AddStatisticsXY(CSVRow xr, CSVRow yr)
+        {
+            string suffix = Suffix(xr);
+            string subdir = Subdir(xr);
+
+            _statistics.Count += 1.0;
+
+            if (xr.ResultCode == ResultCode.OK || yr.ResultCode == ResultCode.OK)
             {
-                _statistics.subdirs[subdir].deltas.Add(delta);
-                _statistics.subdirs[subdir].deltas_sorted = false;
+                double delta;
+
+                if (xr.ResultCode == ResultCode.OK && yr.ResultCode == ResultCode.OK)
+                    delta = yr.Runtime - xr.Runtime;
+                else if (xr.ResultCode == ResultCode.OK && yr.ResultCode != ResultCode.OK)
+                    delta = -_tmeY;
+                else
+                    delta = _tmeX;
+
+                _statistics.deltas.Add(delta);
+                _statistics.deltas_sorted = false;
+                if (suffix.Length > 0)
+                {
+                    _statistics.postfixes[suffix].deltas.Add(delta);
+                    _statistics.postfixes[suffix].deltas_sorted = false;
+                }
+
+                if (subdir.Length > 0)
+                {
+                    _statistics.subdirs[subdir].deltas.Add(delta);
+                    _statistics.subdirs[subdir].deltas_sorted = false;
+                }
             }
         }
 
@@ -306,7 +414,7 @@ namespace Z3Data
                 {
                     if (yit.MoveNext()) yr = yit.Current; else yr = null;
                     if (yr != null && yr.Filename.CompareTo(xr.Filename) >= 0) break;
-                    _y_but_not_x++;
+                    if (yr.Filename.StartsWith(_prefix)) AddStatisticsY(yr);
                 }
                 while (yr != null);
 
@@ -315,12 +423,15 @@ namespace Z3Data
 
                 if (yr.Filename.CompareTo(xr.Filename) != 0)
                 {
-                    _x_but_not_y++;
+                    AddStatisticsX(xr);
                     continue;
                 }
 
+                AddStatisticsX(xr);
+                AddStatisticsY(yr);
+                AddStatisticsXY(xr, yr);
+
                 AddDataPoint(xr, yr);
-                AddStatistics(xr, yr);
             }
         }
 
