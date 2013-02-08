@@ -31,6 +31,9 @@
                         <asp:PlaceHolder runat="server" ID="phHisto" />
                     </tr>
                     <tr>
+                        <td colspan="2"><asp:Panel runat="server" Height="15" /></td>
+                    </tr>
+                    <tr>
                         <td align="center">
                             <asp:Panel ID="p1" runat="server" BorderWidth="1" Width="200">
                                 <asp:Label ID="l1" runat="server" Font-Bold="true" ForeColor="Black">Select job for X axis:</asp:Label>
@@ -55,15 +58,6 @@
                                 </asp:Table>
                             </asp:Panel>
                         </td>
-                    </tr>
-
-                    <tr>
-                        <td>
-                            <asp:Panel ID="Panel1" runat="server" Height="15" />
-                        </td>
-                    </tr>
-
-                    <tr>
                         <td align="center">
                             <asp:Panel ID="p2" runat="server" BorderWidth="1" Width="200">
                                 <asp:Label ID="l2" runat="server" Font-Bold="true" ForeColor="Black">Select job for Y axis:</asp:Label>
@@ -84,13 +78,7 @@
                                         <asp:TableCell>
                                             <asp:TextBox ID="txtIDY" runat="server" Width="100" />
                                         </asp:TableCell></asp:TableRow></asp:Table></asp:Panel></td></tr><tr>
-                        <td>
-                            <asp:Panel ID="Panel2" runat="server" Height="15" />
-                        </td>
-                    </tr>
-
-                    <tr>
-                        <td style="text-align: right">
+                        <td style="text-align: right" colspan="2">
                             <asp:Button ID="btnUpdate" runat="server" Text="Update" />
                         </td>
                     </tr>

@@ -257,7 +257,7 @@ namespace Z3Data
         {
             string suffix = Suffix(row);
             int subdir_inx = suffix.IndexOf("\\");
-            string subdir = subdir_inx < 0 ? "" : suffix.Substring(0, subdir_inx);
+            string subdir = suffix == "" ? "" : (subdir_inx < 0 ? suffix : suffix.Substring(0, subdir_inx));
             if (subdir.Length > 0)
             {
                 if (!_statistics.subdirs.ContainsKey(subdir))

@@ -24,6 +24,7 @@ namespace Nightly
         Configuration config = null;
         public DateTime _startTime = DateTime.Now;
         Comparison cmp = null;
+        uint top_n = 100;
 
         public TimeSpan RenderTime
         {
@@ -51,6 +52,8 @@ namespace Nightly
             {
                 config = Application["Configuration"] as Configuration;
 
+                string px = null, py = null;
+
                 if (!IsPostBack)
                 {
                     Timeline tl = new Timeline(Server.MapPath("~"), config.datadir, config.timeline);
@@ -62,10 +65,7 @@ namespace Nightly
                     lstTagX.Items.Add(new ListItem("Latest", latest));
                     lstTagX.Items.Add(new ListItem("Penultimate", penultimate));
                     lstTagY.Items.Add(new ListItem("Latest", latest));
-                    lstTagY.Items.Add(new ListItem("Penultimate", penultimate));
-
-                    lstTagX.SelectedIndex = 1;
-                    lstTagY.SelectedIndex = 0;
+                    lstTagY.Items.Add(new ListItem("Penultimate", penultimate));                    
 
                     foreach (KeyValuePair<string, uint> kvp in config.tags)
                     {
@@ -74,44 +74,52 @@ namespace Nightly
                         lstTagY.Items.Add(li);
                     }
 
-                    string px = Request.Params.Get("jobX");
-                    string py = Request.Params.Get("jobY");
+                    px = Request.Params.Get("jobX");
+                    py = Request.Params.Get("jobY");
                     Prefix = Request.Params.Get("prefix");
 
                     if (px == null) rbnTagX.Checked = true; else { txtIDX.Text = px; rbnIDX.Checked = true; }
                     if (py == null) rbnTagY.Checked = true; else { txtIDY.Text = py; rbnIDY.Checked = true; }
 
-                    // JX = "1693";
-                    // JY = "1812";
+                    if (px != null)
+                    {
+                        if (px == latest)
+                        {
+                            rbnTagX.Checked = true;
+                            lstTagX.SelectedValue = latest;
+                        }
+                        else if (config.tags.HasTag(Convert.ToUInt32(px)))
+                        {
+                            rbnTagX.Checked = true;
+                            lstTagX.SelectedValue = px;
+                        }
+                        else
+                            lstTagX.SelectedValue = penultimate;
+                    }
+                    else
+                        lstTagX.SelectedValue = penultimate;
+
+                    if (py != null)
+                    {
+                        if (py == penultimate)
+                        {
+                            rbnTagY.Checked = true;
+                            lstTagY.SelectedValue = penultimate;
+                        }
+                        else if (config.tags.HasTag(Convert.ToUInt32(py)))
+                        {
+                            rbnTagY.Checked = true;
+                            lstTagY.SelectedValue = py;
+                        }
+                        else
+                            lstTagY.SelectedValue = latest;
+                    }
+                    else
+                        lstTagY.SelectedValue = latest;
                 }
 
-                JX = rbnTagX.Checked ? lstTagX.SelectedValue : txtIDX.Text;
-                JY = rbnTagY.Checked ? lstTagY.SelectedValue : txtIDY.Text;
-
-                try
-                {
-                    lstTagX.SelectedValue = JX;
-                    rbnTagX.Checked = true;
-                    rbnIDX.Checked = false;
-                }
-                catch (ArgumentOutOfRangeException)
-                {
-                    rbnTagX.Checked = false;
-                    rbnIDX.Checked = true;
-                }
-
-                try
-                {
-                    lstTagY.SelectedValue = JY;
-                    rbnTagY.Checked = true;
-                    rbnIDY.Checked = false;
-                }
-                catch (ArgumentOutOfRangeException)
-                {
-                    rbnTagY.Checked = false;
-                    rbnIDY.Checked = true;
-                }
-
+                JX = px != null ? px : rbnTagX.Checked ? lstTagX.SelectedValue : txtIDX.Text;
+                JY = py != null ? py : rbnTagY.Checked ? lstTagY.SelectedValue : txtIDY.Text;                
 
                 Job jX = null, jY = null;
 
@@ -287,6 +295,7 @@ namespace Nightly
         {
             TableRow row = new TableRow();
             TableCell cell = new TableCell();
+            cell.HorizontalAlign = HorizontalAlign.Left;
             cell.Text = cat;
             row.Cells.Add(cell);
             cell = new TableCell();
@@ -316,14 +325,18 @@ namespace Nightly
             TableRow row = new TableRow();
             TableHeaderCell thc = new TableHeaderCell();
             thc.Text = "";
+            thc.HorizontalAlign = HorizontalAlign.Left;
             row.Cells.Add(thc);
             thc = new TableHeaderCell();
+            thc.HorizontalAlign = HorizontalAlign.Center;
             thc.Text = cmp.ShortNameX;
             row.Cells.Add(thc);
             thc = new TableHeaderCell();
+            thc.HorizontalAlign = HorizontalAlign.Center;
             thc.Text = cmp.ShortNameY;
             row.Cells.Add(thc);
             thc = new TableHeaderCell();
+            thc.HorizontalAlign = HorizontalAlign.Center;
             thc.Text = "Relative";
             row.Cells.Add(thc);
             t.Rows.Add(row);
@@ -354,7 +367,75 @@ namespace Nightly
             t.Rows.Add(buildStatisticsRow("Avg. Time/Result (UNSAT):", cs.x_cumulativeTimeUNSAT / cs.x_countUNSAT, cs.y_cumulativeTimeUNSAT / cs.y_countUNSAT, "sec.", 100.0 * (((cs.y_cumulativeTimeUNSAT / cs.y_countUNSAT) / (cs.x_cumulativeTimeUNSAT / cs.x_countUNSAT)) - 1.0), "%", Color.Red, Color.Green));
             t.Rows.Add(buildStatisticsRow("Avg. Time/Result (UNKNOWN):", cs.x_cumulativeTimeUNKNOWN / cs.x_countUNKNOWN, cs.y_cumulativeTimeUNKNOWN / cs.y_countUNKNOWN, "sec.", 100.0 * (((cs.y_cumulativeTimeUNKNOWN / cs.y_countUNKNOWN) / (cs.x_cumulativeTimeUNKNOWN / cs.x_countUNKNOWN)) - 1.0), "%", Color.Red, Color.Green));
 
-            p.Controls.Add(t);
+
+            Table t2 = new Table();
+            row = new TableRow();
+            thc = new TableHeaderCell();
+            thc.Text = "Statistic";
+            thc.HorizontalAlign = HorizontalAlign.Left;
+            row.Cells.Add(thc);
+            thc = new TableHeaderCell();
+            thc.Text = "Value";
+            thc.HorizontalAlign = HorizontalAlign.Left;
+            row.Cells.Add(thc);
+            t2.Rows.Add(row);
+
+            row = new TableRow();
+            tc = new TableCell();
+            tc.Text = "Mean Delta";
+            tc.HorizontalAlign = HorizontalAlign.Left;
+            row.Cells.Add(tc);
+            tc = new TableCell();
+            tc.HorizontalAlign = HorizontalAlign.Right;
+            tc.Text = cmp.Statistics.DeltaMean.ToString("F3");
+            row.Cells.Add(tc);
+            t2.Rows.Add(row);
+
+            row = new TableRow();
+            tc = new TableCell();
+            tc.Text = "Dispersion Delta (Std. Dev.)";
+            tc.HorizontalAlign = HorizontalAlign.Left;
+            row.Cells.Add(tc);
+            tc = new TableCell();
+            tc.HorizontalAlign = HorizontalAlign.Right;
+            tc.Text = cmp.Statistics.DeltaSTD.ToString("F3");
+            row.Cells.Add(tc);
+            t2.Rows.Add(row);
+
+            row = new TableRow();
+            tc = new TableCell();
+            tc.Text = "Median Delta (P50)";
+            tc.HorizontalAlign = HorizontalAlign.Left;
+            row.Cells.Add(tc);
+            tc = new TableCell();
+            tc.HorizontalAlign = HorizontalAlign.Right;
+            tc.Text = cmp.Statistics.DeltaP50.ToString("F3");
+            row.Cells.Add(tc);
+            t2.Rows.Add(row);
+
+            row = new TableRow();
+            tc = new TableCell();
+            tc.Text = "[P1;P99]";
+            tc.HorizontalAlign = HorizontalAlign.Left;
+            row.Cells.Add(tc);
+            tc = new TableCell();
+            tc.HorizontalAlign = HorizontalAlign.Right;
+            tc.Text = "[" + cmp.Statistics.DeltaP1.ToString("F2") + ";" + cmp.Statistics.DeltaP99.ToString("F2") + "]";
+            row.Cells.Add(tc);
+            t2.Rows.Add(row);
+
+            Table bigtable = new Table();
+            TableRow bigrow = new TableRow();
+            TableCell bigcell = new TableCell();
+            bigcell.HorizontalAlign = HorizontalAlign.Center;
+            bigcell.Controls.Add(t);
+            bigrow.Cells.Add(bigcell);
+            bigcell = new TableCell();
+            bigcell.HorizontalAlign = HorizontalAlign.Center;
+            bigcell.Controls.Add(t2);
+            bigrow.Cells.Add(bigcell);
+            bigtable.Rows.Add(bigrow);
+            p.Controls.Add(bigtable);
             return p;
         }
 
@@ -375,8 +456,8 @@ namespace Nightly
             tc.Tabs.Add(tabStats);
 
             tabStats = new TabPanel();
-            tabStats.HeaderTemplate = new TabHeaderTemplate(AlertLevel.None, "Mean Happiness [Top 20 Users]", "A rating of the users by mean happiness.");
-            tabStats.Controls.Add(buildMeanHappinessPanelUsers());
+            tabStats.HeaderTemplate = new TabHeaderTemplate(AlertLevel.None, "Mean Happiness [Top " + top_n + " Users]", "A rating of the users by mean happiness.");
+            tabStats.Controls.Add(buildMeanHappinessPanelUsers(top_n));
             tc.Tabs.Add(tabStats);
 
             tabStats = new TabPanel();
@@ -385,8 +466,8 @@ namespace Nightly
             tc.Tabs.Add(tabStats);
 
             tabStats = new TabPanel();
-            tabStats.HeaderTemplate = new TabHeaderTemplate(AlertLevel.None, "Dispersion Happiness [Top 20 Users]", "A rating of the users by dispersion happiness.");
-            tabStats.Controls.Add(buildDispersionHappinessPanelUsers());
+            tabStats.HeaderTemplate = new TabHeaderTemplate(AlertLevel.None, "Dispersion Happiness [Top " + top_n + " Users]", "A rating of the users by dispersion happiness.");
+            tabStats.Controls.Add(buildDispersionHappinessPanelUsers(top_n));
             tc.Tabs.Add(tabStats);
 
             return tc;
@@ -398,7 +479,7 @@ namespace Nightly
             TableCell c = new TableCell();
 
             Label l = new Label();
-            l.Text = string.Format("<a href='" + selfLink(Prefix + name.Replace('\\', '|')) + "' style='text-decoration:none;'>{0}</a>:", name);
+            l.Text = string.Format("<a href='" + selfLink(Prefix + (Prefix != "" ? "|" : "") + name.Replace('\\', '|')) + "' style='text-decoration:none;'>{0}</a>:", name);
             c.Controls.Add(l);
             r.Cells.Add(c);
 
@@ -464,7 +545,7 @@ namespace Nightly
             return 0;
         }
 
-        protected Panel buildDispersionHappinessPanelUsers()
+        protected Panel buildDispersionHappinessPanelUsers(uint n)
         {
             ComparisonStatistics cs = cmp.Statistics;
 
@@ -493,7 +574,7 @@ namespace Nightly
             foreach (string s in sds)
             {
                 t.Rows.Add(buildDispersionRow(s, cmp.Statistics.postfixes[s].DeltaSTD, vs, Color.Green, Color.Red));
-                if (++count == 20) break;
+                if (++count == n) break;
             }
 
             p.Controls.Add(t);
@@ -506,7 +587,7 @@ namespace Nightly
             TableCell c = new TableCell();
 
             Label l = new Label();
-            l.Text = string.Format("<a href='" + selfLink(Prefix + name.Replace('\\', '|')) + "' style='text-decoration:none;'>{0}</a>:", name);
+            l.Text = string.Format("<a href='" + selfLink(Prefix + (Prefix != "" ? "|" : "") + name.Replace('\\', '|')) + "' style='text-decoration:none;'>{0}</a>:", name);
             c.Controls.Add(l);
             r.Cells.Add(c);
 
@@ -574,7 +655,7 @@ namespace Nightly
             return 0;
         }
 
-        protected Panel buildMeanHappinessPanelUsers()
+        protected Panel buildMeanHappinessPanelUsers(uint n)
         {
             ComparisonStatistics cs = cmp.Statistics;
 
@@ -601,7 +682,7 @@ namespace Nightly
             foreach (string s in sds)
             {
                 t.Rows.Add(buildMeanRow(s, cmp.Statistics.postfixes[s].DeltaMean, Color.Green, Color.Red));
-                if (++count == 20) break;
+                if (++count == n) break;
             }
 
             p.Controls.Add(t);
@@ -654,7 +735,7 @@ namespace Nightly
 
             res.Controls.Add(p);
 
-            return p;
+            return res;
         }
 
         public Chart buildChart()
@@ -959,8 +1040,7 @@ namespace Nightly
                 serSTD.IsVisibleInLegend = true;
 
                 double mean = cmp.Statistics.DeltaMean;
-                double mean_log = mean == 0 ? 0 : Math.Log10(Math.Abs(cmp.Statistics.DeltaMean));
-                mean_log *= Math.Sign(mean);
+                double mean_log = Math.Abs(mean) < 0.1 ? 0.0 : Math.Sign(mean) * Math.Log10(Math.Abs(10 * mean)) / Math.Log10(10);
 
                 double std = cmp.Statistics.DeltaSTD;
                 double std_1_log = Math.Abs(std) < 0.1 ? 0.0 : Math.Sign(std) * Math.Log10(Math.Abs(10 * std)) / Math.Log10(10);
