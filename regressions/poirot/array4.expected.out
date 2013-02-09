@@ -1,0 +1,15 @@
+(goals
+(goal
+  (forall ((c!0 Int) (c!1 Bool) (c!2 Int) (c!3 Int) (c!4 Int) (c!5 Int))
+    (= (A1!0 c!0 c!1 c!2 c!3 c!4 c!5)
+       (ite (= a c!0)
+            (ite (and c!1 (= c c!2))
+                 (B!2 c!3 c!4 c!5)
+                 (A2!1 b c!1 c!2 c!3 c!4 c!5))
+            (A1!0 c!0 c!1 c!2 c!3 c!4 c!5))))
+  :precision precise :depth 3)
+)
+(extension-model-converter
+  (A1 ((_ curry 2) ((_ curry 3) (_ as-array A1!0))))
+  (A2 ((_ curry 2) ((_ curry 3) (_ as-array A2!1))))
+  (B (_ as-array B!2)))
