@@ -17,3 +17,7 @@ PYTHON="python"
 JAVA="java"
 BUILDDIR="build"
 
+# C#
+CSC="csc.exe"
+CSDRIVER="driver.cs"
+CSTEMP="cstest.exe"

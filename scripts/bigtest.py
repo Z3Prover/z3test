@@ -25,6 +25,8 @@ def bigtest():
                     util.test_benchmarks_using_latest('regressions/smt2-debug', branch=b, debug=d, clang=c)
                     util.test_benchmarks_using_latest('regressions/smt2-extra', branch=b, debug=d, clang=c)
                     util.test_pyscripts_using_latest('regressions/python', branch=b, debug=d, clang=c)
+            if util.is_windows():
+                util.test_cs_using_latest('regressions/cs', branch=b, debug=d, clang=False)
     util.buildz3(branch='mcsat', everything=True, clean=True, debug=True,  java=False, static=False, jobs=config.NUMJOBS, clang=False)
     util.test_pyscripts_using_latest('regressions/mcsat', branch='mcsat', debug=True, clang=False)
     # util.test_benchmarks_using_latest('regressions/smt2', branch='mcsat', debug=True, clang=False)

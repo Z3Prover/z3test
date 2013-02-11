@@ -25,16 +25,15 @@ class Test
             foreach (BitVecExpr p in powers)
                 slow = ctx.MkOr(slow, ctx.MkEq(x, p));
 
-            Console.WriteLine(fast);
+	    TestDriver.CheckString(fast, "(and (not (= x #x00000000)) (= (bvand x (bvsub x #x00000001)) #x00000000))");
 
             Solver s = ctx.MkSolver();
             s.Assert(ctx.MkNot(ctx.MkEq(fast, slow)));
-            Console.WriteLine(s.Check());
+            TestDriver.CheckUNSAT(s.Check());
 
-            Console.WriteLine("buggy version");
             s = ctx.MkSolver();
             s.Assert(ctx.MkNot(step_zero));
-            Console.WriteLine(s.Check());
+            TestDriver.CheckSAT(s.Check());
         }
     }
 }

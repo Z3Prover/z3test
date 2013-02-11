@@ -19,8 +19,9 @@ class Test
             IntExpr s, r;
             s = ctx.MkIntConst("s");
             r = ctx.MkIntConst("r");
-            Console.WriteLine(ctx.MkAdd(x, ctx.MkInt2Real(y), ctx.MkReal(1), ctx.MkAdd(a, ctx.MkInt2Real(s))));
-            Console.WriteLine(ctx.MkAdd(ctx.MkInt2Real(y), c));
+            TestDriver.CheckString(ctx.MkAdd(x, ctx.MkInt2Real(y), ctx.MkReal(1), ctx.MkAdd(a, ctx.MkInt2Real(s))),
+                        "(+ x (to_real y) 1.0 a (to_real s))");
+            TestDriver.CheckString(ctx.MkAdd(ctx.MkInt2Real(y), c), "(+ (to_real y) c)");
         }
     }
 }

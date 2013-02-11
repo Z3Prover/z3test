@@ -308,6 +308,62 @@ def test_pyscripts_using_latest(scriptdir, branch="unstable", debug=True, clang=
     bdir  = get_builddir(branch, debug, clang)
     test_pyscripts(os.path.join(z3dir, bdir), scriptdir, ext, timeout_duration)
 
+def exec_cs_compile(args):
+    if subprocess.call(args) != 0:
+        raise Exception("Compilation of '%s' failed" % file)
+    return True
+
+def exec_cs():
+    if subprocess.call(config.CSTEMP) != 0:
+        raise Exception("Execution of '%s' failed" % (config.CSTEMP))
+    return True
+
+def test_cs(z3libdir, csdir, ext="cs", VS64=False, timeout_duration=60.0):
+    print "Testing C# at", csdir, "using", z3libdir
+    error = False
+    platform_arg = "/platform:x86"
+    if VS64:
+        platform_arg = "/platform:x64"
+    shutil.copyfile("%s/Microsoft.Z3.dll" % z3libdir, "Microsoft.Z3.dll")
+    with setenv('PATH', os.getenv("PATH") + ";" + z3libdir):
+        for file in filter(lambda f: f.endswith(ext), os.listdir(csdir)):
+            if file == config.CSDRIVER:
+                continue
+            file = os.path.join(csdir, file)
+            print "Testing", file
+            try:
+                # Compile.
+                if timeout(exec_cs_compile,
+                           args=[[config.CSC, "/nologo", 
+                                  "/reference:%s\Microsoft.Z3.dll" % z3libdir, 
+                                  "/out:%s" % (config.CSTEMP), 
+                                  platform_arg, 
+                                  "%s\%s" % (csdir, config.CSDRIVER), 
+                                  file]],
+                           timeout_duration=timeout_duration,
+                           default=False) == False:
+                    raise Exception("Timeout compiling '%s' at '%s' using '%s'" % (file, csdir, z3libdir))
+                # Run.
+                if timeout(exec_cs,
+                           args=[],
+                           timeout_duration=timeout_duration,
+                           default=False) == False:
+                    raise Exception("Timeout executing '%s' at '%s' using '%s'" % (file, csdir, z3libdir)) 
+            except Exception as ex:
+                print "Failed"
+                print ex
+                error = True
+            os.remove(config.CSTEMP)
+    os.remove("Microsoft.Z3.dll")
+    if error:
+        raise Exception("Found errors testing C# at '%s' using '%s'" % (csdir, z3libdir))
+
+    
+def test_cs_using_latest(csdir, branch="unstable", debug=True, clang=False, ext="cs", VS64=False, timeout_duration=60.0):
+    z3dir = find_z3depot()
+    bdir  = get_builddir(branch, debug, clang)
+    test_cs(os.path.join(z3dir, bdir), csdir, ext, VS64, timeout_duration)
+
 # buildz3(java=True, everything=True)
 # testjavaex()                
 # testz3ex('cpp_example', "unstable", True, True)
