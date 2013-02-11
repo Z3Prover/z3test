@@ -1,24 +1,3 @@
-(set-option :print-success false)
-(set-info :smt-lib-version 2.0)
-(set-option :AUTO_CONFIG false)
-(set-option :MODEL_HIDE_UNUSED_PARTITIONS false)
-(set-option :MODEL_V2 true)
-(set-option :ASYNC_COMMANDS false)
-(set-option :PHASE_SELECTION 0)
-(set-option :RESTART_STRATEGY 0)
-(set-option :RESTART_FACTOR |1.5|)
-(set-option :ARITH_RANDOM_INITIAL_VALUE true)
-(set-option :CASE_SPLIT 3)
-(set-option :DELAY_UNITS true)
-(set-option :DELAY_UNITS_THRESHOLD 16)
-(set-option :NNF_SK_HACK true)
-(set-option :MBQI false)
-(set-option :QI_EAGER_THRESHOLD 100)
-(set-option :QI_COST |"(+ weight generation)"|)
-(set-option :TYPE_CHECK true)
-(set-option :BV_REFLECT true)
-; done setting options
-
 ; Boogie universal background predicate
 ; Copyright (c) 2004-2010, Microsoft Corp.
 (set-info :category "industrial")
