@@ -1,0 +1,9 @@
+(goals
+(goal
+  (forall ((x Int)) (= (h x) (+ 2 (h (+ 2 (h x))))))
+  (= (h a) (- 1))
+  :precision precise :depth 1)
+)
+(extension-model-converter
+  (f (+ (g (:var 0)) 1))
+  (g (+ (h (:var 0)) 1)))

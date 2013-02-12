@@ -1,0 +1,8 @@
+(goals
+(goal
+  (not (<= (g a) 0))
+  (= (g (g b)) 0)
+  :precision precise :depth 1)
+)
+(extension-model-converter
+  (f (g (:var 0))))
