@@ -2,18 +2,18 @@
 (goal
   (not (<= (f ((_ curry 1) (_ as-array A1!0))) 0))
   (not (<= 0 (f ((_ curry 1) (_ as-array A2!1)))))
-  (not (<= (f ((_ curry 1) (_ as-array a!4!5))) 0))
-  (not (<= (g ((_ curry 1) (_ as-array a!4!5))) 0))
+  (not (<= (f ((_ curry 1) (_ as-array array!4!5))) 0))
+  (not (<= (g ((_ curry 1) (_ as-array array!4!5))) 0))
   (forall ((c!0 Int) (c!1 Bool))
-    (= (a!4!5 c!0 c!1) (ite (= 10 c!0) (B!3 c!1) (A3!2 c!0 c!1))))
+    (= (array!4!5 c!0 c!1) (ite (= 10 c!0) (B!3 c!1) (A3!2 c!0 c!1))))
   :precision precise :depth 3)
 )
 (concat-model-converter
-(filter-model-converter a!4)
+(filter-model-converter array!4)
 (extension-model-converter
   (A1 ((_ curry 1) (_ as-array A1!0)))
   (A2 ((_ curry 1) (_ as-array A2!1)))
   (A3 ((_ curry 1) (_ as-array A3!2)))
   (B (_ as-array B!3))
-  (a!4 ((_ curry 1) (_ as-array a!4!5))))
+  (array!4 ((_ curry 1) (_ as-array array!4!5))))
 )
