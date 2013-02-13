@@ -1,0 +1,26 @@
+(goals
+(goal
+  (not (<= (f ((_ curry 1) (_ as-array A1!0))) 0))
+  (not (<= 0 (f ((_ curry 1) (_ as-array A2!1)))))
+  (not (<= (f ((_ curry 1) (_ as-array array!4!5))) 0))
+  (forall ((c!1 Int) (c!2 Bool))
+    (= (g!6 ((_ curry 1) (_ as-array array!4!5)) c!1 c!2) (A1!0 c!1 c!2)))
+  (forall ((c!3 Int) (c!4 Bool))
+    (= (g!6 ((_ curry 1) (_ as-array array!7!8)) c!3 c!4) (A2!1 c!3 c!4)))
+  (forall ((c!5 Int) (c!6 Bool))
+    (= (array!4!5 c!5 c!6) (ite (= 10 c!5) (B!3 c!6) (A3!2 c!5 c!6))))
+  (forall ((c!7 Int) (c!8 Bool))
+    (= (array!7!8 c!7 c!8) (ite (= 11 c!7) (B!3 c!8) (A3!2 c!7 c!8))))
+  :precision precise :depth 3)
+)
+(concat-model-converter
+(filter-model-converter array!4 array!7)
+(extension-model-converter
+  (A1 ((_ curry 1) (_ as-array A1!0)))
+  (A2 ((_ curry 1) (_ as-array A2!1)))
+  (A3 ((_ curry 1) (_ as-array A3!2)))
+  (B (_ as-array B!3))
+  (array!4 ((_ curry 1) (_ as-array array!4!5)))
+  (g (select ((_ curry 1) ((_ curry 1) (_ as-array g!6))) (:var 0)))
+  (array!7 ((_ curry 1) (_ as-array array!7!8))))
+)

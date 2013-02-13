@@ -1,0 +1,16 @@
+(_ as-array f)
+(_ as-array f)
+(Array Int Real Int Int)
+((_ curry 1) (uncurry A))
+(Array Int Real (Array Int Int))
+A
+(Array Int (Array Real Int Int))
+(= A ((_ curry 2) (uncurry A)))
+(Array Int Real Bool (Array Real Int Int))
+(Array Int Real Bool Real Int Int)
+((_ curry 1) (uncurry B))
+B
+((_ curry 3) (uncurry B))
+((_ curry 4) (uncurry B))
+(error "line 24 column 34: curry parameter must be greater than 0 and less than the arity of the array argument")
+(Array Int (Array Real Bool Real Int Int))

@@ -1,0 +1,17 @@
+(goals
+(goal
+  (forall ((c!1 Int) (c!2 Bool))
+    (= (A1!0 c!1 c!2)
+       (ite b (ite (= c c!1) (f!2 d c!2) (A2!1 c!1 c!2)) (A3!3 c!1 c!2))))
+  (forall ((x Int) (y Int) (z Bool))
+    (or (not (<= x y)) (<= (A1!0 x z) (A1!0 y z))))
+  (forall ((c!5 Int) (c!6 Bool)) (= (A2!1 c!5 c!6) (g!4 c d c!5 c!6)))
+  (forall ((c!7 Int) (c!8 Bool)) (= (A3!3 c!7 c!8) (g!4 0 c c!7 c!8)))
+  :precision precise :depth 3)
+)
+(extension-model-converter
+  (A1 ((_ curry 1) (_ as-array A1!0)))
+  (A2 ((_ curry 1) (_ as-array A2!1)))
+  (f (select ((_ curry 1) (_ as-array f!2)) (:var 0)))
+  (A3 ((_ curry 1) (_ as-array A3!3)))
+  (g (select ((_ curry 1) ((_ curry 1) (_ as-array g!4))) (:var 0) (:var 1))))
