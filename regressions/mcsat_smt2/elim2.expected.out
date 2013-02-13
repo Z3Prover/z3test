@@ -1,0 +1,9 @@
+(goals
+(goal
+  (= a (_ as-array f))
+  (forall ((x Int)) (= (f x) x))
+  (not (<= c 0))
+  :precision precise :depth 2)
+)
+(extension-model-converter
+  (g (:var 0)))
