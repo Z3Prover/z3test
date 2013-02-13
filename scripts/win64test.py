@@ -19,7 +19,7 @@ def win64test(b="unstable"):
         if d:
             util.test_benchmarks_using_latest('regressions/smt2-debug', branch=b, debug=d, clang=False)
         util.test_pyscripts_using_latest('regressions/python', branch=b, debug=d, clang=False)
-        util.test_cs_using_latest('regressions/python', branch=b, debug=d, VS64=True, clang=False)
+        util.test_cs_using_latest('regressions/cs', branch=b, debug=d, VS64=True, clang=False)
 
 if __name__ == "__main__":
     win64test()
