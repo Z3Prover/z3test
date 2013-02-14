@@ -24,4 +24,4 @@ success
 (error "line 27 column 21: unknown sort 'BitVec'")
 success
 success
-(error "line 32 column 30: invalid function application, sort mismatch on argument at position 1")
+(error "line 32 column 30: invalid function application for to_real, sort mismatch on argument at position 1, expected Int but given Real")
