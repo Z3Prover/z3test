@@ -65,7 +65,7 @@ namespace Nightly
                     lstTagX.Items.Add(new ListItem("Latest", latest));
                     lstTagX.Items.Add(new ListItem("Penultimate", penultimate));
                     lstTagY.Items.Add(new ListItem("Latest", latest));
-                    lstTagY.Items.Add(new ListItem("Penultimate", penultimate));                    
+                    lstTagY.Items.Add(new ListItem("Penultimate", penultimate));
 
                     foreach (KeyValuePair<string, uint> kvp in config.tags)
                     {
@@ -119,7 +119,7 @@ namespace Nightly
                 }
 
                 JX = px != null ? px : rbnTagX.Checked ? lstTagX.SelectedValue : txtIDX.Text;
-                JY = py != null ? py : rbnTagY.Checked ? lstTagY.SelectedValue : txtIDY.Text;                
+                JY = py != null ? py : rbnTagY.Checked ? lstTagY.SelectedValue : txtIDY.Text;
 
                 Job jX = null, jY = null;
 
@@ -898,7 +898,7 @@ namespace Nightly
                         default: ser.Points.AddXY(p.x, p.y); break;
                     }
 
-                    if (p.tooltip != null && p.tooltip != "") ser.Points.Last().ToolTip = p.tooltip;
+                    // if (p.tooltip != null && p.tooltip != "") ser.Points.Last().ToolTip = p.tooltip;
                 }
 
                 chart.Series.Add(ser);
@@ -1116,6 +1116,48 @@ namespace Nightly
             }
 
             return chart;
+        }
+
+        protected void btnCSV_Click(object sender, EventArgs e)
+        {
+            string filename = JX + "_vs_" + JY;
+            if (Prefix != "") filename += " " + Prefix.Replace('\\', '|');
+            filename += ".csv";
+
+            Response.ContentType = "text/csv";
+            Response.AppendHeader("Content-Disposition", "attachment; filename=" + filename);
+
+            Response.Write("File,[" + JX + "],[" + JY + "],Dispersion" + Environment.NewLine);
+
+            foreach (Comparison.Point q in cmp.Datapoints)
+            {
+                string r = q.tooltip + ",";
+                r += (q.x == cmp.TimeOutX) ? "TIME" : (q.x == cmp.MemOutX) ? "MEMORY" : (q.x == cmp.ErrorX) ? "ERROR" : q.x.ToString();
+                r += ",";
+                r += (q.y == cmp.TimeOutY) ? "TIME" : (q.y == cmp.MemOutY) ? "MEMORY" : (q.y == cmp.ErrorY) ? "ERROR" : q.y.ToString();
+                r += ",";
+
+                if (q.x >= cmp.TimeOutX && q.y >= cmp.TimeOutY)
+                {
+                    r += "0,";
+                }
+                else if (q.x < cmp.TimeOutX && q.y < cmp.TimeOutY)
+                {
+                    r += (q.x - q.y).ToString() + ",";
+                }
+                else if (q.x < cmp.TimeOutX && q.y >= cmp.TimeOutY)
+                {
+                    r += (-cmp.TimeOutY).ToString() + ",";
+                }
+                else
+                {
+                    r += (cmp.TimeOutX).ToString() + ",";
+                }
+
+                Response.Write(r + Environment.NewLine);
+            }
+
+            Response.End();
         }
     }
 }

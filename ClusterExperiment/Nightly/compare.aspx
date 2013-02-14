@@ -82,6 +82,10 @@
                             <asp:Button ID="btnUpdate" runat="server" Text="Update" />
                         </td>
                     </tr>
+                    <tr>
+                        <td style="text-align: right" colspan="2">
+                            <asp:Button ID="btnCSV" runat="server" Text="CSV ..." OnClick="btnCSV_Click" /></td>
+                    </tr>
                 </table>
 
             </td>

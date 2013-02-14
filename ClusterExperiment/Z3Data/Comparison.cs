@@ -216,7 +216,7 @@ namespace Z3Data
             double yrt = (yr.Runtime < _minY) ? _minY : yr.Runtime;
 
             Comparison.Point p = new Point();
-            // p.tooltip = xr.Filename;
+            p.tooltip = xr.Filename;
 
             switch (xr.ResultCode)
             {
