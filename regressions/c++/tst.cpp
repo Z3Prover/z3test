@@ -191,6 +191,35 @@ void tst6() {
     check(ctx.bv_val("10",8), "#x0a");
 }
 
+void check(check_result p, check_result e) {
+    if (p != e) {
+        std::cerr << "failed, EXPECTED\n" << e << "\nPRODUCED\n" << p << "\n";
+        error_code = 1;
+    }
+}
+
+void check(bool b) {
+    if (!b) {
+        std::cerr << "failed assertion\n";
+        error_code = 1;
+    }
+}
+
+void tst7() {
+     context c;
+     sort I = c.int_sort();
+
+     solver s(c);
+     params p(c);
+     p.set(":unsat-core", true);
+     s.set(p);
+     s.add(c.num_val(0,I)>0,"p1");
+     check(s.check(), unsat);
+     expr_vector v = s.unsat_core();
+     check(v.size() == 1);
+     check(v[0], "p1");
+}
+
 int main() {
     tst1();
     tst2();
@@ -198,5 +227,6 @@ int main() {
     tst4();
     tst5();
     tst6();
+    tst7();
     return error_code;
 }
