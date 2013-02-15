@@ -1,0 +1,5 @@
+(goals
+(goal
+  (forall ((A (Array Int Bool))) (= (f (store A 0 true)) 0))
+  :precision precise :depth 3)
+)
