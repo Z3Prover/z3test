@@ -1,0 +1,15 @@
+(goals
+(goal
+  (forall ((x Int)) (! (not (<= (f x) x)) :pattern ((f x))))
+  (forall ((x Int) (y Int) (z Int))
+    (! (or (not (and (p x y) (p y z))) (p x z))
+       :pattern ((p x y) (p y z))
+       :pattern ((p x y) (p x z))))
+  :precision precise :depth 1)
+)
+(goals
+(goal
+  (forall ((x Int)) (> (f x) x))
+  (forall ((x Int) (y Int) (z Int)) (=> (and (p x y) (p y z)) (p x z)))
+  :precision precise :depth 1)
+)
