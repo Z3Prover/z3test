@@ -365,7 +365,11 @@ namespace SubmissionLib
                 int max = 0;
                 ISchedulerCounters ctrs = scheduler.GetCounters();
                 if (locality == "Socket")
+                {
                     max = ctrs.TotalSockets;
+                    // HACK: Ask for at least 20 sockets.
+                    hpcJob.MinimumNumberOfSockets = 20;
+                }
                 else if (locality == "Core")
                     max = ctrs.TotalCores;
                 else if (locality == "Node")

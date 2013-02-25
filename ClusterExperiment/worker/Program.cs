@@ -606,9 +606,9 @@ namespace worker
             while (!reader.EndOfStream)
             {
                 string l = reader.ReadLine(); // does not contain \r\n
-                if (l == "sat" || l == "SAT" || l == "SATISFIABLE" || l == "VERIFICATION FAILED")
+                if (l == "sat" || l == "SAT" || l == "SATISFIABLE") // || l == "VERIFICATION FAILED")
                     res.sat++;
-                else if (l == "unsat" || l == "UNSAT" || l == "UNSATISFIABLE" || l == "VERIFICATION SUCCESSFUL")
+                else if (l == "unsat" || l == "UNSAT" || l == "UNSATISFIABLE") // || l == "VERIFICATION SUCCESSFUL")
                     res.unsat++;
                 else if (l == "unknown" || l == "UNKNOWN" || l == "INDETERMINATE")
                     res.other++;
@@ -683,7 +683,7 @@ namespace worker
                 resultCode = 5; // TIMEOUT
             else if (r.exitCode == "MEMORY")
                 resultCode = 6; // MEMORYOUT
-            else if (r.exitCode == "0" || r.exitCode == "10" || r.exitCode == "20")
+            else if (r.exitCode == "0") // || r.exitCode == "10" || r.exitCode == "20")
             {
                 resultCode = 0; // OK
                 if (result.sat == 0 && result.unsat == 0 && result.other == 0)
