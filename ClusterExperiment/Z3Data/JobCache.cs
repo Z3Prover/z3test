@@ -163,7 +163,13 @@ namespace Z3Data
                 foreach (CSVRow r in _reference.Rows)
                 {
                     if (r.ResultCode == ResultCode.OK)
-                        referenceTimes.Add(r.Filename, r.Runtime);
+                    {
+                        // Duplicates?
+                        if (referenceTimes.ContainsKey(r.Filename))
+                            referenceTimes[r.Filename] = r.Runtime;
+                        else
+                            referenceTimes.Add(r.Filename, r.Runtime);
+                    }
                 }
             }
 

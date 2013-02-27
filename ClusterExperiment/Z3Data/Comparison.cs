@@ -66,7 +66,7 @@ namespace Z3Data
         public double DeltaP(uint p)
         {
             if (!deltas_sorted) { deltas.Sort(); deltas_sorted = true; }
-            if (deltas.Count == 0) return 0.0;            
+            if (deltas.Count == 0) return 0.0;
             int rank = (int)Math.Round((((double)p) / 100.0 * deltas.Count) - 0.5);
             return (double)deltas[rank];
         }
@@ -403,35 +403,46 @@ namespace Z3Data
             _jY.Rows.Sort(csvrow_lt);
 
             List<CSVRow>.Enumerator yit = _jY.Rows.GetEnumerator();
-            CSVRow yr = null;
+            yit.MoveNext();
+            CSVRow yr = yit.Current;
+            if (yr.Filename.StartsWith(_prefix)) AddStatisticsY(yr);
+            string last_x = null, last_y = null;
 
             foreach (CSVRow xr in _jX.Rows)
             {
-                if (!xr.Filename.StartsWith(_prefix))
+                if (!xr.Filename.StartsWith(_prefix) ||
+                    (last_x != null && last_x.CompareTo(xr.Filename) == 0)) // ignore duplicates.                    
                     continue;
 
                 do
                 {
-                    if (yit.MoveNext()) yr = yit.Current; else yr = null;
-                    if (yr != null && yr.Filename.CompareTo(xr.Filename) >= 0) break;
-                    if (yr.Filename.StartsWith(_prefix)) AddStatisticsY(yr);
+                    if (yr.Filename.CompareTo(xr.Filename) >= 0) break;
+                    last_y = yr.Filename;
+                    while (yit.Current.Filename == last_y) // ignore duplicates.
+                    {
+                        if (!yit.MoveNext())
+                        {
+                            yr = null; break;
+                        }
+                        else
+                            yr = yit.Current;
+                    }
+                    if (yr != null && yr.Filename.StartsWith(_prefix)) AddStatisticsY(yr);
                 }
                 while (yr != null);
 
                 if (yr == null)
                     continue;
 
-                if (yr.Filename.CompareTo(xr.Filename) != 0)
+                AddStatisticsX(xr);
+                
+                if (yr.Filename.CompareTo(xr.Filename) == 0)
                 {
-                    AddStatisticsX(xr);
-                    continue;
+                    AddStatisticsXY(xr, yr);
+                    AddDataPoint(xr, yr);
                 }
 
-                AddStatisticsX(xr);
-                AddStatisticsY(yr);
-                AddStatisticsXY(xr, yr);
-
-                AddDataPoint(xr, yr);
+                last_x = xr.Filename;
             }
         }
 
