@@ -19,7 +19,8 @@ def smalltest(b="unstable"):
         util.test_pyscripts_using_latest('regressions/python', branch=b, debug=d, clang=False)
         if util.is_windows():
             util.test_cs_using_latest('regressions/cs', branch=b, debug=d, clang=False)
-            
+
+           
 if __name__ == "__main__":
     smalltest()
     exit(0)
