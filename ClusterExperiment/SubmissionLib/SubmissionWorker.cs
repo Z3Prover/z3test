@@ -375,6 +375,7 @@ namespace SubmissionLib
                 else if (locality == "Node")
                     max = ctrs.TotalNodes;
 
+                max = 40;
 
                 //int totalJobs = Directory.GetFiles(sharedDir + "\\" + category + "\\", "*." + extension, SearchOption.AllDirectories).Length;
                 //if (totalJobs < max)
@@ -610,7 +611,7 @@ namespace SubmissionLib
             if (move)
             {
                 SqlCommand cmd = new SqlCommand("DELETE FROM Data WHERE ExperimentID=" + jobID + "; " +
-                                                "DELETE FROM Experimentsd WHERE ID=" + jobID + ";", fromSQL);
+                                                "DELETE FROM Experiments WHERE ID=" + jobID + ";", fromSQL);
                 cmd.ExecuteNonQuery();
             }
 
