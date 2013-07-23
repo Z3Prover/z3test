@@ -138,7 +138,7 @@ namespace worker
               SQLRead("SELECT Category,SharedDir,Extension,Memout,Timeout,Parameters,Binary FROM Experiments WHERE ID=" + eId, sql);
 
             if (r.Count() == 0)
-              throw new Exception("Experiment not found.");
+                throw new Exception("Experiment not found.");
 
             Experiment res = new Experiment();
 
@@ -366,9 +366,9 @@ namespace worker
                     // This is a zip file.
                     Package pkg = Package.Open(e.localExecutable, FileMode.Open);
                     PackageRelationshipCollection rels = pkg.GetRelationships();
-                    
+
                     if (rels.Count() != 1)
-                      throw new Exception("Missing package relationships");
+                        throw new Exception("Missing package relationships");
 
                     PackageRelationship main = rels.First();
 
@@ -387,8 +387,9 @@ namespace worker
                     }
                 }
 
-                File.Move(e.localExecutable, e.localExecutable + "-" + myName);
-                e.localExecutable += "-" + myName;
+                string ext = Path.GetExtension(e.localExecutable);
+                File.Move(e.localExecutable, e.localExecutable + "-" + myName + ext);                
+                e.localExecutable += "-" + myName + ext;
             }
         }
 
@@ -485,6 +486,12 @@ namespace worker
                 p.OutputDataReceived += (sender, args) => WriteToStream(sender, args, out_writer, ref output_limit);
                 p.ErrorDataReceived += (sender, args) => WriteToStream(sender, args, err_writer, ref error_limit);
                 bool exhausted_time = false, exhausted_memory = false;
+
+                if (e.localExecutable.EndsWith(".cmd") || e.localExecutable.EndsWith(".bat"))
+                {
+                    p.StartInfo.FileName = @"C:\Windows\System32\cmd.exe";
+                    p.StartInfo.Arguments = "/c " + e.localExecutable + " " + p.StartInfo.Arguments;
+                }
 
             retry:
                 try
@@ -641,7 +648,7 @@ namespace worker
         {
             r.stderr.Seek(0, SeekOrigin.Begin);
             r.stdout.Seek(0, SeekOrigin.Begin);
-            StreamReader reader = new StreamReader(r.stderr);            
+            StreamReader reader = new StreamReader(r.stderr);
             int res = -1;
             while (!reader.EndOfStream && res == -1)
             {
@@ -826,62 +833,118 @@ namespace worker
 
         int main(string[] args)
         {
-            if (args.Count() != 2 && args.Count() != 3)
+            if (args.Count() != 1 && args.Count() != 2 && args.Count() != 3)
                 return 1;
 
             try
             {
-                string eId = args[0];
-                sql = new SqlConnection((args.Count() == 3) ? args[2] : args[1]);
-                myName = Environment.MachineName + "-" + Process.GetCurrentProcess().Id.ToString();
-                Experiment e = null;
-
-                Console.CancelKeyPress += delegate
+                if (args.Count() > 1)
                 {
-                    Console.WriteLine("Worker was interrupted. Removing entries from jobqueue.");
-                    ensureConnected();
-                    SqlCommand cmd = new SqlCommand("UPDATE JobQueue SET Worker=NULL,AcquireTime=NULL WHERE worker='" + myName + "';", sql);
-                    cmd.ExecuteNonQuery();
-                    sql.Close();
-                };
+                    string eId = args[0];
+                    sql = new SqlConnection((args.Count() == 3) ? args[2] : args[1]);
+                    myName = Environment.MachineName + "-" + Process.GetCurrentProcess().Id.ToString();
+                    Experiment e = null;
 
-                try
-                {
-                    e = getExperiment(eId);
-
-                    if (args.Count() == 3)
+                    Console.CancelKeyPress += delegate
                     {
-                        if (args[1] == "?")
-                            populate(e);
-                        else if (args[1] == "!")
-                            recovery(e);
+                        Console.WriteLine("Worker was interrupted. Removing entries from jobqueue.");
+                        ensureConnected();
+                        SqlCommand cmd = new SqlCommand("UPDATE JobQueue SET Worker=NULL,AcquireTime=NULL WHERE worker='" + myName + "';", sql);
+                        cmd.ExecuteNonQuery();
+                        sql.Close();
+                    };
+
+                    try
+                    {
+                        e = getExperiment(eId);
+
+                        if (args.Count() == 3)
+                        {
+                            if (args[1] == "?")
+                                populate(e);
+                            else if (args[1] == "!")
+                                recovery(e);
+                            else
+                                oneJob(e, Convert.ToInt32(args[1]));
+                        }
                         else
-                            oneJob(e, Convert.ToInt32(args[1]));
+                        {
+                            manyJobs(e);
+                        }
+                        saveResults();
                     }
-                    else
+                    catch (Exception ex)
                     {
-                        manyJobs(e);
+                        Console.WriteLine("Worker dying because of: " + ex.Message);
+                        saveResults();
+                        return 1;
                     }
-                    saveResults();
-                }
-                catch (Exception ex)
-                {
-                    Console.WriteLine("Worker dying because of: " + ex.Message);
-                    saveResults();
-                    return 1;
-                }
 
-                try
-                {
-                    if (e != null && Directory.Exists(e.localDir))
+                    try
                     {
-                        Console.WriteLine("Removing temporary directory...");
-                        Directory.Delete(e.localDir, true);
+                        if (e != null && Directory.Exists(e.localDir))
+                        {
+                            Console.WriteLine("Removing temporary directory...");
+                            Directory.Delete(e.localDir, true);
+                        }
                     }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine("Error removing temporary directory: " + ex.Message);
+                    }
+
                 }
-                catch (Exception ex)
+                else
                 {
-                    Console.WriteLine("Error removing temporary directory: " + ex.Message);
+                    // Any-experiment job.                    
+                    sql = new SqlConnection(args[0]);
+                    myName = Environment.MachineName + "-" + Process.GetCurrentProcess().Id.ToString();
+
+                    Console.CancelKeyPress += delegate
+                    {
+                        Console.WriteLine("Worker was interrupted. Removing entries from jobqueue.");
+                        ensureConnected();
+                        SqlCommand cmd = new SqlCommand("UPDATE JobQueue SET Worker=NULL,AcquireTime=NULL WHERE worker='" + myName + "';", sql);
+                        cmd.ExecuteNonQuery();
+                        sql.Close();
+                    };
+
+                    try
+                    {
+                        while (true)
+                        {
+                            ensureConnected();
+                            Dictionary<string, Object> r =
+                                SQLRead("select TOP(1) experimentid from jobqueue order by NEWID()", sql);
+
+                            if (r.Count() == 0)
+                                break;
+
+                            Experiment e = getExperiment(r["experimentid"].ToString());
+
+                            manyJobs(e);
+                            saveResults();
+
+                            try
+                            {
+                                if (e != null && Directory.Exists(e.localDir))
+                                {
+                                    Console.WriteLine("Removing temporary directory...");
+                                    Directory.Delete(e.localDir, true);
+                                }
+                            }
+                            catch (Exception ex)
+                            {
+                                Console.WriteLine("Error removing temporary directory: " + ex.Message);
+                            }
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine("Worker dying because of: " + ex.Message);
+                        saveResults();
+                        return 1;
+                    }
                 }
 
                 try
