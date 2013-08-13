@@ -417,7 +417,7 @@ namespace ClusterExperiment
                 }
                 f.WriteLine();
 
-                // Wite headers
+                // Write headers
                 f.Write(",");
                 for (int i = 0; i < dataGrid.SelectedItems.Count; i++)
                 {
