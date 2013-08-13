@@ -127,25 +127,68 @@ namespace ClusterExperiment
                 string bin = dlg.txtExecutable.Text;
                 if (dlg.chkMostRecentBinary.IsChecked == true)
                     bin = "";
-                Submission sdlg = new Submission(txtDatabase.Text, dlg.txtCategories.Text,
-                                                 dlg.txtSharedDir.Text,
-                                                 dlg.txtMemout.Text, dlg.txtTimeout.Text, dlg.txtExecutor.Text,
-                                                 bin, dlg.txtParameters.Text,
-                                                 dlg.txtCluster.Text, dlg.cmbNodeGroup.Text, dlg.cmbLocality.Text,
-                                                 WindowsIdentity.GetCurrent().Name.ToString(),
-                                                 dlg.cmbPriority.SelectedIndex,
-                                                 dlg.txtExtension.Text, dlg.txtNote.Text,
-                                                 dlg.chkParametricity.IsChecked == true,
-                                                 dlg.txtParametricityFrom.Text,
-                                                 dlg.txtParametricityTo.Text,
-                                                 dlg.txtParametricityStep.Text);
-                sdlg.Owner = this;
-                sdlg.ShowDialog();
 
-                if (sdlg.lastError != null)
-                    System.Windows.MessageBox.Show(this, sdlg.lastError.Message, "Error",
-                    System.Windows.MessageBoxButton.OK,
-                    System.Windows.MessageBoxImage.Error);
+                //double[] var_decay = { 0.35, 0.55, 0.8 };  // 0.1, 0.35 , 0.55, 0.8 };
+                //double[] cla_decay = { 0.1, 0.4, 0.65, 0.9 };
+                //int[] rfirst = { 10, 100, 1000, 10000 };
+                //double[] rinc = { 2.0, 3.0, 4.0, 5.0 };
+
+                //for (int i = 0; i < 3; i++)
+                //    for (int j = 0; j < 4; j++)
+                //        for (int k = 0; k < 4; k++)
+                //            for (int l = 0; l < 4; l++)
+                //            {
+                //                string ps = " -var-decay=" + var_decay[i].ToString() +
+                //                            " -cla-decay=" + cla_decay[j].ToString() +
+                //                            " -rfirst=" + rfirst[k].ToString() +
+                //                            " -rinc=" + rinc[l].ToString();
+
+                //                Submission sdlg = new Submission(txtDatabase.Text, dlg.txtCategories.Text,
+                //                                                 dlg.txtSharedDir.Text,
+                //                                                 dlg.txtMemout.Text, dlg.txtTimeout.Text, dlg.txtExecutor.Text,
+                //                                                 bin, ps,
+                //                                                 dlg.txtCluster.Text, dlg.cmbNodeGroup.Text, dlg.cmbLocality.Text,
+                //                                                 WindowsIdentity.GetCurrent().Name.ToString(),
+                //                                                 dlg.cmbPriority.SelectedIndex,
+                //                                                 dlg.txtExtension.Text, 
+                //                                                 dlg.txtNote.Text + "(" + var_decay[i].ToString() + 
+                //                                                 "/" + cla_decay[j].ToString() + 
+                //                                                 "/" + rfirst[k].ToString() + 
+                //                                                 "/" + rinc[l].ToString() + ") ",
+                //                                                 dlg.chkParametricity.IsChecked == true,
+                //                                                 dlg.txtParametricityFrom.Text,
+                //                                                 dlg.txtParametricityTo.Text,
+                //                                                 dlg.txtParametricityStep.Text);
+                //                sdlg.Owner = this;
+                //                sdlg.ShowDialog();
+
+                //                if (sdlg.lastError != null)
+                //                    System.Windows.MessageBox.Show(this, sdlg.lastError.Message, "Error",
+                //                    System.Windows.MessageBoxButton.OK,
+                //                    System.Windows.MessageBoxImage.Error);
+
+                //            }
+
+
+                 Submission sdlg = new Submission(txtDatabase.Text, dlg.txtCategories.Text,
+                                                    dlg.txtSharedDir.Text,
+                                                    dlg.txtMemout.Text, dlg.txtTimeout.Text, dlg.txtExecutor.Text,
+                                                    bin, dlg.txtParameters.Text,
+                                                    dlg.txtCluster.Text, dlg.cmbNodeGroup.Text, dlg.cmbLocality.Text,
+                                                    WindowsIdentity.GetCurrent().Name.ToString(),
+                                                    dlg.cmbPriority.SelectedIndex,
+                                                    dlg.txtExtension.Text, dlg.txtNote.Text,
+                                                    dlg.chkParametricity.IsChecked == true,
+                                                    dlg.txtParametricityFrom.Text,
+                                                    dlg.txtParametricityTo.Text,
+                                                    dlg.txtParametricityStep.Text);
+                 sdlg.Owner = this;
+                 sdlg.ShowDialog();
+
+                 if (sdlg.lastError != null)
+                     System.Windows.MessageBox.Show(this, sdlg.lastError.Message, "Error",
+                     System.Windows.MessageBoxButton.OK,
+                     System.Windows.MessageBoxImage.Error);
 
                 updateState();
             }
@@ -308,6 +351,13 @@ namespace ClusterExperiment
             Mouse.OverrideCursor = null;
         }
 
+        class CSVDatum
+        {
+            public int? rv = null;
+            public double runtime = 0.0;
+            public int sat = 0, unsat = 0;
+        }
+
         void showSave(object target, ExecutedRoutedEventArgs e)
         {
             System.Windows.Forms.SaveFileDialog dlg = new System.Windows.Forms.SaveFileDialog();
@@ -319,59 +369,85 @@ namespace ClusterExperiment
             if (dlg.ShowDialog() == System.Windows.Forms.DialogResult.OK)
             {
                 Mouse.OverrideCursor = System.Windows.Input.Cursors.Wait;
-
                 StreamWriter f = new StreamWriter(dlg.FileName, false);
 
-                DataRowView rowView = (DataRowView)dataGrid.SelectedItems[0];
-                int pivot_id = (int)rowView["ID"];
-                string cmdStr = "SELECT s as Filename,";
-                string selectStr = "j_" + pivot_id + ".Returnvalue as R" + pivot_id + ",j_" + pivot_id + ".Runtime as T" + pivot_id + 
-                                   ",j_" + pivot_id + ".SAT as SAT" + pivot_id + ",j_" + pivot_id + ".UNSAT as UNSAT" + pivot_id;
-                string fromStr = "FROM Strings, Data as j_" + pivot_id + "";
-                string condStr = "WHERE j_" + pivot_id + ".FilenameP=Strings.ID AND j_" + pivot_id + ".ExperimentID=" + pivot_id;
+                Dictionary<string, Dictionary<int, CSVDatum>> data = 
+                    new Dictionary<string, Dictionary<int, CSVDatum>>();
 
-                for (int i = 1; i < dataGrid.SelectedItems.Count; i++)
-                {
-                    rowView = (DataRowView)dataGrid.SelectedItems[i];
-                    int id = (int)rowView["ID"];
-
-                    selectStr += ",j_" + id + ".Returnvalue as R" + id + ",j_" + id + ".Runtime as T" + id +
-                                 ",j_" + id + ".SAT as SAT" + id + ",j_" + id + ".UNSAT as UNSAT" + id;
-                    fromStr += ", Data as j_" + id;
-                    condStr += " AND j_" + id + ".ExperimentID=" + id + " AND j_" + id + ".FilenameP=j_" + pivot_id + ".FilenameP";
-                }
-
-                cmdStr += selectStr + " " + fromStr + " " + condStr + " ORDER BY Filename";
-
+                // Headers and data
                 f.Write(",");
                 for (int i = 0; i < dataGrid.SelectedItems.Count; i++)
                 {
-                    rowView = (DataRowView)dataGrid.SelectedItems[i];
+                    DataRowView rowView = (DataRowView)dataGrid.SelectedItems[i];
                     int id = (int)rowView["ID"];
                     SqlCommand c = new SqlCommand("SELECT Parameters FROM Experiments WHERE ID=" + id.ToString(), sql);
-                    SqlDataReader rd = c.ExecuteReader();                    
-                    if (rd.Read())
-                        f.Write((string)rd[0]);                    
+                    c.CommandTimeout = 0;
+
+                    SqlDataReader rd = c.ExecuteReader();
+                    if (rd.Read()) 
+                        f.Write(((string)rd[0]).Trim(' '));
                     rd.Close();
                     f.Write(",,,,");
+
+                    c = new SqlCommand("SELECT s as Filename," +
+                                       " Returnvalue," +
+                                       " Runtime," +
+                                       " SAT," +
+                                       " UNSAT" +
+                                       " FROM Strings, Data WHERE" +
+                                       " Strings.ID=Data.FilenameP AND" +
+                                       " Data.ExperimentID=" + id.ToString(), sql);
+                    c.CommandTimeout = 0;
+                    rd = c.ExecuteReader();
+
+                    while (rd.Read())
+                    {
+                        string fn = (string)rd[0];
+                        CSVDatum cur = new CSVDatum();
+                        cur.rv = (rd[1].Equals(System.DBNull.Value)) ? null : (int?)rd[1];
+                        cur.runtime = (double)rd[2];
+                        cur.sat = (int)rd[3];
+                        cur.unsat = (int)rd[4];
+                        if (!data.ContainsKey(fn))
+                            data.Add(fn, new Dictionary<int, CSVDatum>());
+                        data[fn].Add(id, cur);
+                    }
+
+                    rd.Close();
                 }
                 f.WriteLine();
 
-                SqlCommand cmd = new SqlCommand(cmdStr, sql);
-                SqlDataReader r = cmd.ExecuteReader();
-
-                for (int i = 0; i < r.FieldCount; i++)
-                    f.Write(r.GetName(i) + ",");
+                // Wite headers
+                f.Write(",");
+                for (int i = 0; i < dataGrid.SelectedItems.Count; i++)
+                {
+                    DataRowView rowView = (DataRowView)dataGrid.SelectedItems[i];
+                    int id = (int)rowView["ID"];
+                    f.Write("R" + id + ",T" + id + ",SAT" + id + ",UNSAT" + id + ",");
+                }
                 f.WriteLine();
 
-                while (r.Read())
+                // Write data.
+                foreach(KeyValuePair<string, Dictionary<int, CSVDatum>> d in data.OrderBy(x => x.Key))
                 {
-                    for (int i = 0; i < r.FieldCount; i++)
-                        f.Write(r[i] + ",");
+                    f.Write(d.Key + ",");
+
+                    foreach (KeyValuePair<int, CSVDatum> x in d.Value.OrderBy(x => x.Key))
+                    {
+                        if (x.Value == null)
+                            f.Write("MISSING,,,,");
+                        else
+                        {
+                            f.Write(x.Value.rv + ",");
+                            f.Write(x.Value.runtime + ",");
+                            f.Write(x.Value.sat + ",");
+                            f.Write(x.Value.unsat + ",");
+                        }
+                    }
+
                     f.WriteLine();
                 }
 
-                r.Close();
                 f.Close();
             }
 
