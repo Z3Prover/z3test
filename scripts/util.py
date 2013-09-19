@@ -91,7 +91,7 @@ def find_z3depot():
         p = new_p
 
 def gitcheckout(branch):
-    if subprocess.call([config.GIT, 'checkout', branch]) != 0:
+    if subprocess.call([config.GIT, 'checkout', '-f', branch]) != 0:
         raise Exception("Failed to checkout branch '%s' at '%s'" % (branch, os.getcwd()))
 
 def gitpull(branch):
