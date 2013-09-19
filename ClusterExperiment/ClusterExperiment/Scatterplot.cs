@@ -162,6 +162,24 @@ namespace ClusterExperiment
                 newSeries.MarkerColor = Color.Blue;
                 newSeries.XAxisType = AxisType.Primary;
                 newSeries.YAxisType = AxisType.Primary;
+
+                chart.Series.Add("Winners");
+                newSeries = chart.Series.Last();
+                newSeries.ChartType = SeriesChartType.FastPoint;
+                newSeries.MarkerStyle = MarkerStyle.Cross;
+                newSeries.MarkerSize = 6;
+                newSeries.MarkerColor = Color.Green;
+                newSeries.XAxisType = AxisType.Primary;
+                newSeries.YAxisType = AxisType.Primary;
+
+                chart.Series.Add("Losers");
+                newSeries = chart.Series.Last();
+                newSeries.ChartType = SeriesChartType.FastPoint;
+                newSeries.MarkerStyle = MarkerStyle.Cross;
+                newSeries.MarkerSize = 6;
+                newSeries.MarkerColor = Color.OrangeRed;
+                newSeries.XAxisType = AxisType.Primary;
+                newSeries.YAxisType = AxisType.Primary;
             }
         }
 
@@ -239,8 +257,15 @@ namespace ClusterExperiment
                         s.Points.Last().ToolTip = name;
                     }
                     else
-                    {
-                        chart.Series.Last().Points.AddXY(x, y);
+                    {                        
+                        if ((sat1 < sat2 && unsat1 == unsat2) ||
+                            (sat1 == sat2 && unsat1 < unsat2))
+                            chart.Series[4].Points.AddXY(x, y);
+                        else if ((sat1 > sat2 && unsat1 == unsat2) ||
+                            (sat1 == sat2 && unsat1 > unsat2))
+                            chart.Series[5].Points.AddXY(x, y);
+                        else
+                            chart.Series[3].Points.AddXY(x, y);
                     }
                 }
             }

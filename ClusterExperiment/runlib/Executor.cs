@@ -100,19 +100,13 @@ namespace runlib
         {
             try
             {
-                string binary_dir = Path.GetDirectoryName(_binary);
-                string binary_fn = Path.GetFileName(_binary);
-
-                if (binary_dir != Directory.GetCurrentDirectory())
-                    File.Copy(_binary, binary_fn, true);
-
                 Result r = new Result();
 
                 StreamWriter out_writer = new StreamWriter(r.stdout);
                 StreamWriter err_writer = new StreamWriter(r.stderr);
 
                 Process p = new Process();
-                p.StartInfo.FileName = binary_fn;
+                p.StartInfo.FileName = _binary;
                 p.StartInfo.WorkingDirectory = Directory.GetCurrentDirectory();
                 p.StartInfo.Arguments = "";
                 for (int i = 0; i < _args.Length; i++)
@@ -126,10 +120,10 @@ namespace runlib
                 p.ErrorDataReceived += (sender, args) => WriteToStream(sender, args, err_writer, ref _error_limit);
                 bool exhausted_time = false, exhausted_memory = false, exhausted_output = false;
 
-                if (binary_fn.EndsWith(".cmd") || binary_fn.EndsWith(".bat"))
+                // if (binary_fn.EndsWith(".cmd") || binary_fn.EndsWith(".bat"))
                 {
                     p.StartInfo.FileName = @"C:\Windows\System32\cmd.exe";
-                    p.StartInfo.Arguments = "/c " + binary_fn + " " + p.StartInfo.Arguments;
+                    p.StartInfo.Arguments = "/c " + _binary + " " + p.StartInfo.Arguments;
                 }
 
             retry:

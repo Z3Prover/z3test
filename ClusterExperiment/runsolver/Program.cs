@@ -29,7 +29,7 @@ namespace runsolver
                 return;
             }
 
-            bool verbose = false;
+            bool verbose = true;
             ulong timeout = 0;
             ulong memout = 0;
             ulong outputlimit = 134217728 /* 128 MB */;
@@ -67,7 +67,7 @@ namespace runsolver
 
 
             // Get absolute paths for everything.
-            binary = Path.GetFullPath(binary);
+            // binary = Path.GetFullPath(binary);
             for (i = 0; i < binary_args.Length; i++)
             {
                 if (File.Exists(args[i]))
@@ -76,9 +76,9 @@ namespace runsolver
 
             string old_wd = Directory.GetCurrentDirectory();
 
-            string new_wd = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName());
-            Directory.CreateDirectory(new_wd);
-            Directory.SetCurrentDirectory(new_wd);
+            //string new_wd = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName());
+            //Directory.CreateDirectory(new_wd);
+            //Directory.SetCurrentDirectory(new_wd);
 
             if (verbose)
             {
@@ -95,8 +95,8 @@ namespace runsolver
             Console.WriteLine(r);
 
             Directory.SetCurrentDirectory(old_wd);
-            try { Directory.Delete(new_wd, true); }
-            catch { }
+            //try { Directory.Delete(new_wd, true); }
+            //catch { }
         }
     }
 }
