@@ -116,11 +116,11 @@
             </GroupBox>
 
             <Label Content="Memory limit:" Height="28" HorizontalAlignment="Left" Name="labelMemout" VerticalAlignment="Center" Grid.Row="12" Grid.Column="0"/>            
-            <TextBox Height="23" HorizontalAlignment="Stretch" Name="txtMemout" VerticalAlignment="Center" TabIndex="15" Grid.Row="12" Grid.Column="1" ToolTip="The benchmark timeout (per benchmark)." />
+            <TextBox Height="23" HorizontalAlignment="Stretch" Name="txtMemout" VerticalAlignment="Center" TabIndex="15" Grid.Row="12" Grid.Column="1" ToolTip="The memory limit (per benchmark)." />
             <Label Content="b" HorizontalAlignment="Left" Grid.Row="12" Grid.Column="2"/>
 
             <Label Content="Timeout:" Height="28" HorizontalAlignment="Left" Name="label12" VerticalAlignment="Center" Grid.Row="13" Grid.Column="0"/>
-            <TextBox Height="23" HorizontalAlignment="Stretch" Name="txtTimeout" VerticalAlignment="Center" TabIndex="15" Grid.Row="13" Grid.Column="1" ToolTip="The benchmark timeout (per benchmark)." />
+            <TextBox Height="23" HorizontalAlignment="Stretch" Name="txtTimeout" VerticalAlignment="Center" TabIndex="15" Grid.Row="13" Grid.Column="1" ToolTip="The time limit (per benchmark)." />
             <Label Content="sec" HorizontalAlignment="Left" Grid.Row="13" Grid.Column="2"/>
 
             <Label Content="Note:" Height="28" HorizontalAlignment="Left" Name="labelNote" VerticalAlignment="Center" Grid.Row="14" Grid.Column="0"/>
