@@ -21,10 +21,7 @@ def win64test(b="unstable"):
         util.test_pyscripts_using_latest('regressions/python', branch=b, debug=d, clang=False)
         util.test_cs_using_latest('regressions/cs', branch=b, debug=d, VS64=True, clang=False)
 
-def mk_iz3():
-    util.buildz3(branch="interp", everything=True, clean=True, debug=False,  java=False, static=False, jobs=1, clang=False, VS64=True, extraflags=["-f", "..\\..\\..\\foci\\x64\\libfoci.lib"])
 
 if __name__ == "__main__":
     win64test()
-    mk_iz3()
     exit(0)
