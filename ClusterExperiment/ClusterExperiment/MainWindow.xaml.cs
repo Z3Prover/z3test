@@ -170,25 +170,25 @@ namespace ClusterExperiment
                 //            }
 
 
-                 Submission sdlg = new Submission(txtDatabase.Text, dlg.txtCategories.Text,
-                                                    dlg.txtSharedDir.Text,
-                                                    dlg.txtMemout.Text, dlg.txtTimeout.Text, dlg.txtExecutor.Text,
-                                                    bin, dlg.txtParameters.Text,
-                                                    dlg.txtCluster.Text, dlg.cmbNodeGroup.Text, dlg.cmbLocality.Text,
-                                                    WindowsIdentity.GetCurrent().Name.ToString(),
-                                                    dlg.cmbPriority.SelectedIndex,
-                                                    dlg.txtExtension.Text, dlg.txtNote.Text,
-                                                    dlg.chkParametricity.IsChecked == true,
-                                                    dlg.txtParametricityFrom.Text,
-                                                    dlg.txtParametricityTo.Text,
-                                                    dlg.txtParametricityStep.Text);
-                 sdlg.Owner = this;
-                 sdlg.ShowDialog();
+                Submission sdlg = new Submission(txtDatabase.Text, dlg.txtCategories.Text,
+                                                   dlg.txtSharedDir.Text,
+                                                   dlg.txtMemout.Text, dlg.txtTimeout.Text, dlg.txtExecutor.Text,
+                                                   bin, dlg.txtParameters.Text,
+                                                   dlg.txtCluster.Text, dlg.cmbNodeGroup.Text, dlg.cmbLocality.Text,
+                                                   WindowsIdentity.GetCurrent().Name.ToString(),
+                                                   dlg.cmbPriority.SelectedIndex,
+                                                   dlg.txtExtension.Text, dlg.txtNote.Text,
+                                                   dlg.chkParametricity.IsChecked == true,
+                                                   dlg.txtParametricityFrom.Text,
+                                                   dlg.txtParametricityTo.Text,
+                                                   dlg.txtParametricityStep.Text);
+                sdlg.Owner = this;
+                sdlg.ShowDialog();
 
-                 if (sdlg.lastError != null)
-                     System.Windows.MessageBox.Show(this, sdlg.lastError.Message, "Error",
-                     System.Windows.MessageBoxButton.OK,
-                     System.Windows.MessageBoxImage.Error);
+                if (sdlg.lastError != null)
+                    System.Windows.MessageBox.Show(this, sdlg.lastError.Message, "Error",
+                    System.Windows.MessageBoxButton.OK,
+                    System.Windows.MessageBoxImage.Error);
 
                 updateState();
             }
@@ -371,7 +371,7 @@ namespace ClusterExperiment
                 Mouse.OverrideCursor = System.Windows.Input.Cursors.Wait;
                 StreamWriter f = new StreamWriter(dlg.FileName, false);
 
-                Dictionary<string, Dictionary<int, CSVDatum>> data = 
+                Dictionary<string, Dictionary<int, CSVDatum>> data =
                     new Dictionary<string, Dictionary<int, CSVDatum>>();
 
                 // Headers and data
@@ -380,12 +380,15 @@ namespace ClusterExperiment
                 {
                     DataRowView rowView = (DataRowView)dataGrid.SelectedItems[i];
                     int id = (int)rowView["ID"];
-                    SqlCommand c = new SqlCommand("SELECT Parameters FROM Experiments WHERE ID=" + id.ToString(), sql);
+                    SqlCommand c = new SqlCommand("SELECT Note,Parameters FROM Experiments WHERE ID=" + id.ToString(), sql);
                     c.CommandTimeout = 0;
 
                     SqlDataReader rd = c.ExecuteReader();
-                    if (rd.Read()) 
-                        f.Write(((string)rd[0]).Trim(' '));
+                    if (rd.Read())
+                    {
+                        f.Write(((string)rd[0]).Trim(' ') + ",");
+                        f.Write(((string)rd[1]).Trim(' '));
+                    }
                     rd.Close();
                     f.Write(",,,,");
 
@@ -428,20 +431,24 @@ namespace ClusterExperiment
                 f.WriteLine();
 
                 // Write data.
-                foreach(KeyValuePair<string, Dictionary<int, CSVDatum>> d in data.OrderBy(x => x.Key))
+                foreach (KeyValuePair<string, Dictionary<int, CSVDatum>> d in data.OrderBy(x => x.Key))
                 {
                     f.Write(d.Key + ",");
 
-                    foreach (KeyValuePair<int, CSVDatum> x in d.Value.OrderBy(x => x.Key))
+                    for (int i = 0; i < dataGrid.SelectedItems.Count; i++)
                     {
-                        if (x.Value == null)
+                        DataRowView rowView = (DataRowView)dataGrid.SelectedItems[i];
+                        int id = (int)rowView["ID"];
+
+                        if (!d.Value.ContainsKey(id) || d.Value[id] == null)
                             f.Write("MISSING,,,,");
                         else
                         {
-                            f.Write(x.Value.rv + ",");
-                            f.Write(x.Value.runtime + ",");
-                            f.Write(x.Value.sat + ",");
-                            f.Write(x.Value.unsat + ",");
+                            CSVDatum c = d.Value[id];
+                            f.Write(c.rv + ",");
+                            f.Write(c.runtime + ",");
+                            f.Write(c.sat + ",");
+                            f.Write(c.unsat + ",");
                         }
                     }
 

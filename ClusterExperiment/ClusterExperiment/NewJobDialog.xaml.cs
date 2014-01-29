@@ -173,7 +173,7 @@ namespace ClusterExperiment
           string fn = Path.GetTempFileName();
 
           ZipPackage pkg = (ZipPackage)ZipPackage.Open(fn, FileMode.Create);
-
+            
           string mainFile = "";
           int exe_count = 0;
           foreach (string f in dlg.FileNames)
@@ -185,7 +185,7 @@ namespace ClusterExperiment
             }
           }
 
-          if (exe_count != 1)
+          if (true) //exe_count != 1)
           {
             SelectMainExe sme = new SelectMainExe();
             foreach (string f in dlg.FileNames)
