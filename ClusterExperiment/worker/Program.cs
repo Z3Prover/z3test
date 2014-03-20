@@ -388,8 +388,32 @@ namespace worker
                 }
 
                 string ext = Path.GetExtension(e.localExecutable);
-                File.Move(e.localExecutable, e.localExecutable + "-" + myName + ext);                
+                string localname = e.localExecutable + "-" + myName + ext;
+                File.Move(e.localExecutable, localname);
                 e.localExecutable += "-" + myName + ext;
+
+                int retry_count = 1000;
+                while (!File.Exists(localname))
+                {
+                    Thread.Sleep(100);
+                    retry_count--;
+                    if (retry_count == 0) 
+                        throw new Exception("Local binary missing.");
+                }
+                retry_count = 1000;
+            retry:
+                try
+                {
+                    FileStream tmp = File.OpenRead(localname);
+                }
+                catch
+                {
+                    Thread.Sleep(100);
+                    retry_count--;
+                    if (retry_count == 0) 
+                        throw new Exception("Local binary is not readable.");
+                    goto retry;
+                }                    
             }
         }
 
@@ -477,8 +501,8 @@ namespace worker
                 StreamWriter err_writer = new StreamWriter(r.stderr);
                 Process p = new Process();
                 p.StartInfo.FileName = e.localExecutable;
-                p.StartInfo.WorkingDirectory = e.localDir;
-                p.StartInfo.Arguments = j.localFilename + " " + e.Parameters;
+                p.StartInfo.WorkingDirectory = e.localDir;                
+                p.StartInfo.Arguments = j.localFilename + " " + e.Parameters;                
                 p.StartInfo.CreateNoWindow = true;
                 p.StartInfo.RedirectStandardOutput = true;
                 p.StartInfo.RedirectStandardError = true;
@@ -493,12 +517,24 @@ namespace worker
                     p.StartInfo.Arguments = "/c " + e.localExecutable + " " + p.StartInfo.Arguments;
                 }
 
+                // For stdin-only programs like mathsat:
+                //p.StartInfo.RedirectStandardInput = true;
+                //p.StartInfo.Arguments = e.Parameters;
+                //StreamReader fin = new StreamReader(j.localFilename);
+
             retry:
                 try
                 {
                     p.Start();
                     p.BeginOutputReadLine();
                     p.BeginErrorReadLine();
+
+                    // For stdin-only programs like mathsat:
+                    //while (!fin.EndOfStream)
+                    //    p.StandardInput.WriteLine(fin.ReadLine());
+
+                    //fin.Close();
+                    //p.StandardInput.Close();
                 }
                 catch (System.ComponentModel.Win32Exception ex)
                 {
@@ -711,6 +747,7 @@ namespace worker
             SqlParameter out_param = cmd.Parameters.Add("@STDOUT", System.Data.SqlDbType.VarChar);
             SqlParameter err_param = cmd.Parameters.Add("@STDERR", System.Data.SqlDbType.VarChar);
 
+            //if (true)
             if (resultCode >= 3)
             {
                 r.stdout.Seek(0, SeekOrigin.Begin);
@@ -958,6 +995,7 @@ namespace worker
             {
                 Console.WriteLine("TOPLEVEL EXCEPTION: " + e.Message);
                 Console.WriteLine("AT: " + e.StackTrace);
+                return 1;
             }
 
             return 0;

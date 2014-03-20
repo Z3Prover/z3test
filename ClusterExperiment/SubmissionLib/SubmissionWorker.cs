@@ -375,7 +375,7 @@ namespace SubmissionLib
                 else if (locality == "Node")
                     max = ctrs.TotalNodes;
 
-                max = 40;
+                // max = 40;
 
                 //int totalJobs = Directory.GetFiles(sharedDir + "\\" + category + "\\", "*." + extension, SearchOption.AllDirectories).Length;
                 //if (totalJobs < max)
