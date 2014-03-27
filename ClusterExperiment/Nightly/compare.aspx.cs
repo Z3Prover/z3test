@@ -57,10 +57,9 @@ namespace Nightly
                 if (!IsPostBack)
                 {
                     Timeline tl = new Timeline(Server.MapPath("~"), config.datadir, config.timeline);
-                    DataRowCollection rows = tl.Tables[0].Rows;
 
-                    string penultimate = rows[rows.Count - 2]["ID"].ToString();
-                    string latest = rows[rows.Count - 1]["ID"].ToString();
+                    string penultimate = tl.Lookup(tl.RowCount - 2, "ID").ToString();
+                    string latest = tl.Lookup(tl.RowCount - 1, "ID").ToString();
 
                     lstTagX.Items.Add(new ListItem("Latest", latest));
                     lstTagX.Items.Add(new ListItem("Penultimate", penultimate));
