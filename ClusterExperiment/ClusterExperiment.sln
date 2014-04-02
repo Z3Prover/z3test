@@ -1,6 +1,8 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2012
+# Visual Studio 2013
+VisualStudioVersion = 12.0.30110.0
+MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClusterExperiment", "ClusterExperiment\ClusterExperiment.csproj", "{33A8D599-9090-49AA-AD81-34B8820387DD}"
 	ProjectSection(ProjectDependencies) = postProject
 		{AFD1F327-DC13-4838-8D24-1A96B8FCD695} = {AFD1F327-DC13-4838-8D24-1A96B8FCD695}
@@ -31,6 +33,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "runsolver", "runsolver\runsolver.csproj", "{901911A7-B127-4191-960D-BEE1C11712E1}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "runlib", "runlib\runlib.csproj", "{A7E0ACFD-44D3-4FEE-A18E-211A4759D024}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "sendbuildlog", "sendbuildlog\sendbuildlog.csproj", "{0CFF38AD-1427-498B-9A5C-B50E217989DF}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -190,6 +194,18 @@ Global
 		{A7E0ACFD-44D3-4FEE-A18E-211A4759D024}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{A7E0ACFD-44D3-4FEE-A18E-211A4759D024}.Release|Win32.ActiveCfg = Release|Any CPU
 		{A7E0ACFD-44D3-4FEE-A18E-211A4759D024}.Release|x86.ActiveCfg = Release|Any CPU
+		{0CFF38AD-1427-498B-9A5C-B50E217989DF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0CFF38AD-1427-498B-9A5C-B50E217989DF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0CFF38AD-1427-498B-9A5C-B50E217989DF}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{0CFF38AD-1427-498B-9A5C-B50E217989DF}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{0CFF38AD-1427-498B-9A5C-B50E217989DF}.Debug|Win32.ActiveCfg = Debug|Any CPU
+		{0CFF38AD-1427-498B-9A5C-B50E217989DF}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{0CFF38AD-1427-498B-9A5C-B50E217989DF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0CFF38AD-1427-498B-9A5C-B50E217989DF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0CFF38AD-1427-498B-9A5C-B50E217989DF}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{0CFF38AD-1427-498B-9A5C-B50E217989DF}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{0CFF38AD-1427-498B-9A5C-B50E217989DF}.Release|Win32.ActiveCfg = Release|Any CPU
+		{0CFF38AD-1427-498B-9A5C-B50E217989DF}.Release|x86.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
