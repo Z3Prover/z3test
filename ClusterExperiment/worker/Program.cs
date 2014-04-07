@@ -135,7 +135,7 @@ namespace worker
 
             Console.WriteLine("Getting experiment info... ");
             Dictionary<string, Object> r =
-              SQLRead("SELECT Category,SharedDir,Extension,Memout,Timeout,Parameters,Binary FROM Experiments WHERE ID=" + eId, sql);
+              SQLRead("SELECT Category,SharedDir,Extension,Memout,Timeout,Parameters,Binary,Longparams FROM Experiments WHERE ID=" + eId, sql);
 
             if (r.Count() == 0)
                 throw new Exception("Experiment not found.");
@@ -149,7 +149,10 @@ namespace worker
             res.localDir = getTempDirectory();
             res.timeout = new TimeSpan(0, 0, Convert.ToInt32(r["Timeout"]));
             res.memout = (DBNull.Value.Equals(r["Memout"])) ? 0 : Convert.ToInt64(r["Memout"]);
-            res.Parameters = (string)r["Parameters"];
+            if (r["Parameters"].Equals(DBNull.Value))
+                res.Parameters = (string)r["Longparams"];
+            else
+                res.Parameters = (string)r["Parameters"];
             res.localExecutable = res.localDir + "\\z3.exe";
             res.binaryID = (int)r["Binary"];
 
@@ -502,7 +505,8 @@ namespace worker
                 Process p = new Process();
                 p.StartInfo.FileName = e.localExecutable;
                 p.StartInfo.WorkingDirectory = e.localDir;                
-                p.StartInfo.Arguments = j.localFilename + " " + e.Parameters;                
+                p.StartInfo.Arguments = j.localFilename + " " + e.Parameters;
+                //p.StartInfo.Arguments = e.Parameters;                
                 p.StartInfo.CreateNoWindow = true;
                 p.StartInfo.RedirectStandardOutput = true;
                 p.StartInfo.RedirectStandardError = true;

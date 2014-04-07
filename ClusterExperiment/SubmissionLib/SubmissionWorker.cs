@@ -153,7 +153,8 @@ namespace SubmissionLib
                                                            "Creator VARCHAR(256) NOT NULL DEFAULT USER_NAME()," +
                                                            "Note VARCHAR(256)," +
                                                            "ClusterJobID INT," +
-                                                           "Executor VARCHAR(256)" +
+                                                           "Executor VARCHAR(256)," +
+                                                           "Longparams VARCHAR(MAX)" +
                                                            ")", sql);
             cmd.ExecuteNonQuery();
 
@@ -312,10 +313,16 @@ namespace SubmissionLib
             else if (!File.Exists(executor))
                 throw new Exception("Worker binary does not exist.");
 
-            cmd = new SqlCommand("INSERT INTO Experiments (CompletionTime,Category,SharedDir,Extension,Memout,Timeout,Binary,Parameters,Cluster,Nodegroup,Locality,Creator,Note) " +
-                                  "VALUES(NULL,'" + category + "','" + sharedDir + "','" + extension + "'," + memout + "," + timeout + "," + binId + ",'" + parameters + "'," +
-                                  "'" + cluster + "','" + nodegroup + "','" + locality + "'," +
-                                  "'" + username + "',@NOTE); SELECT SCOPE_IDENTITY () As NewID", sql);
+            if (parameters.Length < 512)
+                cmd = new SqlCommand("INSERT INTO Experiments (CompletionTime,Category,SharedDir,Extension,Memout,Timeout,Binary,Parameters,Cluster,Nodegroup,Locality,Creator,Note,Longparams) " +
+                                      "VALUES(NULL,'" + category + "','" + sharedDir + "','" + extension + "'," + memout + "," + timeout + "," + binId + ",'" + parameters + "'," +
+                                      "'" + cluster + "','" + nodegroup + "','" + locality + "'," +
+                                      "'" + username + "',@NOTE,NULL); SELECT SCOPE_IDENTITY () As NewID", sql);
+            else
+                cmd = new SqlCommand("INSERT INTO Experiments (CompletionTime,Category,SharedDir,Extension,Memout,Timeout,Binary,Parameters,Cluster,Nodegroup,Locality,Creator,Note,Longparams) " +
+                                      "VALUES(NULL,'" + category + "','" + sharedDir + "','" + extension + "'," + memout + "," + timeout + "," + binId + ",NULL," +
+                                      "'" + cluster + "','" + nodegroup + "','" + locality + "'," +
+                                      "'" + username + "',@NOTE,'" + parameters + "'); SELECT SCOPE_IDENTITY () As NewID", sql);
 
             SqlParameter p = cmd.Parameters.Add("@NOTE", SqlDbType.VarChar);
             p.Size = note.Length;

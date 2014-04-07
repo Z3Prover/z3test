@@ -79,7 +79,7 @@ namespace ClusterExperiment
           "(SELECT COUNT(1) FROM Data WHERE ExperimentID=" + id.ToString() + " AND ResultCode=4) as ERROR," +
           "(SELECT COUNT(1) FROM Data WHERE ExperimentID=" + id.ToString() + " AND ResultCode=5) as TIMEOUT," +
           "(SELECT COUNT(1) FROM Data WHERE ExperimentID=" + id.ToString() + " AND ResultCode=6) as MEMORYOUT," +
-          "Memout as MaxMem,Timeout as MaxTime,Parameters,Cluster,ClusterJobID,Nodegroup,Locality,Creator,Note " +
+          "Memout as MaxMem,Timeout as MaxTime,Parameters,Cluster,ClusterJobID,Nodegroup,Locality,Creator,Note,Longparams " +
           "FROM Experiments WHERE ID=" + id.ToString(), sql);
         cmd.CommandTimeout = 0;
         SqlDataReader r = cmd.ExecuteReader();
@@ -127,7 +127,10 @@ namespace ClusterExperiment
         
         txtTimeout.Text = (string)r["MaxTime"];
         txtMemout.Text = (string)r["MaxMem"];
-        txtParameters.Text = (string)r["Parameters"];
+        if (r["Parameters"].Equals(DBNull.Value)) 
+            txtParameters.Text = (string)r["Longparams"];
+        else
+            txtParameters.Text = (string)r["Parameters"];
         string cluster = (string)r["Cluster"];
         txtCluster.Text = cluster;
         int clusterJobID = (DBNull.Value.Equals(r["ClusterJobID"])) ? 0 : (int)r["ClusterJobID"];

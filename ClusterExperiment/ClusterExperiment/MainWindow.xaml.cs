@@ -380,14 +380,17 @@ namespace ClusterExperiment
                 {
                     DataRowView rowView = (DataRowView)dataGrid.SelectedItems[i];
                     int id = (int)rowView["ID"];
-                    SqlCommand c = new SqlCommand("SELECT Note,Parameters FROM Experiments WHERE ID=" + id.ToString(), sql);
+                    SqlCommand c = new SqlCommand("SELECT Note,Parameters,Longparams FROM Experiments WHERE ID=" + id.ToString(), sql);
                     c.CommandTimeout = 0;
 
                     SqlDataReader rd = c.ExecuteReader();
                     if (rd.Read())
                     {
                         f.Write(((string)rd[0]).Trim(' ') + ",");
-                        f.Write(((string)rd[1]).Trim(' '));
+                        if (rd[1].Equals(DBNull.Value))
+                            f.Write(((string)rd[2]).Trim(' '));
+                        else
+                            f.Write(((string)rd[1]).Trim(' '));
                     }
                     rd.Close();
                     f.Write(",,,,");
