@@ -22,7 +22,7 @@ namespace CodeplexUpload
                 FileStream lf = File.OpenRead(indicator_file);
                 StreamReader sr = new StreamReader(lf);
                 long last = Convert.ToInt64(sr.ReadLine());
-                if (last >= File.GetLastWriteTime(file).ToFileTimeUtc())
+                if (last >= File.GetCreationTimeUtc(file).ToFileTimeUtc())
                     res = false;
                 sr.Close();
                 lf.Close();
@@ -32,7 +32,7 @@ namespace CodeplexUpload
                 // save the date of the binary.        
                 FileStream of = File.Create(indicator_file);
                 StreamWriter sw = new StreamWriter(of);
-                sw.WriteLine(File.GetLastWriteTime(file).ToFileTimeUtc());
+                sw.WriteLine(File.GetCreationTimeUtc(file).ToFileTimeUtc());
                 sw.Close();
                 of.Close();
             }
