@@ -94,6 +94,9 @@
     <Compile Include="CopyDialog.xaml.cs">
       <DependentUpon>CopyDialog.xaml</DependentUpon>
     </Compile>
+    <Compile Include="CreateGroupDialog.xaml.cs">
+      <DependentUpon>CreateGroupDialog.xaml</DependentUpon>
+    </Compile>
     <Compile Include="ExperimentProperties.xaml.cs">
       <DependentUpon>ExperimentProperties.xaml</DependentUpon>
     </Compile>
@@ -127,6 +130,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="CopyDialog.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="CreateGroupDialog.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

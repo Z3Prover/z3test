@@ -2,84 +2,93 @@
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:custom="clr-namespace:ClusterExperiment"
-        Title="ClusterExperiment" Height="600" Width="716" MinHeight="600" MinWidth="450" Closing="OnClosing" Icon="/ClusterExperiment;component/Images/servers.ico" ResizeMode="CanResizeWithGrip">
+        Title="ClusterExperiment" Height="511" Width="716" MinHeight="600" MinWidth="450" Closing="OnClosing" Icon="/ClusterExperiment;component/Images/servers.ico" ResizeMode="CanResizeWithGrip">
 
-    <Grid>
-        
-    <StatusBar Height="25" HorizontalAlignment="Stretch" Margin="0,0,0,0" Name="statusBar" VerticalAlignment="Bottom">
-        <StatusBarItem Content="Ready." HorizontalAlignment="Stretch" />
-    </StatusBar>
-
-    <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="0,0,0,26" Name="gridOuter">
+    <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="0,0,0,0" Name="gridOuter" >
         <Grid.RowDefinitions>
-            <RowDefinition Height="100" />
-            <RowDefinition Height="*" MinHeight="250" />
+            <RowDefinition Height="110" />
+            <RowDefinition Height="*" MinHeight="100"/>
+            <RowDefinition Height="25" />
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
 
-        <Grid HorizontalAlignment="Stretch" VerticalAlignment="Top" Height="250" Margin="10,10,10,10" Name="grid" Grid.Row="0" Grid.Column="0">
+        <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Height="110" Margin="10,10,10,10" Name="grid" Grid.Row="0" Grid.Column="0">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
-                <RowDefinition Height="Auto" />                
+                <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="180" MinWidth="180" />
                 <ColumnDefinition MinWidth="100" />
                 <ColumnDefinition Width="80" />
             </Grid.ColumnDefinitions>
-            
+
             <Label Content="Database:" Height="28" HorizontalAlignment="Left" Name="label5" VerticalAlignment="Center" Grid.Row="0" Grid.Column="0"/>
-            <TextBox Height="23" HorizontalAlignment="Stretch" Name="txtDatabase" VerticalAlignment="Center" Grid.Row="0" Grid.Column="1" TabIndex="0" />         
+            <TextBox Height="23" HorizontalAlignment="Stretch" Name="txtDatabase" VerticalAlignment="Center" Grid.Row="0" Grid.Column="1" TabIndex="0" />
+            <Button Content="Connect" Height="23" HorizontalAlignment="Center" Name="btnConnect" VerticalAlignment="Center" Width="75" Click="btnConnect_Click" Grid.Row="0" Grid.Column="2" TabIndex="5" />
 
-            <Button Content="Connect" Height="23" HorizontalAlignment="Center" Name="btnConnect" VerticalAlignment="Center" Width="75" Click="btnConnect_Click" Grid.Row="0" Grid.Column="3" TabIndex="5" />
-            <Label Content="Operations" Height="28" HorizontalAlignment="Left" Name="label4" VerticalAlignment="Center" Grid.Row="3" Grid.Column="0"/>
+            <Label Content="Operations" Height="28" HorizontalAlignment="Left" Name="label4" VerticalAlignment="Center" Grid.Row="2" Grid.Column="0"/>
+            <Grid Grid.Row="4" Grid.ColumnSpan="3" HorizontalAlignment="Stretch">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
 
-                <Grid Grid.Row="7" Grid.ColumnSpan="3" HorizontalAlignment="Stretch">
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="Auto" />                        
-                    </Grid.RowDefinitions>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="*"/>
-                        <ColumnDefinition Width="*"/>
-                    </Grid.ColumnDefinitions>
-
-                    <Button Content="Update List" Height="23" HorizontalAlignment="Center" Name="btnUpdate" VerticalAlignment="Center" Width="75" IsEnabled="false" Grid.Row="0" Grid.Column="0" TabIndex="6" Click="btnUpdate_Click" />
-                    <Button Content="New Job" Height="23" HorizontalAlignment="Center" Name="btnNewJob" VerticalAlignment="Center" Width="75" IsEnabled="false" Grid.Row="0" Grid.Column="1" TabIndex="7" Click="btnNewJob_Click" />
-                </Grid>
+                <Button Content="Update List" Height="23" HorizontalAlignment="Center" Name="btnUpdate" VerticalAlignment="Center" Width="75" IsEnabled="false" Grid.Row="0" Grid.Column="0" TabIndex="6" Click="btnUpdate_Click" />
+                <Button Content="New Job" Height="23" HorizontalAlignment="Center" Name="btnNewJob" VerticalAlignment="Center" Width="75" IsEnabled="false" Grid.Row="0" Grid.Column="1" TabIndex="7" Click="btnNewJob_Click" />
             </Grid>
-
-        <DataGrid AutoGenerateColumns="True" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="10,10,10,10" Name="dataGrid" Grid.Row="1" Grid.Column="0" IsReadOnly="True" MouseDoubleClick="dataGrid_MouseDoubleClick" >
-                <DataGrid.CommandBindings>
-                    <CommandBinding Command="Delete" Executed="deleteExperiment" CanExecute="canDeleteExperiment" />
-                    <CommandBinding Command="Properties" Executed="showProperties" CanExecute="canShowProperties" />
-                    <CommandBinding Command="SaveAs" Executed="showSave" CanExecute="canSave" />
-                    <CommandBinding Command="{x:Static custom:MainWindow.CompareCommand}"
-                                    Executed="showCompare"
-                                    CanExecute="canShowCompare" />
-                    <CommandBinding Command="{x:Static custom:MainWindow.CopyCommand}"
-                                    Executed="showCopy"
-                                    CanExecute="canShowCopy" />
-                    <CommandBinding Command="{x:Static custom:MainWindow.MoveCommand}"
-                                    Executed="showMove"
-                                    CanExecute="canShowMove" />
-                </DataGrid.CommandBindings>
-                <DataGrid.ContextMenu>
-                    <ContextMenu>
-                        <MenuItem Name="mnuDelete" Command="Delete" />
-                        <MenuItem Name="mnuCompare" Header="_Compare" Command="{x:Static custom:MainWindow.CompareCommand}" />
-                        <MenuItem Name="mnuScatterplot" Header="_Scatterplot" Command="{x:Static custom:MainWindow.ScatterplotCommand}" />
-                        <MenuItem Name="mnuSaveAs" Header="_Save CSV..." Command="SaveAs" />
-                        <MenuItem Name="mnuCopy" Header="Copy _to..." Command="{x:Static custom:MainWindow.CopyCommand}" />
-                        <MenuItem Name="mnuMove" Header="_Move to..." Command="{x:Static custom:MainWindow.MoveCommand}" />
-                        <MenuItem Name="mnuProperties" Command="Properties" />
-                    </ContextMenu>
-                </DataGrid.ContextMenu>
-            </DataGrid>
         </Grid>
+
+        <TabControl Grid.Row="1" Grid.Column="0" TabStripPlacement="Bottom">
+            <TabItem Header="Jobs" >
+                <DataGrid AutoGenerateColumns="True" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="10,10,10,10" Name="dataGrid" IsReadOnly="True" MouseDoubleClick="dataGrid_MouseDoubleClick" >
+                    <DataGrid.CommandBindings>
+                        <CommandBinding Command="Delete" Executed="deleteExperiment" CanExecute="canDeleteExperiment" />
+                        <CommandBinding Command="Properties" Executed="showProperties" CanExecute="canShowProperties" />
+                        <CommandBinding Command="SaveAs" Executed="showSave" CanExecute="canSave" />
+                        <CommandBinding Command="{x:Static custom:MainWindow.CompareCommand}"
+                            Executed="showCompare"
+                            CanExecute="canShowCompare" />
+                        <CommandBinding Command="{x:Static custom:MainWindow.CopyCommand}"
+                            Executed="showCopy"
+                            CanExecute="canShowCopy" />
+                        <CommandBinding Command="{x:Static custom:MainWindow.MoveCommand}"
+                            Executed="showMove"
+                            CanExecute="canShowMove" />
+                    </DataGrid.CommandBindings>
+                    <DataGrid.ContextMenu>
+                        <ContextMenu>
+                            <MenuItem Name="mnuDelete" Command="Delete" />
+                            <MenuItem Name="mnuCompare" Header="_Compare" Command="{x:Static custom:MainWindow.CompareCommand}" />
+                            <MenuItem Name="mnuScatterplot" Header="_Scatterplot" Command="{x:Static custom:MainWindow.ScatterplotCommand}" />
+                            <MenuItem Name="mnuSaveAs" Header="_Save CSV..." Command="SaveAs" />
+                            <MenuItem Name="mnuCopy" Header="Copy _to..." Command="{x:Static custom:MainWindow.CopyCommand}" />
+                            <MenuItem Name="mnuMove" Header="_Move to..." Command="{x:Static custom:MainWindow.MoveCommand}" />
+                            <MenuItem Name="mnuProperties" Command="Properties" />
+                            <MenuItem Name="mnuCreateGroup" Header="Create group..." Command="{x:Static custom:MainWindow.CreateGroupCommand}" />
+                        </ContextMenu>
+                    </DataGrid.ContextMenu>
+                </DataGrid>
+            </TabItem>
+            
+            <TabItem Header="Job Groups">
+                <DataGrid AutoGenerateColumns="True" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="10,10,10,10" Name="jobgroupGrid" IsReadOnly="True" MouseDoubleClick="jobgroupGrid_MouseDoubleClick" >
+                </DataGrid>
+            </TabItem>
+
+        </TabControl>
+
+        <StatusBar Height="25" HorizontalAlignment="Stretch" Grid.Row="3" Grid.Column="0" Name="statusBar" VerticalAlignment="Bottom">
+            <StatusBarItem Content="Ready." HorizontalAlignment="Stretch" />
+        </StatusBar>
     </Grid>
+
 </Window>

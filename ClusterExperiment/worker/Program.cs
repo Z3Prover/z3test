@@ -491,7 +491,7 @@ namespace worker
             {
                 getBinary(e);
 
-                Console.WriteLine("Running job #" + j.ID);
+                // Console.WriteLine("Running job #" + j.ID);
                 File.Copy(j.filename, j.localFilename, true);
 
                 Result r = new Result();

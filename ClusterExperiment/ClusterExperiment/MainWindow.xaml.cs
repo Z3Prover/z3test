@@ -40,6 +40,7 @@ namespace ClusterExperiment
         public static RoutedCommand CopyCommand = new RoutedCommand();
         public static RoutedCommand MoveCommand = new RoutedCommand();
         public static RoutedCommand ScatterplotCommand = new RoutedCommand();
+        public static RoutedCommand CreateGroupCommand = new RoutedCommand();
 
         public MainWindow()
         {
@@ -52,6 +53,8 @@ namespace ClusterExperiment
             customCommandBinding = new CommandBinding(MoveCommand, showMove, canShowMove);
             CommandBindings.Add(customCommandBinding);
             customCommandBinding = new CommandBinding(ScatterplotCommand, showScatterplot, canShowScatterplot);
+            CommandBindings.Add(customCommandBinding);
+            customCommandBinding = new CommandBinding(CreateGroupCommand, showCreateGroup, canShowCreateGroup);
             CommandBindings.Add(customCommandBinding);
 
             Loaded += new RoutedEventHandler(MainWindow_Loaded);
@@ -77,6 +80,11 @@ namespace ClusterExperiment
             DataSet ds = new DataSet();
             da.Fill(ds, "Experiments");
             dataGrid.ItemsSource = ds.Tables[0].DefaultView;
+
+            da = new SqlDataAdapter("SELECT * FROM JobgroupsView ORDER BY ID DESC", sql);
+            ds = new DataSet();
+            da.Fill(ds, "Jobgroups");
+            jobgroupGrid.ItemsSource = ds.Tables[0].DefaultView;
 
             Mouse.OverrideCursor = null;
         }
@@ -567,6 +575,93 @@ namespace ClusterExperiment
         void canShowMove(object Sender, CanExecuteRoutedEventArgs e)
         {
             e.CanExecute = (sql != null) && (dataGrid.SelectedItems.Count >= 1);
+        }
+
+        void showCreateGroup(object target, ExecutedRoutedEventArgs e)
+        {
+            bool first = true;
+            string category = "";
+            IEnumerator den = dataGrid.SelectedItems.GetEnumerator();
+            DataRowView rv;
+            while (den.MoveNext())
+            {
+                rv = (DataRowView)den.Current;
+                string cur = (string)rv["Category"];
+                if (first) { category = cur; first = false; }
+                else if (cur != category)
+                {
+                    System.Windows.MessageBox.Show(this, "Jobs in a group need to have the same category.", "Error",
+                                                System.Windows.MessageBoxButton.OK,
+                                                System.Windows.MessageBoxImage.Error);
+                    return;
+                }
+            }
+
+            CreateGroupDialog dlg = new CreateGroupDialog();
+            dlg.Owner = this;
+            if (dlg.ShowDialog() == true)
+            {
+                Mouse.OverrideCursor = System.Windows.Input.Cursors.Wait;
+
+                string name = dlg.txtGroupName.Text;
+                string note = dlg.txtNote.Text;
+
+                SqlCommand cmd = new SqlCommand("SELECT * FROM JobGroups WHERE Name='" + name + "'", sql);
+                SqlDataReader r = cmd.ExecuteReader();
+                if (r.HasRows)
+                {
+                    System.Windows.MessageBox.Show(this, "Jobgroup with the same name already exists.", "Error",
+                                                    System.Windows.MessageBoxButton.OK,
+                                                    System.Windows.MessageBoxImage.Error);
+                    r.Close();
+                    return;
+                }
+                r.Close();                
+
+                string username = WindowsIdentity.GetCurrent().Name.ToString();
+
+                cmd = new SqlCommand("INSERT INTO JobGroups (Name,Creator,Category,Note) VALUES (" +
+                                     "'" + name + "'," +
+                                     "'" + username + "'," +
+                                     "'" + category + "'," +
+                                     "'" + note + "'); SELECT SCOPE_IDENTITY() as NewID;", sql);
+                r = cmd.ExecuteReader();
+                if (!r.HasRows)
+                {
+                    System.Windows.MessageBox.Show(this, "Jobgroup creation failed.", "Error",
+                                                    System.Windows.MessageBoxButton.OK,
+                                                    System.Windows.MessageBoxImage.Error);
+                    r.Close();
+                    return;
+                }
+                r.Read();
+                int jgid = Convert.ToInt32(r[0]);
+                r.Close();
+
+                den = dataGrid.SelectedItems.GetEnumerator();
+                while (den.MoveNext())
+                {
+                    rv = (DataRowView)den.Current;
+                    int jid = (int)rv["ID"];
+                    cmd = new SqlCommand("INSERT INTO JobGroupData (JobID,GroupID) VALUES (" + jid + "," + jgid + ");", sql);
+                    cmd.ExecuteNonQuery();
+                }
+
+                updateDataGrid();
+
+                Mouse.OverrideCursor = null;
+            }
+        }
+
+        void canShowCreateGroup(object Sender, CanExecuteRoutedEventArgs e)
+        {
+            e.CanExecute = (sql != null) && (dataGrid.SelectedItems.Count >= 1);
+        }
+
+
+        private void jobgroupGrid_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+        {
+
         }
     }
 }

@@ -259,6 +259,30 @@ namespace SubmissionLib
                                  "  (SELECT AcquireTime FROM JobQUEUE WHERE ID=@JID), GETDATE()); " +
                                  "DELETE FROM JobQueue WHERE ID=@JID;", sql);
             cmd.ExecuteNonQuery();
+
+            cmd = new SqlCommand("CREATE TABLE [dbo].[JobGroups](" +
+                                 "ID INT IDENTITY(1,1) NOT NULL, " +
+                                 "Name VARCHAR(512)," +
+                                 "Creator VARCHAR(256) NOT NULL DEFAULT USER_NAME()," +
+                                 "Category VARCHAR(256)," +
+                                 "Note VARCHAR(256)" +
+                                 ")", sql);
+            cmd.ExecuteNonQuery();
+
+            cmd = new SqlCommand("CREATE TABLE [dbo].[JobGroupData](" +
+                                 "JobID INT NOT NULL, " +
+                                 "GroupID INT NOT NULL" +
+                                 ")", sql);
+            cmd.ExecuteNonQuery();
+
+            cmd = new SqlCommand("CREATE VIEW [dbo].[JobgroupsView] WITH SCHEMABINDING as SELECT " +
+                                 "  ID,Name,COUNT(*) as '#',Creator,Category,Note FROM " +
+                                        "  [dbo].[JobGroups],[dbo].[JobGroupData] " +
+                                "  WHERE " +
+                                    "Jobgroups.ID=JobGroupData.GroupID " +
+                                "  GROUP BY " +
+                                    "ID,Name,Creator,Category,Note", sql);
+            cmd.ExecuteNonQuery();
         }
 
         private void SetResources(ISchedulerTask task, string locality)
@@ -652,7 +676,7 @@ namespace SubmissionLib
             {
                 IScheduler scheduler = new Scheduler();
                 scheduler.SetInterfaceMode(true, IntPtr.Zero);
-                
+
                 int sFree = GetFreeNodes(scheduler, preferredCluster);
                 foreach (string a in alternatives)
                 {
