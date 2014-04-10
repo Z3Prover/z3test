@@ -28,9 +28,9 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea3 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
-            System.Windows.Forms.DataVisualization.Charting.Legend legend3 = new System.Windows.Forms.DataVisualization.Charting.Legend();
-            System.Windows.Forms.DataVisualization.Charting.Series series3 = new System.Windows.Forms.DataVisualization.Charting.Series();
+            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea4 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
+            System.Windows.Forms.DataVisualization.Charting.Legend legend4 = new System.Windows.Forms.DataVisualization.Charting.Legend();
+            System.Windows.Forms.DataVisualization.Charting.Series series4 = new System.Windows.Forms.DataVisualization.Charting.Series();
             this.chart = new System.Windows.Forms.DataVisualization.Charting.Chart();
             this.cbFancy = new System.Windows.Forms.CheckBox();
             this.lblAvgSpeedupTxt = new System.Windows.Forms.Label();
@@ -62,18 +62,18 @@
             // 
             // chart
             // 
-            chartArea3.Name = "ChartArea1";
-            this.chart.ChartAreas.Add(chartArea3);
+            chartArea4.Name = "ChartArea1";
+            this.chart.ChartAreas.Add(chartArea4);
             this.chart.Dock = System.Windows.Forms.DockStyle.Fill;
-            legend3.Name = "Legend1";
-            this.chart.Legends.Add(legend3);
+            legend4.Name = "Legend1";
+            this.chart.Legends.Add(legend4);
             this.chart.Location = new System.Drawing.Point(0, 0);
             this.chart.Name = "chart";
-            series3.ChartArea = "ChartArea1";
-            series3.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.FastPoint;
-            series3.Legend = "Legend1";
-            series3.Name = "Series1";
-            this.chart.Series.Add(series3);
+            series4.ChartArea = "ChartArea1";
+            series4.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.FastPoint;
+            series4.Legend = "Legend1";
+            series4.Name = "Series1";
+            this.chart.Series.Add(series4);
             this.chart.Size = new System.Drawing.Size(529, 500);
             this.chart.TabIndex = 0;
             this.chart.Text = "Scatterplot";
@@ -157,9 +157,9 @@
             // 
             // lblSlower
             // 
-            this.lblSlower.Location = new System.Drawing.Point(398, 69);
+            this.lblSlower.Location = new System.Drawing.Point(413, 69);
             this.lblSlower.Name = "lblSlower";
-            this.lblSlower.Size = new System.Drawing.Size(119, 13);
+            this.lblSlower.Size = new System.Drawing.Size(104, 13);
             this.lblSlower.TabIndex = 18;
             this.lblSlower.Text = "label1";
             this.lblSlower.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
@@ -169,15 +169,15 @@
             this.label5.AutoSize = true;
             this.label5.Location = new System.Drawing.Point(361, 69);
             this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(39, 13);
+            this.label5.Size = new System.Drawing.Size(49, 13);
             this.label5.TabIndex = 17;
-            this.label5.Text = "Slower";
+            this.label5.Text = "Y Slower";
             // 
             // lblFaster
             // 
-            this.lblFaster.Location = new System.Drawing.Point(398, 56);
+            this.lblFaster.Location = new System.Drawing.Point(413, 56);
             this.lblFaster.Name = "lblFaster";
-            this.lblFaster.Size = new System.Drawing.Size(119, 13);
+            this.lblFaster.Size = new System.Drawing.Size(104, 13);
             this.lblFaster.TabIndex = 16;
             this.lblFaster.Text = "label1";
             this.lblFaster.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
@@ -187,15 +187,15 @@
             this.label3.AutoSize = true;
             this.label3.Location = new System.Drawing.Point(361, 56);
             this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(36, 13);
+            this.label3.Size = new System.Drawing.Size(46, 13);
             this.label3.TabIndex = 15;
-            this.label3.Text = "Faster";
+            this.label3.Text = "Y Faster";
             // 
             // lblTotal
             // 
-            this.lblTotal.Location = new System.Drawing.Point(407, 42);
+            this.lblTotal.Location = new System.Drawing.Point(410, 42);
             this.lblTotal.Name = "lblTotal";
-            this.lblTotal.Size = new System.Drawing.Size(110, 13);
+            this.lblTotal.Size = new System.Drawing.Size(107, 13);
             this.lblTotal.TabIndex = 14;
             this.lblTotal.Text = "label1";
             this.lblTotal.TextAlign = System.Drawing.ContentAlignment.MiddleRight;

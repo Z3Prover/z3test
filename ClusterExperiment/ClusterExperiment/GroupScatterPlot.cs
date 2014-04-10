@@ -253,8 +253,8 @@ namespace ClusterExperiment
         {
             public int Compare(DataEntry x, DataEntry y)
             {
-                if (x.runtime < y.runtime) return 1;
-                else if (x.runtime > y.runtime) return -1;
+                if (x.runtime < y.runtime) return -1;
+                else if (x.runtime > y.runtime) return +1;
                 else return 0;
             }
         };
@@ -397,7 +397,7 @@ namespace ClusterExperiment
 
                 if (fancy)
                 {
-                    string name = (string)r[8];
+                    string name = dX.First().name;
                     int inx = name.IndexOf('\\', name.IndexOf('\\') + 1);
                     string c = (inx > 0) ? name.Substring(0, inx) : name;
                     Series s;
@@ -425,7 +425,7 @@ namespace ClusterExperiment
                     else
                         chart.Series[3].Points.AddXY(x, y);
 
-                    if (x < y) faster++; else if (y < x) slower++;
+                    if (x > y) faster++; else if (y > x) slower++;
                 }
 
                 total++;

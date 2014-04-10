@@ -268,7 +268,7 @@ namespace ClusterExperiment
                         else
                             chart.Series[3].Points.AddXY(x, y);
 
-                        if (x < y) faster++; else if (y < x) slower++;
+                        if (x > y) faster++; else if (y > x) slower++;
                     }
 
                     total++;

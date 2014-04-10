@@ -201,9 +201,9 @@
             // 
             // lblSlower
             // 
-            this.lblSlower.Location = new System.Drawing.Point(403, 69);
+            this.lblSlower.Location = new System.Drawing.Point(418, 69);
             this.lblSlower.Name = "lblSlower";
-            this.lblSlower.Size = new System.Drawing.Size(114, 13);
+            this.lblSlower.Size = new System.Drawing.Size(99, 13);
             this.lblSlower.TabIndex = 25;
             this.lblSlower.Text = "label1";
             this.lblSlower.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
@@ -213,15 +213,15 @@
             this.label5.AutoSize = true;
             this.label5.Location = new System.Drawing.Point(366, 69);
             this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(39, 13);
+            this.label5.Size = new System.Drawing.Size(49, 13);
             this.label5.TabIndex = 24;
-            this.label5.Text = "Slower";
+            this.label5.Text = "Y Slower";
             // 
             // lblFaster
             // 
-            this.lblFaster.Location = new System.Drawing.Point(403, 56);
+            this.lblFaster.Location = new System.Drawing.Point(418, 56);
             this.lblFaster.Name = "lblFaster";
-            this.lblFaster.Size = new System.Drawing.Size(114, 13);
+            this.lblFaster.Size = new System.Drawing.Size(99, 13);
             this.lblFaster.TabIndex = 23;
             this.lblFaster.Text = "label1";
             this.lblFaster.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
@@ -231,15 +231,15 @@
             this.label3.AutoSize = true;
             this.label3.Location = new System.Drawing.Point(366, 56);
             this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(36, 13);
+            this.label3.Size = new System.Drawing.Size(46, 13);
             this.label3.TabIndex = 22;
-            this.label3.Text = "Faster";
+            this.label3.Text = "Y Faster";
             // 
             // lblTotal
             // 
-            this.lblTotal.Location = new System.Drawing.Point(403, 43);
+            this.lblTotal.Location = new System.Drawing.Point(418, 43);
             this.lblTotal.Name = "lblTotal";
-            this.lblTotal.Size = new System.Drawing.Size(114, 16);
+            this.lblTotal.Size = new System.Drawing.Size(99, 16);
             this.lblTotal.TabIndex = 21;
             this.lblTotal.Text = "label1";
             this.lblTotal.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
