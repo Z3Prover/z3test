@@ -112,6 +112,12 @@
                         <Label Content="step:"/>
                         <TextBox Name="txtParametricityStep" Width="50" IsEnabled="False" />
                     </StackPanel>
+                    <GroupBox>
+                        <GroupBox.Header>
+                            <CheckBox Name="chkJobgroup" Content="Create jobgroup" Checked="chkJobgroup_Checked" Unchecked="chkJobgroup_Unchecked" IsEnabled="False"></CheckBox>
+                        </GroupBox.Header>
+                        <TextBox Name="txtJobgroup" Width="255" IsEnabled="False" />
+                    </GroupBox>
                 </StackPanel>
             </GroupBox>
 

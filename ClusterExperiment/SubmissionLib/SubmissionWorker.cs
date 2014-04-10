@@ -25,6 +25,9 @@ namespace SubmissionLib
         public int id;
         public Scheduler scheduler = new Scheduler();
         private IntPtr hwnd;
+        public bool haveJobId = false;
+        public int JobId;
+        public string cat = null;
 
         public SubmissionWorker(IntPtr hwnd, int id)
         {
@@ -328,6 +331,8 @@ namespace SubmissionLib
             while (!haveBinId)
                 System.Threading.Thread.Sleep(250);
 
+            this.cat = category;
+
             SqlConnection sql = Connect(db);
             SqlCommand cmd;
             SqlDataReader r;
@@ -357,6 +362,8 @@ namespace SubmissionLib
                 throw new Exception("SQL Insert failed");
 
             int newID = Convert.ToInt32(r[0]);
+            haveJobId = true;
+            JobId = newID;
 
             r.Close();
             r.Dispose();

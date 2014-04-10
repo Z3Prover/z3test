@@ -192,7 +192,9 @@ namespace ClusterExperiment
                                                    dlg.chkParametricity.IsChecked == true,
                                                    dlg.txtParametricityFrom.Text,
                                                    dlg.txtParametricityTo.Text,
-                                                   dlg.txtParametricityStep.Text);
+                                                   dlg.txtParametricityStep.Text,
+                                                   dlg.chkJobgroup.IsChecked == true,
+                                                   dlg.txtJobgroup.Text);
                 sdlg.Owner = this;
                 sdlg.ShowDialog();
 
