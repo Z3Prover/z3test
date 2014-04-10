@@ -41,6 +41,7 @@ namespace ClusterExperiment
         public static RoutedCommand MoveCommand = new RoutedCommand();
         public static RoutedCommand ScatterplotCommand = new RoutedCommand();
         public static RoutedCommand CreateGroupCommand = new RoutedCommand();
+        public static RoutedCommand GroupScatterplotCommand = new RoutedCommand();
 
         public MainWindow()
         {
@@ -55,6 +56,8 @@ namespace ClusterExperiment
             customCommandBinding = new CommandBinding(ScatterplotCommand, showScatterplot, canShowScatterplot);
             CommandBindings.Add(customCommandBinding);
             customCommandBinding = new CommandBinding(CreateGroupCommand, showCreateGroup, canShowCreateGroup);
+            CommandBindings.Add(customCommandBinding);
+            customCommandBinding = new CommandBinding(GroupScatterplotCommand, showGroupScatterplot, canShowGroupScatterplot);
             CommandBindings.Add(customCommandBinding);
 
             Loaded += new RoutedEventHandler(MainWindow_Loaded);
@@ -72,7 +75,7 @@ namespace ClusterExperiment
                 txtDatabase.Text = (string)Registry.GetValue(keyName, "Database", "");
         }
 
-        void updateDataGrid()
+        private void updateDataGrid()
         {
             Mouse.OverrideCursor = System.Windows.Input.Cursors.Wait;
 
@@ -202,7 +205,7 @@ namespace ClusterExperiment
             }
         }
 
-        void updateState()
+        private void updateState()
         {
             if (sql != null && sql.State == ConnectionState.Open)
             {
@@ -250,7 +253,7 @@ namespace ClusterExperiment
             Mouse.OverrideCursor = null;
         }
 
-        void showProperties(object target, ExecutedRoutedEventArgs e)
+        private void showProperties(object target, ExecutedRoutedEventArgs e)
         {
             Mouse.OverrideCursor = System.Windows.Input.Cursors.Wait;
 
@@ -264,7 +267,7 @@ namespace ClusterExperiment
             Mouse.OverrideCursor = null;
         }
 
-        void deleteExperiment(object target, ExecutedRoutedEventArgs e)
+        private void deleteExperiment(object target, ExecutedRoutedEventArgs e)
         {
             Mouse.OverrideCursor = System.Windows.Input.Cursors.Wait;
 
@@ -327,7 +330,7 @@ namespace ClusterExperiment
             updateDataGrid();
         }
 
-        void showCompare(object target, ExecutedRoutedEventArgs e)
+        private void showCompare(object target, ExecutedRoutedEventArgs e)
         {
             Mouse.OverrideCursor = System.Windows.Input.Cursors.Wait;
 
@@ -343,8 +346,7 @@ namespace ClusterExperiment
             Mouse.OverrideCursor = null;
         }
 
-
-        void showScatterplot(object target, ExecutedRoutedEventArgs e)
+        private void showScatterplot(object target, ExecutedRoutedEventArgs e)
         {
             Mouse.OverrideCursor = System.Windows.Input.Cursors.Wait;
 
@@ -366,7 +368,7 @@ namespace ClusterExperiment
             public int sat = 0, unsat = 0;
         }
 
-        void showSave(object target, ExecutedRoutedEventArgs e)
+        private void showSave(object target, ExecutedRoutedEventArgs e)
         {
             System.Windows.Forms.SaveFileDialog dlg = new System.Windows.Forms.SaveFileDialog();
             dlg.Filter = "CSV files (*.csv)|*.csv|All files (*.*)|*.*";
@@ -472,32 +474,32 @@ namespace ClusterExperiment
             Mouse.OverrideCursor = null;
         }
 
-        void canShowProperties(object sender, CanExecuteRoutedEventArgs e)
+        private void canShowProperties(object sender, CanExecuteRoutedEventArgs e)
         {
             e.CanExecute = (sql != null) && (dataGrid.SelectedItems.Count == 1);
         }
 
-        void canDeleteExperiment(object sender, CanExecuteRoutedEventArgs e)
+        private void canDeleteExperiment(object sender, CanExecuteRoutedEventArgs e)
         {
             e.CanExecute = (sql != null) && (dataGrid.SelectedItems.Count >= 1);
         }
 
-        void canShowCompare(object sender, CanExecuteRoutedEventArgs e)
+        private void canShowCompare(object sender, CanExecuteRoutedEventArgs e)
         {
             e.CanExecute = (sql != null) && (dataGrid.SelectedItems.Count == 2);
         }
 
-        void canShowScatterplot(object sender, CanExecuteRoutedEventArgs e)
+        private void canShowScatterplot(object sender, CanExecuteRoutedEventArgs e)
         {
             e.CanExecute = (sql != null) && (dataGrid.SelectedItems.Count == 2);
         }
 
-        void canSave(object Sender, CanExecuteRoutedEventArgs e)
+        private void canSave(object Sender, CanExecuteRoutedEventArgs e)
         {
             e.CanExecute = (sql != null) && (dataGrid.SelectedItems.Count >= 1);
         }
 
-        void showCopy(object target, ExecutedRoutedEventArgs e)
+        private void showCopy(object target, ExecutedRoutedEventArgs e)
         {
             CopyDialog dlg = new CopyDialog();
             dlg.Owner = this;
@@ -532,12 +534,12 @@ namespace ClusterExperiment
             }
         }
 
-        void canShowCopy(object Sender, CanExecuteRoutedEventArgs e)
+        private void canShowCopy(object Sender, CanExecuteRoutedEventArgs e)
         {
             e.CanExecute = (sql != null) && (dataGrid.SelectedItems.Count >= 1);
         }
 
-        void showMove(object target, ExecutedRoutedEventArgs e)
+        private void showMove(object target, ExecutedRoutedEventArgs e)
         {
             CopyDialog dlg = new CopyDialog();
             dlg.Owner = this;
@@ -572,12 +574,12 @@ namespace ClusterExperiment
             }
         }
 
-        void canShowMove(object Sender, CanExecuteRoutedEventArgs e)
+        private void canShowMove(object Sender, CanExecuteRoutedEventArgs e)
         {
             e.CanExecute = (sql != null) && (dataGrid.SelectedItems.Count >= 1);
         }
 
-        void showCreateGroup(object target, ExecutedRoutedEventArgs e)
+        private void showCreateGroup(object target, ExecutedRoutedEventArgs e)
         {
             bool first = true;
             string category = "";
@@ -653,7 +655,7 @@ namespace ClusterExperiment
             }
         }
 
-        void canShowCreateGroup(object Sender, CanExecuteRoutedEventArgs e)
+        private void canShowCreateGroup(object Sender, CanExecuteRoutedEventArgs e)
         {
             e.CanExecute = (sql != null) && (dataGrid.SelectedItems.Count >= 1);
         }
@@ -662,6 +664,36 @@ namespace ClusterExperiment
         private void jobgroupGrid_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
 
+        }
+
+        private void canDeleteJobGroup(object sender, CanExecuteRoutedEventArgs e)
+        {
+            e.CanExecute = (sql != null) && (jobgroupGrid.SelectedItems.Count >= 1);
+        }
+
+        private void deleteJobGroup(object sender, ExecutedRoutedEventArgs e)
+        {
+            
+        }
+
+        private void canShowGroupScatterplot(object sender, CanExecuteRoutedEventArgs e)
+        {
+            e.CanExecute = (sql != null) && (jobgroupGrid.SelectedItems.Count == 2);
+        }
+
+        private void showGroupScatterplot(object target, ExecutedRoutedEventArgs e)
+        {
+            Mouse.OverrideCursor = System.Windows.Input.Cursors.Wait;
+
+            DataRowView rowView = (DataRowView)jobgroupGrid.SelectedItems[0];
+            int id1 = (int)rowView["ID"];
+            rowView = (DataRowView)jobgroupGrid.SelectedItems[1];
+            int id2 = (int)rowView["ID"];
+
+            GroupScatterPlot sp = new GroupScatterPlot(id1, id2, sql);
+            sp.Show();
+
+            Mouse.OverrideCursor = null;
         }
     }
 }

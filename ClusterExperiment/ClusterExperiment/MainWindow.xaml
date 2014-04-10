@@ -81,6 +81,15 @@
             
             <TabItem Header="Job Groups">
                 <DataGrid AutoGenerateColumns="True" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="10,10,10,10" Name="jobgroupGrid" IsReadOnly="True" MouseDoubleClick="jobgroupGrid_MouseDoubleClick" >
+                    <DataGrid.CommandBindings>
+                        <CommandBinding Command="Delete" Executed="deleteJobGroup" CanExecute="canDeleteJobGroup" />                                                
+                    </DataGrid.CommandBindings>
+                    <DataGrid.ContextMenu>
+                        <ContextMenu>
+                            <MenuItem Name="mnuJGDelete" Command="Delete" />                            
+                            <MenuItem Name="mnuJGScatterplot" Header="_Scatterplot" Command="{x:Static custom:MainWindow.GroupScatterplotCommand}" />                            
+                        </ContextMenu>
+                    </DataGrid.ContextMenu>
                 </DataGrid>
             </TabItem>
 
