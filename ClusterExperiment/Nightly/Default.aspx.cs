@@ -103,15 +103,16 @@ namespace Nightly
             return value;
         }
 
-        public Series series(string name, Color col, string cat, double maxdays, AxisType axisType,
+        public Series series(string name, Color col, int width, string cat, double maxdays, AxisType axisType,
                              List<string> subcats, List<string> avgcats = null, bool logarithmic = false)
         {
             double logMultiplier = 20000.0;
             DateTime now = DateTime.Now;
             Series ser = new Series((logarithmic) ? name + " (log)" : name);
-            ser.ChartType = SeriesChartType.Line;
+            ser.ChartType = SeriesChartType.Line;            
             ser.YAxisType = axisType;
             ser.Color = col;
+            ser.BorderWidth = width;
 
             double earliest_x = double.MinValue;
             double earliest_y = 0.0;
@@ -164,6 +165,7 @@ namespace Nightly
                     }
 
                     value /= contravalue;
+                    if (double.IsNaN(value)) value = 0.0;
                 }
 
                 if (date_str != null)
@@ -263,23 +265,23 @@ namespace Nightly
             l.Name = "StatisticsLegend";
             chart.Legends.Add(l);
 
-            chart.Series.Add(series("# solved", Color.Green, name, maxdays, AxisType.Primary, new List<string>() { "SAT", "UNSAT" }));
+            chart.Series.Add(series("# solved", Color.Green, 1, name, maxdays, AxisType.Primary, new List<string>() { "SAT", "UNSAT" }));
             chart.Series.Last().ChartArea = ca.Name;
             chart.Series.Last().Legend = l.Name;
-            chart.Series.Add(series("# errors", Color.OrangeRed, name, maxdays, AxisType.Primary, new List<string>() { "ERROR" }, null, true));
+            chart.Series.Add(series("# errors", Color.OrangeRed, 2, name, maxdays, AxisType.Primary, new List<string>() { "ERROR" }, null, true));
             chart.Series.Last().ChartArea = ca.Name;
             chart.Series.Last().Legend = l.Name;
-            chart.Series.Add(series("# inf. errors", Color.Orange, name, maxdays, AxisType.Primary, new List<string>() { "INFERR" }, null, true));
+            chart.Series.Add(series("# inf. errors", Color.LightSalmon, 1, name, maxdays, AxisType.Primary, new List<string>() { "INFERR" }, null, true));
             chart.Series.Last().ChartArea = ca.Name;
             chart.Series.Last().Legend = l.Name;
-            chart.Series.Add(series("# bugs", Color.Red, name, maxdays, AxisType.Primary, new List<string>() { "BUG" }, null, true));
+            chart.Series.Add(series("# bugs", Color.Red, 2, name, maxdays, AxisType.Primary, new List<string>() { "BUG" }, null, true));
             chart.Series.Last().ChartArea = ca.Name;
             chart.Series.Last().Legend = l.Name;
-            chart.Series.Add(series("# unsolved", Color.Blue, name, maxdays, AxisType.Primary, new List<string>() { "TIMEOUT", "MEMORY", "UNKNOWN" }));
+            chart.Series.Add(series("# unsolved", Color.Blue, 1, name, maxdays, AxisType.Primary, new List<string>() { "TIMEOUT", "MEMORY", "UNKNOWN" }));
             chart.Series.Last().ChartArea = ca.Name;
             chart.Series.Last().Legend = l.Name;
 
-            chart.Series.Add(series("avg  runtime [s]", Color.Gray, name, maxdays, AxisType.Secondary,
+            chart.Series.Add(series("avg  runtime [s]", Color.Gray, 1, name, maxdays, AxisType.Secondary,
                 new List<string>() { "SATTIME", "UNSATTIME" },
                 new List<string>() { "SAT", "UNSAT" }));
             chart.Series.Last().ChartArea = "Statistics";
