@@ -198,10 +198,10 @@ namespace SubmissionLib
             cmd = new SqlCommand("CREATE TABLE [dbo].[Strings] (ID INT IDENTITY(1,1) NOT NULL, s VARCHAR(1024))", sql);
             cmd.ExecuteNonQuery();
 
-            cmd = new SqlCommand("CREATE NONCLUSTERED INDEX StringIndex ON Strings (s);");
+            cmd = new SqlCommand("CREATE NONCLUSTERED INDEX StringIndex ON Strings (s);", sql);
             cmd.ExecuteNonQuery();
 
-            cmd = new SqlCommand("CREATE CLUSTERED INDEX IDIndex ON Strings (ID);");
+            cmd = new SqlCommand("CREATE CLUSTERED INDEX IDIndex ON Strings (ID);", sql);
             cmd.ExecuteNonQuery();
 
             cmd = new SqlCommand("CREATE TABLE [dbo].[JobQueue] (ID INT IDENTITY(1,1) NOT NULL, " +
@@ -517,7 +517,47 @@ namespace SubmissionLib
             return res;
         }
 
-        private string copyExperimentsEntry(SqlConnection fromSQL, SqlConnection toSQL, string jobID)
+        private int copyBinary(SqlConnection fromSQL, SqlConnection toSQL, string jobID)
+        {
+            int res = 0;
+
+            SqlCommand cmd = new SqlCommand("SELECT Binary FROM Experiments WHERE ID=" + jobID, fromSQL);
+            SqlDataReader r = cmd.ExecuteReader();
+            int old_bin_id = 0;
+            if (r.Read())
+                old_bin_id = Convert.ToInt32(r[0]);
+            else
+                throw new Exception("Could not find binary");
+            r.Close();
+
+            byte[] data = new byte[0];
+            cmd = new SqlCommand("SELECT Binary,UploadTime FROM Binaries WHERE ID=" + old_bin_id, fromSQL);
+            r = cmd.ExecuteReader();
+
+            if (!r.Read())
+                throw new Exception("Could not find binary");
+
+            data = (byte[])r[0];
+            DateTime ut = (DateTime)r[1];
+            r.Close();
+
+            string cmdstring = "INSERT INTO Binaries (Binary,UploadTime) VALUES (@BINARYDATA,'" + ut + "'); SELECT SCOPE_IDENTITY () As BinaryID";
+            SqlCommand tocmd = new SqlCommand(cmdstring, toSQL);
+            tocmd.CommandTimeout = 0;
+            SqlParameter par = tocmd.Parameters.Add("@BINARYDATA", System.Data.SqlDbType.VarBinary);
+            par.Size = data.Count();
+            par.Value = data;
+
+            r = tocmd.ExecuteReader();
+            if (!r.Read())
+                throw new Exception("SQL Insert failed");
+            res = Convert.ToInt32(r[0]);
+            r.Close();
+
+            return res;
+        }
+
+        private string copyExperimentsEntry(SqlConnection fromSQL, SqlConnection toSQL, string jobID, int newBinId)
         {
             // string newID = "";
 
@@ -545,7 +585,12 @@ namespace SubmissionLib
                 SqlCommand tocmd = new SqlCommand(cmdstring, toSQL);
 
                 for (int i = 0; i < r.FieldCount; i++)
-                    tocmd.Parameters.AddWithValue("@P" + i.ToString(), r[i]);
+                {
+                    if (r.GetName(i) == "Binary")
+                        tocmd.Parameters.AddWithValue("@P" + i.ToString(), newBinId);
+                    else
+                        tocmd.Parameters.AddWithValue("@P" + i.ToString(), r[i]);
+                }
 
                 if (tocmd.ExecuteNonQuery() == 0)
                     throw new Exception("SQL Insert failed");
@@ -640,7 +685,8 @@ namespace SubmissionLib
             if (!checkExperimentExists(fromSQL, toSQL, jobID, ref toJobID))
             {
                 // Always copy to a new ID
-                copyExperimentsEntry(fromSQL, toSQL, jobID);
+                int newbinid = copyBinary(fromSQL, toSQL, jobID);
+                copyExperimentsEntry(fromSQL, toSQL, jobID, newbinid);
                 copyDataEntries(fromSQL, toSQL, jobID);
             }
             else
