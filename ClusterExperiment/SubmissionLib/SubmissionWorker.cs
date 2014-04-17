@@ -522,6 +522,7 @@ namespace SubmissionLib
             int res = 0;
 
             SqlCommand cmd = new SqlCommand("SELECT Binary FROM Experiments WHERE ID=" + jobID, fromSQL);
+            cmd.CommandTimeout = 0;
             SqlDataReader r = cmd.ExecuteReader();
             int old_bin_id = 0;
             if (r.Read())
@@ -532,6 +533,7 @@ namespace SubmissionLib
 
             byte[] data = new byte[0];
             cmd = new SqlCommand("SELECT Binary,UploadTime FROM Binaries WHERE ID=" + old_bin_id, fromSQL);
+            cmd.CommandTimeout = 0;
             r = cmd.ExecuteReader();
 
             if (!r.Read())
@@ -542,13 +544,13 @@ namespace SubmissionLib
             r.Close();
 
             string cmdstring = "INSERT INTO Binaries (Binary,UploadTime) VALUES (@BINARYDATA,'" + ut + "'); SELECT SCOPE_IDENTITY () As BinaryID";
-            SqlCommand tocmd = new SqlCommand(cmdstring, toSQL);
-            tocmd.CommandTimeout = 0;
-            SqlParameter par = tocmd.Parameters.Add("@BINARYDATA", System.Data.SqlDbType.VarBinary);
+            cmd = new SqlCommand(cmdstring, toSQL);
+            cmd.CommandTimeout = 0;
+            SqlParameter par = cmd.Parameters.Add("@BINARYDATA", System.Data.SqlDbType.VarBinary);
             par.Size = data.Count();
             par.Value = data;
 
-            r = tocmd.ExecuteReader();
+            r = cmd.ExecuteReader();
             if (!r.Read())
                 throw new Exception("SQL Insert failed");
             res = Convert.ToInt32(r[0]);

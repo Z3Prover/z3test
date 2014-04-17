@@ -525,14 +525,36 @@ namespace ClusterExperiment
                     jobIDs.Add((int)x["ID"]);
                 }
 
-                Submission sdlg = new Submission(txtDatabase.Text, backupDB, jobIDs, false /* no move */);
-                sdlg.Owner = this;
-                sdlg.ShowDialog();
+                Submission sdlg = null;
 
-                if (sdlg.lastError != null)
-                    System.Windows.MessageBox.Show(this, sdlg.lastError.Message, "Error",
-                    System.Windows.MessageBoxButton.OK,
-                    System.Windows.MessageBoxImage.Error);
+                do
+                {
+                    Int32Collection subset = null;
+                    if (jobIDs.Count > 20)
+                    {
+                        subset = new Int32Collection();
+                        for (int i = 0; i < 20; i++)
+                        {
+                            subset.Add(jobIDs[0]);
+                            jobIDs.RemoveAt(0);
+                        }
+                    }
+                    else
+                    {
+                        subset = new Int32Collection(jobIDs);
+                        jobIDs.Clear();
+                    }
+
+                    sdlg = new Submission(txtDatabase.Text, backupDB, subset, false /* no move */);
+                    sdlg.Owner = this;
+                    sdlg.ShowDialog();
+
+                    if (sdlg.lastError != null)
+                        System.Windows.MessageBox.Show(this, sdlg.lastError.Message, "Error",
+                        System.Windows.MessageBoxButton.OK,
+                        System.Windows.MessageBoxImage.Error);
+                }
+                while (jobIDs.Count > 0 && sdlg.lastError == null);
             }
         }
 
@@ -565,9 +587,31 @@ namespace ClusterExperiment
                     jobIDs.Add((int)x["ID"]);
                 }
 
-                Submission sdlg = new Submission(txtDatabase.Text, backupDB, jobIDs, true);
-                sdlg.Owner = this;
-                sdlg.ShowDialog();
+                Submission sdlg = null;
+
+                do
+                {
+                    Int32Collection subset = null;
+                    if (jobIDs.Count > 20)
+                    {
+                        subset = new Int32Collection();
+                        for (int i = 0; i < 20; i++)
+                        {
+                            subset.Add(jobIDs[0]);
+                            jobIDs.RemoveAt(0);
+                        }
+                    }
+                    else
+                    {
+                        subset = new Int32Collection(jobIDs);
+                        jobIDs.Clear();
+                    }
+
+                    sdlg = new Submission(txtDatabase.Text, backupDB, subset, true /* move */);
+                    sdlg.Owner = this;
+                    sdlg.ShowDialog();                    
+                }
+                while (jobIDs.Count > 0 && sdlg.lastError == null);
 
                 if (sdlg.lastError != null)
                     System.Windows.MessageBox.Show(this, sdlg.lastError.Message, "Error",
@@ -620,7 +664,7 @@ namespace ClusterExperiment
                     r.Close();
                     return;
                 }
-                r.Close();                
+                r.Close();
 
                 string username = WindowsIdentity.GetCurrent().Name.ToString();
 
@@ -675,7 +719,7 @@ namespace ClusterExperiment
 
         private void deleteJobGroup(object sender, ExecutedRoutedEventArgs e)
         {
-            
+
         }
 
         private void canShowGroupScatterplot(object sender, CanExecuteRoutedEventArgs e)

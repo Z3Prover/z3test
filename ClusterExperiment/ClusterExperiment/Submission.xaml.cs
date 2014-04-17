@@ -218,7 +218,7 @@ namespace ClusterExperiment
         {
             InitializeComponent();
             Mouse.OverrideCursor = System.Windows.Input.Cursors.Wait;
-            Title = "Copying...";
+            Title = move ? "Moving..." : "Copying...";
 
             ColumnDefinition c1 = new ColumnDefinition();
             ColumnDefinition c2 = new ColumnDefinition();
@@ -246,7 +246,7 @@ namespace ClusterExperiment
                 outerGrid.RowDefinitions.Add(r);
                 r.Height = new GridLength(26);
                 Label l = new Label();
-                l.Content = "Copying Job #" + jobID.ToString() + "...";
+                l.Content = (move?"Moving":"Copying") + " Job #" + jobID.ToString() + "...";
                 l.Height = 26;
                 Grid.SetRow(l, outerGrid.RowDefinitions.Count() - 1);
                 Grid.SetColumn(l, 0);
