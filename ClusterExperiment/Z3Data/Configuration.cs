@@ -54,6 +54,10 @@ namespace Z3Data
         public string package_dir = "";
         public string codeplex_username = "";
         public string codeplex_password = "";
+
+        // Build system
+        public string build_log = "";
+
         public Configuration(string configFile)
         {
             // Console.WriteLine(now() + ": Reading configuration from " + configFile);        
@@ -149,6 +153,11 @@ namespace Z3Data
                                         package_dir = reader.GetAttribute("package_dir");
                                         codeplex_username = reader.GetAttribute("username");
                                         codeplex_password = reader.GetAttribute("password");
+                                    }
+                                    break;
+                                case "Buildlog":
+                                    {
+                                        build_log = reader.GetAttribute("file");
                                     }
                                     break;
                                 default: /* nothing */ break;
