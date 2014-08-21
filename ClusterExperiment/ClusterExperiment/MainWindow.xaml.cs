@@ -39,9 +39,11 @@ namespace ClusterExperiment
         public static RoutedCommand CompareCommand = new RoutedCommand();
         public static RoutedCommand CopyCommand = new RoutedCommand();
         public static RoutedCommand MoveCommand = new RoutedCommand();
+        public static RoutedCommand SaveCSVCommand = new RoutedCommand();
         public static RoutedCommand ScatterplotCommand = new RoutedCommand();
         public static RoutedCommand CreateGroupCommand = new RoutedCommand();
         public static RoutedCommand GroupScatterplotCommand = new RoutedCommand();
+        public static RoutedCommand SaveBinaryCommand = new RoutedCommand();
 
         public MainWindow()
         {
@@ -53,11 +55,15 @@ namespace ClusterExperiment
             CommandBindings.Add(customCommandBinding);
             customCommandBinding = new CommandBinding(MoveCommand, showMove, canShowMove);
             CommandBindings.Add(customCommandBinding);
+            customCommandBinding = new CommandBinding(SaveCSVCommand, showSaveCSV, canShowSaveCSV);
+            CommandBindings.Add(customCommandBinding);
             customCommandBinding = new CommandBinding(ScatterplotCommand, showScatterplot, canShowScatterplot);
             CommandBindings.Add(customCommandBinding);
             customCommandBinding = new CommandBinding(CreateGroupCommand, showCreateGroup, canShowCreateGroup);
             CommandBindings.Add(customCommandBinding);
             customCommandBinding = new CommandBinding(GroupScatterplotCommand, showGroupScatterplot, canShowGroupScatterplot);
+            CommandBindings.Add(customCommandBinding);
+            customCommandBinding = new CommandBinding(SaveBinaryCommand, showSaveBinary, canShowSaveBinary);
             CommandBindings.Add(customCommandBinding);
 
             Loaded += new RoutedEventHandler(MainWindow_Loaded);
@@ -370,7 +376,12 @@ namespace ClusterExperiment
             public int sat = 0, unsat = 0;
         }
 
-        private void showSave(object target, ExecutedRoutedEventArgs e)
+        private void canShowSaveCSV(object sender, CanExecuteRoutedEventArgs e)
+        {
+            e.CanExecute = (sql != null) && (dataGrid.SelectedItems.Count >= 1);
+        }
+
+        private void showSaveCSV(object target, ExecutedRoutedEventArgs e)
         {
             System.Windows.Forms.SaveFileDialog dlg = new System.Windows.Forms.SaveFileDialog();
             dlg.Filter = "CSV files (*.csv)|*.csv|All files (*.*)|*.*";
@@ -738,6 +749,72 @@ namespace ClusterExperiment
 
             GroupScatterPlot sp = new GroupScatterPlot(id1, id2, sql);
             sp.Show();
+
+            Mouse.OverrideCursor = null;
+        }
+
+        private void canShowSaveBinary(object Sender, CanExecuteRoutedEventArgs e)
+        {
+            e.CanExecute = (sql != null) && (dataGrid.SelectedItems.Count == 1);
+        }
+
+        private void showSaveBinary(object target, ExecutedRoutedEventArgs e)
+        {
+            DataRowView rowView = (DataRowView) dataGrid.SelectedItems[0];
+            int id = (int)rowView["ID"];
+
+            System.Windows.Forms.SaveFileDialog dlg = new System.Windows.Forms.SaveFileDialog();
+            dlg.Filter = "Executable files (*.exe)|*.exe|All files (*.*)|*.*";
+            dlg.FilterIndex = 1;
+            dlg.RestoreDirectory = true;
+            dlg.FileName = "binary_" + id + ".exe";
+
+            if (dlg.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+            {
+                Mouse.OverrideCursor = System.Windows.Input.Cursors.Wait;                
+                int binary_id = 0;                
+
+                SqlCommand c = new SqlCommand("SELECT Binary FROM Experiments WHERE ID=" + id.ToString(), sql);
+                c.CommandTimeout = 0;
+
+                SqlDataReader rd = c.ExecuteReader();
+                if (rd.Read())
+                {
+                    binary_id = (int)rd[0];
+                    rd.Close();
+                }
+                else
+                {
+                    System.Windows.MessageBox.Show(this, "Could not get binary ID.", "Error",
+                                                    System.Windows.MessageBoxButton.OK,
+                                                    System.Windows.MessageBoxImage.Error);                    
+                    rd.Close();
+                    return;
+                }
+
+                string fn = dlg.FileName;
+                FileStream file = File.Open(fn, System.IO.FileMode.OpenOrCreate, System.IO.FileAccess.Write);
+
+                c = new SqlCommand("SELECT Binary FROM Binaries WHERE ID=" + binary_id.ToString(), sql);
+                c.CommandTimeout = 0;
+
+                rd = c.ExecuteReader();
+                if (rd.Read())
+                {
+                    byte[] data = (byte[])rd[0];
+                    file.Write(data, 0, data.Length);
+                    file.Close();
+                    rd.Close();
+                }
+                else
+                {
+                    System.Windows.MessageBox.Show(this, "Could not get binary data.", "Error",
+                                                    System.Windows.MessageBoxButton.OK,
+                                                    System.Windows.MessageBoxImage.Error);
+                    file.Close();
+                    rd.Close();
+                }                
+            }
 
             Mouse.OverrideCursor = null;
         }

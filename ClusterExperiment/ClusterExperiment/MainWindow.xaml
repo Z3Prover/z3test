@@ -53,27 +53,22 @@
                     <DataGrid.CommandBindings>
                         <CommandBinding Command="Delete" Executed="deleteExperiment" CanExecute="canDeleteExperiment" />
                         <CommandBinding Command="Properties" Executed="showProperties" CanExecute="canShowProperties" />
-                        <CommandBinding Command="SaveAs" Executed="showSave" CanExecute="canSave" />
-                        <CommandBinding Command="{x:Static custom:MainWindow.CompareCommand}"
-                            Executed="showCompare"
-                            CanExecute="canShowCompare" />
-                        <CommandBinding Command="{x:Static custom:MainWindow.CopyCommand}"
-                            Executed="showCopy"
-                            CanExecute="canShowCopy" />
-                        <CommandBinding Command="{x:Static custom:MainWindow.MoveCommand}"
-                            Executed="showMove"
-                            CanExecute="canShowMove" />
+                        <CommandBinding Command="SaveAs" Executed="showSaveCSV" CanExecute="canShowSaveCSV" />
+                        <CommandBinding Command="{x:Static custom:MainWindow.CompareCommand}" Executed="showCompare" CanExecute="canShowCompare" />
+                        <CommandBinding Command="{x:Static custom:MainWindow.CopyCommand}" Executed="showCopy" CanExecute="canShowCopy" />
+                        <CommandBinding Command="{x:Static custom:MainWindow.MoveCommand}" Executed="showMove" CanExecute="canShowMove" />
                     </DataGrid.CommandBindings>
                     <DataGrid.ContextMenu>
                         <ContextMenu>
                             <MenuItem Name="mnuDelete" Command="Delete" />
                             <MenuItem Name="mnuCompare" Header="_Compare" Command="{x:Static custom:MainWindow.CompareCommand}" />
                             <MenuItem Name="mnuScatterplot" Header="_Scatterplot" Command="{x:Static custom:MainWindow.ScatterplotCommand}" />
-                            <MenuItem Name="mnuSaveAs" Header="_Save CSV..." Command="SaveAs" />
+                            <MenuItem Name="mnuSaveAs" Header="_Save CSV..." Command="{x:Static custom:MainWindow.SaveCSVCommand}"/>
                             <MenuItem Name="mnuCopy" Header="Copy _to..." Command="{x:Static custom:MainWindow.CopyCommand}" />
                             <MenuItem Name="mnuMove" Header="_Move to..." Command="{x:Static custom:MainWindow.MoveCommand}" />
                             <MenuItem Name="mnuProperties" Command="Properties" />
                             <MenuItem Name="mnuCreateGroup" Header="Create group..." Command="{x:Static custom:MainWindow.CreateGroupCommand}" />
+                            <MenuItem Name="mnuSaveBinary" Header="Save _binary to..." Command="{x:Static custom:MainWindow.SaveBinaryCommand}" />
                         </ContextMenu>
                     </DataGrid.ContextMenu>
                 </DataGrid>
