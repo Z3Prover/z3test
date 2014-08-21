@@ -65,10 +65,10 @@
                             <MenuItem Name="mnuScatterplot" Header="_Scatterplot" Command="{x:Static custom:MainWindow.ScatterplotCommand}" />
                             <MenuItem Name="mnuSaveAs" Header="_Save CSV..." Command="{x:Static custom:MainWindow.SaveCSVCommand}"/>
                             <MenuItem Name="mnuCopy" Header="Copy _to..." Command="{x:Static custom:MainWindow.CopyCommand}" />
-                            <MenuItem Name="mnuMove" Header="_Move to..." Command="{x:Static custom:MainWindow.MoveCommand}" />
-                            <MenuItem Name="mnuProperties" Command="Properties" />
+                            <MenuItem Name="mnuMove" Header="_Move to..." Command="{x:Static custom:MainWindow.MoveCommand}" />                            
                             <MenuItem Name="mnuCreateGroup" Header="Create group..." Command="{x:Static custom:MainWindow.CreateGroupCommand}" />
                             <MenuItem Name="mnuSaveBinary" Header="Save _binary to..." Command="{x:Static custom:MainWindow.SaveBinaryCommand}" />
+                            <MenuItem Name="mnuProperties" Command="Properties" />
                         </ContextMenu>
                     </DataGrid.ContextMenu>
                 </DataGrid>
