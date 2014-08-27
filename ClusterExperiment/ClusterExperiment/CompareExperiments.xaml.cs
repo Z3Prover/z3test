@@ -35,7 +35,8 @@ namespace ClusterExperiment
                       "a.UNKNOWN as 'UNKNOWN (" + eID1 + ")'," +
                       "b.SAT as 'SAT (" + eID2 + ")'," +
                       "b.UNSAT as 'UNSAT (" + eID2 + ")'," +
-                      "b.UNKNOWN as 'UNKNOWN (" + eID2 + ")'" +
+                      "b.UNKNOWN as 'UNKNOWN (" + eID2 + ")'," +
+                      "a.ID as 'ID1', b.ID as 'ID2' " +
               "FROM Data a, Data b, Strings " +
               "WHERE a.ExperimentID=" + eID1 + " AND " +
               "b.ExperimentID=" + eID2 + " AND " +
@@ -132,6 +133,27 @@ namespace ClusterExperiment
         updateGrid(radioFNTEXT);
         radioFNTEXT.IsChecked = true;
       }
+    }
+
+    private void dataGrid_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+    {
+        if (dataGrid.SelectedItems.Count != 1)
+            return;
+
+        DataRowView rowView = (DataRowView)dataGrid.SelectedItem;
+        int id13 = (int)rowView[12];
+        int id24 = (int)rowView[13];               
+
+        ShowOutput w = null;
+
+        int inx = dataGrid.CurrentCell.Column.DisplayIndex;
+        if (inx == 1 || inx == 3)
+            w = new ShowOutput(id13, sql);
+        else 
+            w = new ShowOutput(id24, sql);
+
+        w.Show();
+        Mouse.OverrideCursor = null; 
     }
   }
 }

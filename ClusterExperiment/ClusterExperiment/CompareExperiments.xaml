@@ -14,7 +14,7 @@
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
 
-            <DataGrid AutoGenerateColumns="True" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="0,0,0,0" Name="dataGrid" Grid.Row="0" Grid.Column="0" IsReadOnly="True" RowHeight="23" SelectionUnit="FullRow" />
+            <DataGrid AutoGenerateColumns="True" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="0,0,0,0" Name="dataGrid" Grid.Row="0" Grid.Column="0" IsReadOnly="True" RowHeight="23" SelectionUnit="FullRow" MouseDoubleClick="dataGrid_MouseDoubleClick" />
 
             <Grid Name="radioGrid" Grid.Row="2" Grid.Column="0" HorizontalAlignment="Stretch" VerticalAlignment="Bottom">
                 <Grid.RowDefinitions>
