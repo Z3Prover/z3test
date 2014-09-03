@@ -285,51 +285,60 @@ namespace ClusterExperiment
             if (r == System.Windows.MessageBoxResult.Yes)
             {
                 for (int i = 0; i < dataGrid.SelectedItems.Count; i++)
-                {
-                    DataRowView rowView = (DataRowView)dataGrid.SelectedItems[i];
-                    int id = (int)rowView["ID"];
+                {                    
+                    int id = (int)((DataRowView)dataGrid.SelectedItems[i])["ID"];
+                    SqlDataReader rd = null;
 
-                    SqlCommand cmd = new SqlCommand("SELECT Cluster,ClusterJobID,SharedDir,Executor FROM Experiments WHERE ID=" + id.ToString(), sql);
-                    cmd.CommandTimeout = 0;
-                    SqlDataReader rd = cmd.ExecuteReader();
-
-                    if (rd.Read())
+                    try
                     {
-                        string cluster = (string)rd["Cluster"];
-                        object jobid = rd["ClusterJobID"];
-                        object sharedDir = rd["SharedDir"];
-                        object executor = rd["Executor"];
-                        rd.Close();
+                        SqlCommand cmd = new SqlCommand("SELECT Cluster,ClusterJobID,SharedDir,Executor FROM Experiments WHERE ID=" + id.ToString(), sql);
+                        rd = cmd.ExecuteReader();
 
-                        if (cluster != "" && !DBNull.Value.Equals(jobid))
+                        if (rd.Read())
                         {
-                            try
+                            string cluster = (string)rd["Cluster"];
+                            object jobid = rd["ClusterJobID"];
+                            object sharedDir = rd["SharedDir"];
+                            object executor = rd["Executor"];
+                            rd.Close();
+
+                            if (cluster != "" && !DBNull.Value.Equals(jobid))
                             {
-                                Scheduler scheduler = new Scheduler();
-                                scheduler.Connect(cluster);
-                                WindowInteropHelper helper = new WindowInteropHelper(this);
-                                scheduler.SetInterfaceMode(false, helper.Handle);
-                                scheduler.CancelJob((int)jobid, "Job aborted by user.");
+                                try
+                                {
+                                    Scheduler scheduler = new Scheduler();
+                                    scheduler.Connect(cluster);
+                                    WindowInteropHelper helper = new WindowInteropHelper(this);
+                                    scheduler.SetInterfaceMode(false, helper.Handle);
+                                    scheduler.CancelJob((int)jobid, "Job aborted by user.");
+                                }
+                                catch { /* That's fine... */ }
                             }
-                            catch { /* That's fine... */ }
+
+                            if (!DBNull.Value.Equals(sharedDir) && !DBNull.Value.Equals(executor))
+                            {
+                                try
+                                {
+                                    File.Delete((string)sharedDir + "\\" + (string)executor);
+                                }
+                                catch { /* That's fine... */ }
+                            }
+
                         }
 
-                        if (!DBNull.Value.Equals(sharedDir) && !DBNull.Value.Equals(executor))
-                        {
-                            try
-                            {
-                                File.Delete((string)sharedDir + "\\" + (string)executor);
-                            }
-                            catch { /* That's fine... */ }
-                        }
-
+                        cmd = new SqlCommand("DELETE FROM JobQueue WHERE ExperimentID=" + id.ToString() + ";" +
+                                             "DELETE FROM Data WHERE ExperimentID=" + id.ToString() + ";" +
+                                             "DELETE FROM Experiments WHERE ID=" + id.ToString(), sql);
                     }
-
-                    cmd = new SqlCommand("DELETE FROM JobQueue WHERE ExperimentID=" + id.ToString() + ";" +
-                                         "DELETE FROM Data WHERE ExperimentID=" + id.ToString() + ";" +
-                                         "DELETE FROM Experiments WHERE ID=" + id.ToString(), sql);
-                    cmd.CommandTimeout = 0;
-                    cmd.ExecuteNonQuery();
+                    catch (Exception ex)
+                    {
+                        string msg = String.Format("Error: could not delete experiment #{0} because of: {1} ", id, ex.Message);
+                        r = System.Windows.MessageBox.Show(msg, "Error", MessageBoxButton.OK, MessageBoxImage.Error, MessageBoxResult.OK);
+                    }
+                    finally
+                    {
+                        if (rd != null) rd.Close();
+                    }
                 }
             }
 
