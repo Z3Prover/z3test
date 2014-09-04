@@ -69,7 +69,7 @@ namespace ClusterExperiment
             "LEN(sb.s) > (" + (category2.Length + ext2.Length + 2) + ") AND " +
             "SUBSTRING(sa.s, " + (category1.Length + 2) + ", LEN(sa.s)-" + (category1.Length + ext1.Length + 1) + ") = " +
             "SUBSTRING(sb.s, " + (category2.Length + 2) + ", LEN(sb.s)-" + (category2.Length + ext2.Length + 1) + ") " +
-            (condition == "" ? "" : " AND " + condition + " ") +
+            (condition == "" ? "" : (" AND " + condition + " ")) +
           "ORDER BY  " +
               "ABS(a.Runtime-b.Runtime) Desc";
         }
@@ -77,7 +77,7 @@ namespace ClusterExperiment
       else
       {
         return "SELECT " +
-                        "Strings.s as Filename," +
+                        "sa.s as Filename," +
                         "a.Runtime as 'Runtime (" + eID1 + ")'," +
                         "b.Runtime as 'Runtime (" + eID2 + ")'," +
                         "a.Returnvalue as 'Returnvalue (" + eID1 + ")'," +
@@ -90,11 +90,11 @@ namespace ClusterExperiment
                         "b.UNSAT as 'UNSAT (" + eID2 + ")'," +
                         "b.UNKNOWN as 'UNKNOWN (" + eID2 + ")'," +
                         "a.ID as 'ID1', b.ID as 'ID2' " +
-               "FROM Data a, Data b, Strings " +
+               "FROM Data a, Data b, Strings sa " +
                "WHERE a.ExperimentID=" + eID1 + " AND " +
                  "b.ExperimentID=" + eID2 + " AND " +
-                 "a.FilenameP=b.FilenameP AND a.FilenameP=Strings.ID " +
-                 (condition == "" ? "" : " " + condition + "AND ") +
+                 "a.FilenameP=b.FilenameP AND a.FilenameP=sa.ID " +
+                 (condition == "" ? "" : (" AND " + condition + " ")) +
                "ORDER BY ABS(a.Runtime-b.Runtime) Desc";
       }
     }
@@ -181,11 +181,11 @@ namespace ClusterExperiment
         else if (sender == radioSATUNSAT)
           da = new SqlDataAdapter(mk_query("((a.SAT>0 AND b.UNSAT>0) OR (a.UNSAT>0 AND b.SAT>0))"), sql);
         else if (sender == radioFNSAT)
-          da = new SqlDataAdapter(mk_query("Strings.s LIKE '%sat%' AND NOT Strings.s LIKE '%unsat%'"), sql);
+          da = new SqlDataAdapter(mk_query("sa.s LIKE '%sat%' AND NOT sa.s LIKE '%unsat%'"), sql);
         else if (sender == radioFNUNSAT)
-          da = new SqlDataAdapter(mk_query("Strings.s LIKE '%unsat%'"), sql);
+          da = new SqlDataAdapter(mk_query("sa.s LIKE '%unsat%'"), sql);
         else if (sender == radioFNTEXT)
-          da = new SqlDataAdapter(mk_query("Strings.s LIKE '%" + txtFilename.Text + "%'"), sql);
+          da = new SqlDataAdapter(mk_query("sa.s LIKE '%" + txtFilename.Text + "%'"), sql);
 
         DataSet ds = new DataSet();
         da.Fill(ds, "Data");
