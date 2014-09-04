@@ -24,7 +24,8 @@
                     <RowDefinition Height="Auto" />
                 </Grid.RowDefinitions>
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition MinWidth="550" Width="*" />
+                    <ColumnDefinition MinWidth="300" Width="*"/>
                 </Grid.ColumnDefinitions>
                 <StackPanel Grid.Row="0" Orientation="Horizontal">
                     <RadioButton Name="radioAll" GroupName="Option" Padding="5,0,5,0" Click="RadioButton_Click" IsChecked="True" VerticalAlignment="Center">All</RadioButton>
@@ -55,6 +56,18 @@
                     <RadioButton Name="radioFNUNSAT" GroupName="Option" Padding="5,0,5,0" Click="RadioButton_Click" VerticalAlignment="Center">"unsat"</RadioButton>
                     <RadioButton Name="radioFNTEXT" GroupName="Option" Padding="5,0,5,0" Click="RadioButton_Click" VerticalAlignment="Center">Text:</RadioButton>
                     <TextBox Name="txtFilename" Width="100" Height="20" VerticalAlignment="Center" HorizontalContentAlignment="Left" KeyUp="txtFilename_KeyUp" Text="unknown" />
+                </StackPanel>
+                <StackPanel Grid.Row="0" Grid.Column="1" Orientation="Vertical"  Grid.RowSpan="4">
+                    <Label Content="Ignore:"/>
+                    <CheckBox Name="chkIgnoreFNPrefix" Content="Prefix (shared directory)" Margin="10,0,0,0" Width="150" Height="20" HorizontalAlignment="Left" VerticalAlignment="Center" IsChecked="False" Checked="chkIgnoreFNPrefix_Checked" Unchecked="chkIgnoreFNPrefix_Unchecked"/>
+                    <CheckBox Name="chkIgnoreFNCategory" Content="Category" Margin="10,0,0,0" Width="150" Height="20" HorizontalAlignment="Left" VerticalAlignment="Center" IsChecked="False" Checked="chkIgnoreFNCategory_Checked" Unchecked="chkIgnoreFNCategory_Unchecked"/>
+                    <CheckBox Name="chkIgnoreFNPostfix" Content="Postfix (extensions):" Margin="10,0,0,0" Width="150" Height="20" HorizontalAlignment="Left" VerticalAlignment="Center" IsChecked="False" Unchecked="chkIgnoreFNPostfix_Unchecked" Checked="chkIgnoreFNPostfix_Checked"/>
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Stretch" Margin="10,0,0,0">
+                        <Label Name="lblLeft" Content=""/>
+                        <TextBox Name="txtExtensionLeft" MinWidth="75" HorizontalAlignment="Stretch" VerticalAlignment="Center" Text="ABC" IsEnabled="False" KeyUp="txtExtensionLeft_KeyUp"/>
+                        <Label Name="lblRight" Content=""/>
+                        <TextBox Name="txtExtensionRight" MinWidth="75" HorizontalAlignment="Stretch" VerticalAlignment="Center" Text="ABC" IsEnabled="False" KeyUp="txtExtensionRight_KeyUp"/>
+                    </StackPanel>
                 </StackPanel>
             </Grid>
         </Grid>
