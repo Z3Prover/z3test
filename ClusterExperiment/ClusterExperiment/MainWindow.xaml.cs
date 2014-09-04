@@ -329,6 +329,7 @@ namespace ClusterExperiment
                         cmd = new SqlCommand("DELETE FROM JobQueue WHERE ExperimentID=" + id.ToString() + ";" +
                                              "DELETE FROM Data WHERE ExperimentID=" + id.ToString() + ";" +
                                              "DELETE FROM Experiments WHERE ID=" + id.ToString(), sql);
+                        cmd.ExecuteNonQuery();
                     }
                     catch (Exception ex)
                     {
