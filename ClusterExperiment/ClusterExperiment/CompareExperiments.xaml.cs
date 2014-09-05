@@ -219,8 +219,8 @@ namespace ClusterExperiment
         return;
 
       DataRowView rowView = (DataRowView)dataGrid.SelectedItem;
-      int id13 = (int)rowView[14];
-      int id24 = (int)rowView[15];
+      int id13 = (int)rowView[12];
+      int id24 = (int)rowView[13];
 
       ShowOutput w = null;
 

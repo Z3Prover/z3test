@@ -26,7 +26,7 @@ namespace ClusterExperiment
 
       Title = "Job " + id;
 
-      SqlCommand cmd = new SqlCommand("SELECT SharedDir+Strings.s as Filename,stdout,stderr " +
+      SqlCommand cmd = new SqlCommand("SELECT SharedDir+'\\'+Strings.s as Filename,stdout,stderr " +
                                       "FROM Data,Strings,Experiments " +
                                       "WHERE FilenameP=Strings.ID AND Data.ExperimentID=Experiments.ID " +
                                       "AND Data.ID=" + id, sql);
