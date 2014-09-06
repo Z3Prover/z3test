@@ -214,7 +214,7 @@ namespace ClusterExperiment
         }
 
         // Copy a job...
-        public Submission(string DB, string backupDB, Int32Collection jobs, bool move = false)
+        public Submission(string db, string backupdb, Int32Collection jobs, bool move = false)
         {
             InitializeComponent();
             Mouse.OverrideCursor = System.Windows.Input.Cursors.Wait;
@@ -260,10 +260,58 @@ namespace ClusterExperiment
                 outerGrid.Children.Add(p);
 
                 pbars.Add(w.id, p);
-                String[] args = { "Copy", DB, backupDB, jobID.ToString(), move.ToString() };
+                String[] args = { "Copy", db, backupdb, jobID.ToString(), move.ToString() };
                 workers.Add(workers.Count(), w);
                 w.RunWorkerAsync(args);
             }
+
+            Mouse.OverrideCursor = null;
+        }
+
+        public Submission(string db, int jobid, string reinforcementCluster, int numWorkers, int priority)
+        {
+            InitializeComponent();
+            Mouse.OverrideCursor = System.Windows.Input.Cursors.Wait;
+            Title = "Calling reinforcements ...";
+
+            ColumnDefinition c1 = new ColumnDefinition();
+            ColumnDefinition c2 = new ColumnDefinition();
+            c1.Width = new GridLength(170);
+            c2.Width = new GridLength(75);
+            outerGrid.ColumnDefinitions.Add(c1);
+            outerGrid.ColumnDefinitions.Add(c2);
+
+            workers.Clear();
+
+            WindowInteropHelper helper = new WindowInteropHelper(this);
+            SubmissionWorker w = new SubmissionWorker(helper.Handle, workers.Count());
+            w.DoWork += new DoWorkEventHandler(worker_DoWork);
+            w.ProgressChanged += new ProgressChangedEventHandler(worker_ProgressChanged);
+            w.RunWorkerCompleted += new RunWorkerCompletedEventHandler(worker_RunWorkerCompleted);
+            w.WorkerReportsProgress = true;
+            w.WorkerSupportsCancellation = false;
+
+            RowDefinition r = new RowDefinition();
+            outerGrid.RowDefinitions.Add(r);
+            r.Height = new GridLength(26);
+            Label l = new Label();
+            l.Content = "Job #" + jobid.ToString() + "...";
+            l.Height = 26;
+            Grid.SetRow(l, outerGrid.RowDefinitions.Count() - 1);
+            Grid.SetColumn(l, 0);
+            outerGrid.Children.Add(l);
+
+            ProgressBar p = new ProgressBar();
+            p.Height = 26;
+            p.Width = 75;
+            Grid.SetRow(p, outerGrid.RowDefinitions.Count() - 1);
+            Grid.SetColumn(p, 1);
+            outerGrid.Children.Add(p);
+
+            pbars.Add(w.id, p);
+            Object[] args = { "Reinforce", db, jobid, reinforcementCluster, numWorkers, priority};
+            workers.Add(workers.Count(), w);
+            w.RunWorkerAsync(args);
 
             Mouse.OverrideCursor = null;
         }
@@ -439,18 +487,24 @@ namespace ClusterExperiment
                 }
                 else if (cmd == "Submit")
                 {
-                    //int jobs =
-                    w.SubmitJob((string)args[1], (string)args[2], (string)args[3],
-                                (string)args[4], (string)args[5], (string)args[6], (string)args[7],
-                                (string)args[8], (string)args[9], (string)args[10], (string)args[11],
-                                (int)args[12], (string)args[13], (string)args[14],
-                                ref haveBinId, ref binId);
+                    string sExecutor = "";
+                    int jobid =
+                    w.SetupExperiment((string)args[1], (string)args[2], (string)args[3],
+                                      (string)args[4], (string)args[5], (string)args[6], (string)args[7],
+                                      (string)args[8], (string)args[9], (string)args[10], (string)args[11],
+                                      (int)args[12], (string)args[13], (string)args[14],
+                                      ref haveBinId, ref binId, ref sExecutor);
+                    w.SubmitHPCJob((string)args[1],true,  jobid, (string)args[8], (string)args[9], (int)args[12], (string)args[10], binId, (string)args[3], sExecutor);
 
                     // e.Result = "1 experiment with " + jobs + " jobs submitted.";
                 }
                 else if (cmd == "Copy")
                 {
                     w.Copy((string)args[1], (string)args[2], (string)args[3], ((string)args[4] == "True"));
+                }
+                else if (cmd == "Reinforce")
+                {
+                    w.Reinforce((string)args[1], (int)args[2], (string)args[3], (int)args[4], (int)args[5]);
                 }
                 else
                     throw new Exception("Unknown submission operation: " + cmd);

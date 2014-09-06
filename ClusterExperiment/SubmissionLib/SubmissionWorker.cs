@@ -321,11 +321,11 @@ namespace SubmissionLib
                 job.Priority = JobPriority.Highest;
         }
 
-        public void SubmitJob(string db, string category, string sharedDir,
-                              string memout, string timeout, string executor,
-                              string parameters, string cluster, string nodegroup, string locality,
-                              string username, int priority, string extension, string note,
-                              ref bool haveBinId, ref int binId)
+        public int SetupExperiment(string db, string category, string sharedDir,
+                                    string memout, string timeout, string executor,
+                                    string parameters, string cluster, string nodegroup, string locality,
+                                    string username, int priority, string extension, string note,
+                                    ref bool haveBinId, ref int binId, ref string sExecutor)
         {
             // Wait for binID
             while (!haveBinId)
@@ -371,7 +371,8 @@ namespace SubmissionLib
             // Copy the worker to the shared directory      
             string eFullpath = System.IO.Path.GetFullPath(executor);
             string eFilename = System.IO.Path.GetFileName(executor);
-            string sExecutor = newID.ToString() + "_" + eFilename;
+            sExecutor = newID.ToString() + "_" + eFilename;
+            
             if (!File.Exists(sharedDir + "\\" + sExecutor) ||
                 File.GetLastWriteTime(sharedDir + "\\" + sExecutor) < File.GetLastWriteTime(eFullpath))
                 File.Copy(eFullpath, sharedDir + "\\" + sExecutor, true);
@@ -379,6 +380,14 @@ namespace SubmissionLib
 
             cmd = new SqlCommand("UPDATE Experiments SET Executor='" + sExecutor + "' WHERE ID='" + newID.ToString() + "'", sql);
             cmd.ExecuteNonQuery();
+
+            return newID;
+        }
+
+        public void SubmitHPCJob(string db, bool isNew, int newID, string cluster, string nodegroup, int priority, string locality, int binID, string sharedDir, string executor)
+        {
+            SqlConnection sql = Connect(db);
+            SqlCommand cmd = null;
 
             scheduler.Connect(cluster);
 
@@ -431,7 +440,7 @@ namespace SubmissionLib
                 populateTask.IsRerunnable = false;
                 populateTask.IsExclusive = false;
                 populateTask.WorkDirectory = sharedDir;
-                populateTask.CommandLine = sExecutor + " " + newID + " ? \"" + db + "\"";
+                populateTask.CommandLine = executor + " " + newID + " ? \"" + db + "\"";
                 populateTask.Name = "Populate";
                 hpcJob.AddTask(populateTask);
 
@@ -442,7 +451,7 @@ namespace SubmissionLib
                     ISchedulerTask task = hpcJob.CreateTask();
                     SetResources(task, locality);
                     task.WorkDirectory = sharedDir;
-                    task.CommandLine = sExecutor + " " + newID + " \"" + db + "\"";
+                    task.CommandLine = executor + " " + newID + " \"" + db + "\"";
                     task.IsExclusive = false;
                     task.IsRerunnable = true;
                     task.DependsOn.Add("Populate");
@@ -458,7 +467,7 @@ namespace SubmissionLib
                 rTask.IsRerunnable = true;
                 rTask.IsExclusive = false;
                 rTask.WorkDirectory = sharedDir;
-                rTask.CommandLine = sExecutor + " " + newID + " ! \"" + db + "\"";
+                rTask.CommandLine = executor + " " + newID + " ! \"" + db + "\"";
                 rTask.DependsOn.Add("Worker");
                 rTask.Name = "Recovery";
                 hpcJob.AddTask(rTask);
@@ -470,15 +479,19 @@ namespace SubmissionLib
                 dTask.IsRerunnable = true;
                 dTask.IsExclusive = false;
                 dTask.WorkDirectory = sharedDir;
-                dTask.CommandLine = "del " + sharedDir + "\\" + sExecutor;
+                dTask.CommandLine = "del " + sharedDir + "\\" + executor;
                 dTask.Name = "Delete worker";
                 dTask.DependsOn.Add("Recovery");
                 hpcJob.AddTask(dTask);
 
                 scheduler.AddJob(hpcJob);
                 scheduler.SubmitJob(hpcJob, null, null);
-                cmd = new SqlCommand("UPDATE Experiments SET ClusterJobID=" + hpcJob.Id.ToString() + " WHERE ID=" + newID.ToString() + "; ", sql);
-                cmd.ExecuteNonQuery();
+
+                if (isNew)
+                {
+                    cmd = new SqlCommand("UPDATE Experiments SET ClusterJobID=" + hpcJob.Id.ToString() + " WHERE ID=" + newID.ToString() + "; ", sql);
+                    cmd.ExecuteNonQuery();
+                }
             }
             catch (Exception ex)
             {
@@ -705,6 +718,35 @@ namespace SubmissionLib
 
             toSQL.Close();
             fromSQL.Close();
+        }
+
+        public void Reinforce(string DB, int jobID, string reinforcementCluster, int nworkers, int priority)
+        {
+            ReportProgress(0);
+
+            SqlConnection sql = Connect(DB);
+
+            SqlCommand cmd = new SqlCommand("SELECT SharedDir,Executor,Nodegroup,Locality,Binary FROM Experiments WHERE ID=" + jobID.ToString(), sql);
+            SqlDataReader r = cmd.ExecuteReader();
+
+            if (r.Read())
+            {
+                string sharedDir = (string)r["SharedDir"];
+                string nodegroup = (string)r["Nodegroup"];
+                string locality = (string)r["Locality"];
+                int binID = (int)r["Binary"];
+                string executor = (string)r["Executor"];
+
+                r.Close();
+
+                SubmitHPCJob(DB, false, jobID, reinforcementCluster, nodegroup, priority, locality, binID, sharedDir, executor);
+
+                ReportProgress(100);
+            }
+            else
+                throw new Exception("Could not read experiment data");
+
+            sql.Close();            
         }
 
         protected static int GetFreeNodes(IScheduler scheduler, string cluster)

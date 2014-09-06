@@ -44,6 +44,7 @@ namespace ClusterExperiment
     public static RoutedCommand CreateGroupCommand = new RoutedCommand();
     public static RoutedCommand GroupScatterplotCommand = new RoutedCommand();
     public static RoutedCommand SaveBinaryCommand = new RoutedCommand();
+    public static RoutedCommand ReinforcementsCommand = new RoutedCommand();
 
     public MainWindow()
     {
@@ -64,6 +65,8 @@ namespace ClusterExperiment
       customCommandBinding = new CommandBinding(GroupScatterplotCommand, showGroupScatterplot, canShowGroupScatterplot);
       CommandBindings.Add(customCommandBinding);
       customCommandBinding = new CommandBinding(SaveBinaryCommand, showSaveBinary, canShowSaveBinary);
+      CommandBindings.Add(customCommandBinding);
+      customCommandBinding = new CommandBinding(ReinforcementsCommand, showReinforcements, canShowReinforcements);
       CommandBindings.Add(customCommandBinding);
 
       Loaded += new RoutedEventHandler(MainWindow_Loaded);
@@ -843,6 +846,37 @@ namespace ClusterExperiment
       }
 
       Mouse.OverrideCursor = null;
+    }
+
+    private void canShowReinforcements(object Sender, CanExecuteRoutedEventArgs e)
+    {
+      e.CanExecute = (sql != null) && (dataGrid.SelectedItems.Count == 1);
+    }
+
+    private void showReinforcements(object target, ExecutedRoutedEventArgs e)
+    {
+        ReinforcementsDialog dlg = new ReinforcementsDialog();
+        dlg.Owner = this;
+        if (dlg.ShowDialog() == true)
+        {
+            DataRowView rowView = (DataRowView)dataGrid.SelectedItems[0];
+
+            string rcluster = dlg.txtRCluster.Text;
+            int nworkers = Convert.ToInt32(dlg.txtNumWorkers.Text);
+            int jid = (int)rowView["ID"];
+            int priority = dlg.cmbPriority.SelectedIndex;
+            
+            Submission sdlg = null;
+
+            sdlg = new Submission(txtDatabase.Text, jid, rcluster, nworkers, priority);
+            sdlg.Owner = this;
+            sdlg.ShowDialog();
+
+            if (sdlg.lastError != null)
+                System.Windows.MessageBox.Show(this, sdlg.lastError.Message, "Error",
+                System.Windows.MessageBoxButton.OK,
+                System.Windows.MessageBoxImage.Error);
+        }
     }
   }
 }
