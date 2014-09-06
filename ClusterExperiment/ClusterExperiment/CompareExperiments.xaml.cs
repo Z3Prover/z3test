@@ -47,6 +47,8 @@ namespace ClusterExperiment
             "SUBSTRING(sa.s, " + (category1.Length + 2) + ", IIF(sa.s is null, 0, LEN(sa.s))-(" + (category1.Length + ext1.Length + 1) + ")) as 'Filename (Base)', " +            
             "a.Runtime as 'Runtime (" + eID1 + ")', " +
             "b.Runtime as 'Runtime (" + eID2 + ")', " +
+            "a.ResultCode as 'ResultCode (" + eID1 + ")', " +
+            "b.ResultCode as 'ResultCode (" + eID2 + ")', " +
             "a.Returnvalue as 'Returnvalue (" + eID1 + ")', " +
             "b.Returnvalue as 'Returnvalue (" + eID2 + ")', " +
             "a.Runtime-b.Runtime as Diff, " +
@@ -56,8 +58,6 @@ namespace ClusterExperiment
             "b.SAT as 'SAT (" + eID2 + ")', " +
             "b.UNSAT as 'UNSAT (" + eID2 + ")', " +
             "b.UNKNOWN as 'UNKNOWN (" + eID2 + ")', " +
-            "sa.s as 'Filename(" + eID1 + ")', " +
-            "sb.s as 'Filename(" + eID2 + ")', " +
             "a.ID as 'ID1', b.ID as 'ID2' " +
           "FROM  " +
             "Data a, Data b, Strings sa, Strings sb " +
@@ -80,6 +80,8 @@ namespace ClusterExperiment
                         "sa.s as Filename," +
                         "a.Runtime as 'Runtime (" + eID1 + ")'," +
                         "b.Runtime as 'Runtime (" + eID2 + ")'," +
+                        "a.ResultCode as 'ResultCode (" + eID1 + ")', " +
+                        "b.ResultCode as 'ResultCode (" + eID2 + ")', " +
                         "a.Returnvalue as 'Returnvalue (" + eID1 + ")'," +
                         "b.Returnvalue as 'Returnvalue (" + eID2 + ")'," +
                         "a.Runtime-b.Runtime as Diff," +
@@ -219,8 +221,8 @@ namespace ClusterExperiment
         return;
 
       DataRowView rowView = (DataRowView)dataGrid.SelectedItem;
-      int id13 = (int)rowView[12];
-      int id24 = (int)rowView[13];
+      int id13 = (int)rowView[14];
+      int id24 = (int)rowView[15];
 
       ShowOutput w = null;
 
