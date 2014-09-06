@@ -91,6 +91,9 @@
     <Compile Include="CompareExperiments.xaml.cs">
       <DependentUpon>CompareExperiments.xaml</DependentUpon>
     </Compile>
+    <Compile Include="ReinforcementsDialog.xaml.cs">
+      <DependentUpon>ReinforcementsDialog.xaml</DependentUpon>
+    </Compile>
     <Compile Include="CopyDialog.xaml.cs">
       <DependentUpon>CopyDialog.xaml</DependentUpon>
     </Compile>
@@ -134,6 +137,10 @@
     <Page Include="CompareExperiments.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="ReinforcementsDialog.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="CopyDialog.xaml">
       <SubType>Designer</SubType>

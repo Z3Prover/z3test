@@ -161,6 +161,24 @@ namespace worker
 
         void populate(Experiment e)
         {
+            // First check whether someone else is populating already.
+            int c = 1;
+
+            SqlCommand cmd = new SqlCommand("SELECT COUNT(*) FROM Data WHERE ExperimentID=" + e.ID + ";", sql);
+            SqlDataReader r = cmd.ExecuteReader();            
+            if (r.Read()) c = ((int)r[0]);
+            r.Close();
+            if (c != 0)
+                return;
+
+            cmd = new SqlCommand("SELECT COUNT(*) FROM JobQueue WHERE ExperimentID=" + e.ID + ";", sql);
+            r = cmd.ExecuteReader();
+            if (r.Read()) c = ((int)r[0]);
+            r.Close();
+            if (c != 0)
+                return;
+
+
             int i = 0, pinx;
             string cur;
             while (i < e.fileExtension.Length)
@@ -188,7 +206,7 @@ namespace worker
                     {
                         if (Path.GetExtension(s).Substring(1) != cur) continue;
 
-                        SqlCommand cmd = new SqlCommand("AQ " + e.ID + ",'" + s.Substring(sl) + "';", sql, t);
+                        cmd = new SqlCommand("AQ " + e.ID + ",'" + s.Substring(sl) + "';", sql, t);
                         cmd.ExecuteNonQuery();
                         cnt++;
 
