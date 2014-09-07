@@ -344,12 +344,12 @@ namespace SubmissionLib
                 throw new Exception("Worker binary does not exist.");
 
             if (parameters.Length < 512)
-                cmd = new SqlCommand("INSERT INTO Experiments (CompletionTime,Category,SharedDir,Extension,Memout,Timeout,Binary,Parameters,Cluster,Nodegroup,Locality,Creator,Note,Longparams) " +
+                cmd = new SqlCommand("INSERT INTO Experiments (CompletionTime,Category,SharedDir,Extension,Memout,Timeout,Binary,Parameters,Cluster,Nodegroup,Locality,Creator,Note,Longparams,Flag) " +
                                       "VALUES(NULL,'" + category + "','" + sharedDir + "','" + extension + "'," + memout + "," + timeout + "," + binId + ",'" + parameters + "'," +
                                       "'" + cluster + "','" + nodegroup + "','" + locality + "'," +
                                       "'" + username + "',@NOTE,NULL,0); SELECT SCOPE_IDENTITY () As NewID", sql);
             else
-                cmd = new SqlCommand("INSERT INTO Experiments (CompletionTime,Category,SharedDir,Extension,Memout,Timeout,Binary,Parameters,Cluster,Nodegroup,Locality,Creator,Note,Longparams) " +
+              cmd = new SqlCommand("INSERT INTO Experiments (CompletionTime,Category,SharedDir,Extension,Memout,Timeout,Binary,Parameters,Cluster,Nodegroup,Locality,Creator,Note,Longparams,Flag) " +
                                       "VALUES(NULL,'" + category + "','" + sharedDir + "','" + extension + "'," + memout + "," + timeout + "," + binId + ",NULL," +
                                       "'" + cluster + "','" + nodegroup + "','" + locality + "'," +
                                       "'" + username + "',@NOTE,'" + parameters + "',0); SELECT SCOPE_IDENTITY () As NewID", sql);
