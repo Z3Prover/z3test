@@ -157,7 +157,8 @@ namespace SubmissionLib
                                                            "Note VARCHAR(256)," +
                                                            "ClusterJobID INT," +
                                                            "Executor VARCHAR(256)," +
-                                                           "Longparams VARCHAR(MAX)" +
+                                                           "Longparams VARCHAR(MAX)," +
+                                                           "Flag bit" +
                                                            ")", sql);
             cmd.ExecuteNonQuery();
 
@@ -218,7 +219,7 @@ namespace SubmissionLib
             cmd.ExecuteNonQuery();
 
             cmd = new SqlCommand("CREATE VIEW [dbo].[TitleScreen] WITH SCHEMABINDING as SELECT " +
-                                 "ID,SubmissionTime,Category,Cluster,Nodegroup,Creator " +
+                                 "ID,SubmissionTime,Category,Cluster,Nodegroup,Creator,Note,Flag " +
                                  "FROM [dbo].[Experiments]", sql);
             cmd.ExecuteNonQuery();
 
@@ -346,12 +347,12 @@ namespace SubmissionLib
                 cmd = new SqlCommand("INSERT INTO Experiments (CompletionTime,Category,SharedDir,Extension,Memout,Timeout,Binary,Parameters,Cluster,Nodegroup,Locality,Creator,Note,Longparams) " +
                                       "VALUES(NULL,'" + category + "','" + sharedDir + "','" + extension + "'," + memout + "," + timeout + "," + binId + ",'" + parameters + "'," +
                                       "'" + cluster + "','" + nodegroup + "','" + locality + "'," +
-                                      "'" + username + "',@NOTE,NULL); SELECT SCOPE_IDENTITY () As NewID", sql);
+                                      "'" + username + "',@NOTE,NULL,0); SELECT SCOPE_IDENTITY () As NewID", sql);
             else
                 cmd = new SqlCommand("INSERT INTO Experiments (CompletionTime,Category,SharedDir,Extension,Memout,Timeout,Binary,Parameters,Cluster,Nodegroup,Locality,Creator,Note,Longparams) " +
                                       "VALUES(NULL,'" + category + "','" + sharedDir + "','" + extension + "'," + memout + "," + timeout + "," + binId + ",NULL," +
                                       "'" + cluster + "','" + nodegroup + "','" + locality + "'," +
-                                      "'" + username + "',@NOTE,'" + parameters + "'); SELECT SCOPE_IDENTITY () As NewID", sql);
+                                      "'" + username + "',@NOTE,'" + parameters + "',0); SELECT SCOPE_IDENTITY () As NewID", sql);
 
             SqlParameter p = cmd.Parameters.Add("@NOTE", SqlDbType.VarChar);
             p.Size = note.Length;

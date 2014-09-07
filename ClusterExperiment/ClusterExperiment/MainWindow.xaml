@@ -63,12 +63,13 @@
                             <MenuItem Name="mnuDelete" Command="Delete" />
                             <MenuItem Name="mnuCompare" Header="_Compare" Command="{x:Static custom:MainWindow.CompareCommand}" />
                             <MenuItem Name="mnuScatterplot" Header="_Scatterplot" Command="{x:Static custom:MainWindow.ScatterplotCommand}" />
-                            <MenuItem Name="mnuSaveAs" Header="_Save CSV..." Command="{x:Static custom:MainWindow.SaveCSVCommand}"/>
+                            <MenuItem Name="mnuSaveAs" Header="Save _CSV..." Command="{x:Static custom:MainWindow.SaveCSVCommand}"/>
                             <MenuItem Name="mnuCopy" Header="Copy _to..." Command="{x:Static custom:MainWindow.CopyCommand}" />
                             <MenuItem Name="mnuMove" Header="_Move to..." Command="{x:Static custom:MainWindow.MoveCommand}" />                            
-                            <MenuItem Name="mnuCreateGroup" Header="Create group..." Command="{x:Static custom:MainWindow.CreateGroupCommand}" />
+                            <MenuItem Name="mnuCreateGroup" Header="Create _group..." Command="{x:Static custom:MainWindow.CreateGroupCommand}" />
                             <MenuItem Name="mnuSaveBinary" Header="Save _binary to..." Command="{x:Static custom:MainWindow.SaveBinaryCommand}" />
                             <MenuItem Name="mnuReinforcements" Header="Call _reinforcements..." Command="{x:Static custom:MainWindow.ReinforcementsCommand}" />
+                            <MenuItem Name="mnuFlag" Header="Toggle _flag" Command="{x:Static custom:MainWindow.FlagCommand}" />
                             <MenuItem Name="mnuProperties" Command="Properties" />
                         </ContextMenu>
                     </DataGrid.ContextMenu>

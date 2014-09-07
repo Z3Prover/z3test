@@ -45,6 +45,7 @@ namespace ClusterExperiment
     public static RoutedCommand GroupScatterplotCommand = new RoutedCommand();
     public static RoutedCommand SaveBinaryCommand = new RoutedCommand();
     public static RoutedCommand ReinforcementsCommand = new RoutedCommand();
+    public static RoutedCommand FlagCommand = new RoutedCommand();
 
     public MainWindow()
     {
@@ -67,6 +68,8 @@ namespace ClusterExperiment
       customCommandBinding = new CommandBinding(SaveBinaryCommand, showSaveBinary, canShowSaveBinary);
       CommandBindings.Add(customCommandBinding);
       customCommandBinding = new CommandBinding(ReinforcementsCommand, showReinforcements, canShowReinforcements);
+      CommandBindings.Add(customCommandBinding);
+      customCommandBinding = new CommandBinding(FlagCommand, showFlag, canShowFlag);
       CommandBindings.Add(customCommandBinding);
 
       Loaded += new RoutedEventHandler(MainWindow_Loaded);
@@ -91,12 +94,12 @@ namespace ClusterExperiment
       SqlDataAdapter da = new SqlDataAdapter("SELECT * FROM TitleScreen ORDER BY SubmissionTime DESC", sql);
       DataSet ds = new DataSet();
       da.Fill(ds, "Experiments");
-      dataGrid.ItemsSource = ds.Tables[0].DefaultView;
+      dataGrid.ItemsSource = ds.Tables[0].DefaultView;      
 
       da = new SqlDataAdapter("SELECT * FROM JobgroupsView ORDER BY ID DESC", sql);
       ds = new DataSet();
       da.Fill(ds, "Jobgroups");
-      jobgroupGrid.ItemsSource = ds.Tables[0].DefaultView;
+      jobgroupGrid.ItemsSource = ds.Tables[0].DefaultView;      
 
       Mouse.OverrideCursor = null;
     }
@@ -877,6 +880,25 @@ namespace ClusterExperiment
                 System.Windows.MessageBoxButton.OK,
                 System.Windows.MessageBoxImage.Error);
         }
+    }
+
+    private void canShowFlag(object Sender, CanExecuteRoutedEventArgs e)
+    {
+      e.CanExecute = (sql != null) && (dataGrid.SelectedItems.Count >= 1);
+    }
+
+    private void showFlag(object target, ExecutedRoutedEventArgs e)
+    {      
+      foreach (DataRowView drv in dataGrid.SelectedItems)
+      {
+        int id = (int)drv["ID"];
+        bool old = (bool)drv["Flag"];
+
+        SqlCommand c = new SqlCommand("UPDATE Experiments SET Flag=" + ((old == true) ? "0" : "1") + " WHERE ID=" + id, sql);
+        c.ExecuteNonQuery();
+        
+        drv.Row["Flag"] = (old == true) ? 0 : 1;
+      }
     }
   }
 }
