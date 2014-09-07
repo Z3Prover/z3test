@@ -45,7 +45,7 @@ namespace ClusterExperiment
     public static RoutedCommand GroupScatterplotCommand = new RoutedCommand();
     public static RoutedCommand SaveBinaryCommand = new RoutedCommand();
     public static RoutedCommand ReinforcementsCommand = new RoutedCommand();
-    public static RoutedCommand FlagCommand = new RoutedCommand();
+    public static RoutedCommand FlagCommand = new RoutedCommand();    
 
     public MainWindow()
     {
@@ -73,6 +73,8 @@ namespace ClusterExperiment
       CommandBindings.Add(customCommandBinding);
 
       Loaded += new RoutedEventHandler(MainWindow_Loaded);
+
+      btnConnect.Focus();
     }
 
     void MainWindow_Loaded(object sender, RoutedEventArgs e)
@@ -91,7 +93,12 @@ namespace ClusterExperiment
     {
       Mouse.OverrideCursor = System.Windows.Input.Cursors.Wait;
 
-      SqlDataAdapter da = new SqlDataAdapter("SELECT * FROM TitleScreen ORDER BY SubmissionTime DESC", sql);
+      SqlDataAdapter da;
+
+      if (txtFilter.Text != "")
+        da = new SqlDataAdapter("SELECT * FROM TitleScreen WHERE (Category like '%" + txtFilter.Text + "%' OR Note like '%" + txtFilter.Text + "%') ORDER BY SubmissionTime DESC", sql);
+      else
+        da = new SqlDataAdapter("SELECT * FROM TitleScreen ORDER BY SubmissionTime DESC", sql);
       DataSet ds = new DataSet();
       da.Fill(ds, "Experiments");
       dataGrid.ItemsSource = ds.Tables[0].DefaultView;      
@@ -469,6 +476,10 @@ namespace ClusterExperiment
             if (cur.sat == 0 && cur.unsat == 0 && !rv_ok)
               cur.runtime = error_line;
 
+            if (fn.StartsWith("QF_BV-sat\\")) fn = fn.Substring(10);
+            else if (fn.StartsWith("QF_BV-sat-hard\\")) 
+              fn = fn.Substring(15);
+
             if (!data.ContainsKey(fn))
               data.Add(fn, new Dictionary<int, CSVDatum>());
             data[fn].Add(id, cur);
@@ -491,6 +502,17 @@ namespace ClusterExperiment
         // Write data.
         foreach (KeyValuePair<string, Dictionary<int, CSVDatum>> d in data.OrderBy(x => x.Key))
         {
+          bool skip = false;
+          for (int i = 0; i < dataGrid.SelectedItems.Count; i++)
+          {
+            DataRowView rowView = (DataRowView)dataGrid.SelectedItems[i];
+            int id = (int)rowView["ID"];
+            if (!d.Value.ContainsKey(id) || d.Value[id] == null)
+              skip = true;
+          }
+          if (skip)
+            continue;
+
           f.Write(d.Key + ",");
 
           for (int i = 0; i < dataGrid.SelectedItems.Count; i++)
@@ -899,6 +921,23 @@ namespace ClusterExperiment
         
         drv.Row["Flag"] = (old == true) ? 0 : 1;
       }
+    }
+
+    private void txtFilter_KeyUp(object sender, System.Windows.Input.KeyEventArgs e)
+    {
+      if (e.Key == Key.Enter)
+        updateDataGrid();
+    }
+
+    private void canFocusOnFilter(object Sender, CanExecuteRoutedEventArgs e)
+    {
+      e.CanExecute = true;
+    }
+
+    private void focusOnFilter(object sender, ExecutedRoutedEventArgs e)
+    {
+      txtFilter.SelectAll();
+      txtFilter.Focus();
     }
   }
 }
