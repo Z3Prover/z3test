@@ -130,6 +130,9 @@
     <Compile Include="Submission.xaml.cs">
       <DependentUpon>Submission.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Duplicates.xaml.cs">
+      <DependentUpon>Duplicates.xaml</DependentUpon>
+    </Compile>
     <Page Include="ChooseCategories.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -193,6 +196,10 @@
     <Page Include="Themes\Generic.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Duplicates.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
   </ItemGroup>
   <ItemGroup>

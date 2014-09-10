@@ -45,7 +45,8 @@ namespace ClusterExperiment
     public static RoutedCommand GroupScatterplotCommand = new RoutedCommand();
     public static RoutedCommand SaveBinaryCommand = new RoutedCommand();
     public static RoutedCommand ReinforcementsCommand = new RoutedCommand();
-    public static RoutedCommand FlagCommand = new RoutedCommand();    
+    public static RoutedCommand FlagCommand = new RoutedCommand();
+    public static RoutedCommand DuplicatesCommand = new RoutedCommand();
 
     public MainWindow()
     {
@@ -70,6 +71,8 @@ namespace ClusterExperiment
       customCommandBinding = new CommandBinding(ReinforcementsCommand, showReinforcements, canShowReinforcements);
       CommandBindings.Add(customCommandBinding);
       customCommandBinding = new CommandBinding(FlagCommand, showFlag, canShowFlag);
+      CommandBindings.Add(customCommandBinding);
+      customCommandBinding = new CommandBinding(DuplicatesCommand, showDuplicates, canShowDuplicates);
       CommandBindings.Add(customCommandBinding);
 
       Loaded += new RoutedEventHandler(MainWindow_Loaded);
@@ -938,6 +941,40 @@ namespace ClusterExperiment
     {
       txtFilter.SelectAll();
       txtFilter.Focus();
+    }
+
+    private void canShowDuplicates(object Sender, CanExecuteRoutedEventArgs e)
+    {
+        e.CanExecute = (sql != null) && (dataGrid.SelectedItems.Count == 1);
+    }
+
+    private void showDuplicates(object sender, ExecutedRoutedEventArgs e)
+    {
+        Mouse.OverrideCursor = System.Windows.Input.Cursors.Wait;
+
+        DataRowView rowView = (DataRowView)dataGrid.SelectedItems[0];
+        int eid = (int)rowView["ID"];
+
+        SqlCommand cmd = new SqlCommand("SELECT TOP 1 COUNT(*) as Count,FilenameP FROM Data WHERE ExperimentID=" + eid + " GROUP BY FilenameP HAVING COUNT(*)>1", sql);
+        SqlDataReader r = cmd.ExecuteReader();
+
+        if (r.HasRows)
+        {
+            r.Close();
+
+            Duplicates dlg = new Duplicates(eid, sql);
+            dlg.ShowDialog();
+        }
+        else
+        {
+            r.Close();
+            System.Windows.MessageBox.Show(this,
+                "This experiment has no duplicates.", "No duplicates.",
+                System.Windows.MessageBoxButton.OK,
+                System.Windows.MessageBoxImage.Information);
+        }        
+
+        Mouse.OverrideCursor = null;
     }
   }
 }
