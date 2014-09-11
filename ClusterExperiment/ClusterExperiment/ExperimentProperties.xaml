@@ -34,8 +34,8 @@
         <Label Content="Category:" Grid.Row="2" Grid.Column="0" />
         <TextBox Name="txtCategory" IsReadOnly="True" Grid.Row="2" Grid.Column="1" />
 
-        <Label Content="Progress:" Grid.Row="3" Grid.Column="0" />
-        <Grid Grid.Row="3" Grid.Column="2" HorizontalAlignment="Right">
+        <Label Content="Progress:" Grid.Row="3" Grid.Column="0"/>
+        <Grid Grid.Row="3" Grid.Column="2" HorizontalAlignment="Right" VerticalAlignment="Stretch">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
@@ -52,7 +52,7 @@
             <Label Name="lblFinished" Grid.Row="1" Grid.Column="1" HorizontalContentAlignment="Right" />
             <Label Name="lblRunning" Grid.Row="1" Grid.Column="2" HorizontalContentAlignment="Right" />
         </Grid>
-        <Grid Grid.Row="4" Grid.Column="2" HorizontalAlignment="Right">
+        <Grid Grid.Row="4" Grid.Column="2" HorizontalAlignment="Right" VerticalAlignment="Stretch">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
@@ -60,8 +60,8 @@
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
-            <Label Content="Status on Cluster:" Grid.Row="0" Grid.Column="0"/>
-            <Label Name="lblClusterStatus" Grid.Row="1" Grid.Column="0" HorizontalContentAlignment="Left" />
+            <Label Content="Status on Cluster:" Grid.Row="0" Grid.Column="0" Height="26"/>
+            <Label Name="lblClusterStatus" Content="OK" Grid.Row="1" Grid.Column="0" HorizontalContentAlignment="Right" />
         </Grid>
 
         <Label Content="Statistics:" Grid.Row="5" Grid.Column="0" />
