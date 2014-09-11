@@ -47,6 +47,7 @@ namespace ClusterExperiment
     public static RoutedCommand ReinforcementsCommand = new RoutedCommand();
     public static RoutedCommand FlagCommand = new RoutedCommand();
     public static RoutedCommand DuplicatesCommand = new RoutedCommand();
+    public static RoutedCommand TallyCommand = new RoutedCommand();    
 
     public MainWindow()
     {
@@ -73,6 +74,8 @@ namespace ClusterExperiment
       customCommandBinding = new CommandBinding(FlagCommand, showFlag, canShowFlag);
       CommandBindings.Add(customCommandBinding);
       customCommandBinding = new CommandBinding(DuplicatesCommand, showDuplicates, canShowDuplicates);
+      CommandBindings.Add(customCommandBinding);
+      customCommandBinding = new CommandBinding(TallyCommand, showTally, canShowTally);
       CommandBindings.Add(customCommandBinding);
 
       Loaded += new RoutedEventHandler(MainWindow_Loaded);
@@ -975,6 +978,37 @@ namespace ClusterExperiment
         }        
 
         Mouse.OverrideCursor = null;
+    }
+
+    private void canShowTally(object Sender, CanExecuteRoutedEventArgs e)
+    {
+        e.CanExecute = (sql != null) && (dataGrid.SelectedItems.Count > 0);
+    }
+
+    private void showTally(object sender, ExecutedRoutedEventArgs e)
+    {
+      Mouse.OverrideCursor = System.Windows.Input.Cursors.Wait;
+
+      double total = 0.0; // in hours
+
+      foreach (DataRowView drv in dataGrid.SelectedItems)
+      {
+        int id = (int)drv["ID"];
+        SqlCommand cmd = new SqlCommand("SELECT SUM(Runtime)/6300 FROM Data WHERE ExperimentID=" + id, sql);
+        SqlDataReader r = cmd.ExecuteReader();
+        while (r.Read())
+          total += (double)r[0];
+        r.Close();
+      }
+
+      TimeSpan ts = new TimeSpan(Convert.ToInt32(total), 0, 0);
+
+      System.Windows.MessageBox.Show(this,
+                     "The total amount of runtime spent computing the selected results is " + ts.ToString() + ".", "Tally",
+                     System.Windows.MessageBoxButton.OK,
+                     System.Windows.MessageBoxImage.Information);     
+
+      Mouse.OverrideCursor = null;
     }
   }
 }
