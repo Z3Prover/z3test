@@ -385,7 +385,7 @@ namespace SubmissionLib
             return newID;
         }
 
-        public void SubmitHPCJob(string db, bool isNew, int newID, string cluster, string nodegroup, int priority, string locality, int binID, string sharedDir, string executor)
+        public void SubmitHPCJob(string db, bool isNew, int newID, string cluster, string nodegroup, int priority, string locality, int binID, string sharedDir, string executor, int nworkers=0)
         {
             SqlConnection sql = Connect(db);
             SqlCommand cmd = null;
@@ -423,6 +423,8 @@ namespace SubmissionLib
                 else if (locality == "Node")
                     max = ctrs.TotalNodes;
 
+                if (nworkers != 0) max = nworkers;
+
                 // max = 40;
 
                 //int totalJobs = Directory.GetFiles(sharedDir + "\\" + category + "\\", "*." + extension, SearchOption.AllDirectories).Length;
@@ -432,7 +434,7 @@ namespace SubmissionLib
                 //if (max == 0)
                 //  throw new Exception("No benchmark files found.");
 
-                int progressTotal = max + 3;
+                int progressTotal = max + 3;                
 
                 // Add population task.
                 ReportProgress(Convert.ToInt32(100.0 * 1 / (double)max));
@@ -740,7 +742,7 @@ namespace SubmissionLib
 
                 r.Close();
 
-                SubmitHPCJob(DB, false, jobID, reinforcementCluster, nodegroup, priority, locality, binID, sharedDir, executor);
+                SubmitHPCJob(DB, false, jobID, reinforcementCluster, nodegroup, priority, locality, binID, sharedDir, executor, nworkers);
 
                 ReportProgress(100);
             }
