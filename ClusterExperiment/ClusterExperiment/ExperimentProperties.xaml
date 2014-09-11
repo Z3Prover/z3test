@@ -52,6 +52,7 @@
             <Label Name="lblFinished" Grid.Row="1" Grid.Column="1" HorizontalContentAlignment="Right" />
             <Label Name="lblRunning" Grid.Row="1" Grid.Column="2" HorizontalContentAlignment="Right" />
         </Grid>
+        <Label Name="lblInfrastructureErrors" Foreground="Red" Content="" Grid.Row="4" Grid.Column="1" HorizontalAlignment="Left"/>
         <Grid Grid.Row="4" Grid.Column="2" HorizontalAlignment="Right" VerticalAlignment="Stretch">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto" />
@@ -60,7 +61,7 @@
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
-            <Label Content="Status on Cluster:" Grid.Row="0" Grid.Column="0" Height="26"/>
+            <Label Content="Status on Cluster:" Grid.Row="0" Grid.Column="0"/>
             <Label Name="lblClusterStatus" Content="OK" Grid.Row="1" Grid.Column="0" HorizontalContentAlignment="Right" />
         </Grid>
 

@@ -65,6 +65,7 @@ namespace ClusterExperiment
       try
       {
         Mouse.OverrideCursor = System.Windows.Input.Cursors.Wait;
+        
         lblID.Content = this.Title = "Experiment #" + id.ToString();
 
         SqlCommand cmd = new SqlCommand("SELECT SubmissionTime,Category," +
@@ -175,11 +176,22 @@ namespace ClusterExperiment
           lblClusterStatus.Content = "Unable to retrieve status.";
           lblClusterStatus.Foreground = System.Windows.Media.Brushes.Black;
         }
+
+        cmd = new SqlCommand("SELECT COUNT(*) FROM Data WHERE ExperimentID=" + id.ToString() + " AND stderr LIKE '%INFRASTRUCTURE ERROR%';", sql);
+        r = cmd.ExecuteReader();
+        if (r.Read())
+        {
+          int ierrs = (int)r[0];
+          if (ierrs == 0) lblInfrastructureErrors.Content = "";
+          else lblInfrastructureErrors.Content = ierrs.ToString() + " infrastructure errors!";
+        }
+        r.Close();
+
       }
       catch (SqlException ex)
       {
         if (ex.Number == -2) /* timeout */ goto retry; else throw ex;
-      }
+      }      
 
       Mouse.OverrideCursor = null;
     }
