@@ -1001,7 +1001,7 @@ namespace ClusterExperiment
         r.Close();
       }
 
-      TimeSpan ts = new TimeSpan(Convert.ToInt32(total), 0, 0);
+      TimeSpan ts = TimeSpan.FromHours(total);
 
       System.Windows.MessageBox.Show(this,
                      "The total amount of runtime spent computing the selected results is " + ts.ToString() + ".", "Tally",
