@@ -32,14 +32,14 @@ namespace ClusterExperiment
     private void Window_Loaded(object sender, RoutedEventArgs e)
     {
       txtRCluster.Text = (string)Registry.GetValue(keyName, "ReinforcementsCluster", "");
-      txtNumWorkers.Text = (string)Registry.GetValue(keyName, "ReinforcementsNum", "");
+      txtNumWorkers.Text = (string)Registry.GetValue(keyName, "ReinforcementsNumWorkers", "");
       cmbPriority.SelectedIndex = (int)Registry.GetValue(keyName, "ReinforcementsPriority", (int)2);
     }
 
     private void okButton_Click(object sender, RoutedEventArgs e)
     {
       Registry.SetValue(keyName, "ReinforcementsCluster", txtRCluster.Text, RegistryValueKind.String);
-      Registry.SetValue(keyName, "ReinforcementsNum", txtNumWorkers.Text, RegistryValueKind.String);
+      Registry.SetValue(keyName, "ReinforcementsNumWorkers", txtNumWorkers.Text, RegistryValueKind.String);
       Registry.SetValue(keyName, "ReinforcementsPriority", cmbPriority.SelectedIndex, RegistryValueKind.DWord);
 
       DialogResult = true;

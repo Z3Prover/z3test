@@ -47,7 +47,8 @@ namespace ClusterExperiment
     public static RoutedCommand ReinforcementsCommand = new RoutedCommand();
     public static RoutedCommand FlagCommand = new RoutedCommand();
     public static RoutedCommand DuplicatesCommand = new RoutedCommand();
-    public static RoutedCommand TallyCommand = new RoutedCommand();    
+    public static RoutedCommand TallyCommand = new RoutedCommand();
+    public static RoutedCommand RecoveryCommand = new RoutedCommand();    
 
     public MainWindow()
     {
@@ -71,12 +72,14 @@ namespace ClusterExperiment
       CommandBindings.Add(customCommandBinding);
       customCommandBinding = new CommandBinding(ReinforcementsCommand, showReinforcements, canShowReinforcements);
       CommandBindings.Add(customCommandBinding);
+      customCommandBinding = new CommandBinding(RecoveryCommand, showRecovery, canShowRecovery);
+      CommandBindings.Add(customCommandBinding);
       customCommandBinding = new CommandBinding(FlagCommand, showFlag, canShowFlag);
       CommandBindings.Add(customCommandBinding);
       customCommandBinding = new CommandBinding(DuplicatesCommand, showDuplicates, canShowDuplicates);
       CommandBindings.Add(customCommandBinding);
       customCommandBinding = new CommandBinding(TallyCommand, showTally, canShowTally);
-      CommandBindings.Add(customCommandBinding);
+      CommandBindings.Add(customCommandBinding);      
 
       Loaded += new RoutedEventHandler(MainWindow_Loaded);
 
@@ -477,10 +480,14 @@ namespace ClusterExperiment
             cur.sat = (int)rd["SAT"];
             cur.unsat = (int)rd["UNSAT"];
 
-            bool rv_ok = (rc == 5 && cur.rv == null) ||
-                         ((rc == 0) && (cur.rv == 0 || cur.rv == 10 || cur.rv == 20));
+            bool rv_ok = (rc != 4) &&
+                         ((rc == 5 && cur.rv == null) ||
+                         ((rc == 0) && (cur.rv == 0 || cur.rv == 10 || cur.rv == 20)));
             if (cur.sat == 0 && cur.unsat == 0 && !rv_ok)
               cur.runtime = error_line;
+
+            if (cur.runtime < 0.1) 
+              cur.runtime = 0.1;
 
             if (fn.StartsWith("QF_BV-sat\\")) fn = fn.Substring(10);
             else if (fn.StartsWith("QF_BV-sat-hard\\")) 
@@ -953,8 +960,6 @@ namespace ClusterExperiment
 
     private void showDuplicates(object sender, ExecutedRoutedEventArgs e)
     {
-        Mouse.OverrideCursor = System.Windows.Input.Cursors.Wait;
-
         DataRowView rowView = (DataRowView)dataGrid.SelectedItems[0];
         int eid = (int)rowView["ID"];
 
@@ -966,6 +971,7 @@ namespace ClusterExperiment
             r.Close();
 
             Duplicates dlg = new Duplicates(eid, sql);
+            dlg.Owner = this;
             dlg.ShowDialog();
         }
         else
@@ -976,8 +982,6 @@ namespace ClusterExperiment
                 System.Windows.MessageBoxButton.OK,
                 System.Windows.MessageBoxImage.Information);
         }        
-
-        Mouse.OverrideCursor = null;
     }
 
     private void canShowTally(object Sender, CanExecuteRoutedEventArgs e)
@@ -1009,6 +1013,41 @@ namespace ClusterExperiment
                      System.Windows.MessageBoxImage.Information);     
 
       Mouse.OverrideCursor = null;
+    }
+
+    private void canShowRecovery(object Sender, CanExecuteRoutedEventArgs e)
+    {
+      e.CanExecute = (sql != null) && (dataGrid.SelectedItems.Count > 0);
+    }
+
+    private void showRecovery(object sender, ExecutedRoutedEventArgs e)
+    {
+      RecoveryDialog dlg = new RecoveryDialog();
+      dlg.Owner = this;
+      if (dlg.ShowDialog() == true)
+      {
+        foreach (DataRowView drv in dataGrid.SelectedItems)
+        {
+          int jobid = (int)drv["ID"];
+          string cluster = dlg.txtRCluster.Text;
+          int numWorkers = Convert.ToInt32(dlg.txtNumWorkers.Text);
+          int priority = dlg.cmbPriority.SelectedIndex;
+          string executor = dlg.txtExecutor.Text;
+
+          Submission sdlg = new Submission(txtDatabase.Text, jobid, cluster, numWorkers, priority, executor);
+          sdlg.Owner = this;
+          sdlg.ShowDialog();
+
+          if (sdlg.lastError != null)
+          {
+            System.Windows.MessageBox.Show(this, sdlg.lastError.Message, "Error",
+                                           System.Windows.MessageBoxButton.OK,
+                                           System.Windows.MessageBoxImage.Error);
+            break;
+          }
+        }
+        updateState();
+      }
     }
   }
 }

@@ -1,7 +1,7 @@
 ﻿<Window x:Class="ClusterExperiment.ReinforcementsDialog"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="Call Reinforcements ..." Height="160" Width="448" ShowInTaskbar="False" WindowStartupLocation="CenterOwner" Loaded="Window_Loaded">
+        Title="Call reinforcements..." Height="180" Width="448" ShowInTaskbar="False" WindowStartupLocation="CenterOwner" Loaded="Window_Loaded">
     
     <Grid HorizontalAlignment="Stretch" Margin="10" Name="grid" VerticalAlignment="Stretch">
         <Grid.RowDefinitions>
@@ -12,11 +12,11 @@
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="145" />
+            <ColumnDefinition Width="120" />
             <ColumnDefinition MinWidth="100" />            
         </Grid.ColumnDefinitions>
 
-        <Label Content="Reinforcements cluster:" Height="28" HorizontalAlignment="Left" Name="lblDB" VerticalAlignment="Center" Grid.Row="0" Grid.Column="0"/>
+        <Label Content="Cluster:" Height="28" HorizontalAlignment="Left" Name="lblCluster" VerticalAlignment="Center" Grid.Row="0" Grid.Column="0"/>
         <TextBox Height="23" HorizontalAlignment="Stretch" Name="txtRCluster" VerticalAlignment="Center" Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="3" TabIndex="0" />
 
         <Label Content="Number of workers:" Height="28" HorizontalAlignment="Left" Name="lblNumWorkers" VerticalAlignment="Center" Grid.Row="1" Grid.Column="0"/>

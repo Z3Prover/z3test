@@ -268,7 +268,8 @@ namespace ClusterExperiment
             Mouse.OverrideCursor = null;
         }
 
-        public Submission(string db, int jobid, string reinforcementCluster, int numWorkers, int priority)
+        // Submit reinforcement job...
+        public Submission(string db, int jobid, string cluster, int numWorkers, int priority)
         {
             InitializeComponent();
             Mouse.OverrideCursor = System.Windows.Input.Cursors.Wait;
@@ -309,11 +310,60 @@ namespace ClusterExperiment
             outerGrid.Children.Add(p);
 
             pbars.Add(w.id, p);
-            Object[] args = { "Reinforce", db, jobid, reinforcementCluster, numWorkers, priority};
+            Object[] args = { "Reinforce", db, jobid, cluster, numWorkers, priority };
             workers.Add(workers.Count(), w);
             w.RunWorkerAsync(args);
 
             Mouse.OverrideCursor = null;
+        }
+
+        // Recovery job submission
+        public Submission(string db, int jobid, string cluster, int numWorkers, int priority, string executor)
+        {
+          InitializeComponent();
+          Mouse.OverrideCursor = System.Windows.Input.Cursors.Wait;
+          Title = "Submit recovery job...";
+
+          ColumnDefinition c1 = new ColumnDefinition();
+          ColumnDefinition c2 = new ColumnDefinition();
+          c1.Width = new GridLength(170);
+          c2.Width = new GridLength(75);
+          outerGrid.ColumnDefinitions.Add(c1);
+          outerGrid.ColumnDefinitions.Add(c2);
+
+          workers.Clear();
+
+          WindowInteropHelper helper = new WindowInteropHelper(this);
+          SubmissionWorker w = new SubmissionWorker(helper.Handle, workers.Count());
+          w.DoWork += new DoWorkEventHandler(worker_DoWork);
+          w.ProgressChanged += new ProgressChangedEventHandler(worker_ProgressChanged);
+          w.RunWorkerCompleted += new RunWorkerCompletedEventHandler(worker_RunWorkerCompleted);
+          w.WorkerReportsProgress = true;
+          w.WorkerSupportsCancellation = false;
+
+          RowDefinition r = new RowDefinition();
+          outerGrid.RowDefinitions.Add(r);
+          r.Height = new GridLength(26);
+          Label l = new Label();
+          l.Content = "Job #" + jobid.ToString() + "...";
+          l.Height = 26;
+          Grid.SetRow(l, outerGrid.RowDefinitions.Count() - 1);
+          Grid.SetColumn(l, 0);
+          outerGrid.Children.Add(l);
+
+          ProgressBar p = new ProgressBar();
+          p.Height = 26;
+          p.Width = 75;
+          Grid.SetRow(p, outerGrid.RowDefinitions.Count() - 1);
+          Grid.SetColumn(p, 1);
+          outerGrid.Children.Add(p);
+
+          pbars.Add(w.id, p);
+          Object[] args = { "Recovery", db, jobid, cluster, priority, numWorkers, executor };
+          workers.Add(workers.Count(), w);
+          w.RunWorkerAsync(args);
+
+          Mouse.OverrideCursor = null;
         }
 
 
@@ -506,8 +556,13 @@ namespace ClusterExperiment
                 {
                     w.Reinforce((string)args[1], (int)args[2], (string)args[3], (int)args[4], (int)args[5]);
                 }
+                else if (cmd == "Recovery")
+                {                  
+                    w.SubmitHPCRecoveryJob((string)args[1], (int)args[2], (string)args[3], 
+                                           (int)args[4], (int)args[5], (string)args[6]);
+                }
                 else
-                    throw new Exception("Unknown submission operation: " + cmd);
+                  throw new Exception("Unknown submission operation: " + cmd);
             }
             catch (Exception ex)
             {
