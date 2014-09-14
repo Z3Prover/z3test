@@ -998,10 +998,10 @@ namespace ClusterExperiment
       foreach (DataRowView drv in dataGrid.SelectedItems)
       {
         int id = (int)drv["ID"];
-        SqlCommand cmd = new SqlCommand("SELECT SUM(Runtime)/6300 FROM Data WHERE ExperimentID=" + id, sql);
+        SqlCommand cmd = new SqlCommand("SELECT SUM(Runtime)/3600 FROM Data WHERE ExperimentID=" + id, sql);
         SqlDataReader r = cmd.ExecuteReader();
         while (r.Read())
-          total += (double)r[0];
+          total += (r[0] == DBNull.Value) ? 0.0 : (double)r[0];
         r.Close();
       }
 
