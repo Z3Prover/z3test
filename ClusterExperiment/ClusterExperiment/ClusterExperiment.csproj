@@ -85,6 +85,9 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="ChangePriorityDialog.xaml.cs">
+      <DependentUpon>ChangePriorityDialog.xaml</DependentUpon>
+    </Compile>
     <Compile Include="ChooseCategories.xaml.cs">
       <DependentUpon>ChooseCategories.xaml</DependentUpon>
     </Compile>
@@ -136,6 +139,10 @@
     <Compile Include="Duplicates.xaml.cs">
       <DependentUpon>Duplicates.xaml</DependentUpon>
     </Compile>
+    <Page Include="ChangePriorityDialog.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="ChooseCategories.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>

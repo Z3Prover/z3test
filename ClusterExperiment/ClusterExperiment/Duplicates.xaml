@@ -1,7 +1,8 @@
 ﻿<Window x:Class="ClusterExperiment.Duplicates"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="Duplicates..." Height="240" Width="640">
+        Title="Duplicates..." Height="240" Width="640"
+        WindowStartupLocation="CenterOwner">
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*"/>

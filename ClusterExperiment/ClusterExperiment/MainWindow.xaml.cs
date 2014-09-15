@@ -48,7 +48,8 @@ namespace ClusterExperiment
     public static RoutedCommand FlagCommand = new RoutedCommand();
     public static RoutedCommand DuplicatesCommand = new RoutedCommand();
     public static RoutedCommand TallyCommand = new RoutedCommand();
-    public static RoutedCommand RecoveryCommand = new RoutedCommand();    
+    public static RoutedCommand RecoveryCommand = new RoutedCommand();
+    public static RoutedCommand ChangePriorityCommand = new RoutedCommand();       
 
     public MainWindow()
     {
@@ -79,7 +80,9 @@ namespace ClusterExperiment
       customCommandBinding = new CommandBinding(DuplicatesCommand, showDuplicates, canShowDuplicates);
       CommandBindings.Add(customCommandBinding);
       customCommandBinding = new CommandBinding(TallyCommand, showTally, canShowTally);
-      CommandBindings.Add(customCommandBinding);      
+      CommandBindings.Add(customCommandBinding);
+      customCommandBinding = new CommandBinding(ChangePriorityCommand, showChangePriority, canChangePriority);
+      CommandBindings.Add(customCommandBinding);            
 
       Loaded += new RoutedEventHandler(MainWindow_Loaded);
 
@@ -1048,6 +1051,70 @@ namespace ClusterExperiment
         }
         updateState();
       }
+    }
+
+    private void canChangePriority(object Sender, CanExecuteRoutedEventArgs e)
+    {
+      e.CanExecute = (sql != null) && (dataGrid.SelectedItems.Count > 0);
+    }
+
+    private void showChangePriority(object sender, ExecutedRoutedEventArgs e)
+    {
+      ChangePriorityDialog dlg = new ChangePriorityDialog();
+      dlg.Owner = this;
+      if (dlg.ShowDialog() == true)
+      {
+        Mouse.OverrideCursor = System.Windows.Input.Cursors.Wait;
+
+        foreach (DataRowView drv in dataGrid.SelectedItems)
+        {
+          int eid = (int)drv["ID"];
+
+          SqlCommand cmd = new SqlCommand("SELECT Cluster, ClusterJobID FROM Experiments WHERE ID=" + eid, sql);
+          SqlDataReader r = cmd.ExecuteReader();
+
+          try
+          {
+            if (r.Read())
+            {
+              string cluster = (string)r["Cluster"];
+              int cjid = (int)r["ClusterJobID"];
+
+              Scheduler scheduler = new Scheduler();
+              scheduler.Connect(cluster);
+              ISchedulerJob job = scheduler.OpenJob(Convert.ToInt32(cjid));
+
+              JobState state = job.State;
+              if (state == JobState.Configuring ||
+                  state == JobState.Queued ||
+                  state == JobState.Running ||
+                  state == JobState.Submitted ||
+                  state == JobState.Validating)
+              {
+                switch (dlg.cmbPriority.SelectedIndex)
+                {
+                  case 0: job.Priority = JobPriority.Lowest; break;
+                  case 1: job.Priority = JobPriority.BelowNormal; break;
+                  case 3: job.Priority = JobPriority.AboveNormal; break;
+                  case 4: job.Priority = JobPriority.Highest; break;
+                  default: job.Priority = JobPriority.Normal; break;
+                }
+                
+                job.Commit(); 
+              }
+            }
+
+            r.Close();
+          }
+          catch (Exception ex)
+          {
+            System.Windows.MessageBox.Show(this, "Exception: " + ex.Message, "Error",
+                                           MessageBoxButton.OK, MessageBoxImage.Error);
+          }
+        }
+      }
+
+      Mouse.OverrideCursor = null;
     }
   }
 }
