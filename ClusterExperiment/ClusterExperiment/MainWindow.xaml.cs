@@ -108,7 +108,7 @@ namespace ClusterExperiment
       SqlDataAdapter da;
 
       if (txtFilter.Text != "")
-        da = new SqlDataAdapter("SELECT * FROM TitleScreen WHERE (Category like '%" + txtFilter.Text + "%' OR Note like '%" + txtFilter.Text + "%') ORDER BY SubmissionTime DESC", sql);
+        da = new SqlDataAdapter("SELECT * FROM TitleScreen WHERE (Category like '%" + txtFilter.Text + "%' OR Note like '%" + txtFilter.Text + "%' OR Creator like '%" + txtFilter.Text + "%') ORDER BY SubmissionTime DESC", sql);
       else
         da = new SqlDataAdapter("SELECT * FROM TitleScreen ORDER BY SubmissionTime DESC", sql);
       DataSet ds = new DataSet();
