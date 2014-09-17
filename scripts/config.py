@@ -10,7 +10,7 @@ if PASSWORD != None:
 NUMJOBS=os.getenv("MAKEJOBS", 16)
 
 RSSFEED_BRANCHES=['master', 'unstable', 'contrib', 'mcsat']
-DEVS=["leonardo@microsoft.com", "cwinter@microsoft.com", "nbjorner@microsoft.com", "kenmcmil@microsoft.com"]
+DEVS=["leonardo@microsoft.com", "cwinter@microsoft.com", "nbjorner@microsoft.com", "kenmcmil@microsoft.com", "a-nlopes@microsoft.com"]
 ORIGIN="https://git01.codeplex.com/z3"
 GIT="git"
 PYTHON="python"
