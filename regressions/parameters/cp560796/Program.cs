@@ -18,8 +18,8 @@ namespace cp560796
             // var mbqiMaxIterations = "10000";
             var settings = new Dictionary<string, string>() { 
                 { "unsat_core", "true" },
-                { "smt.mbqi.trace", "true"},
-                { "blah", "none"}
+                //{ "smt.mbqi.trace", "true"},
+                //{ "blah", "none"}
             };
 
             return new Context(settings);
