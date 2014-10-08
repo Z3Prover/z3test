@@ -54,13 +54,14 @@ namespace cp560796
                 ParamDescrs q = solver.ParameterDescriptions;
                 
                 BoolExpr c =
-                        context.ParseSMTLIB2File(@"small-bug1-fixpoint-10.smt2");
+                        context.ParseSMTLIB2File(@"small-bug1-fixpoint-1.smt2");
 
                 solver.Assert(c); // <---- Sometimes this call has mbqi.trace on, and sometimes it's off.
 
                 var status = solver.Check();
-
-                Console.WriteLine(solver.UnsatCore);
+                var core = solver.UnsatCore;
+                foreach(var e in core) 
+                    Console.WriteLine("{0}", e);
             }            
         }
 
