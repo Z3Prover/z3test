@@ -107,7 +107,7 @@ namespace Z3Data
 
             Dictionary<string, Object> r = sql.Read("SELECT " +
                 "ID,SubmissionTime,SharedDir,Binary,Parameters,Timeout,Memout," +
-                "Cluster,ClusterJobId,Nodegroup,Locality FROM Experiments " +
+                "Cluster,ClusterJobId,Nodegroup,Locality,Longparams FROM Experiments " +
                 "WHERE ID=" + _metaData.Id.ToString() + ";");
 
             if (SQLInterface.getuint(ref r, "ID") != _metaData.Id)
@@ -116,7 +116,10 @@ namespace Z3Data
             _metaData.SubmissionTime = Convert.ToDateTime(r["SubmissionTime"], Global.culture);
             _metaData.BaseDirectory = r["SharedDir"].ToString();
             _metaData.BinaryId = Convert.ToUInt32(r["Binary"]);
-            _metaData.Parameters = r["Parameters"].ToString();
+            if (r["Parameters"].Equals(DBNull.Value))
+                _metaData.Parameters = r["Longparams"].ToString();
+            else
+                _metaData.Parameters = r["Parameters"].ToString();
             _metaData.Timeout = Convert.ToUInt32(r["Timeout"]);
             _metaData.Memoryout = Convert.ToUInt32(r["Memout"]);
             _metaData.Cluster = r["Cluster"].ToString();

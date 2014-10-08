@@ -1,25 +1,22 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.IO;
-using System.Data;
-using System.Data.OleDb;
 
 namespace Z3Data
 {
-    public class Timeline : DataSet
+    public class Timeline
     {
         string _dataDir = null;
-
+        ArrayList _rows = null;
+        Dictionary<string, int> _col2inx = new Dictionary<string, int>();
         public Timeline(string dir, string dataDir, string filename)
         {
             _dataDir = dataDir;
 
             Load(dir, filename);
-
-            if (Tables.Count != 1)
-                throw new Exception("Dataset does not contain exactly one table.");
         }
 
         public Dictionary<string, CategoryStatistics> Categories
@@ -57,45 +54,70 @@ namespace Z3Data
             get { return _cats.Count; }
         }
 
+        public int RowCount
+        {
+            get { return _rows.Count; }
+        }
+
+        public string Lookup(int row, string cat)
+        {
+            int inx = _col2inx[cat];
+            return ((string[])_rows[row])[inx];
+        }
+
         protected void Load(string dir, string filename)
         {
-            string connString = string.Format("Provider=Microsoft.Jet.OLEDB.4.0;Data Source={0};Extended Properties=Text;", dir);
-            string cmdString = string.Format("SELECT * FROM {0} ORDER BY ID ASC", filename);
-
-            OleDbDataAdapter dataAdapter = new OleDbDataAdapter(cmdString, connString);
-            dataAdapter.Fill(this);
-
             _cats = new Dictionary<string, CategoryStatistics>();
             _catnames = new SortedSet<string>();
-            foreach (DataColumn c in Tables[0].Columns)
-            {
-                string s = c.ColumnName;
-                int del_inx = s.IndexOf('|');
 
+            StreamReader f = new StreamReader(Path.IsPathRooted(filename) ? filename : dir + "\\" + filename);
+
+            string line = f.ReadLine();
+
+            if (line == null)
+                return;
+
+            int colcount = 0;
+            string[] a = line.Split(',');
+            foreach (string s in a)
+            {
+                string ss = s.Trim('"');
+                _col2inx[ss] = colcount++;
+
+                int del_inx = ss.IndexOf('|');
                 if (del_inx < 0)
                     continue;
 
-                string cat = s.Substring(0, del_inx);
+                string cat = ss.Substring(0, del_inx);
 
                 if (!_cats.ContainsKey(cat))
                 {
                     _cats.Add(cat, new CategoryStatistics());
-                    _catnames.Add(cat);
+                    _catnames.Add(cat);                    
                 }
-            }            
+                
+            }
 
-            foreach (DataRow r in Tables[0].Rows)
+            _rows = new ArrayList();
+
+            while (!f.EndOfStream)
             {
-                uint id = Convert.ToUInt32(r["Id"]);
+                line = f.ReadLine();
+                a = line.Split(',');
+                uint id = Convert.ToUInt32(a[1]);
                 if (id > _lastJobId)
                     _lastJobId = id;
+                string[] b = new string[a.Count()];
+                for (uint i = 0; i < a.Count(); i++)
+                    b[i] = a[i].Trim('"');
+                _rows.Add(b);
             }
         }
 
         public static void Make(StreamWriter f, ref Jobs jobs)
         {
-            int[] codes = { 0, 1, 2, 3, 4, 6, 5, 7, 8, 98, 99 };
-            string[] codenames = { "SAT", "UNSAT", "UNKNOWN", "BUG", "ERROR", "MEMORY", "TIMEOUT", "SATTIME", "UNSATTIME", "OVERPERF", "UNDERPERF" };
+            int[] codes = { 0, 1, 2, 3, 4, 6, 5, 7, 8, 9, 98, 99 };
+            string[] codenames = { "SAT", "UNSAT", "UNKNOWN", "BUG", "ERROR", "MEMORY", "TIMEOUT", "SATTIME", "UNSATTIME", "INFERR", "OVERPERF", "UNDERPERF" };
 
             f.Write("Date,ID");
             HashSet<string> categories = new HashSet<string>();
@@ -144,6 +166,7 @@ namespace Z3Data
                                 case 6: f.Write("," + cs.Memout.ToString()); break;
                                 case 7: f.Write("," + cs.TimeSAT.ToString()); break;
                                 case 8: f.Write("," + cs.TimeUNSAT.ToString()); break;
+                                case 9: f.Write("," + cs.InfrastructureErrors.ToString()); break;
                                 case 98: f.Write("," + cs.Overperformers.ToString()); break;
                                 case 99: f.Write("," + cs.UnderPerformers.ToString()); break;
                             }
@@ -159,6 +182,6 @@ namespace Z3Data
         // Cached stuff.
         Dictionary<string, CategoryStatistics> _cats = null;
         SortedSet<string> _catnames = null;
-        uint _lastJobId = 0;        
+        uint _lastJobId = 0;
     }
 }

@@ -25,6 +25,9 @@ namespace SubmissionLib
         public int id;
         public Scheduler scheduler = new Scheduler();
         private IntPtr hwnd;
+        public bool haveJobId = false;
+        public int JobId;
+        public string cat = null;
 
         public SubmissionWorker(IntPtr hwnd, int id)
         {
@@ -153,7 +156,9 @@ namespace SubmissionLib
                                                            "Creator VARCHAR(256) NOT NULL DEFAULT USER_NAME()," +
                                                            "Note VARCHAR(256)," +
                                                            "ClusterJobID INT," +
-                                                           "Executor VARCHAR(256)" +
+                                                           "Executor VARCHAR(256)," +
+                                                           "Longparams VARCHAR(MAX)," +
+                                                           "Flag bit" +
                                                            ")", sql);
             cmd.ExecuteNonQuery();
 
@@ -194,10 +199,10 @@ namespace SubmissionLib
             cmd = new SqlCommand("CREATE TABLE [dbo].[Strings] (ID INT IDENTITY(1,1) NOT NULL, s VARCHAR(1024))", sql);
             cmd.ExecuteNonQuery();
 
-            cmd = new SqlCommand("CREATE NONCLUSTERED INDEX StringIndex ON Strings (s);");
+            cmd = new SqlCommand("CREATE NONCLUSTERED INDEX StringIndex ON Strings (s);", sql);
             cmd.ExecuteNonQuery();
 
-            cmd = new SqlCommand("CREATE CLUSTERED INDEX IDIndex ON Strings (ID);");
+            cmd = new SqlCommand("CREATE CLUSTERED INDEX IDIndex ON Strings (ID);", sql);
             cmd.ExecuteNonQuery();
 
             cmd = new SqlCommand("CREATE TABLE [dbo].[JobQueue] (ID INT IDENTITY(1,1) NOT NULL, " +
@@ -214,7 +219,7 @@ namespace SubmissionLib
             cmd.ExecuteNonQuery();
 
             cmd = new SqlCommand("CREATE VIEW [dbo].[TitleScreen] WITH SCHEMABINDING as SELECT " +
-                                 "ID,SubmissionTime,Category,Cluster,Nodegroup,Creator " +
+                                 "ID,SubmissionTime,Category,Cluster,Nodegroup,Creator,Note,Flag " +
                                  "FROM [dbo].[Experiments]", sql);
             cmd.ExecuteNonQuery();
 
@@ -258,6 +263,30 @@ namespace SubmissionLib
                                  "  (SELECT AcquireTime FROM JobQUEUE WHERE ID=@JID), GETDATE()); " +
                                  "DELETE FROM JobQueue WHERE ID=@JID;", sql);
             cmd.ExecuteNonQuery();
+
+            cmd = new SqlCommand("CREATE TABLE [dbo].[JobGroups](" +
+                                 "ID INT IDENTITY(1,1) NOT NULL, " +
+                                 "Name VARCHAR(512)," +
+                                 "Creator VARCHAR(256) NOT NULL DEFAULT USER_NAME()," +
+                                 "Category VARCHAR(256)," +
+                                 "Note VARCHAR(256)" +
+                                 ")", sql);
+            cmd.ExecuteNonQuery();
+
+            cmd = new SqlCommand("CREATE TABLE [dbo].[JobGroupData](" +
+                                 "JobID INT NOT NULL, " +
+                                 "GroupID INT NOT NULL" +
+                                 ")", sql);
+            cmd.ExecuteNonQuery();
+
+            cmd = new SqlCommand("CREATE VIEW [dbo].[JobgroupsView] WITH SCHEMABINDING as SELECT " +
+                                 "  ID,Name,COUNT(*) as '#',Creator,Category,Note FROM " +
+                                        "  [dbo].[JobGroups],[dbo].[JobGroupData] " +
+                                "  WHERE " +
+                                    "Jobgroups.ID=JobGroupData.GroupID " +
+                                "  GROUP BY " +
+                                    "ID,Name,Creator,Category,Note", sql);
+            cmd.ExecuteNonQuery();
         }
 
         private void SetResources(ISchedulerTask task, string locality)
@@ -293,15 +322,17 @@ namespace SubmissionLib
                 job.Priority = JobPriority.Highest;
         }
 
-        public void SubmitJob(string db, string category, string sharedDir,
-                              string memout, string timeout, string executor,
-                              string parameters, string cluster, string nodegroup, string locality,
-                              string username, int priority, string extension, string note,
-                              ref bool haveBinId, ref int binId)
+        public int SetupExperiment(string db, string category, string sharedDir,
+                                    string memout, string timeout, string executor,
+                                    string parameters, string cluster, string nodegroup, string locality,
+                                    string username, int priority, string extension, string note,
+                                    ref bool haveBinId, ref int binId, ref string sExecutor)
         {
             // Wait for binID
             while (!haveBinId)
                 System.Threading.Thread.Sleep(250);
+
+            this.cat = category;
 
             SqlConnection sql = Connect(db);
             SqlCommand cmd;
@@ -312,10 +343,16 @@ namespace SubmissionLib
             else if (!File.Exists(executor))
                 throw new Exception("Worker binary does not exist.");
 
-            cmd = new SqlCommand("INSERT INTO Experiments (CompletionTime,Category,SharedDir,Extension,Memout,Timeout,Binary,Parameters,Cluster,Nodegroup,Locality,Creator,Note) " +
-                                  "VALUES(NULL,'" + category + "','" + sharedDir + "','" + extension + "'," + memout + "," + timeout + "," + binId + ",'" + parameters + "'," +
-                                  "'" + cluster + "','" + nodegroup + "','" + locality + "'," +
-                                  "'" + username + "',@NOTE); SELECT SCOPE_IDENTITY () As NewID", sql);
+            if (parameters.Length < 512)
+                cmd = new SqlCommand("INSERT INTO Experiments (CompletionTime,Category,SharedDir,Extension,Memout,Timeout,Binary,Parameters,Cluster,Nodegroup,Locality,Creator,Note,Longparams,Flag) " +
+                                      "VALUES(NULL,'" + category + "','" + sharedDir + "','" + extension + "'," + memout + "," + timeout + "," + binId + ",'" + parameters + "'," +
+                                      "'" + cluster + "','" + nodegroup + "','" + locality + "'," +
+                                      "'" + username + "',@NOTE,NULL,0); SELECT SCOPE_IDENTITY () As NewID", sql);
+            else
+              cmd = new SqlCommand("INSERT INTO Experiments (CompletionTime,Category,SharedDir,Extension,Memout,Timeout,Binary,Parameters,Cluster,Nodegroup,Locality,Creator,Note,Longparams,Flag) " +
+                                      "VALUES(NULL,'" + category + "','" + sharedDir + "','" + extension + "'," + memout + "," + timeout + "," + binId + ",NULL," +
+                                      "'" + cluster + "','" + nodegroup + "','" + locality + "'," +
+                                      "'" + username + "',@NOTE,'" + parameters + "',0); SELECT SCOPE_IDENTITY () As NewID", sql);
 
             SqlParameter p = cmd.Parameters.Add("@NOTE", SqlDbType.VarChar);
             p.Size = note.Length;
@@ -326,6 +363,8 @@ namespace SubmissionLib
                 throw new Exception("SQL Insert failed");
 
             int newID = Convert.ToInt32(r[0]);
+            haveJobId = true;
+            JobId = newID;
 
             r.Close();
             r.Dispose();
@@ -333,14 +372,22 @@ namespace SubmissionLib
             // Copy the worker to the shared directory      
             string eFullpath = System.IO.Path.GetFullPath(executor);
             string eFilename = System.IO.Path.GetFileName(executor);
-            string sExecutor = newID.ToString() + "_" + eFilename;
+            sExecutor = newID.ToString() + "_" + eFilename;
+            
             if (!File.Exists(sharedDir + "\\" + sExecutor) ||
                 File.GetLastWriteTime(sharedDir + "\\" + sExecutor) < File.GetLastWriteTime(eFullpath))
                 File.Copy(eFullpath, sharedDir + "\\" + sExecutor, true);
 
-
             cmd = new SqlCommand("UPDATE Experiments SET Executor='" + sExecutor + "' WHERE ID='" + newID.ToString() + "'", sql);
             cmd.ExecuteNonQuery();
+
+            return newID;
+        }
+
+        public void SubmitHPCJob(string db, bool isNew, int newID, string cluster, string nodegroup, int priority, string locality, int binID, string sharedDir, string executor, int nworkers=0)
+        {
+            SqlConnection sql = Connect(db);
+            SqlCommand cmd = null;
 
             scheduler.Connect(cluster);
 
@@ -361,6 +408,8 @@ namespace SubmissionLib
                     hpcJob.UnitType = JobUnitType.Core;
                 else if (locality == "Node")
                     hpcJob.UnitType = JobUnitType.Node;
+              else 
+                  throw new Exception("Unknown locality.");
 
                 int max = 0;
                 ISchedulerCounters ctrs = scheduler.GetCounters();
@@ -375,7 +424,9 @@ namespace SubmissionLib
                 else if (locality == "Node")
                     max = ctrs.TotalNodes;
 
-                max = 40;
+                if (nworkers != 0) max = nworkers;
+
+                // max = 40;
 
                 //int totalJobs = Directory.GetFiles(sharedDir + "\\" + category + "\\", "*." + extension, SearchOption.AllDirectories).Length;
                 //if (totalJobs < max)
@@ -384,7 +435,7 @@ namespace SubmissionLib
                 //if (max == 0)
                 //  throw new Exception("No benchmark files found.");
 
-                int progressTotal = max + 3;
+                int progressTotal = max + 3;                
 
                 // Add population task.
                 ReportProgress(Convert.ToInt32(100.0 * 1 / (double)max));
@@ -393,7 +444,7 @@ namespace SubmissionLib
                 populateTask.IsRerunnable = false;
                 populateTask.IsExclusive = false;
                 populateTask.WorkDirectory = sharedDir;
-                populateTask.CommandLine = sExecutor + " " + newID + " ? \"" + db + "\"";
+                populateTask.CommandLine = executor + " " + newID + " ? \"" + db + "\"";
                 populateTask.Name = "Populate";
                 hpcJob.AddTask(populateTask);
 
@@ -404,7 +455,7 @@ namespace SubmissionLib
                     ISchedulerTask task = hpcJob.CreateTask();
                     SetResources(task, locality);
                     task.WorkDirectory = sharedDir;
-                    task.CommandLine = sExecutor + " " + newID + " \"" + db + "\"";
+                    task.CommandLine = executor + " " + newID + " \"" + db + "\"";
                     task.IsExclusive = false;
                     task.IsRerunnable = true;
                     task.DependsOn.Add("Populate");
@@ -420,7 +471,7 @@ namespace SubmissionLib
                 rTask.IsRerunnable = true;
                 rTask.IsExclusive = false;
                 rTask.WorkDirectory = sharedDir;
-                rTask.CommandLine = sExecutor + " " + newID + " ! \"" + db + "\"";
+                rTask.CommandLine = executor + " " + newID + " ! \"" + db + "\"";
                 rTask.DependsOn.Add("Worker");
                 rTask.Name = "Recovery";
                 hpcJob.AddTask(rTask);
@@ -432,15 +483,19 @@ namespace SubmissionLib
                 dTask.IsRerunnable = true;
                 dTask.IsExclusive = false;
                 dTask.WorkDirectory = sharedDir;
-                dTask.CommandLine = "del " + sharedDir + "\\" + sExecutor;
+                dTask.CommandLine = "del " + sharedDir + "\\" + executor;
                 dTask.Name = "Delete worker";
                 dTask.DependsOn.Add("Recovery");
                 hpcJob.AddTask(dTask);
 
                 scheduler.AddJob(hpcJob);
                 scheduler.SubmitJob(hpcJob, null, null);
-                cmd = new SqlCommand("UPDATE Experiments SET ClusterJobID=" + hpcJob.Id.ToString() + " WHERE ID=" + newID.ToString() + "; ", sql);
-                cmd.ExecuteNonQuery();
+
+                if (isNew)
+                {
+                    cmd = new SqlCommand("UPDATE Experiments SET ClusterJobID=" + hpcJob.Id.ToString() + " WHERE ID=" + newID.ToString() + "; ", sql);
+                    cmd.ExecuteNonQuery();
+                }
             }
             catch (Exception ex)
             {
@@ -479,7 +534,49 @@ namespace SubmissionLib
             return res;
         }
 
-        private string copyExperimentsEntry(SqlConnection fromSQL, SqlConnection toSQL, string jobID)
+        private int copyBinary(SqlConnection fromSQL, SqlConnection toSQL, string jobID)
+        {
+            int res = 0;
+
+            SqlCommand cmd = new SqlCommand("SELECT Binary FROM Experiments WHERE ID=" + jobID, fromSQL);
+            cmd.CommandTimeout = 0;
+            SqlDataReader r = cmd.ExecuteReader();
+            int old_bin_id = 0;
+            if (r.Read())
+                old_bin_id = Convert.ToInt32(r[0]);
+            else
+                throw new Exception("Could not find binary");
+            r.Close();
+
+            byte[] data = new byte[0];
+            cmd = new SqlCommand("SELECT Binary,UploadTime FROM Binaries WHERE ID=" + old_bin_id, fromSQL);
+            cmd.CommandTimeout = 0;
+            r = cmd.ExecuteReader();
+
+            if (!r.Read())
+                throw new Exception("Could not find binary");
+
+            data = (byte[])r[0];
+            DateTime ut = (DateTime)r[1];
+            r.Close();
+
+            string cmdstring = "INSERT INTO Binaries (Binary,UploadTime) VALUES (@BINARYDATA,'" + ut + "'); SELECT SCOPE_IDENTITY () As BinaryID";
+            cmd = new SqlCommand(cmdstring, toSQL);
+            cmd.CommandTimeout = 0;
+            SqlParameter par = cmd.Parameters.Add("@BINARYDATA", System.Data.SqlDbType.VarBinary);
+            par.Size = data.Count();
+            par.Value = data;
+
+            r = cmd.ExecuteReader();
+            if (!r.Read())
+                throw new Exception("SQL Insert failed");
+            res = Convert.ToInt32(r[0]);
+            r.Close();
+
+            return res;
+        }
+
+        private string copyExperimentsEntry(SqlConnection fromSQL, SqlConnection toSQL, string jobID, int newBinId)
         {
             // string newID = "";
 
@@ -507,7 +604,12 @@ namespace SubmissionLib
                 SqlCommand tocmd = new SqlCommand(cmdstring, toSQL);
 
                 for (int i = 0; i < r.FieldCount; i++)
-                    tocmd.Parameters.AddWithValue("@P" + i.ToString(), r[i]);
+                {
+                    if (r.GetName(i) == "Binary")
+                        tocmd.Parameters.AddWithValue("@P" + i.ToString(), newBinId);
+                    else
+                        tocmd.Parameters.AddWithValue("@P" + i.ToString(), r[i]);
+                }
 
                 if (tocmd.ExecuteNonQuery() == 0)
                     throw new Exception("SQL Insert failed");
@@ -602,7 +704,8 @@ namespace SubmissionLib
             if (!checkExperimentExists(fromSQL, toSQL, jobID, ref toJobID))
             {
                 // Always copy to a new ID
-                copyExperimentsEntry(fromSQL, toSQL, jobID);
+                int newbinid = copyBinary(fromSQL, toSQL, jobID);
+                copyExperimentsEntry(fromSQL, toSQL, jobID, newbinid);
                 copyDataEntries(fromSQL, toSQL, jobID);
             }
             else
@@ -619,6 +722,35 @@ namespace SubmissionLib
 
             toSQL.Close();
             fromSQL.Close();
+        }
+
+        public void Reinforce(string DB, int jobID, string reinforcementCluster, int nworkers, int priority)
+        {
+            ReportProgress(0);
+
+            SqlConnection sql = Connect(DB);
+
+            SqlCommand cmd = new SqlCommand("SELECT SharedDir,Executor,Nodegroup,Locality,Binary FROM Experiments WHERE ID=" + jobID.ToString(), sql);
+            SqlDataReader r = cmd.ExecuteReader();
+
+            if (r.Read())
+            {
+                string sharedDir = (string)r["SharedDir"];
+                string nodegroup = (string)r["Nodegroup"];
+                string locality = (string)r["Locality"];
+                int binID = (int)r["Binary"];
+                string executor = (string)r["Executor"];
+
+                r.Close();
+
+                SubmitHPCJob(DB, false, jobID, reinforcementCluster, nodegroup, priority, locality, binID, sharedDir, executor, nworkers);
+
+                ReportProgress(100);
+            }
+            else
+                throw new Exception("Could not read experiment data");
+
+            sql.Close();            
         }
 
         protected static int GetFreeNodes(IScheduler scheduler, string cluster)
@@ -645,7 +777,7 @@ namespace SubmissionLib
             {
                 IScheduler scheduler = new Scheduler();
                 scheduler.SetInterfaceMode(true, IntPtr.Zero);
-                
+
                 int sFree = GetFreeNodes(scheduler, preferredCluster);
                 foreach (string a in alternatives)
                 {
@@ -659,6 +791,118 @@ namespace SubmissionLib
             }
 
             return s;
+        }
+
+        public void SubmitHPCRecoveryJob(string db, int eid, string cluster, int priority, int nworkers, string executor)
+        {
+          SqlConnection sql = Connect(db);
+          SqlCommand cmd = new SqlCommand("SELECT * FROM Experiments WHERE ID=" + eid, sql);
+          SqlDataReader r = cmd.ExecuteReader();
+          if (!r.Read())
+            throw new Exception("Could not read from database.");
+
+          string nodegroup = (string)r["Nodegroup"];
+          string locality = (string)r["Locality"];
+          string sharedDir = (string)r["SharedDir"];
+
+          string eFullpath = System.IO.Path.GetFullPath(executor);
+          string eFilename = System.IO.Path.GetFileName(executor);
+          string sExecutor = eid.ToString() + "_" + eFilename;
+
+          if (!File.Exists(sharedDir + "\\" + sExecutor) ||
+              File.GetLastWriteTime(sharedDir + "\\" + sExecutor) < File.GetLastWriteTime(eFullpath))
+          {
+          retry:
+              try
+              {
+                File.Copy(eFullpath, sharedDir + "\\" + sExecutor, true);
+              }
+              catch (UnauthorizedAccessException)
+              {
+                sExecutor = sExecutor.Substring(0, sExecutor.Length - 4) + "-.exe";
+                goto retry;
+              }
+              catch (IOException)
+              {
+                sExecutor = sExecutor.Substring(0, sExecutor.Length - 4) + "-.exe";
+                goto retry;
+              }
+          }
+
+          scheduler.Connect(cluster);
+
+          ISchedulerJob hpcJob = scheduler.CreateJob();
+          try
+          {
+            if (nodegroup != "<Any>")
+              hpcJob.NodeGroups.Add(nodegroup);
+            hpcJob.Name = "Z3 Performance Test Recovery (" + eid + ")";
+            hpcJob.IsExclusive = true;
+            hpcJob.CanPreempt = true;
+            SetPriority(hpcJob, priority);
+            hpcJob.Project = "Z3";
+
+            if (locality == "Socket")
+              hpcJob.UnitType = JobUnitType.Socket;
+            else if (locality == "Core")
+              hpcJob.UnitType = JobUnitType.Core;
+            else if (locality == "Node")
+              hpcJob.UnitType = JobUnitType.Node;
+            else
+              throw new Exception("Unknown locality.");
+
+            int max = nworkers == 0 ? 1 : nworkers;
+
+            int progressTotal = max + 3;
+
+            // Add population task.
+            ReportProgress(Convert.ToInt32(100.0 * 1 / (double)max));
+            ISchedulerTask populateTask = hpcJob.CreateTask();
+            SetResources(populateTask, locality);
+            populateTask.IsRerunnable = false;
+            populateTask.IsExclusive = false;
+            populateTask.WorkDirectory = sharedDir;
+            populateTask.CommandLine = sExecutor + " " + eid + " * \"" + db + "\""; // * means recovery
+            populateTask.Name = "Populate";
+            hpcJob.AddTask(populateTask);
+
+            for (int i = 0; i < max; i++)
+            {
+              // Add worker task.
+              ReportProgress(Convert.ToInt32(100.0 * (i + 1) / (double)max));
+              ISchedulerTask task = hpcJob.CreateTask();
+              SetResources(task, locality);
+              task.WorkDirectory = sharedDir;
+              task.CommandLine = sExecutor + " " + eid + " \"" + db + "\"";
+              task.IsExclusive = false;
+              task.IsRerunnable = true;
+              task.DependsOn.Add("Populate");
+              task.Name = "Worker";
+
+              hpcJob.AddTask(task);
+            }
+
+            // No additional recovery task.
+
+            // Add deletion task.
+            ReportProgress(Convert.ToInt32(100.0 * (progressTotal) / (double)max));
+            ISchedulerTask dTask = hpcJob.CreateTask();
+            SetResources(dTask, locality);
+            dTask.IsRerunnable = true;
+            dTask.IsExclusive = false;
+            dTask.WorkDirectory = sharedDir;
+            dTask.CommandLine = "del " + sharedDir + "\\" + executor;
+            dTask.Name = "Delete worker";
+            dTask.DependsOn.Add("Worker");
+            hpcJob.AddTask(dTask);
+
+            scheduler.AddJob(hpcJob);
+            scheduler.SubmitJob(hpcJob, null, null);
+          }
+          catch (Exception ex)
+          {
+            MessageBox.Show("Error submitting job: " + ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+          }
         }
     };
 }

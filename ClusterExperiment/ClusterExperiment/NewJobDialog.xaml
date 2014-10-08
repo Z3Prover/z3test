@@ -112,6 +112,12 @@
                         <Label Content="step:"/>
                         <TextBox Name="txtParametricityStep" Width="50" IsEnabled="False" />
                     </StackPanel>
+                    <GroupBox>
+                        <GroupBox.Header>
+                            <CheckBox Name="chkJobgroup" Content="Create jobgroup" Checked="chkJobgroup_Checked" Unchecked="chkJobgroup_Unchecked" IsEnabled="False"></CheckBox>
+                        </GroupBox.Header>
+                        <TextBox Name="txtJobgroup" Width="255" IsEnabled="False" />
+                    </GroupBox>
                 </StackPanel>
             </GroupBox>
 
@@ -129,7 +135,7 @@
             <StackPanel Grid.Column="1" Grid.Row="17" Grid.ColumnSpan="2" Orientation="Horizontal" HorizontalAlignment="Right">
                 <Button Name="okButton" IsDefault="True" Width="80" Click="okButton_Click" TabIndex="16">OK</Button>
                 <Button Name="cancelButton" IsCancel="True" Width="80" Click="cancelButton_Click" TabIndex="17">Cancel</Button>
-            </StackPanel>            
+            </StackPanel>
             
         </Grid>
     </Grid>

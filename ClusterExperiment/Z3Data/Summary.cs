@@ -43,7 +43,7 @@ namespace Z3Data
                 if (tokens.Count() == 1 && tokens[0] == "") // empty line
                     continue;
 
-                if (tokens.Count() != 13)
+                if (tokens.Count() < 13 || tokens.Count() > 14)
                     throw new Exception("Unexpected number of tokens in summary line (" + _filename + ").");
 
                 if (!ContainsKey(tokens[0]))
@@ -63,6 +63,9 @@ namespace Z3Data
 
                 base[tokens[0]].Overperformers = Convert.ToUInt32(tokens[11]);
                 base[tokens[0]].UnderPerformers = Convert.ToUInt32(tokens[12]);
+
+                if (tokens.Count() > 13)
+                    base[tokens[0]].InfrastructureErrors = Convert.ToUInt32(tokens[13]);
             }
 
             f.Close();
@@ -89,7 +92,8 @@ namespace Z3Data
                 f.Write(s.TimeSAT.ToString() + ",");
                 f.Write(s.TimeUNSAT.ToString() + ",");
                 f.Write(s.Overperformers.ToString() + ",");
-                f.Write(s.UnderPerformers.ToString());
+                f.Write(s.UnderPerformers.ToString() + ",");
+                f.Write(s.InfrastructureErrors.ToString());
                 f.WriteLine();
             }
             f.Close();
@@ -179,7 +183,10 @@ namespace Z3Data
                 case ResultCode.BUG: cs.Bugs++; break;
                 case ResultCode.ERROR:
                     {
-                        cs.Errors++;
+                        if (r.StdErr.StartsWith("INFRASTRUCTURE ERROR:"))
+                            cs.InfrastructureErrors++;
+                        else
+                            cs.Errors++;
                         cs.SAT += r.SAT;
                         cs.UNSAT += r.UNSAT;
                         cs.UNKNOWN += r.UNKNOWN;

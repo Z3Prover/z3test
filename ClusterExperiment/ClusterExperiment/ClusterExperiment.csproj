@@ -85,17 +85,35 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="ChangePriorityDialog.xaml.cs">
+      <DependentUpon>ChangePriorityDialog.xaml</DependentUpon>
+    </Compile>
     <Compile Include="ChooseCategories.xaml.cs">
       <DependentUpon>ChooseCategories.xaml</DependentUpon>
     </Compile>
     <Compile Include="CompareExperiments.xaml.cs">
       <DependentUpon>CompareExperiments.xaml</DependentUpon>
     </Compile>
+    <Compile Include="RecoveryDialog.xaml.cs">
+      <DependentUpon>RecoveryDialog.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="ReinforcementsDialog.xaml.cs">
+      <DependentUpon>ReinforcementsDialog.xaml</DependentUpon>
+    </Compile>
     <Compile Include="CopyDialog.xaml.cs">
       <DependentUpon>CopyDialog.xaml</DependentUpon>
     </Compile>
+    <Compile Include="CreateGroupDialog.xaml.cs">
+      <DependentUpon>CreateGroupDialog.xaml</DependentUpon>
+    </Compile>
     <Compile Include="ExperimentProperties.xaml.cs">
       <DependentUpon>ExperimentProperties.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="GroupScatterPlot.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="GroupScatterPlot.Designer.cs">
+      <DependentUpon>GroupScatterPlot.cs</DependentUpon>
     </Compile>
     <Compile Include="Scatterplot.cs">
       <SubType>Form</SubType>
@@ -118,6 +136,13 @@
     <Compile Include="Submission.xaml.cs">
       <DependentUpon>Submission.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Duplicates.xaml.cs">
+      <DependentUpon>Duplicates.xaml</DependentUpon>
+    </Compile>
+    <Page Include="ChangePriorityDialog.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="ChooseCategories.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -126,7 +151,19 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="RecoveryDialog.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="ReinforcementsDialog.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="CopyDialog.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="CreateGroupDialog.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -174,6 +211,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="Duplicates.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="NewJobDialog.xaml.cs">
@@ -192,6 +233,9 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
+    <EmbeddedResource Include="GroupScatterPlot.resx">
+      <DependentUpon>GroupScatterPlot.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>

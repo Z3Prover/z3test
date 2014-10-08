@@ -65,6 +65,7 @@ namespace ClusterExperiment
       try
       {
         Mouse.OverrideCursor = System.Windows.Input.Cursors.Wait;
+        
         lblID.Content = this.Title = "Experiment #" + id.ToString();
 
         SqlCommand cmd = new SqlCommand("SELECT SubmissionTime,Category," +
@@ -79,7 +80,7 @@ namespace ClusterExperiment
           "(SELECT COUNT(1) FROM Data WHERE ExperimentID=" + id.ToString() + " AND ResultCode=4) as ERROR," +
           "(SELECT COUNT(1) FROM Data WHERE ExperimentID=" + id.ToString() + " AND ResultCode=5) as TIMEOUT," +
           "(SELECT COUNT(1) FROM Data WHERE ExperimentID=" + id.ToString() + " AND ResultCode=6) as MEMORYOUT," +
-          "Memout as MaxMem,Timeout as MaxTime,Parameters,Cluster,ClusterJobID,Nodegroup,Locality,Creator,Note " +
+          "Memout as MaxMem,Timeout as MaxTime,Parameters,Cluster,ClusterJobID,Nodegroup,Locality,Creator,Note,Longparams " +
           "FROM Experiments WHERE ID=" + id.ToString(), sql);
         cmd.CommandTimeout = 0;
         SqlDataReader r = cmd.ExecuteReader();
@@ -127,7 +128,10 @@ namespace ClusterExperiment
         
         txtTimeout.Text = (string)r["MaxTime"];
         txtMemout.Text = (string)r["MaxMem"];
-        txtParameters.Text = (string)r["Parameters"];
+        if (r["Parameters"].Equals(DBNull.Value)) 
+            txtParameters.Text = (string)r["Longparams"];
+        else
+            txtParameters.Text = (string)r["Parameters"];
         string cluster = (string)r["Cluster"];
         txtCluster.Text = cluster;
         int clusterJobID = (DBNull.Value.Equals(r["ClusterJobID"])) ? 0 : (int)r["ClusterJobID"];
@@ -172,11 +176,22 @@ namespace ClusterExperiment
           lblClusterStatus.Content = "Unable to retrieve status.";
           lblClusterStatus.Foreground = System.Windows.Media.Brushes.Black;
         }
+
+        cmd = new SqlCommand("SELECT COUNT(*) FROM Data WHERE ExperimentID=" + id.ToString() + " AND stderr LIKE '%INFRASTRUCTURE ERROR%';", sql);
+        r = cmd.ExecuteReader();
+        if (r.Read())
+        {
+          int ierrs = (int)r[0];
+          if (ierrs == 0) lblInfrastructureErrors.Content = "";
+          else lblInfrastructureErrors.Content = ierrs.ToString() + " infrastructure errors!";
+        }
+        r.Close();
+
       }
       catch (SqlException ex)
       {
         if (ex.Number == -2) /* timeout */ goto retry; else throw ex;
-      }
+      }      
 
       Mouse.OverrideCursor = null;
     }

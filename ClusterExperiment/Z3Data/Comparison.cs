@@ -14,7 +14,7 @@ namespace Z3Data
     {
         public double Count = 0.0;
 
-        public double x_files;
+        public double x_files = 0.0;
         public double x_countSAT = 0.0;
         public double x_countUNSAT = 0.0;
         public double x_countUNKNOWN = 0.0;
@@ -398,6 +398,7 @@ namespace Z3Data
             _statistics.subdirs = new Dictionary<string, ComparisonStatistics>();
 
             if (_jX == null || _jY == null) return;
+            if (_jX.Rows.Count == 0 || _jY.Rows.Count == 0) return;
 
             _jX.Rows.Sort(csvrow_lt);
             _jY.Rows.Sort(csvrow_lt);

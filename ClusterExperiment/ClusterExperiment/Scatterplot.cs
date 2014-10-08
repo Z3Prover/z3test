@@ -198,6 +198,7 @@ namespace ClusterExperiment
             SqlDataReader r = null;
 
             double totalX = 0.0, totalY = 0.0;
+            uint total = 0, faster = 0, slower = 0;
 
             try
             {
@@ -266,7 +267,11 @@ namespace ClusterExperiment
                             chart.Series[5].Points.AddXY(x, y);
                         else
                             chart.Series[3].Points.AddXY(x, y);
+
+                        if (x > y) faster++; else if (y > x) slower++;
                     }
+
+                    total++;
                 }
             }
             finally
@@ -277,10 +282,14 @@ namespace ClusterExperiment
 
             double avgSpeedup = totalX / totalY;
             lblAvgSpeedup.Text = Convert.ToString(avgSpeedup);
-            if (avgSpeedup > 1.0)
+            if (avgSpeedup >= 1.0)
                 lblAvgSpeedup.ForeColor = Color.Green;
             else if (avgSpeedup < 1.0)
                 lblAvgSpeedup.ForeColor = Color.Red;
+
+            lblTotal.Text = total.ToString();
+            lblFaster.Text = faster.ToString();
+            lblSlower.Text = slower.ToString();
         }
 
         private void ScatterTest_Load(object sender, EventArgs e)

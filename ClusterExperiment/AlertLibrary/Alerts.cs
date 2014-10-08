@@ -101,6 +101,13 @@ namespace AlertLibrary
                     string.Format("There {0} {1} bug{2}.", bugs == 1 ? "is" : "are", bugs, bugs == 1 ? "" : "s"));
             }
 
+            // Infrastructure errors; this is just an information.
+            uint ierrs = (cat == "") ? _job.Summary.Overall.InfrastructureErrors : _job.Summary[cat].InfrastructureErrors;
+            if (ierrs != 0)
+            {
+                res.Add(AlertLevel.None,
+                    string.Format("There {0} {1} infrastructure error{2}.", ierrs == 1 ? "is" : "are", ierrs, ierrs == 1 ? "" : "s"));
+            }
 
             // Check for errors != 0; this is just a warning.
             uint errors = (cat == "") ? _job.Summary.Overall.Errors : _job.Summary[cat].Errors;

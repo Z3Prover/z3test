@@ -135,7 +135,7 @@ namespace worker
 
             Console.WriteLine("Getting experiment info... ");
             Dictionary<string, Object> r =
-              SQLRead("SELECT Category,SharedDir,Extension,Memout,Timeout,Parameters,Binary FROM Experiments WHERE ID=" + eId, sql);
+              SQLRead("SELECT Category,SharedDir,Extension,Memout,Timeout,Parameters,Binary,Longparams FROM Experiments WHERE ID=" + eId, sql);
 
             if (r.Count() == 0)
                 throw new Exception("Experiment not found.");
@@ -149,7 +149,10 @@ namespace worker
             res.localDir = getTempDirectory();
             res.timeout = new TimeSpan(0, 0, Convert.ToInt32(r["Timeout"]));
             res.memout = (DBNull.Value.Equals(r["Memout"])) ? 0 : Convert.ToInt64(r["Memout"]);
-            res.Parameters = (string)r["Parameters"];
+            if (r["Parameters"].Equals(DBNull.Value))
+                res.Parameters = (string)r["Longparams"];
+            else
+                res.Parameters = (string)r["Parameters"];
             res.localExecutable = res.localDir + "\\z3.exe";
             res.binaryID = (int)r["Binary"];
 
@@ -158,6 +161,24 @@ namespace worker
 
         void populate(Experiment e)
         {
+            // First check whether someone else is populating already.
+            int c = 1;
+
+            SqlCommand cmd = new SqlCommand("SELECT COUNT(*) FROM Data WHERE ExperimentID=" + e.ID + ";", sql);
+            SqlDataReader r = cmd.ExecuteReader();            
+            if (r.Read()) c = ((int)r[0]);
+            r.Close();
+            if (c != 0)
+                return;
+
+            cmd = new SqlCommand("SELECT COUNT(*) FROM JobQueue WHERE ExperimentID=" + e.ID + ";", sql);
+            r = cmd.ExecuteReader();
+            if (r.Read()) c = ((int)r[0]);
+            r.Close();
+            if (c != 0)
+                return;
+
+
             int i = 0, pinx;
             string cur;
             while (i < e.fileExtension.Length)
@@ -185,7 +206,7 @@ namespace worker
                     {
                         if (Path.GetExtension(s).Substring(1) != cur) continue;
 
-                        SqlCommand cmd = new SqlCommand("AQ " + e.ID + ",'" + s.Substring(sl) + "';", sql, t);
+                        cmd = new SqlCommand("AQ " + e.ID + ",'" + s.Substring(sl) + "';", sql, t);
                         cmd.ExecuteNonQuery();
                         cnt++;
 
@@ -388,8 +409,32 @@ namespace worker
                 }
 
                 string ext = Path.GetExtension(e.localExecutable);
-                File.Move(e.localExecutable, e.localExecutable + "-" + myName + ext);                
+                string localname = e.localExecutable + "-" + myName + ext;
+                File.Move(e.localExecutable, localname);
                 e.localExecutable += "-" + myName + ext;
+
+                int retry_count = 1000;
+                while (!File.Exists(localname))
+                {
+                    Thread.Sleep(100);
+                    retry_count--;
+                    if (retry_count == 0) 
+                        throw new Exception("Local binary missing.");
+                }
+                retry_count = 1000;
+            retry:
+                try
+                {
+                    FileStream tmp = File.OpenRead(localname);
+                }
+                catch
+                {
+                    Thread.Sleep(100);
+                    retry_count--;
+                    if (retry_count == 0) 
+                        throw new Exception("Local binary is not readable.");
+                    goto retry;
+                }                    
             }
         }
 
@@ -464,7 +509,7 @@ namespace worker
             {
                 getBinary(e);
 
-                Console.WriteLine("Running job #" + j.ID);
+                // Console.WriteLine("Running job #" + j.ID);
                 File.Copy(j.filename, j.localFilename, true);
 
                 Result r = new Result();
@@ -477,8 +522,9 @@ namespace worker
                 StreamWriter err_writer = new StreamWriter(r.stderr);
                 Process p = new Process();
                 p.StartInfo.FileName = e.localExecutable;
-                p.StartInfo.WorkingDirectory = e.localDir;
+                p.StartInfo.WorkingDirectory = e.localDir;                
                 p.StartInfo.Arguments = j.localFilename + " " + e.Parameters;
+                //p.StartInfo.Arguments = e.Parameters;                
                 p.StartInfo.CreateNoWindow = true;
                 p.StartInfo.RedirectStandardOutput = true;
                 p.StartInfo.RedirectStandardError = true;
@@ -493,12 +539,24 @@ namespace worker
                     p.StartInfo.Arguments = "/c " + e.localExecutable + " " + p.StartInfo.Arguments;
                 }
 
+                // For stdin-only programs like mathsat:
+                //p.StartInfo.RedirectStandardInput = true;
+                //p.StartInfo.Arguments = e.Parameters;
+                //StreamReader fin = new StreamReader(j.localFilename);
+
             retry:
                 try
                 {
                     p.Start();
                     p.BeginOutputReadLine();
                     p.BeginErrorReadLine();
+
+                    // For stdin-only programs like mathsat:
+                    //while (!fin.EndOfStream)
+                    //    p.StandardInput.WriteLine(fin.ReadLine());
+
+                    //fin.Close();
+                    //p.StandardInput.Close();
                 }
                 catch (System.ComponentModel.Win32Exception ex)
                 {
@@ -711,6 +769,7 @@ namespace worker
             SqlParameter out_param = cmd.Parameters.Add("@STDOUT", System.Data.SqlDbType.VarChar);
             SqlParameter err_param = cmd.Parameters.Add("@STDERR", System.Data.SqlDbType.VarChar);
 
+            //if (true)
             if (resultCode >= 3)
             {
                 r.stdout.Seek(0, SeekOrigin.Begin);
@@ -958,6 +1017,7 @@ namespace worker
             {
                 Console.WriteLine("TOPLEVEL EXCEPTION: " + e.Message);
                 Console.WriteLine("AT: " + e.StackTrace);
+                return 1;
             }
 
             return 0;

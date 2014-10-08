@@ -77,7 +77,7 @@ namespace Nightly
             return res;
         }
 
-        protected double GetRowValue(DataRow r, string cat, List<string> subcats)
+        protected double GetRowValue(int row, string cat, List<string> subcats)
         {
             double value = 0.0;
             if (cat == "")
@@ -87,7 +87,7 @@ namespace Nightly
                 {
                     foreach (string sc in subcats)
                     {
-                        object q = r[e.Current.Key + "|" + sc];
+                        object q = timeline.Lookup(row, e.Current.Key + "|" + sc);
                         value += (q == null) ? 0 : Convert.ToDouble(q);
                     }
                 }
@@ -96,22 +96,23 @@ namespace Nightly
             {
                 foreach (string sc in subcats)
                 {
-                    object q = r[cat + "|" + sc];
+                    object q = timeline.Lookup(row, cat + "|" + sc);
                     value += (q == null) ? 0 : Convert.ToDouble(q);
                 }
             }
             return value;
         }
 
-        public Series series(string name, Color col, string cat, double maxdays, AxisType axisType,
+        public Series series(string name, Color col, int width, string cat, double maxdays, AxisType axisType,
                              List<string> subcats, List<string> avgcats = null, bool logarithmic = false)
         {
             double logMultiplier = 20000.0;
             DateTime now = DateTime.Now;
             Series ser = new Series((logarithmic) ? name + " (log)" : name);
-            ser.ChartType = SeriesChartType.Line;
+            ser.ChartType = SeriesChartType.Line;            
             ser.YAxisType = axisType;
             ser.Color = col;
+            ser.BorderWidth = width;
 
             double earliest_x = double.MinValue;
             double earliest_y = 0.0;
@@ -124,20 +125,20 @@ namespace Nightly
             double logMax = 10.0;
             if (logarithmic)
             {
-                // we need to find the max value.                
-                foreach (DataRow r in timeline.Tables[0].Rows)
+                // we need to find the max value.
+                for (int i = 0; i < timeline.RowCount; i++)
                 {
-                    double value = GetRowValue(r, cat, subcats);
+                    double value = GetRowValue(i, cat, subcats);
                     if (value > logMax) logMax = value;
                 }
                 logMultiplier = logMax / Math.Log10(logMax);
             }
 
-            foreach (DataRow r in timeline.Tables[0].Rows)
+            for (int i = 0; i < timeline.RowCount; i++)
             {
-                string date_str = r["Date"] as string;
+                string date_str = timeline.Lookup(i, "Date") as string;
 
-                double value = GetRowValue(r, cat, subcats);
+                double value = GetRowValue(i, cat, subcats);
 
                 if (avgcats != null)
                 {
@@ -149,7 +150,7 @@ namespace Nightly
                         {
                             foreach (string sc in avgcats)
                             {
-                                object q = r[e.Current.Key + "|" + sc];
+                                object q = timeline.Lookup(i, e.Current.Key + "|" + sc);
                                 contravalue += (q == null) ? 0 : Convert.ToDouble(q);
                             }
                         }
@@ -158,12 +159,13 @@ namespace Nightly
                     {
                         foreach (string sc in avgcats)
                         {
-                            object q = r[cat + "|" + sc];
+                            object q = timeline.Lookup(i, cat + "|" + sc);
                             contravalue += (q == null) ? 0 : Convert.ToDouble(q);
                         }
                     }
 
                     value /= contravalue;
+                    if (double.IsNaN(value)) value = 0.0;
                 }
 
                 if (date_str != null)
@@ -263,20 +265,23 @@ namespace Nightly
             l.Name = "StatisticsLegend";
             chart.Legends.Add(l);
 
-            chart.Series.Add(series("# solved", Color.Green, name, maxdays, AxisType.Primary, new List<string>() { "SAT", "UNSAT" }));
+            chart.Series.Add(series("# solved", Color.Green, 1, name, maxdays, AxisType.Primary, new List<string>() { "SAT", "UNSAT" }));
             chart.Series.Last().ChartArea = ca.Name;
             chart.Series.Last().Legend = l.Name;
-            chart.Series.Add(series("# errors", Color.Orange, name, maxdays, AxisType.Primary, new List<string>() { "ERROR" }, null, true));
+            chart.Series.Add(series("# errors", Color.OrangeRed, 2, name, maxdays, AxisType.Primary, new List<string>() { "ERROR" }, null, true));
             chart.Series.Last().ChartArea = ca.Name;
             chart.Series.Last().Legend = l.Name;
-            chart.Series.Add(series("# bugs", Color.Red, name, maxdays, AxisType.Primary, new List<string>() { "BUG" }, null, true));
+            chart.Series.Add(series("# inf. errors", Color.LightSalmon, 1, name, maxdays, AxisType.Primary, new List<string>() { "INFERR" }, null, true));
             chart.Series.Last().ChartArea = ca.Name;
             chart.Series.Last().Legend = l.Name;
-            chart.Series.Add(series("# unsolved", Color.Blue, name, maxdays, AxisType.Primary, new List<string>() { "TIMEOUT", "MEMORY", "UNKNOWN" }));
+            chart.Series.Add(series("# bugs", Color.Red, 2, name, maxdays, AxisType.Primary, new List<string>() { "BUG" }, null, true));
+            chart.Series.Last().ChartArea = ca.Name;
+            chart.Series.Last().Legend = l.Name;
+            chart.Series.Add(series("# unsolved", Color.Blue, 1, name, maxdays, AxisType.Primary, new List<string>() { "TIMEOUT", "MEMORY", "UNKNOWN" }));
             chart.Series.Last().ChartArea = ca.Name;
             chart.Series.Last().Legend = l.Name;
 
-            chart.Series.Add(series("avg  runtime [s]", Color.Gray, name, maxdays, AxisType.Secondary,
+            chart.Series.Add(series("avg  runtime [s]", Color.Gray, 1, name, maxdays, AxisType.Secondary,
                 new List<string>() { "SATTIME", "UNSATTIME" },
                 new List<string>() { "SAT", "UNSAT" }));
             chart.Series.Last().ChartArea = "Statistics";
@@ -524,7 +529,7 @@ namespace Nightly
             //series.Legend = l.Name;
             series.ChartType = SeriesChartType.Point;
             series.YAxisType = AxisType.Primary;
-            series.Color = Color.Blue;            
+            series.Color = Color.Blue;
             series.MarkerSize = 4;
             series.MarkerStyle = MarkerStyle.Circle;
 
@@ -557,7 +562,7 @@ namespace Nightly
                     double avg_time = (cs.TimeSAT + cs.TimeUNSAT) / (double)solved;
                     double top_speed = virtualBestAvg;
 
-                    double x = 100.0 * solved / (double) cs.Files; // % solved.                
+                    double x = 100.0 * solved / (double)cs.Files; // % solved.                
                     double y = 100.0 * top_speed / avg_time; // rel. speed?
 
                     int inx = series.Points.AddXY(x, y);
@@ -1045,6 +1050,7 @@ namespace Nightly
             t.Rows.Add(buildStatisticsRow("UNSAT:", cs.UNSAT, "", Color.Black));
             t.Rows.Add(buildStatisticsRow("UNKNOWN:", cs.UNKNOWN, "", Color.Black));
             t.Rows.Add(buildStatisticsRow("Errors:", cs.Errors, "", Color.Orange));
+            t.Rows.Add(buildStatisticsRow("Infrastructure Errors:", cs.InfrastructureErrors, "", Color.Red));
             t.Rows.Add(buildStatisticsRow("Bugs:", cs.Bugs, "", Color.Red));
             t.Rows.Add(buildStatisticsRow("Memoryout:", cs.Memout, "", Color.Black));
             t.Rows.Add(buildStatisticsRow("Timeout:", cs.Timeout, "", Color.Black));
