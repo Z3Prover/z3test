@@ -6,8 +6,26 @@
 
 from z3 import *
 tac = Tactic('smt')
-#tac1 = With(tac, 'smt.arith.nl_arith',True)
-tac2 = With(tac, 'arith.nl',True)
-tac2 = With(tac, 'smt.arith.nl',True)
 
-print tac2
+tac = With(tac, 'smt.arith.nl', False)
+
+s = tac.solver()
+s.add(Int('x')*Int('y') > 0)
+print "unknown: ", s.check()
+
+tac = With(Tactic('smt'), 'smt.arith.nl', True)
+s = tac.solver()
+s.add(Int('x')*Int('y') > 0)
+print "sat: ", s.check()
+
+tac = With(Tactic('smt'), 'arith.nl', True)
+s = tac.solver()
+s.add(Int('x')*Int('y') > 0)
+print "sat: ", s.check()
+
+try:
+   With(tac, 'smt2.arith.nl',True)
+except Z3Exception as e:
+   print e
+   print "exception expected"
+
