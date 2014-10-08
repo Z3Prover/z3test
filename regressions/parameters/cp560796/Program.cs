@@ -56,6 +56,7 @@ namespace cp560796
                 BoolExpr c =
                         context.ParseSMTLIB2File(@"small-bug1-fixpoint-1.smt2");
 
+                Console.WriteLine("checking");
                 solver.Assert(c); // <---- Sometimes this call has mbqi.trace on, and sometimes it's off.
 
                 var status = solver.Check();
