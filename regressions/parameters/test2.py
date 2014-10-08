@@ -6,7 +6,8 @@
 
 from z3 import *
 tac = Tactic('smt')
-tac1 = With(tac, smt.arith.nl_arith=True)
-tac2 = With(tac, arith.nl_arith=True)
+#tac1 = With(tac, 'smt.arith.nl_arith',True)
+tac2 = With(tac, 'arith.nl',True)
+tac2 = With(tac, 'smt.arith.nl',True)
 
-print tac1
+print tac2
