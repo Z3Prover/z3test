@@ -8,5 +8,16 @@
 
 from z3 import *
 tac = Tactic('smt')
-tac1 = With(tac, blah=True)
-print tac1
+try:
+  tac1 = With(tac, blah=True)
+except Z3Exception as e:
+  print e
+  print "exception expected"
+
+try:
+  tac1 = With(tac, 'arith.nl',4)
+except Z3Exception as e:
+  print e
+  print "exception expected"
+
+#print tac1
