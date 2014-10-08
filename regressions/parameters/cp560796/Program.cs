@@ -54,7 +54,7 @@ namespace cp560796
                 ParamDescrs q = solver.ParameterDescriptions;
                 
                 BoolExpr c =
-                        context.ParseSMTLIB2File(@"C:\cwinter\SMTLIB\BV\wintersteiger\fmsd13\fixpoint\small-bug1-fixpoint-10.smt2");
+                        context.ParseSMTLIB2File(@"small-bug1-fixpoint-10.smt2");
 
                 solver.Assert(c); // <---- Sometimes this call has mbqi.trace on, and sometimes it's off.
 
