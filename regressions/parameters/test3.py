@@ -2,7 +2,7 @@
 # - E.g., the context_params are not listed.
 
 from z3 import *
-set("verbose", 10000)
+set_param(verbose=1000)
 fml = Int('x') > Int('y')
 s = Solver()
 s.add(fml)
