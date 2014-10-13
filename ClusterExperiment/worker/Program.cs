@@ -522,9 +522,11 @@ namespace worker
                 StreamWriter err_writer = new StreamWriter(r.stderr);
                 Process p = new Process();
                 p.StartInfo.FileName = e.localExecutable;
-                p.StartInfo.WorkingDirectory = e.localDir;                
+                p.StartInfo.WorkingDirectory = e.localDir;
                 p.StartInfo.Arguments = j.localFilename + " " + e.Parameters;
-                //p.StartInfo.Arguments = e.Parameters;                
+                //p.StartInfo.Arguments = e.Parameters + " " + j.localFilename;
+                //p.StartInfo.Arguments = e.Parameters;
+                //p.StartInfo.Arguments = " " + j.filename;
                 p.StartInfo.CreateNoWindow = true;
                 p.StartInfo.RedirectStandardOutput = true;
                 p.StartInfo.RedirectStandardError = true;
@@ -855,16 +857,50 @@ namespace worker
             cmd.ExecuteNonQuery();
         }
 
+        void requeueInfrastructureErrors(Experiment e)
+        {
+          SqlCommand cmd = new SqlCommand("SELECT Data.ID, Strings.s as Filename FROM Data, Strings WHERE FilenameP=Strings.ID AND ExperimentID=" + e.ID + " AND stderr like 'INFRASTRUCTURE ERROR%'", sql);
+          SqlDataReader r = cmd.ExecuteReader();
+          Dictionary<int, string> d = new Dictionary<int, string>();          
+          while (r.Read()) {
+            d[(int)r["ID"]] = (string)r["Filename"];
+          }
+          r.Close();
+
+          foreach (KeyValuePair<int,string> kvp in d)
+          {            
+            SqlCommand cmd2 = new SqlCommand("AQ " + e.ID + ",'" + kvp.Value + "';", sql);
+            cmd2.ExecuteNonQuery();
+
+            cmd2 = new SqlCommand("DELETE FROM Data WHERE ExperimentID=" + e.ID + " AND ID=" + kvp.Key, sql);
+            cmd2.ExecuteNonQuery();
+          }
+        }
+
         void recovery(Experiment e)
         {
             // Recovery job.
             if (!haveJobs(e)) return;
+            requeueInfrastructureErrors(e);
             for (Job j = getJob(e, -1); j != null; j = getJob(e, -1))
             {
                 runJob(e, j);
                 if (results.Count > 50) saveResults();
             }
             saveResults();
+        }
+        bool haveInfrastructureErrors(Experiment e)
+        {
+          ensureConnected();
+          Dictionary<string, Object> rd =
+            SQLRead("SELECT TOP 1 ID FROM Data WHERE ExperimentID=" + e.ID + " AND stderr like 'INFRASTRUCTURE ERROR%'", sql);
+          return rd.Count() != 0;
+        }
+
+        void infrastructureErrorsRecovery(Experiment e)
+        {
+          if (haveInfrastructureErrors(e))
+            requeueInfrastructureErrors(e);
         }
 
         void oneJob(Experiment e, int jid)
@@ -923,6 +959,8 @@ namespace worker
                                 populate(e);
                             else if (args[1] == "!")
                                 recovery(e);
+                            else if (args[1] == "*")
+                                infrastructureErrorsRecovery(e);
                             else
                                 oneJob(e, Convert.ToInt32(args[1]));
                         }

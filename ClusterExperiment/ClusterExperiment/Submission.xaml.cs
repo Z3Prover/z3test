@@ -145,8 +145,8 @@ namespace ClusterExperiment
 
         // Submit a job...
         public Submission(string db, string categories, string sharedDir, string memout, string timeout, string executor,
-                          string executable, string parameters, string cluster, string nodegroup, string locality, string username,
-                          int priority, string extension, string note, bool parametricity,
+                          string executable, string parameters, string cluster, string nodegroup, string locality, string limitsMin, string limitsMax,
+                          string username, int priority, string extension, string note, bool parametricity,
                           string pFrom, string pTo, string pStep,
                           bool createGroup, string groupName)
         {
@@ -183,19 +183,20 @@ namespace ClusterExperiment
                 {
                     submit(db, categories, sharedDir, memout, timeout, executor,
                            parameters.Replace("{0}", i.ToString()),
-                           cluster, nodegroup, locality, username, priority, extension,
+                           cluster, nodegroup, locality, limitsMin, limitsMax,
+                           username, priority, extension,
                            "(" + count.ToString() + "/" + total.ToString() + ") " + note);
                 }
             }
             else
                 submit(db, categories, sharedDir, memout, timeout, executor, parameters,
-                     cluster, nodegroup, locality, username, priority, extension, note);
+                       cluster, nodegroup, locality, limitsMin, limitsMax, username, priority, extension, note);
         }
 
         // Submit a job...
         public Submission(string db, string categories, string sharedDir, string memout, string timeout, string executor,
-                          string executable, string parameters, string cluster, string nodegroup, string locality, string username,
-                          int priority, string extension, string note)
+                          string executable, string parameters, string cluster, string nodegroup, string locality, string limitsMin, string limitsMax,
+                          string username, int priority, string extension, string note)
         {
             InitializeComponent();
             Mouse.OverrideCursor = System.Windows.Input.Cursors.Wait;
@@ -210,7 +211,7 @@ namespace ClusterExperiment
 
             uploadBinary(db, executable);
             submit(db, categories, sharedDir, memout, timeout, executor, parameters,
-                   cluster, nodegroup, locality, username, priority, extension, note);
+                   cluster, nodegroup, locality, limitsMin, limitsMax, username, priority, extension, note);
         }
 
         // Copy a job...
@@ -246,7 +247,7 @@ namespace ClusterExperiment
                 outerGrid.RowDefinitions.Add(r);
                 r.Height = new GridLength(26);
                 Label l = new Label();
-                l.Content = (move?"Moving":"Copying") + " Job #" + jobID.ToString() + "...";
+                l.Content = (move ? "Moving" : "Copying") + " Job #" + jobID.ToString() + "...";
                 l.Height = 26;
                 Grid.SetRow(l, outerGrid.RowDefinitions.Count() - 1);
                 Grid.SetColumn(l, 0);
@@ -320,56 +321,56 @@ namespace ClusterExperiment
         // Recovery job submission
         public Submission(string db, int jobid, string cluster, int numWorkers, int priority, string executor)
         {
-          InitializeComponent();
-          Mouse.OverrideCursor = System.Windows.Input.Cursors.Wait;
-          Title = "Submit recovery job...";
+            InitializeComponent();
+            Mouse.OverrideCursor = System.Windows.Input.Cursors.Wait;
+            Title = "Submit recovery job...";
 
-          ColumnDefinition c1 = new ColumnDefinition();
-          ColumnDefinition c2 = new ColumnDefinition();
-          c1.Width = new GridLength(170);
-          c2.Width = new GridLength(75);
-          outerGrid.ColumnDefinitions.Add(c1);
-          outerGrid.ColumnDefinitions.Add(c2);
+            ColumnDefinition c1 = new ColumnDefinition();
+            ColumnDefinition c2 = new ColumnDefinition();
+            c1.Width = new GridLength(170);
+            c2.Width = new GridLength(75);
+            outerGrid.ColumnDefinitions.Add(c1);
+            outerGrid.ColumnDefinitions.Add(c2);
 
-          workers.Clear();
+            workers.Clear();
 
-          WindowInteropHelper helper = new WindowInteropHelper(this);
-          SubmissionWorker w = new SubmissionWorker(helper.Handle, workers.Count());
-          w.DoWork += new DoWorkEventHandler(worker_DoWork);
-          w.ProgressChanged += new ProgressChangedEventHandler(worker_ProgressChanged);
-          w.RunWorkerCompleted += new RunWorkerCompletedEventHandler(worker_RunWorkerCompleted);
-          w.WorkerReportsProgress = true;
-          w.WorkerSupportsCancellation = false;
+            WindowInteropHelper helper = new WindowInteropHelper(this);
+            SubmissionWorker w = new SubmissionWorker(helper.Handle, workers.Count());
+            w.DoWork += new DoWorkEventHandler(worker_DoWork);
+            w.ProgressChanged += new ProgressChangedEventHandler(worker_ProgressChanged);
+            w.RunWorkerCompleted += new RunWorkerCompletedEventHandler(worker_RunWorkerCompleted);
+            w.WorkerReportsProgress = true;
+            w.WorkerSupportsCancellation = false;
 
-          RowDefinition r = new RowDefinition();
-          outerGrid.RowDefinitions.Add(r);
-          r.Height = new GridLength(26);
-          Label l = new Label();
-          l.Content = "Job #" + jobid.ToString() + "...";
-          l.Height = 26;
-          Grid.SetRow(l, outerGrid.RowDefinitions.Count() - 1);
-          Grid.SetColumn(l, 0);
-          outerGrid.Children.Add(l);
+            RowDefinition r = new RowDefinition();
+            outerGrid.RowDefinitions.Add(r);
+            r.Height = new GridLength(26);
+            Label l = new Label();
+            l.Content = "Job #" + jobid.ToString() + "...";
+            l.Height = 26;
+            Grid.SetRow(l, outerGrid.RowDefinitions.Count() - 1);
+            Grid.SetColumn(l, 0);
+            outerGrid.Children.Add(l);
 
-          ProgressBar p = new ProgressBar();
-          p.Height = 26;
-          p.Width = 75;
-          Grid.SetRow(p, outerGrid.RowDefinitions.Count() - 1);
-          Grid.SetColumn(p, 1);
-          outerGrid.Children.Add(p);
+            ProgressBar p = new ProgressBar();
+            p.Height = 26;
+            p.Width = 75;
+            Grid.SetRow(p, outerGrid.RowDefinitions.Count() - 1);
+            Grid.SetColumn(p, 1);
+            outerGrid.Children.Add(p);
 
-          pbars.Add(w.id, p);
-          Object[] args = { "Recovery", db, jobid, cluster, priority, numWorkers, executor };
-          workers.Add(workers.Count(), w);
-          w.RunWorkerAsync(args);
+            pbars.Add(w.id, p);
+            Object[] args = { "Recovery", db, jobid, cluster, priority, numWorkers, executor };
+            workers.Add(workers.Count(), w);
+            w.RunWorkerAsync(args);
 
-          Mouse.OverrideCursor = null;
+            Mouse.OverrideCursor = null;
         }
 
 
         private void submit(string db, string categories, string sharedDir, string memout, string timeout, string executor,
-                            string parameters, string cluster, string nodegroup, string locality, string username,
-                            int priority, string extension, string note)
+                            string parameters, string cluster, string nodegroup, string locality, string limitsMin, string limitsMax,
+                            string username, int priority, string extension, string note)
         {
             string[] cats = categories.Split(',');
             foreach (string category in cats)
@@ -401,7 +402,7 @@ namespace ClusterExperiment
 
                 pbars.Add(w.id, p);
                 Object[] args = { "Submit", db, category, sharedDir, memout, timeout, executor,
-                          parameters, cluster, nodegroup, locality, username, priority, extension, note };
+                          parameters, cluster, nodegroup, locality, limitsMin, limitsMax, username, priority, extension, note };
 
                 workers.Add(workers.Count(), w);
                 w.RunWorkerAsync(args);
@@ -541,10 +542,12 @@ namespace ClusterExperiment
                     int jobid =
                     w.SetupExperiment((string)args[1], (string)args[2], (string)args[3],
                                       (string)args[4], (string)args[5], (string)args[6], (string)args[7],
-                                      (string)args[8], (string)args[9], (string)args[10], (string)args[11],
-                                      (int)args[12], (string)args[13], (string)args[14],
+                                      (string)args[8], (string)args[9], (string)args[10], (string)args[11], (string)args[12],
+                                      (string)args[13], (int)args[14], (string)args[15], (string)args[16],
                                       ref haveBinId, ref binId, ref sExecutor);
-                    w.SubmitHPCJob((string)args[1],true,  jobid, (string)args[8], (string)args[9], (int)args[12], (string)args[10], binId, (string)args[3], sExecutor);
+                    w.SubmitHPCJob((string)args[1], true, jobid, (string)args[8], (string)args[9], (int)args[14], 
+                                   (string)args[10], (string)args[11], (string)args[12], 
+                                   binId, (string)args[3], sExecutor);
 
                     // e.Result = "1 experiment with " + jobs + " jobs submitted.";
                 }
@@ -557,12 +560,12 @@ namespace ClusterExperiment
                     w.Reinforce((string)args[1], (int)args[2], (string)args[3], (int)args[4], (int)args[5]);
                 }
                 else if (cmd == "Recovery")
-                {                  
-                    w.SubmitHPCRecoveryJob((string)args[1], (int)args[2], (string)args[3], 
+                {
+                    w.SubmitHPCRecoveryJob((string)args[1], (int)args[2], (string)args[3],
                                            (int)args[4], (int)args[5], (string)args[6]);
                 }
                 else
-                  throw new Exception("Unknown submission operation: " + cmd);
+                    throw new Exception("Unknown submission operation: " + cmd);
             }
             catch (Exception ex)
             {

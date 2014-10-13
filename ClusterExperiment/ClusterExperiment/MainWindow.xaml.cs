@@ -168,55 +168,14 @@ namespace ClusterExperiment
       {
         string bin = dlg.txtExecutable.Text;
         if (dlg.chkMostRecentBinary.IsChecked == true)
-          bin = "";
+          bin = "";       
 
-        //double[] var_decay = { 0.35, 0.55, 0.8 };  // 0.1, 0.35 , 0.55, 0.8 };
-        //double[] cla_decay = { 0.1, 0.4, 0.65, 0.9 };
-        //int[] rfirst = { 10, 100, 1000, 10000 };
-        //double[] rinc = { 2.0, 3.0, 4.0, 5.0 };
-
-        //for (int i = 0; i < 3; i++)
-        //    for (int j = 0; j < 4; j++)
-        //        for (int k = 0; k < 4; k++)
-        //            for (int l = 0; l < 4; l++)
-        //            {
-        //                string ps = " -var-decay=" + var_decay[i].ToString() +
-        //                            " -cla-decay=" + cla_decay[j].ToString() +
-        //                            " -rfirst=" + rfirst[k].ToString() +
-        //                            " -rinc=" + rinc[l].ToString();
-
-        //                Submission sdlg = new Submission(txtDatabase.Text, dlg.txtCategories.Text,
-        //                                                 dlg.txtSharedDir.Text,
-        //                                                 dlg.txtMemout.Text, dlg.txtTimeout.Text, dlg.txtExecutor.Text,
-        //                                                 bin, ps,
-        //                                                 dlg.txtCluster.Text, dlg.cmbNodeGroup.Text, dlg.cmbLocality.Text,
-        //                                                 WindowsIdentity.GetCurrent().Name.ToString(),
-        //                                                 dlg.cmbPriority.SelectedIndex,
-        //                                                 dlg.txtExtension.Text, 
-        //                                                 dlg.txtNote.Text + "(" + var_decay[i].ToString() + 
-        //                                                 "/" + cla_decay[j].ToString() + 
-        //                                                 "/" + rfirst[k].ToString() + 
-        //                                                 "/" + rinc[l].ToString() + ") ",
-        //                                                 dlg.chkParametricity.IsChecked == true,
-        //                                                 dlg.txtParametricityFrom.Text,
-        //                                                 dlg.txtParametricityTo.Text,
-        //                                                 dlg.txtParametricityStep.Text);
-        //                sdlg.Owner = this;
-        //                sdlg.ShowDialog();
-
-        //                if (sdlg.lastError != null)
-        //                    System.Windows.MessageBox.Show(this, sdlg.lastError.Message, "Error",
-        //                    System.Windows.MessageBoxButton.OK,
-        //                    System.Windows.MessageBoxImage.Error);
-
-        //            }
-
-
-        Submission sdlg = new Submission(txtDatabase.Text, dlg.txtCategories.Text,
+          Submission sdlg = new Submission(txtDatabase.Text, dlg.txtCategories.Text,
                                            dlg.txtSharedDir.Text,
                                            dlg.txtMemout.Text, dlg.txtTimeout.Text, dlg.txtExecutor.Text,
                                            bin, dlg.txtParameters.Text,
                                            dlg.txtCluster.Text, dlg.cmbNodeGroup.Text, dlg.cmbLocality.Text,
+                                           dlg.txtLimitMin.Text, dlg.txtLimitMax.Text,
                                            WindowsIdentity.GetCurrent().Name.ToString(),
                                            dlg.cmbPriority.SelectedIndex,
                                            dlg.txtExtension.Text, dlg.txtNote.Text,
@@ -354,6 +313,7 @@ namespace ClusterExperiment
             cmd = new SqlCommand("DELETE FROM JobQueue WHERE ExperimentID=" + id.ToString() + ";" +
                                  "DELETE FROM Data WHERE ExperimentID=" + id.ToString() + ";" +
                                  "DELETE FROM Experiments WHERE ID=" + id.ToString(), sql);
+            cmd.CommandTimeout = 0;
             cmd.ExecuteNonQuery();
           }
           catch (Exception ex)

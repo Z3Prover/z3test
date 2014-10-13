@@ -21,3 +21,5 @@ ClusterExperiment/*/obj/*
 ClusterExperiment/*/bin/*
 ClusterExperiment/Release/*
 ClusterExperiment/packages/*
+*.sdf
+ClusterExperiment/Debug/

@@ -42,6 +42,8 @@ namespace ClusterExperiment
             txtExecutable.Text = (string)Registry.GetValue(keyName, "Executable", "");
             txtParameters.Text = (string)Registry.GetValue(keyName, "Parameters", "");
             cmbLocality.SelectedIndex = (int)Registry.GetValue(keyName, "Locality", (int)0);
+            txtLimitMin.Text = (string)Registry.GetValue(keyName, "LimitsMin", "");
+            txtLimitMax.Text = (string)Registry.GetValue(keyName, "LimitsMax", "");
             txtMemout.Text = (string)Registry.GetValue(keyName, "Memout", "2147483648");
             txtTimeout.Text = (string)Registry.GetValue(keyName, "Timeout", "");
 
@@ -83,6 +85,8 @@ namespace ClusterExperiment
             Registry.SetValue(keyName, "Executable", txtExecutable.Text, RegistryValueKind.String);
             Registry.SetValue(keyName, "Parameters", txtParameters.Text, RegistryValueKind.String);
             Registry.SetValue(keyName, "Locality", cmbLocality.SelectedIndex, RegistryValueKind.DWord);
+            Registry.SetValue(keyName, "LimitsMin", txtLimitMin.Text, RegistryValueKind.String);
+            Registry.SetValue(keyName, "LimitsMax", txtLimitMax.Text, RegistryValueKind.String);            
             Registry.SetValue(keyName, "Memout", txtMemout.Text, RegistryValueKind.String);
             Registry.SetValue(keyName, "Timeout", txtTimeout.Text, RegistryValueKind.String);
             Registry.SetValue(keyName, "Cluster", txtCluster.Text, RegistryValueKind.String);
@@ -296,6 +300,28 @@ namespace ClusterExperiment
         private void chkJobgroup_Unchecked(object sender, RoutedEventArgs e)
         {
             txtJobgroup.IsEnabled = false;
+        }
+
+        private void cmbLocality_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (lblLimitsUnit != null & cmbLocality.SelectedItem != null)
+                lblLimitsUnit.Content = cmbLocality.SelectedItem + "s";
+        }
+
+        private void txtLimitMax_TextChanged(object sender, TextChangedEventArgs e)
+        {            
+            try
+            {
+                if ((txtLimitMin.Text.Trim() != "") && 
+                    (txtLimitMax.Text.Trim() != ""))
+                {
+                    uint min = Convert.ToUInt32(txtLimitMin.Text);
+                    uint max = Convert.ToUInt32(txtLimitMax.Text);
+                    if (max < min)
+                        System.Windows.MessageBox.Show("Max should be greater than min.", "Error", MessageBoxButton.OK, MessageBoxImage.Information);
+                }
+            }
+            catch { }
         }
     }
 }
