@@ -17,6 +17,8 @@ def smalltest(b="unstable"):
             util.test_benchmarks_using_latest('regressions/smt2-debug', branch=b, debug=d, clang=False)
         util.test_benchmarks_using_latest('regressions/smt2', branch=b, debug=d, clang=False)
         util.test_pyscripts_using_latest('regressions/python', branch=b, debug=d, clang=False)
+        util.test_benchmarks_using_latest('regressions/parameters', branch=b, debug=d, clang=False)
+        util.test_pyscripts_using_latest('regressions/parameters', branch=b, debug=d, clang=False)
         if util.is_windows():
             util.test_cs_using_latest('regressions/cs', branch=b, debug=d, clang=False)
 
