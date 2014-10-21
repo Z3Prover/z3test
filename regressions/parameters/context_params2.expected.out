@@ -1,0 +1,16 @@
+WARNING: Error setting :unsat_core: unknown parameter ':unsat_core'
+Legal parameters are:
+  auto_config (bool) (default: true)
+  check_interpolants (bool) (default: false)
+  debug_ref_count (bool) (default: false)
+  model (bool) (default: true)
+  model_validate (bool) (default: false)
+  proof (bool) (default: false)
+  smtlib2_compliant (bool) (default: false)
+  timeout (unsigned int) (default: 4294967295)
+  trace (bool) (default: false)
+  trace_file_name (string) (default: z3.log)
+  type_check (bool) (default: true)
+  unsat_core (bool) (default: false)
+  well_sorted_check (bool) (default: true)
+
