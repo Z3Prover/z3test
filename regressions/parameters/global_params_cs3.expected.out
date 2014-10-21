@@ -1,0 +1,1 @@
+WARNING: Error setting smt.arith.nl, invalid value '42' for Boolean parameter 'arith.nl' at module 'smt'
