@@ -305,7 +305,14 @@ namespace ClusterExperiment
         private void cmbLocality_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             if (lblLimitsUnit != null & cmbLocality.SelectedItem != null)
-                lblLimitsUnit.Content = cmbLocality.SelectedItem + "s";
+            {
+                switch (cmbLocality.SelectedIndex) {
+                    case 0: lblLimitsUnit.Content = "Cores"; break;
+                    case 1: lblLimitsUnit.Content = "Sockets"; break;
+                    case 2: lblLimitsUnit.Content = "Nodes"; break;
+                    default: lblLimitsUnit.Content = "?"; break;
+                }
+            }
         }
 
         private void txtLimitMax_TextChanged(object sender, TextChangedEventArgs e)
