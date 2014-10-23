@@ -315,11 +315,11 @@ namespace ClusterExperiment
             }
         }
 
-        private void txtLimitMax_TextChanged(object sender, TextChangedEventArgs e)
-        {            
+        private void txtLimitMax_LostFocus(object sender, RoutedEventArgs e)
+        {
             try
             {
-                if ((txtLimitMin.Text.Trim() != "") && 
+                if ((txtLimitMin.Text.Trim() != "") &&
                     (txtLimitMax.Text.Trim() != ""))
                 {
                     uint min = Convert.ToUInt32(txtLimitMin.Text);

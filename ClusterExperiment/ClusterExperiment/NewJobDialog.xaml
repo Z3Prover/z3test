@@ -91,7 +91,7 @@
                 <Label Content="Use at least"/>
                 <TextBox Name="txtLimitMin" Width="40" Height="23" ToolTip="Require at least &lt;n&gt; computing elements. This helps the scheduler to allocate more than just 1 element when the job starts."/>
                 <Label Content="and at most"/>
-                <TextBox Name="txtLimitMax" Width="40" Height="23" ToolTip="Use at most &lt;n&gt; computing elements. This helps to avoid situations where we have few benchmarks, but the cluster is not busy." TextChanged="txtLimitMax_TextChanged"/>
+                <TextBox Name="txtLimitMax" Width="40" Height="23" ToolTip="Use at most &lt;n&gt; computing elements. This helps to avoid situations where we have few benchmarks, but the cluster is not busy." LostFocus="txtLimitMax_LostFocus"/>
                 <Label Content="Sockets" Name="lblLimitsUnit"/>
             </StackPanel>
 
