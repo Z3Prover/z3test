@@ -17,6 +17,7 @@ namespace worker
         SqlConnection sql = null;
         string myName = "";
         const int MAXBUF = 16777216;
+        Random rng = new Random();
 
         class Experiment
         {
@@ -922,7 +923,8 @@ namespace worker
                 }
 
                 saveResults();
-                Thread.Sleep(5000);
+                int sleepy_time = rng.Next(1, 60);
+                Thread.Sleep(sleepy_time * 1000);
             }
         }
 

@@ -31,6 +31,8 @@ def bigtest():
 #   util.buildz3(branch='tptp', everything=True, clean=True, debug=True,  java=False, static=False, jobs=config.NUMJOBS, clang=False)
     util.test_pyscripts_using_latest('regressions/mcsat', branch='mcsat', debug=True, clang=False)
     util.test_benchmarks_using_latest('regressions/mcsat_smt2', branch='mcsat', debug=True, clang=False)
+#    util.test_benchmarks_using_latest('regressions/parameters', branch=b, debug=d, clang=False)
+#    util.test_pyscripts_using_latest('regressions/parameters', branch=b, debug=d, clang=False)
 
 if __name__ == "__main__":
     bigtest()
