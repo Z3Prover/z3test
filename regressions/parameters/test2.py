@@ -5,6 +5,7 @@
 # Fix: Either (1) insist on global names everywhere.
 
 from z3 import *
+import sys
 tac = Tactic('smt')
 
 tac = With(tac, 'smt.arith.nl', False)
@@ -26,6 +27,6 @@ print "sat: ", s.check()
 try:
    With(tac, 'smt2.arith.nl',True)
 except Z3Exception as e:
-   print e
+   sys.stdout.write("%s" % e)
    print "exception expected"
 
