@@ -30,13 +30,18 @@ namespace ClusterExperiment
         bool fancy = false;
         uint aggMode = 1; // AVG
 
-        public GroupScatterPlot(int gIDX, int gIDY, SqlConnection sql)
+        public GroupScatterPlot(SqlConnection sql)
         {
             InitializeComponent();
-            this.Text = "Plot: Group " + gIDX + " vs Group " + gIDY;
+            this.Text = "Plot: Group " + gIDX + " vs Group " + gIDY;            
+            this.sql = sql;
+
+        }
+
+        public bool ShowPlot(int gIDX, int gIDY)
+        {
             this.gIDX = gIDX;
             this.gIDY = gIDY;
-            this.sql = sql;
 
             SqlCommand cmd = new SqlCommand("SELECT Name,Note,Category FROM Jobgroups WHERE ID=" + gIDX, sql);
             SqlDataReader r = cmd.ExecuteReader();
@@ -50,7 +55,7 @@ namespace ClusterExperiment
             {
                 MessageBox.Show(this, "Jobgroup ID not found.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 r.Close();
-                return;
+                return false;
             }
             r.Close();
 
@@ -72,7 +77,7 @@ namespace ClusterExperiment
             {
                 MessageBox.Show(this, "Jobgroup ID not found.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 r.Close();
-                return;
+                return false;
             }
             r.Close();
 
@@ -80,7 +85,7 @@ namespace ClusterExperiment
             {
                 MessageBox.Show(this, "Jobgroup categories don't match.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 r.Close();
-                return;
+                return false;
             }
 
             cmd = new SqlCommand("SELECT JobID FROM JobGroupData WHERE GroupID=" + gIDY, sql);
@@ -114,6 +119,8 @@ namespace ClusterExperiment
                 }
                 r.Close();
             }
+
+            return true;
         }
 
         private void setupChart()
@@ -481,13 +488,13 @@ namespace ClusterExperiment
         }
 
         private void radioMin_CheckedChanged(object sender, EventArgs e)
-        {            
+        {
             if (radioMin.Checked)
             {
                 Mouse.OverrideCursor = System.Windows.Input.Cursors.Wait;
                 aggMode = 0;
                 setupChart();
-                refreshChart(); 
+                refreshChart();
                 Mouse.OverrideCursor = null;
             }
         }
@@ -511,13 +518,13 @@ namespace ClusterExperiment
                 Mouse.OverrideCursor = System.Windows.Input.Cursors.Wait;
                 aggMode = 2;
                 setupChart();
-                refreshChart(); 
+                refreshChart();
                 Mouse.OverrideCursor = null;
             }
         }
 
         private void radioMAX_CheckedChanged(object sender, EventArgs e)
-        {            
+        {
             if (radioMAX.Checked)
             {
                 Mouse.OverrideCursor = System.Windows.Input.Cursors.Wait;
@@ -525,7 +532,7 @@ namespace ClusterExperiment
                 setupChart();
                 refreshChart();
                 Mouse.OverrideCursor = null;
-            }            
+            }
         }
     }
 }

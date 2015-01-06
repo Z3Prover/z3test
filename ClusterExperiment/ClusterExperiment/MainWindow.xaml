@@ -59,7 +59,7 @@
                             <MenuItem Name="mnuDelete" Command="Delete" />
                             <MenuItem Name="mnuCompare" Header="_Compare" Command="{x:Static custom:MainWindow.CompareCommand}" />
                             <MenuItem Name="mnuScatterplot" Header="_Scatterplot" Command="{x:Static custom:MainWindow.ScatterplotCommand}" />
-                            <MenuItem Name="mnuSaveAs" Header="Save _CSV..." Command="{x:Static custom:MainWindow.SaveCSVCommand}"/>
+                            <MenuItem Name="mnuSaveAs" Header="Save CS_V..." Command="{x:Static custom:MainWindow.SaveCSVCommand}"/>
                             <MenuItem Name="mnuCopy" Header="Copy _to..." Command="{x:Static custom:MainWindow.CopyCommand}" />
                             <MenuItem Name="mnuMove" Header="_Move to..." Command="{x:Static custom:MainWindow.MoveCommand}" />                            
                             <MenuItem Name="mnuCreateGroup" Header="Create _group..." Command="{x:Static custom:MainWindow.CreateGroupCommand}" />
@@ -69,7 +69,8 @@
                             <MenuItem Name="mnuRecovery" Header="Start recover_y..." Command="{x:Static custom:MainWindow.RecoveryCommand}" />                            
                             <MenuItem Name="mnuDuplicates" Header="Resolve _duplicates..." Command="{x:Static custom:MainWindow.DuplicatesCommand}" />
                             <MenuItem Name="mnuFlag" Header="Toggle _flag" Command="{x:Static custom:MainWindow.FlagCommand}" />
-                            <MenuItem Name="mnuTally" Header="Tall_y" Command="{x:Static custom:MainWindow.TallyCommand}" />
+                            <MenuItem Name="mnuTally" Header="Ta_lly" Command="{x:Static custom:MainWindow.TallyCommand}" />
+                            <MenuItem Name="mnuSaveMetaCSV" Header="Save met_a CSV..." Command="{x:Static custom:MainWindow.SaveMetaCSVCommand}"/>
                             <MenuItem Name="mnuProperties" Command="Properties" />
                         </ContextMenu>
                     </DataGrid.ContextMenu>
