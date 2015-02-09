@@ -9,6 +9,7 @@ using System.IO.Packaging;
 using System.Threading;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
+using System.Text.RegularExpressions;
 
 namespace worker
 {
@@ -30,6 +31,7 @@ namespace worker
             public int binaryID;
             public TimeSpan timeout;
             public long memout;
+            public string custom_check_sat = null;
 
             public string localDir;
         }
@@ -156,6 +158,20 @@ namespace worker
                 res.Parameters = (string)r["Parameters"];
             res.localExecutable = res.localDir + "\\z3.exe";
             res.binaryID = (int)r["Binary"];
+            res.custom_check_sat = null;
+
+            if (res.Parameters.Contains("replace-check-sat="))
+            {
+                Regex rx = new Regex("replace-check-sat=\"([^\"]+)\"");
+                Match m = rx.Match(res.Parameters);
+                if (m.Groups.Count > 0)
+                {
+                    string new_cs = m.Groups[1].Value;
+                    Console.WriteLine("new check-sat: " + new_cs);
+                    res.Parameters = res.Parameters.Replace("replace-check-sat=\"" + new_cs + "\"", "");
+                    res.custom_check_sat = new_cs;
+                }
+            }
 
             return res;
         }
@@ -503,6 +519,29 @@ namespace worker
                 // That's okay, let's just discared the output.
             }
         }
+        void replace_checksat(Experiment e, Job j)
+        {
+            string tmpf = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName());
+            FileStream f = new FileStream(j.localFilename, FileMode.Open, FileAccess.Read);
+            FileStream ft = new FileStream(tmpf, FileMode.Create, FileAccess.Write);
+            StreamReader fr = new StreamReader(f);
+            StreamWriter ftw = new StreamWriter(ft);
+            while (!fr.EndOfStream)
+            {
+                string s = fr.ReadLine();
+                ftw.WriteLine(s.Replace("(check-sat)", e.custom_check_sat));
+            }
+            ftw.Close();
+            ft.Close();
+            fr.Close();
+            f.Close();
+            File.Copy(tmpf, j.localFilename, true);
+            try
+            {
+                File.Delete(tmpf);
+            }
+            catch { }
+        }
 
         void runJob(Experiment e, Job j)
         {
@@ -512,13 +551,15 @@ namespace worker
 
                 // Console.WriteLine("Running job #" + j.ID);
                 File.Copy(j.filename, j.localFilename, true);
+                if (e.custom_check_sat != null)
+                    replace_checksat(e, j);
 
                 Result r = new Result();
                 r.j = j;
 
                 int output_limit = 134217728; // 128 MB
                 int error_limit = 262144; // 256 KB
-
+                
                 StreamWriter out_writer = new StreamWriter(r.stdout);
                 StreamWriter err_writer = new StreamWriter(r.stderr);
                 Process p = new Process();
