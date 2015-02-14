@@ -182,7 +182,7 @@ namespace worker
             int c = 1;
 
             SqlCommand cmd = new SqlCommand("SELECT COUNT(*) FROM Data WHERE ExperimentID=" + e.ID + ";", sql);
-            SqlDataReader r = cmd.ExecuteReader();            
+            SqlDataReader r = cmd.ExecuteReader();
             if (r.Read()) c = ((int)r[0]);
             r.Close();
             if (c != 0)
@@ -435,7 +435,7 @@ namespace worker
                 {
                     Thread.Sleep(100);
                     retry_count--;
-                    if (retry_count == 0) 
+                    if (retry_count == 0)
                         throw new Exception("Local binary missing.");
                 }
                 retry_count = 1000;
@@ -448,10 +448,10 @@ namespace worker
                 {
                     Thread.Sleep(100);
                     retry_count--;
-                    if (retry_count == 0) 
+                    if (retry_count == 0)
                         throw new Exception("Local binary is not readable.");
                     goto retry;
-                }                    
+                }
             }
         }
 
@@ -519,6 +519,7 @@ namespace worker
                 // That's okay, let's just discared the output.
             }
         }
+
         void replace_checksat(Experiment e, Job j)
         {
             string tmpf = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName());
@@ -542,6 +543,76 @@ namespace worker
             }
             catch { }
         }
+
+
+        // Try the following?
+        //private string ConvertToString(char[] buffer, int count)
+        //{
+        //    StringBuilder data = new StringBuilder(buffer.Length);
+
+        //    for (int i = 0; i < count; i++)
+        //    {
+        //        data.Append(buffer[i]);
+        //    }
+
+        //    return data.ToString();
+        //}
+
+        //void replace_checksat(Experiment e, Job j)
+        //{
+        //    string fn = j.localFilename;
+        //    string tr = "(check-sat)";
+        //    string rp = e.custom_check_sat;
+        //    int cl = tr.Length;
+
+        //    int ll = cl + rp.Length;
+        //    char[] buffer = new char[ll];
+
+        //    int index = 0;
+        //    int rl = tr.Length;
+
+        //    StreamReader streamReader = new StreamReader(fn);
+        //    StreamWriter streamWriter = new StreamWriter(fn + ".tmp");
+
+        //    while (true)
+        //    {
+        //        streamReader.DiscardBufferedData();
+        //        streamReader.BaseStream.Seek(index, SeekOrigin.Begin);
+        //        int count = streamReader.ReadBlock(buffer, 0, ll);
+        //        if (count == 0) break;
+
+        //        string data = ConvertToString(buffer, count);
+        //        bool isEndReplaced = false;
+        //        if (count >= cl)
+        //            isEndReplaced = (data.LastIndexOf(tr, cl) > 0);
+
+        //        data = data.Replace(tr, rp);
+        //        if (isEndReplaced)
+        //        {
+        //            streamWriter.Write(data);
+        //            index += count;
+        //        }
+        //        else
+        //        {
+        //            if (count >= cl)
+        //            {
+        //                streamWriter.Write(data.Substring(0, data.Length - rl));
+        //                index += cl;
+        //            }
+        //            else
+        //            {
+        //                streamWriter.Write(data);
+        //                index += cl;
+        //            }
+        //        }
+        //    }
+
+        //    streamReader.Close();
+        //    streamWriter.Close();
+
+        //    File.Delete(fn);
+        //    File.Move(fn + ".tmp", fn);
+        //}
 
         void runJob(Experiment e, Job j)
         {
@@ -584,9 +655,9 @@ namespace worker
                 }
 
                 // For stdin-only programs like mathsat:
-                //p.StartInfo.RedirectStandardInput = true;
-                //p.StartInfo.Arguments = e.Parameters;
-                //StreamReader fin = new StreamReader(j.localFilename);
+            //p.StartInfo.RedirectStandardInput = true;
+            //p.StartInfo.Arguments = e.Parameters;
+            //StreamReader fin = new StreamReader(j.localFilename);
 
             retry:
                 try
@@ -901,22 +972,23 @@ namespace worker
 
         void requeueInfrastructureErrors(Experiment e)
         {
-          SqlCommand cmd = new SqlCommand("SELECT Data.ID, Strings.s as Filename FROM Data, Strings WHERE FilenameP=Strings.ID AND ExperimentID=" + e.ID + " AND stderr like 'INFRASTRUCTURE ERROR%'", sql);
-          SqlDataReader r = cmd.ExecuteReader();
-          Dictionary<int, string> d = new Dictionary<int, string>();          
-          while (r.Read()) {
-            d[(int)r["ID"]] = (string)r["Filename"];
-          }
-          r.Close();
+            SqlCommand cmd = new SqlCommand("SELECT Data.ID, Strings.s as Filename FROM Data, Strings WHERE FilenameP=Strings.ID AND ExperimentID=" + e.ID + " AND stderr like 'INFRASTRUCTURE ERROR%'", sql);
+            SqlDataReader r = cmd.ExecuteReader();
+            Dictionary<int, string> d = new Dictionary<int, string>();
+            while (r.Read())
+            {
+                d[(int)r["ID"]] = (string)r["Filename"];
+            }
+            r.Close();
 
-          foreach (KeyValuePair<int,string> kvp in d)
-          {            
-            SqlCommand cmd2 = new SqlCommand("AQ " + e.ID + ",'" + kvp.Value + "';", sql);
-            cmd2.ExecuteNonQuery();
+            foreach (KeyValuePair<int, string> kvp in d)
+            {
+                SqlCommand cmd2 = new SqlCommand("AQ " + e.ID + ",'" + kvp.Value + "';", sql);
+                cmd2.ExecuteNonQuery();
 
-            cmd2 = new SqlCommand("DELETE FROM Data WHERE ExperimentID=" + e.ID + " AND ID=" + kvp.Key, sql);
-            cmd2.ExecuteNonQuery();
-          }
+                cmd2 = new SqlCommand("DELETE FROM Data WHERE ExperimentID=" + e.ID + " AND ID=" + kvp.Key, sql);
+                cmd2.ExecuteNonQuery();
+            }
         }
 
         void recovery(Experiment e)
@@ -933,16 +1005,16 @@ namespace worker
         }
         bool haveInfrastructureErrors(Experiment e)
         {
-          ensureConnected();
-          Dictionary<string, Object> rd =
-            SQLRead("SELECT TOP 1 ID FROM Data WHERE ExperimentID=" + e.ID + " AND stderr like 'INFRASTRUCTURE ERROR%'", sql);
-          return rd.Count() != 0;
+            ensureConnected();
+            Dictionary<string, Object> rd =
+              SQLRead("SELECT TOP 1 ID FROM Data WHERE ExperimentID=" + e.ID + " AND stderr like 'INFRASTRUCTURE ERROR%'", sql);
+            return rd.Count() != 0;
         }
 
         void infrastructureErrorsRecovery(Experiment e)
         {
-          if (haveInfrastructureErrors(e))
-            requeueInfrastructureErrors(e);
+            if (haveInfrastructureErrors(e))
+                requeueInfrastructureErrors(e);
         }
 
         void oneJob(Experiment e, int jid)

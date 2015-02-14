@@ -225,12 +225,12 @@ namespace SubmissionLib
 
             cmd = new SqlCommand("CREATE PROCEDURE [dbo].[S] " +
                                    "  @NSTR varchar(255), @SID int OUTPUT " +
-                                 "AS 	" +
+                                 "AS " +
                                    "  SELECT @SID = (SELECT TOP 1 ID FROM Strings WHERE s=@NSTR); " +
                                    "  IF (@SID IS NULL) BEGIN   " +
                                      "    INSERT INTO Strings (s) VALUES(@NSTR);   " +
                                  "    (SELECT @SID = (SELECT SCOPE_IDENTITY())); " +
-                                   "  END; 	", sql);
+                                   "  END; ", sql);
             cmd.ExecuteNonQuery();
 
             cmd = new SqlCommand("CREATE PROCEDURE [dbo].[AQ] " +
