@@ -442,7 +442,7 @@ namespace ClusterExperiment
                         CSVDatum cur = new CSVDatum();
                         int rc = Convert.ToInt32((byte)rd["ResultCode"]);
                         cur.rv = (rd["ReturnValue"].Equals(System.DBNull.Value)) ? null : (int?)rd["Returnvalue"];
-                        cur.runtime = (double)rd["Runtime"];
+                        cur.runtime = (rd["Runtime"].Equals(System.DBNull.Value)) ? ex_timeout : (double)rd["Runtime"];
                         cur.sat = (int)rd["SAT"];
                         cur.unsat = (int)rd["UNSAT"];
 
