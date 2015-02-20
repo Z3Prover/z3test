@@ -93,7 +93,7 @@ namespace Nightly
 
                 tc = new TableCell();
                 h = new HyperLink();
-                h.NavigateUrl = "Compare.aspx?jobX=" + id + "&jobY=" + last_tag_id;
+                h.NavigateUrl = "Compare.aspx?jobX=" + last_tag_id + "&jobY=" + id;
                 h.Text = last_tag_name;
                 tc.Controls.Add(h);
                 tc.HorizontalAlign = HorizontalAlign.Center;
@@ -101,7 +101,7 @@ namespace Nightly
 
                 tc = new TableCell();
                 h = new HyperLink();
-                h.NavigateUrl = "Compare.aspx?jobX=" + id + "&jobY=" + last_job_id;
+                h.NavigateUrl = "Compare.aspx?jobX=" + last_job_id + "&jobY=" + id;
                 h.Text = "latest";
                 tc.Controls.Add(h);
                 tr.Cells.Add(tc);
