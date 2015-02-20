@@ -38,6 +38,21 @@ namespace Z3Data
             return _ids.ContainsKey(id);
         }
 
+        public bool HasTag(string tag)
+        {
+            return _tags.ContainsKey(tag);
+        }
+        
+        public bool HasID(string id)
+        {
+            return _ids.ContainsKey(Convert.ToUInt32(id));
+        }
+
+        public bool HasID(uint id)
+        {
+            return _ids.ContainsKey(id);
+        }
+
         public string Get(uint id)
         {
             if (_ids.ContainsKey(id))

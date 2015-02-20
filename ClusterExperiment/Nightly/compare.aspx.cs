@@ -61,16 +61,15 @@ namespace Nightly
                     string penultimate = tl.Lookup(tl.RowCount - 2, "ID").ToString();
                     string latest = tl.Lookup(tl.RowCount - 1, "ID").ToString();
 
-                    lstTagX.Items.Add(new ListItem("Latest", latest));
-                    lstTagX.Items.Add(new ListItem("Penultimate", penultimate));
-                    lstTagY.Items.Add(new ListItem("Latest", latest));
-                    lstTagY.Items.Add(new ListItem("Penultimate", penultimate));
+                    lstTagX.Items.Add(new ListItem("Latest (" + latest + ")", latest));
+                    lstTagX.Items.Add(new ListItem("Penultimate (" + penultimate + ")", penultimate));
+                    lstTagY.Items.Add(new ListItem("Latest (" + latest + ")", latest));
+                    lstTagY.Items.Add(new ListItem("Penultimate (" + penultimate + ")", penultimate));
 
                     foreach (KeyValuePair<string, uint> kvp in config.tags)
                     {
-                        ListItem li = new ListItem(kvp.Key, kvp.Value.ToString());
-                        lstTagX.Items.Add(li);
-                        lstTagY.Items.Add(li);
+                        lstTagX.Items.Add(new ListItem(kvp.Key + " (" + kvp.Value.ToString() + ")", kvp.Value.ToString()));
+                        lstTagY.Items.Add(new ListItem(kvp.Key + " (" + kvp.Value.ToString() + ")", kvp.Value.ToString()));
                     }
 
                     px = Request.Params.Get("jobX");
@@ -82,12 +81,7 @@ namespace Nightly
 
                     if (px != null)
                     {
-                        if (px == latest)
-                        {
-                            rbnTagX.Checked = true;
-                            lstTagX.SelectedValue = latest;
-                        }
-                        else if (config.tags.HasTag(Convert.ToUInt32(px)))
+                        if (config.tags.HasID(px))
                         {
                             rbnTagX.Checked = true;
                             lstTagX.SelectedValue = px;
@@ -100,18 +94,14 @@ namespace Nightly
 
                     if (py != null)
                     {
-                        if (py == penultimate)
+                        if (config.tags.HasID(py))
                         {
                             rbnTagY.Checked = true;
-                            lstTagY.SelectedValue = penultimate;
-                        }
-                        else if (config.tags.HasTag(Convert.ToUInt32(py)))
-                        {
-                            rbnTagY.Checked = true;
-                            lstTagY.SelectedValue = py;
+                            lstTagY.Items.FindByText(py.ToString());
+                            lstTagY.SelectedValue = py.ToString();
                         }
                         else
-                            lstTagY.SelectedValue = latest;
+                            lstTagY.SelectedValue = latest;                        
                     }
                     else
                         lstTagY.SelectedValue = latest;

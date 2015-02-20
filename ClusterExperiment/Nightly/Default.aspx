@@ -12,8 +12,7 @@
 
     <asp:PlaceHolder runat="server" ID="phTop" />
 
-    <h1>Z3 Nightly Regression Tests
-    </h1>
+    <h1>Z3 Nightly Regression Tests</h1>
 
     <br />
 

@@ -21,7 +21,8 @@
                 <asp:Menu ID="NavigationMenu" runat="server" CssClass="menu" EnableViewState="false" IncludeStyleBlock="false" Orientation="Horizontal">
                     <Items>
                         <asp:MenuItem NavigateUrl="~/Default.aspx" Text="Home"/>
-                        <asp:MenuItem NavigateUrl="~/Compare.aspx" Text="Compare" Value="Compare"></asp:MenuItem>
+                        <asp:MenuItem NavigateUrl="~/Compare.aspx" Text="Compare" Value="Compare" />
+                        <asp:MenuItem NavigateUrl="~/History.aspx" Text="History" Value="History" />
                         <asp:MenuItem NavigateUrl="~/About.aspx" Text="About"/>
                     </Items>
                 </asp:Menu>

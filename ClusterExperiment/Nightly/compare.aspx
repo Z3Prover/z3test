@@ -95,4 +95,7 @@
     <asp:PlaceHolder runat="server" ID="phMain" />
 
     <div style="float: right; font-size: smaller; font-family: monospace; font-variant: small-caps;">
-        Load time: <%= RenderTime.TotalSeconds %>sec. </div></asp:Content>
+        Load time: <%= RenderTime.TotalSeconds %>sec. 
+    </div>
+
+</asp:Content>
