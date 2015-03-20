@@ -1,6 +1,7 @@
 ﻿<Window x:Class="ClusterExperiment.ShowResults"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:custom="clr-namespace:ClusterExperiment"
         Title="ShowResults" Height="518" Width="877" WindowStartupLocation="CenterOwner">
 
     <Grid>
@@ -23,10 +24,10 @@
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*" MinWidth="200" />
                 </Grid.ColumnDefinitions>
-                
+
                 <Grid Grid.Row="0" Grid.Column="0" HorizontalAlignment="Stretch">
                     <Grid.RowDefinitions>
-                        <RowDefinition Height="Auto" />                        
+                        <RowDefinition Height="Auto" />
                         <RowDefinition Height="Auto" />
                     </Grid.RowDefinitions>
                     <Grid.ColumnDefinitions>
@@ -38,7 +39,21 @@
                     <TextBox Name="txtSharedDir" IsReadOnly="True" Grid.Row="0" Grid.Column="1"/>
                 </Grid>
 
-                <DataGrid AutoGenerateColumns="True" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="0,0,0,0" Name="dataGrid" Grid.Row="1" Grid.Column="0" IsReadOnly="True" RowHeight="23" SelectionUnit="FullRow" MouseDoubleClick="dataGrid_MouseDoubleClick" />
+                <DataGrid AutoGenerateColumns="True" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" 
+                          Margin="0,0,0,0" Name="dataGrid" Grid.Row="1" Grid.Column="0" IsReadOnly="True" 
+                          RowHeight="23" SelectionUnit="FullRow" MouseDoubleClick="dataGrid_MouseDoubleClick">
+                    <DataGrid.ContextMenu>
+                        <ContextMenu>
+                            <MenuItem Name="mnuReclassify" Header="_Reclassify">
+                                <MenuItem Name="mnuReclassifyOK" Header="_OK" Command="{x:Static custom:ShowResults.ReclassifyOK}" />
+                                <MenuItem Name="mnuReclassifyBug" Header="_Bug" Command="{x:Static custom:ShowResults.ReclassifyBug}" />
+                                <MenuItem Name="mnuReclassifyError" Header="_Error" Command="{x:Static custom:ShowResults.ReclassifyError}" />
+                                <MenuItem Name="mnuReclassifyTimeout" Header="_Timeout" Command="{x:Static custom:ShowResults.ReclassifyTimeout}" />
+                                <MenuItem Name="mnuReclassifyMemout" Header="_Memout" Command="{x:Static custom:ShowResults.ReclassifyMemout}" />
+                            </MenuItem>
+                        </ContextMenu>
+                    </DataGrid.ContextMenu>
+                </DataGrid>
 
                 <Grid Name="radioGrid" Grid.Row="2" Grid.Column="0" HorizontalAlignment="Stretch" VerticalAlignment="Bottom">
                     <Grid.RowDefinitions>
@@ -46,14 +61,14 @@
                         <RowDefinition Height="Auto" />
                         <RowDefinition Height="Auto" />
                     </Grid.RowDefinitions>
-                    <Grid.ColumnDefinitions>                        
+                    <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*" />
                     </Grid.ColumnDefinitions>
                     <StackPanel Grid.Row="0" Orientation="Horizontal">
                         <RadioButton Name="radioAll" GroupName="Option" Padding="5,0,5,0" Click="RadioButton_Click" IsChecked="True" VerticalAlignment="Center">All</RadioButton>
                         <RadioButton Name="radioSAT" GroupName="Option" Padding="5,0,5,0" Click="RadioButton_Click" VerticalAlignment="Center">SAT</RadioButton>
                         <RadioButton Name="radioUNSAT" GroupName="Option" Padding="5,0,5,0" Click="RadioButton_Click" VerticalAlignment="Center">UNSAT</RadioButton>
-                        <RadioButton Name="radioUNKNOWN" GroupName="Option" Padding="5,0,5,0" Click="RadioButton_Click" VerticalAlignment="Center">UNKNOWN</RadioButton>                    
+                        <RadioButton Name="radioUNKNOWN" GroupName="Option" Padding="5,0,5,0" Click="RadioButton_Click" VerticalAlignment="Center">UNKNOWN</RadioButton>
                         <RadioButton Name="radioBUGS" GroupName="Option" Padding="5,0,5,0" Click="RadioButton_Click" VerticalAlignment="Center">BUG</RadioButton>
                         <RadioButton Name="radioERROR" GroupName="Option" Padding="5,0,5,0" Click="RadioButton_Click" VerticalAlignment="Center">ERROR</RadioButton>
                         <RadioButton Name="radioMemouts" GroupName="Option" Padding="5,0,5,0" Click="RadioButton_Click" VerticalAlignment="Center">MEMORY</RadioButton>

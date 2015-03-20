@@ -547,7 +547,7 @@ namespace ClusterExperiment
                                       ref haveBinId, ref binId, ref sExecutor);
                     w.SubmitHPCJob((string)args[1], true, jobid, (string)args[8], (string)args[9], (int)args[14], 
                                    (string)args[10], (string)args[11], (string)args[12], 
-                                   binId, (string)args[3], sExecutor);
+                                   (string)args[3], sExecutor);
 
                     // e.Result = "1 experiment with " + jobs + " jobs submitted.";
                 }

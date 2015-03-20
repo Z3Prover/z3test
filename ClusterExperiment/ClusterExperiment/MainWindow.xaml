@@ -52,7 +52,7 @@
                         <CommandBinding Command="SaveAs" Executed="showSaveCSV" CanExecute="canShowSaveCSV" />
                         <CommandBinding Command="{x:Static custom:MainWindow.CompareCommand}" Executed="showCompare" CanExecute="canShowCompare" />
                         <CommandBinding Command="{x:Static custom:MainWindow.CopyCommand}" Executed="showCopy" CanExecute="canShowCopy" />
-                        <CommandBinding Command="{x:Static custom:MainWindow.MoveCommand}" Executed="showMove" CanExecute="canShowMove" />                        
+                        <CommandBinding Command="{x:Static custom:MainWindow.MoveCommand}" Executed="showMove" CanExecute="canShowMove" />
                     </DataGrid.CommandBindings>
                     <DataGrid.ContextMenu>
                         <ContextMenu>
@@ -65,8 +65,11 @@
                             <MenuItem Name="mnuCreateGroup" Header="Create _group..." Command="{x:Static custom:MainWindow.CreateGroupCommand}" />
                             <MenuItem Name="mnuSaveBinary" Header="Save _binary to..." Command="{x:Static custom:MainWindow.SaveBinaryCommand}" />
                             <MenuItem Name="mnuReinforcements" Header="Call _reinforcements..." Command="{x:Static custom:MainWindow.ReinforcementsCommand}" />
+                            <MenuItem Name="mnuRecovery" Header="Requeue in. errors..." Command="{x:Static custom:MainWindow.RequeueIErrorsCommand}" />
+                            <MenuItem Name="mnuRestart" Header="Restart" Command="{x:Static custom:MainWindow.RestartCommand}" />
                             <MenuItem Name="mnuChangePriority" Header="Change priority..." Command="{x:Static custom:MainWindow.ChangePriorityCommand}" />
-                            <MenuItem Name="mnuRecovery" Header="Start recover_y..." Command="{x:Static custom:MainWindow.RecoveryCommand}" />                            
+                            <MenuItem Name="mnuRequeueIE" Header="Start recovery..." Command="{x:Static custom:MainWindow.RecoveryCommand}" />
+                            <MenuItem Name="mnuUpdateBinary" Header="Update binary..." Command="{x:Static custom:MainWindow.UpdateBinaryCommand}" />
                             <MenuItem Name="mnuDuplicates" Header="Resolve _duplicates..." Command="{x:Static custom:MainWindow.DuplicatesCommand}" />
                             <MenuItem Name="mnuFlag" Header="Toggle _flag" Command="{x:Static custom:MainWindow.FlagCommand}" />
                             <MenuItem Name="mnuTally" Header="Ta_lly" Command="{x:Static custom:MainWindow.TallyCommand}" />
