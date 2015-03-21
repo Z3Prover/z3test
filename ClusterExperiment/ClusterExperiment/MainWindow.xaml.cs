@@ -1316,7 +1316,7 @@ namespace ClusterExperiment
                 {
                     int eid = (int)drv["ID"];
 
-                    SqlCommand cmd = new SqlCommand("SELECT Data.ID, Strings.s as Filename FROM Data, Strings WHERE FilenameP=Strings.ID AND ExperimentID=" + eid + " AND (stderr like 'INFRASTRUCTURE ERROR%' OR ReturnValue=-1073741515)", sql);
+                    SqlCommand cmd = new SqlCommand("SELECT Data.ID, Strings.s as Filename FROM Data, Strings WHERE FilenameP=Strings.ID AND ExperimentID=" + eid + " AND ResultCode=4 AND (stderr like 'INFRASTRUCTURE ERROR%' OR ReturnValue=-1073741515)", sql);
                     cmd.CommandTimeout = 0;
                     SqlDataReader r = cmd.ExecuteReader();
                     Dictionary<int, string> d = new Dictionary<int, string>();

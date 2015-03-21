@@ -177,7 +177,7 @@ namespace ClusterExperiment
           lblClusterStatus.Foreground = System.Windows.Media.Brushes.Black;
         }
 
-        cmd = new SqlCommand("SELECT COUNT(*) FROM Data WHERE ExperimentID=" + id.ToString() + " AND (stderr LIKE '%INFRASTRUCTURE ERROR%' OR ReturnValue=-1073741515);", sql);
+        cmd = new SqlCommand("SELECT COUNT(*) FROM Data WHERE ExperimentID=" + id.ToString() + " AND ResultCode=4 AND (stderr LIKE '%INFRASTRUCTURE ERROR%' OR ReturnValue=-1073741515);", sql);
         r = cmd.ExecuteReader();
         if (r.Read())
         {
