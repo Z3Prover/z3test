@@ -131,10 +131,10 @@ namespace ClusterExperiment
             if (showProgress)
             {
                 cmd = "SELECT TitleScreen.*, Done, Queued, Total " +
-                        // ", Progress" + 
+                    // ", Progress" + 
                         "FROM TitleScreen, " +
                         "(SELECT DCT.ID, Done, Queued, (Done+Queued) as Total " +
-                        // ", STR(100.0 * Done/NULLIF(Done+Queued, 0), 6, 2) + '%' as Progress " +
+                    // ", STR(100.0 * Done/NULLIF(Done+Queued, 0), 6, 2) + '%' as Progress " +
                         "FROM " +
                             "(SELECT TitleScreen.ID, COUNT(Data.ID) as Done " +
                             "FROM TitleScreen LEFT JOIN Data " +
@@ -144,7 +144,7 @@ namespace ClusterExperiment
                             ", " +
                             "(SELECT TitleScreen.ID, COUNT(JobQueue.ID) as Queued " +
                             "FROM TitleScreen LEFT JOIN JobQueue " +
-		                    "ON TitleScreen.ID=JobQueue.ExperimentID " +
+                            "ON TitleScreen.ID=JobQueue.ExperimentID " +
                             "GROUP BY " +
                             "TitleScreen.ID) as JCT " +
                         "WHERE " +
@@ -153,11 +153,11 @@ namespace ClusterExperiment
                     "TitleScreen.ID = ProgressT.ID ";
             }
 
-            if (txtFilter.Text != "") 
+            if (txtFilter.Text != "")
             {
                 cmd += showProgress ? "AND " : "WHERE ";
                 cmd += "(Category like '%" + txtFilter.Text + "%' OR " +
-                       "Note like '%" + txtFilter.Text + "%' OR "+
+                       "Note like '%" + txtFilter.Text + "%' OR " +
                        "Creator like '%" + txtFilter.Text + "%') ";
             }
 
@@ -213,6 +213,15 @@ namespace ClusterExperiment
         }
 
         private void btnNewJob_Click(object sender, RoutedEventArgs e)
+        {
+            showNewJob(sender, e);
+        }
+
+        private void canShowNewJob(object sender, CanExecuteRoutedEventArgs e)
+        {
+            e.CanExecute = true;
+        }
+        private void showNewJob(object sender, RoutedEventArgs e)
         {
             NewJobDialog dlg = new NewJobDialog();
             dlg.Owner = this;
@@ -1345,7 +1354,7 @@ namespace ClusterExperiment
         private void showRequeueIErrorsCommand(object sender, ExecutedRoutedEventArgs e)
         {
             Mouse.OverrideCursor = System.Windows.Input.Cursors.Wait;
-            uint ie_cnt = 0;
+            int ie_cnt = 0;
             SqlTransaction t = sql.BeginTransaction();
 
             try
@@ -1364,27 +1373,25 @@ namespace ClusterExperiment
                     }
                     r.Close();
 
-                    uint cnt = 0;
-                    foreach (KeyValuePair<int, string> kvp in d)
+                    if (d.Count > 0)
                     {
-                        SqlCommand cmd2 = new SqlCommand("AQ " + eid + ",'" + kvp.Value + "';", sql, t);
-                        cmd2.CommandTimeout = 0;
-                        cmd2.ExecuteNonQuery();
+                        string tmpCmd = "";
+                        foreach (KeyValuePair<int, string> kvp in d)
+                            tmpCmd += "EXECUTE AQ " + eid + ",'" + kvp.Value + "'; DELETE FROM Data WHERE ID=" + kvp.Key + "; ";
 
-                        cmd2 = new SqlCommand("DELETE FROM Data WHERE ExperimentID=" + eid + " AND ID=" + kvp.Key, sql, t);
-                        cmd2.CommandTimeout = 0;
-                        cmd2.ExecuteNonQuery();
+                        cmd = new SqlCommand(tmpCmd, sql, t);
+                        cmd.CommandTimeout = 0;
+                        cmd.ExecuteNonQuery();
 
-                        cnt++;
+                        ie_cnt += d.Count;
+                        t.Commit();
+                        t = sql.BeginTransaction();
                     }
-
-                    ie_cnt += cnt;
-                    t.Commit();
-                    t = sql.BeginTransaction();
                 }
 
                 System.Windows.MessageBox.Show(this, "Re-queued " + ie_cnt + " infrastructure errors.", "Infrastructure errors",
                                                 MessageBoxButton.OK, MessageBoxImage.Information);
+                t.Dispose();
                 System.Console.WriteLine();
             }
             catch (Exception ex)
@@ -1439,7 +1446,7 @@ namespace ClusterExperiment
                     scheduler.Connect(cluster);
 
                     try
-                    {                        
+                    {
                         ISchedulerJob job = scheduler.OpenJob(clusterJobID);
                         switch (job.Priority)
                         {
@@ -1475,24 +1482,25 @@ namespace ClusterExperiment
                     catch (Exception ex)
                     {
                         System.Windows.MessageBox.Show(this, "Exception: " + ex.Message, "Error",
-                                                MessageBoxButton.OK, MessageBoxImage.Error);                        
+                                                MessageBoxButton.OK, MessageBoxImage.Error);
                     }
 
                     cmd = new SqlCommand("DELETE FROM Data WHERE ExperimentID=" + eid + ";" +
                                          "DELETE FROM JobQueue WHERE ExperimentID=" + eid + ";", sql);
                     cmd.CommandTimeout = 0;
                     cmd.ExecuteNonQuery();
-                    
+
                     scheduler.Close();
 
                     string wrkrpath = System.IO.Path.Combine(sharedDir, executor);
-                    if (!File.Exists(wrkrpath)) {
+                    if (!File.Exists(wrkrpath))
+                    {
                         string exc = (string)Registry.GetValue(keyName, "Executor", "");
                         File.Copy(exc, wrkrpath, true);
                     }
 
                     WindowInteropHelper helper = new WindowInteropHelper(this);
-                    SubmissionWorker sw = new SubmissionWorker(helper.Handle, 0);                    
+                    SubmissionWorker sw = new SubmissionWorker(helper.Handle, 0);
                     sw.SubmitHPCJob(txtDatabase.Text, true, eid,
                                     cluster, nodegroup, priority,
                                     locality, min.ToString(), max.ToString(),
@@ -1506,6 +1514,45 @@ namespace ClusterExperiment
             }
 
             Mouse.OverrideCursor = null;
-        }         
-    }    
+        }
+
+        private void MenuItemExit_Click(object sender, RoutedEventArgs e)
+        {
+            Close();
+        }
+
+        private void cannShowNewCatchall(object Sender, CanExecuteRoutedEventArgs e)
+        {
+            e.CanExecute = true;
+        }
+
+        private void showNewCatchall(object sender, RoutedEventArgs e)
+        {
+            CatchallDialog dlg = new CatchallDialog();
+            dlg.Owner = this;
+            if (dlg.ShowDialog() == true)
+            {
+                Submission sdlg = new Submission(txtDatabase.Text, 
+                                                 dlg.txtCluster.Text,
+                                                 dlg.cmbLocality.Text,
+                                                 dlg.cmbPriority.SelectedIndex,
+                                                 dlg.cmbNodeGroup.Text,
+                                                 dlg.txtExecutor.Text,
+                                                 dlg.txtLimitMin.Text,
+                                                 dlg.txtLimitMax.Text);
+
+                sdlg.Owner = this;
+                sdlg.ShowDialog();
+
+                if (sdlg.lastError != null)
+                {
+                    System.Windows.MessageBox.Show(this, sdlg.lastError.Message, "Error",
+                                                   System.Windows.MessageBoxButton.OK,
+                                                   System.Windows.MessageBoxImage.Error);
+                }
+                
+                updateState();
+            }
+        }
+    }
 }

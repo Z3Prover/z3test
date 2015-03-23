@@ -367,6 +367,55 @@ namespace ClusterExperiment
             Mouse.OverrideCursor = null;
         }
 
+        // Catchall job submission
+        public Submission(string db, string cluster, string locality, int priority, string nodegroup, string executor, string min, string max)
+        {
+            InitializeComponent();
+            Mouse.OverrideCursor = System.Windows.Input.Cursors.Wait;
+            Title = "Submitting catchall job...";
+
+            ColumnDefinition c1 = new ColumnDefinition();
+            ColumnDefinition c2 = new ColumnDefinition();
+            c1.Width = new GridLength(170);
+            c2.Width = new GridLength(75);
+            outerGrid.ColumnDefinitions.Add(c1);
+            outerGrid.ColumnDefinitions.Add(c2);
+
+            workers.Clear();
+
+            WindowInteropHelper helper = new WindowInteropHelper(this);
+            SubmissionWorker w = new SubmissionWorker(helper.Handle, workers.Count());
+            w.DoWork += new DoWorkEventHandler(worker_DoWork);
+            w.ProgressChanged += new ProgressChangedEventHandler(worker_ProgressChanged);
+            w.RunWorkerCompleted += new RunWorkerCompletedEventHandler(worker_RunWorkerCompleted);
+            w.WorkerReportsProgress = true;
+            w.WorkerSupportsCancellation = false;
+
+            RowDefinition r = new RowDefinition();
+            outerGrid.RowDefinitions.Add(r);
+            r.Height = new GridLength(26);
+            Label l = new Label();
+            l.Content = "Catchall...";
+            l.Height = 26;
+            Grid.SetRow(l, outerGrid.RowDefinitions.Count() - 1);
+            Grid.SetColumn(l, 0);
+            outerGrid.Children.Add(l);
+
+            ProgressBar p = new ProgressBar();
+            p.Height = 26;
+            p.Width = 75;
+            Grid.SetRow(p, outerGrid.RowDefinitions.Count() - 1);
+            Grid.SetColumn(p, 1);
+            outerGrid.Children.Add(p);
+
+            pbars.Add(w.id, p);
+            Object[] args = { "Catchall", db, cluster, locality, priority, nodegroup, executor, min, max};
+            workers.Add(workers.Count(), w);
+            w.RunWorkerAsync(args);
+
+            Mouse.OverrideCursor = null;
+        }
+
 
         private void submit(string db, string categories, string sharedDir, string memout, string timeout, string executor,
                             string parameters, string cluster, string nodegroup, string locality, string limitsMin, string limitsMax,
@@ -563,6 +612,11 @@ namespace ClusterExperiment
                 {
                     w.SubmitHPCRecoveryJob((string)args[1], (int)args[2], (string)args[3],
                                            (int)args[4], (int)args[5], (string)args[6]);
+                }
+                else if (cmd == "Catchall")
+                {
+                    w.SubmitCatchall((string)args[1], (string)args[2], (string)args[3], (int)args[4],
+                                     (string)args[5], (string)args[6], (string)args[7], (string)args[8]);
                 }
                 else
                     throw new Exception("Unknown submission operation: " + cmd);

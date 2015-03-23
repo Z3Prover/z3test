@@ -27,7 +27,7 @@
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="180" />
                 <ColumnDefinition MinWidth="160" />
-                <ColumnDefinition Width="30" />                
+                <ColumnDefinition Width="30" />
             </Grid.ColumnDefinitions>
 
             <Label Content="Cluster Headnode:" Height="28" HorizontalAlignment="Left" Name="label1" VerticalAlignment="Center" Grid.Row="0"/>

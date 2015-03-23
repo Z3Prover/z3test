@@ -390,6 +390,86 @@ namespace SubmissionLib
             return newID;
         }
 
+        public void SubmitCatchall(string db, string cluster, string locality, int priority, string nodegroup, string executor, string min, string max)
+        {            
+            scheduler.Connect(cluster);
+            ISchedulerJob hpcJob = scheduler.CreateJob();
+            try
+            {
+                if (nodegroup != "<Any>")
+                    hpcJob.NodeGroups.Add(nodegroup);
+                hpcJob.Name = "Z3 Performance Test (catchall)";
+                hpcJob.IsExclusive = true;
+                hpcJob.CanPreempt = true;
+                SetPriority(hpcJob, priority);
+                hpcJob.Project = "Z3";
+                hpcJob.Runtime = 604800; /* 1 week */
+
+                uint fmin = 0;
+                uint fmax = 0;
+                string limitsMinTrimmed = min.Trim();
+                string limitsMaxTrimmed = max.Trim();
+                
+                if (limitsMinTrimmed != "")
+                {
+                    try { fmin = Convert.ToUInt32(limitsMinTrimmed); }
+                    catch { fmin = 0; }
+                }
+                if (limitsMaxTrimmed != "")
+                {
+                    try { fmax = Convert.ToUInt32(limitsMaxTrimmed); }
+                    catch { fmax = 0; }
+                }          
+
+                ISchedulerCounters ctrs = scheduler.GetCounters();
+                if (locality == "Socket")
+                {
+                    hpcJob.UnitType = JobUnitType.Socket;
+                    if (fmin > 0) hpcJob.MinimumNumberOfSockets = (int)fmin;
+                    fmax = ((fmax == 0) ? (uint)ctrs.TotalSockets : fmax);
+                    hpcJob.MaximumNumberOfSockets = (int)fmax;
+                }
+                else if (locality == "Core")
+                {
+                    hpcJob.UnitType = JobUnitType.Core;
+                    if (fmin > 0) hpcJob.MinimumNumberOfCores = (int)fmin;
+                    fmax = ((fmax == 0) ? (uint)ctrs.TotalCores : fmax);
+                    hpcJob.MaximumNumberOfCores = (int)fmax;
+                }
+                else if (locality == "Node")
+                {
+                    hpcJob.UnitType = JobUnitType.Node;
+                    if (fmin > 0) hpcJob.MinimumNumberOfNodes = (int)fmin;
+                    fmax = ((fmax == 0) ? (uint)ctrs.TotalNodes : fmax);
+                    hpcJob.MaximumNumberOfNodes = (int)fmax;
+                }
+
+                for (int i = 0; i < fmax; i++)
+                {
+                    // Add worker task.
+                    if (WorkerReportsProgress) ReportProgress(Convert.ToInt32(100.0 * (i + 1) / (double)fmax));
+                    ISchedulerTask task = hpcJob.CreateTask();
+                    SetResources(task, locality);
+                    task.WorkDirectory = Path.GetDirectoryName(Path.GetFullPath(executor));
+                    task.CommandLine = Path.GetFileName(executor) + " \"" + db + "\"";
+                    task.IsExclusive = false;
+                    task.IsRerunnable = true;
+                    task.Name = "Worker";
+                    task.Runtime = 86400; /* 1 day */
+
+                    hpcJob.AddTask(task);
+                }
+
+                scheduler.AddJob(hpcJob);
+                scheduler.SubmitJob(hpcJob, null, null);
+            }
+            catch (Exception ex)
+            {
+                scheduler.CancelJob(hpcJob.Id, "Aborted.");
+                throw ex;
+            }
+        }
+
         public void SubmitHPCJob(string db, bool isNew, int newID, string cluster, string nodegroup, int priority,
                                  string locality, string limitsMin, string limitsMax, string sharedDir,
                                  string executor, int nworkers = 0)
