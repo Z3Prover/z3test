@@ -7,7 +7,7 @@
     <Window.CommandBindings>
         <CommandBinding Command="Find" Executed="focusOnFilter" CanExecute="canFocusOnFilter" />
     </Window.CommandBindings>
-    
+
     <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="0,0,0,0" Name="gridOuter" >
         <Grid.RowDefinitions>
             <RowDefinition Height="80" />
@@ -25,7 +25,7 @@
             </Grid.RowDefinitions>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="100" MinWidth="100" />
-                <ColumnDefinition MinWidth="100" />                
+                <ColumnDefinition MinWidth="100" />
                 <ColumnDefinition Width="80" />
             </Grid.ColumnDefinitions>
 
@@ -34,18 +34,36 @@
             <Button Content="Connect" HorizontalAlignment="Right" Name="btnConnect" VerticalAlignment="Center" Width="75" Click="btnConnect_Click" Grid.Row="0" Grid.Column="3" TabIndex="5" />
 
             <Label Content="Operations:" HorizontalAlignment="Left" Name="label4" VerticalAlignment="Center" Grid.Row="1" Grid.Column="0"/>
-            <StackPanel Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2" Orientation="Horizontal" HorizontalAlignment="Stretch">                
+            <StackPanel Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2" Orientation="Horizontal" HorizontalAlignment="Stretch">
                 <Button Content="Update List" Margin="0,0,50,0" Height="23" HorizontalAlignment="Left" Name="btnUpdate" VerticalAlignment="Center" Width="75" IsEnabled="false" TabIndex="6" Click="btnUpdate_Click" />
                 <Button Content="New Job" Margin="0,0,50,0" Height="23" HorizontalAlignment="Left" Name="btnNewJob" VerticalAlignment="Center" Width="75" IsEnabled="false"  TabIndex="7" Click="btnNewJob_Click" />
                 <Label Content="Filter:" Margin="0,0,10,0" Height="23" HorizontalAlignment="Stretch"/>
-                <TextBox MinWidth="280" Name="txtFilter" HorizontalAlignment="Stretch" VerticalAlignment="Center" TabIndex="8" KeyUp="txtFilter_KeyUp"/>             
+                <TextBox MinWidth="280" Name="txtFilter" HorizontalAlignment="Stretch" VerticalAlignment="Center" TabIndex="8" KeyUp="txtFilter_KeyUp"/>
             </StackPanel>
 
-        </Grid>               
+        </Grid>
 
         <TabControl Grid.Row="1" Grid.Column="0" TabStripPlacement="Bottom">
             <TabItem Header="Jobs" >
-                <DataGrid AutoGenerateColumns="True" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="10,10,10,10" Name="dataGrid" IsReadOnly="True" MouseDoubleClick="dataGrid_MouseDoubleClick" >
+                <DataGrid AutoGenerateColumns="False" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="10,10,10,10" Name="dataGrid" IsReadOnly="True" MouseDoubleClick="dataGrid_MouseDoubleClick" >
+                    <DataGrid.Resources>
+                        <DataTemplate x:Key="ProgressTemplate" >
+                            <ProgressBar Minimum="0" Maximum="{Binding Total, Mode=OneWay}" Value="{Binding Done, Mode=OneWay}" Width="75" Height="15" IsEnabled="True" />
+                        </DataTemplate>
+                    </DataGrid.Resources>
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Binding="{Binding Path=ID}" Header="ID" />
+                        <DataGridTextColumn Binding="{Binding Path=SubmissionTime}" Header="Submitted" />
+                        <DataGridTextColumn Binding="{Binding Path=Category}" Header="Category" />
+                        <DataGridTextColumn Binding="{Binding Path=Cluster}" Header="Cluster" />
+                        <DataGridTextColumn Binding="{Binding Path=Creator}" Header="Creator" />
+                        <DataGridTextColumn Binding="{Binding Path=Note}" Header="Note" />
+                        <DataGridCheckBoxColumn Binding="{Binding Path=Flag}" Header="Flag" IsThreeState="False" />
+                        <DataGridTemplateColumn Header="Progress" CellTemplate="{StaticResource ProgressTemplate}" />
+                        <DataGridTextColumn Binding="{Binding Path=Done}" Header="Done" TextBlock.TextAlignment="Right" />
+                        <DataGridTextColumn Binding="{Binding Path=Queued}" Header="Queued" TextBlock.TextAlignment="Right" />
+                        <DataGridTextColumn Binding="{Binding Path=Total}" Header="Total" TextBlock.TextAlignment="Right" />                        
+                    </DataGrid.Columns>
                     <DataGrid.CommandBindings>
                         <CommandBinding Command="Delete" Executed="deleteExperiment" CanExecute="canDeleteExperiment" />
                         <CommandBinding Command="Properties" Executed="showProperties" CanExecute="canShowProperties" />
@@ -61,7 +79,7 @@
                             <MenuItem Name="mnuScatterplot" Header="_Scatterplot" Command="{x:Static custom:MainWindow.ScatterplotCommand}" />
                             <MenuItem Name="mnuSaveAs" Header="Save CS_V..." Command="{x:Static custom:MainWindow.SaveCSVCommand}"/>
                             <MenuItem Name="mnuCopy" Header="Copy _to..." Command="{x:Static custom:MainWindow.CopyCommand}" />
-                            <MenuItem Name="mnuMove" Header="_Move to..." Command="{x:Static custom:MainWindow.MoveCommand}" />                            
+                            <MenuItem Name="mnuMove" Header="_Move to..." Command="{x:Static custom:MainWindow.MoveCommand}" />
                             <MenuItem Name="mnuCreateGroup" Header="Create _group..." Command="{x:Static custom:MainWindow.CreateGroupCommand}" />
                             <MenuItem Name="mnuSaveBinary" Header="Save _binary to..." Command="{x:Static custom:MainWindow.SaveBinaryCommand}" />
                             <MenuItem Name="mnuReinforcements" Header="Call _reinforcements..." Command="{x:Static custom:MainWindow.ReinforcementsCommand}" />
@@ -79,16 +97,16 @@
                     </DataGrid.ContextMenu>
                 </DataGrid>
             </TabItem>
-            
+
             <TabItem Header="Job Groups">
                 <DataGrid AutoGenerateColumns="True" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="10,10,10,10" Name="jobgroupGrid" IsReadOnly="True" MouseDoubleClick="jobgroupGrid_MouseDoubleClick" >
                     <DataGrid.CommandBindings>
-                        <CommandBinding Command="Delete" Executed="deleteJobGroup" CanExecute="canDeleteJobGroup" />                                                
+                        <CommandBinding Command="Delete" Executed="deleteJobGroup" CanExecute="canDeleteJobGroup" />
                     </DataGrid.CommandBindings>
                     <DataGrid.ContextMenu>
                         <ContextMenu>
-                            <MenuItem Name="mnuJGDelete" Command="Delete" />                            
-                            <MenuItem Name="mnuJGScatterplot" Header="_Scatterplot" Command="{x:Static custom:MainWindow.GroupScatterplotCommand}" />                            
+                            <MenuItem Name="mnuJGDelete" Command="Delete" />
+                            <MenuItem Name="mnuJGScatterplot" Header="_Scatterplot" Command="{x:Static custom:MainWindow.GroupScatterplotCommand}" />
                         </ContextMenu>
                     </DataGrid.ContextMenu>
                 </DataGrid>

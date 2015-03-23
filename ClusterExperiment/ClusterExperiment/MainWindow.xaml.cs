@@ -5,13 +5,16 @@ using System.Text;
 using System.IO;
 using System.IO.Packaging;
 using System.Collections;
+using System.ComponentModel;
 using System.Data;
 using System.Data.SqlClient;
+using System.Drawing;
 using System.Security.Principal;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Documents;
+using System.Windows.Forms;
 using System.Windows.Input;
 using System.Windows.Interop;
 using System.Windows.Media;
@@ -19,7 +22,6 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.Windows.Threading;
-using System.Windows.Forms;
 using Microsoft.Hpc.Scheduler;
 using Microsoft.Hpc.Scheduler.Properties;
 using Microsoft.Win32;
@@ -122,10 +124,45 @@ namespace ClusterExperiment
 
             SqlDataAdapter da;
 
-            if (txtFilter.Text != "")
-                da = new SqlDataAdapter("SELECT * FROM TitleScreen WHERE (Category like '%" + txtFilter.Text + "%' OR Note like '%" + txtFilter.Text + "%' OR Creator like '%" + txtFilter.Text + "%') ORDER BY SubmissionTime DESC", sql);
-            else
-                da = new SqlDataAdapter("SELECT * FROM TitleScreen ORDER BY SubmissionTime DESC", sql);
+            string cmd = "SELECT * FROM TitleScreen ";
+
+            bool showProgress = true;
+
+            if (showProgress)
+            {
+                cmd = "SELECT TitleScreen.*, Done, Queued, Total " +
+                        // ", Progress" + 
+                        "FROM TitleScreen, " +
+                        "(SELECT DCT.ID, Done, Queued, (Done+Queued) as Total " +
+                        // ", STR(100.0 * Done/NULLIF(Done+Queued, 0), 6, 2) + '%' as Progress " +
+                        "FROM " +
+                            "(SELECT TitleScreen.ID, COUNT(Data.ID) as Done " +
+                            "FROM TitleScreen LEFT JOIN Data " +
+                            "ON TitleScreen.ID=Data.ExperimentID " +
+                            "GROUP BY " +
+                            "TitleScreen.ID) DCT " +
+                            ", " +
+                            "(SELECT TitleScreen.ID, COUNT(JobQueue.ID) as Queued " +
+                            "FROM TitleScreen LEFT JOIN JobQueue " +
+		                    "ON TitleScreen.ID=JobQueue.ExperimentID " +
+                            "GROUP BY " +
+                            "TitleScreen.ID) as JCT " +
+                        "WHERE " +
+                        "DCT.ID = JCT.ID) as ProgressT " +
+                    "WHERE " +
+                    "TitleScreen.ID = ProgressT.ID ";
+            }
+
+            if (txtFilter.Text != "") 
+            {
+                cmd += showProgress ? "AND " : "WHERE ";
+                cmd += "(Category like '%" + txtFilter.Text + "%' OR " +
+                       "Note like '%" + txtFilter.Text + "%' OR "+
+                       "Creator like '%" + txtFilter.Text + "%') ";
+            }
+
+            cmd += "ORDER BY SubmissionTime DESC";
+            da = new SqlDataAdapter(cmd, sql);
             DataSet ds = new DataSet();
             da.Fill(ds, "Experiments");
             dataGrid.ItemsSource = ds.Tables[0].DefaultView;
@@ -1103,7 +1140,7 @@ namespace ClusterExperiment
             foreach (DataRowView drv in dataGrid.SelectedItems)
             {
                 int id = (int)drv["ID"];
-                bool old = (bool)drv["Flag"];
+                bool old = System.DBNull.Value.Equals(drv["Flag"]) ? false : (bool)drv["Flag"];
 
                 SqlCommand c = new SqlCommand("UPDATE Experiments SET Flag=" + ((old == true) ? "0" : "1") + " WHERE ID=" + id, sql);
                 c.ExecuteNonQuery();
@@ -1309,6 +1346,7 @@ namespace ClusterExperiment
         {
             Mouse.OverrideCursor = System.Windows.Input.Cursors.Wait;
             uint ie_cnt = 0;
+            SqlTransaction t = sql.BeginTransaction();
 
             try
             {
@@ -1316,7 +1354,7 @@ namespace ClusterExperiment
                 {
                     int eid = (int)drv["ID"];
 
-                    SqlCommand cmd = new SqlCommand("SELECT Data.ID, Strings.s as Filename FROM Data, Strings WHERE FilenameP=Strings.ID AND ExperimentID=" + eid + " AND ResultCode=4 AND (stderr like 'INFRASTRUCTURE ERROR%' OR ReturnValue=-1073741515)", sql);
+                    SqlCommand cmd = new SqlCommand("SELECT Data.ID, Strings.s as Filename FROM Data, Strings WHERE FilenameP=Strings.ID AND ExperimentID=" + eid + " AND ResultCode=4 AND (stderr like 'INFRASTRUCTURE ERROR%' OR ReturnValue=-1073741515)", sql, t);
                     cmd.CommandTimeout = 0;
                     SqlDataReader r = cmd.ExecuteReader();
                     Dictionary<int, string> d = new Dictionary<int, string>();
@@ -1329,11 +1367,11 @@ namespace ClusterExperiment
                     uint cnt = 0;
                     foreach (KeyValuePair<int, string> kvp in d)
                     {
-                        SqlCommand cmd2 = new SqlCommand("AQ " + eid + ",'" + kvp.Value + "';", sql);
+                        SqlCommand cmd2 = new SqlCommand("AQ " + eid + ",'" + kvp.Value + "';", sql, t);
                         cmd2.CommandTimeout = 0;
                         cmd2.ExecuteNonQuery();
 
-                        cmd2 = new SqlCommand("DELETE FROM Data WHERE ExperimentID=" + eid + " AND ID=" + kvp.Key, sql);
+                        cmd2 = new SqlCommand("DELETE FROM Data WHERE ExperimentID=" + eid + " AND ID=" + kvp.Key, sql, t);
                         cmd2.CommandTimeout = 0;
                         cmd2.ExecuteNonQuery();
 
@@ -1341,6 +1379,8 @@ namespace ClusterExperiment
                     }
 
                     ie_cnt += cnt;
+                    t.Commit();
+                    t = sql.BeginTransaction();
                 }
 
                 System.Windows.MessageBox.Show(this, "Re-queued " + ie_cnt + " infrastructure errors.", "Infrastructure errors",
@@ -1351,6 +1391,7 @@ namespace ClusterExperiment
             {
                 System.Windows.MessageBox.Show(this, "Exception: " + ex.Message, "Error",
                                                 MessageBoxButton.OK, MessageBoxImage.Error);
+                t.Rollback();
             }
 
             Mouse.OverrideCursor = null;
@@ -1465,6 +1506,6 @@ namespace ClusterExperiment
             }
 
             Mouse.OverrideCursor = null;
-        }
-    }
+        }         
+    }    
 }

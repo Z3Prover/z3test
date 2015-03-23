@@ -993,7 +993,7 @@ namespace worker
 
         void requeueInfrastructureErrors(Experiment e)
         {
-            SqlCommand cmd = new SqlCommand("SELECT Data.ID, Strings.s as Filename FROM Data, Strings WHERE FilenameP=Strings.ID AND ExperimentID=" + e.ID + " AND (stderr like 'INFRASTRUCTURE ERROR%' OR ReturnValue=-1073741515)", sql);
+            SqlCommand cmd = new SqlCommand("SELECT Data.ID, Strings.s as Filename FROM Data, Strings WHERE FilenameP=Strings.ID AND ExperimentID=" + e.ID + " AND ResultCode=4 AND (stderr like 'INFRASTRUCTURE ERROR%' OR ReturnValue=-1073741515)", sql);
             cmd.CommandTimeout = 0;
             SqlDataReader r = cmd.ExecuteReader();
             Dictionary<int, string> d = new Dictionary<int, string>();
@@ -1036,7 +1036,7 @@ namespace worker
         {
             ensureConnected();
             Dictionary<string, Object> rd =
-              SQLRead("SELECT TOP 1 ID FROM Data WHERE ExperimentID=" + e.ID + " AND (stderr like 'INFRASTRUCTURE ERROR%' OR ReturnValue=-1073741515)", sql);
+              SQLRead("SELECT TOP 1 ID FROM Data WHERE ExperimentID=" + e.ID + " AND ResultCode=4 AND (stderr like 'INFRASTRUCTURE ERROR%' OR ReturnValue=-1073741515)", sql);
             return rd.Count() != 0;
         }
 
