@@ -72,7 +72,7 @@ namespace ClusterExperiment
                         if (all_timeouts)
                             Pick((int)((DataRowView)dataGrid.Items[0])["ID"]);
                         else
-                            not_done = true;
+                            not_done = filenameps.Count() > 0;
                     }
                     else
                         not_done = false;
