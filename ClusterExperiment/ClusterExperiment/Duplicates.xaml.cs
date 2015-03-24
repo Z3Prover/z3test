@@ -32,22 +32,55 @@ namespace ClusterExperiment
             this.sql = sql;
             this.resolveTimeouts = resolveTimeouts;
 
+            ResolveJobQueue();
+
             SqlCommand cmd = new SqlCommand("SELECT COUNT(*) as Count,FilenameP FROM Data WHERE ExperimentID=" + eid + " GROUP BY FilenameP HAVING COUNT(*)>1", sql);
+            SqlDataReader r = cmd.ExecuteReader();
+            while (r.Read())
+                filenameps.Add((int)r["FilenameP"]);
+            r.Close();            
+
+            showNextDupe();
+        }
+
+        private void ResolveJobQueue()
+        {
+            if (filenameps.Count() != 0)
+                throw new Exception("expected empty list");
+
+            SqlCommand cmd = new SqlCommand("SELECT COUNT(*) as Count, FilenameP FROM JobQueue WHERE ExperimentID=" + eid + " GROUP BY FilenameP HAVING COUNT(*)>1", sql);
             SqlDataReader r = cmd.ExecuteReader();
             while (r.Read())
                 filenameps.Add((int)r["FilenameP"]);
             r.Close();
 
-            showNextDupe();
+            foreach (int e in filenameps)
+            {
+                cmd = new SqlCommand("SELECT ID FROM JobQueue WHERE ExperimentID=" + eid + " AND FilenameP=" + e, sql);
+                cmd.CommandTimeout = 0;
+                r = cmd.ExecuteReader();
+                List<int> ids = new List<int>();
+                while (r.Read())
+                    ids.Add((int)r["ID"]);
+                r.Close();
+
+                ids.RemoveAt(0); // keep 1.
+                foreach (int id in ids)
+                {
+                    cmd = new SqlCommand("DELETE FROM JobQueue WHERE ExperimentID=" + eid + " and ID=" + id, sql);
+                    cmd.CommandTimeout = 0;
+                    cmd.ExecuteNonQuery();
+                }
+            }
         }
 
-        private void showNextDupe() 
+        private void showNextDupe()
         {
-            if (filenameps.Count==0)
+            if (filenameps.Count == 0)
             {
-                DialogResult = true;                
+                DialogResult = true;
             }
-            else 
+            else
             {
                 bool not_done = true;
                 do
@@ -72,12 +105,12 @@ namespace ClusterExperiment
                         if (all_timeouts)
                             Pick((int)((DataRowView)dataGrid.Items[0])["ID"]);
                         else
-                            not_done = filenameps.Count() > 0;
+                            not_done = false;
                     }
                     else
                         not_done = false;
                 }
-                while (not_done);
+                while (not_done && filenameps.Count() > 0);
             }
         }
 

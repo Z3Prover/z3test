@@ -1208,6 +1208,14 @@ namespace ClusterExperiment
                 bool have_rows = r.HasRows;
                 r.Close();
 
+                if (!have_rows)
+                {
+                    cmd = new SqlCommand("SELECT TOP 1 COUNT(*) as Count,FilenameP FROM JobQueue WHERE ExperimentID=" + eid + " GROUP BY FilenameP HAVING COUNT(*)>1", sql);
+                    r = cmd.ExecuteReader();
+                    have_rows = r.HasRows;
+                    r.Close();
+                }
+
                 if (have_rows)
                 {
                     Mouse.OverrideCursor = null;
