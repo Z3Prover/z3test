@@ -2,7 +2,11 @@
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:custom="clr-namespace:ClusterExperiment"
-        Title="ClusterExperiment" Height="511" Width="716" MinHeight="600" MinWidth="450" Closing="OnClosing" Icon="/ClusterExperiment;component/Images/servers.ico" ResizeMode="CanResizeWithGrip">    
+        Title="ClusterExperiment" 
+        Height="511" Width="716" MinHeight="600" MinWidth="450" 
+        Closing="OnClosing" 
+        Icon="/ClusterExperiment;component/Images/servers.ico" 
+        ResizeMode="CanResizeWithGrip">
     
     <Window.CommandBindings>
         <CommandBinding Command="Find" Executed="focusOnFilter" CanExecute="canFocusOnFilter" />        
@@ -33,6 +37,8 @@
             <MenuItem Header="Options" Name="mnuOptions">
                 <MenuItem Header="Show progress" Name="mnuOptProgress" IsCheckable="True" Checked="mnuOptProgress_Checked" Unchecked="mnuOptProgress_Unchecked" />
                 <MenuItem Header="Auto-resolve timeout dupes" Name="mnuOptResolveTimeoutDupes" IsCheckable="True" />
+                <MenuItem Header="Auto-resolve same-time dupes" Name="mnuOptResolveSameTimeDupes" IsCheckable="True" />
+                <MenuItem Header="Auto-resolve slowest dupes" Name="mnuOptResolveSlowestDupes" IsCheckable="True" />
             </MenuItem>
         </Menu>
 

@@ -122,6 +122,8 @@ namespace ClusterExperiment
             {
                 mnuOptProgress.IsChecked = ((Int32)Registry.GetValue(okn, "ShowProgress", 0)) == 1;
                 mnuOptResolveTimeoutDupes.IsChecked = ((Int32)Registry.GetValue(okn, "ResolveTimeoutDupes", 0)) == 1;
+                mnuOptResolveSameTimeDupes.IsChecked = ((Int32)Registry.GetValue(okn, "ResolveSameTimeDupes", 0)) == 1;
+                mnuOptResolveSlowestDupes.IsChecked = ((Int32)Registry.GetValue(okn, "ResolveSlowestDupes", 0)) == 1;
             }
         }
         private void OnClosing(object sender, System.ComponentModel.CancelEventArgs e)
@@ -131,6 +133,8 @@ namespace ClusterExperiment
             string okn = keyName + "\\Options";
             Registry.SetValue(okn, "ShowProgress", mnuOptProgress.IsChecked ? 1 : 0, RegistryValueKind.DWord);
             Registry.SetValue(okn, "ResolveTimeoutDupes", mnuOptResolveTimeoutDupes.IsChecked ? 1 : 0, RegistryValueKind.DWord);
+            Registry.SetValue(okn, "ResolveSameTimeDupes", mnuOptResolveSameTimeDupes.IsChecked ? 1 : 0, RegistryValueKind.DWord);
+            Registry.SetValue(okn, "ResolveSlowestDupes", mnuOptResolveSlowestDupes.IsChecked ? 1 : 0, RegistryValueKind.DWord);
         }
 
         private void updateDataGrid()
@@ -1216,10 +1220,32 @@ namespace ClusterExperiment
                     r.Close();
                 }
 
+                if (!have_rows)
+                {
+                    cmd = new SqlCommand("SELECT COUNT(*) FROM JobQueue " +
+                                            "WHERE " +
+                                            "ExperimentID=" + eid + " AND " +
+                                            "ID in (SELECT JobQueue.ID " +
+                                                "FROM JobQueue, Data  " +
+                                                "WHERE " +
+                                                "JobQueue.ExperimentID=" + eid + " AND " +
+                                                "Data.ExperimentID=" + eid + " AND " +
+                                                "Data.FilenameP = JobQueue.FilenameP); ", sql);
+                    cmd.CommandTimeout = 0;
+                    r = cmd.ExecuteReader();
+                    if (r.HasRows && r.Read())
+                        have_rows = ((int)r[0]) != 0;
+                    r.Close();
+                }
+
                 if (have_rows)
                 {
                     Mouse.OverrideCursor = null;
-                    Duplicates dlg = new Duplicates(eid, mnuOptResolveTimeoutDupes.IsChecked, sql);
+                    Duplicates dlg = new Duplicates(eid, 
+                        mnuOptResolveTimeoutDupes.IsChecked, 
+                        mnuOptResolveSameTimeDupes.IsChecked,
+                        mnuOptResolveSlowestDupes.IsChecked,
+                        sql);
                     dlg.Owner = this;
                     dlg.ShowDialog();
                     zero_duplicates = false;
@@ -1234,6 +1260,8 @@ namespace ClusterExperiment
                             System.Windows.MessageBoxButton.OK,
                             System.Windows.MessageBoxImage.Information);
             }
+            else
+                updateDataGrid();
 
             Mouse.OverrideCursor = null;
         }

@@ -24,23 +24,35 @@ namespace ClusterExperiment
         private SqlConnection sql = null;
         private List<int> filenameps = new List<int>();
         private bool resolveTimeouts = false;
+        private bool resolveSameTime = false;
+        private bool resolveSlowest = false;
 
-        public Duplicates(int eid, bool resolveTimeouts, SqlConnection sql)
+        public Duplicates(int eid,
+            bool resolveTimeouts,
+            bool resolveSameTime,
+            bool resolveSlowest,
+            SqlConnection sql)
         {
             InitializeComponent();
             this.eid = eid;
             this.sql = sql;
             this.resolveTimeouts = resolveTimeouts;
+            this.resolveSameTime = resolveSameTime;
+            this.resolveSlowest = resolveSlowest;
+
+            Loaded += new RoutedEventHandler(Duplicates_Loaded);
+        }
+
+        
+        void Duplicates_Loaded(object sender, RoutedEventArgs e)
+        {
+            Mouse.OverrideCursor = System.Windows.Input.Cursors.Wait;
 
             ResolveJobQueue();
+            ResolveAcross();
+            ResolveData();
 
-            SqlCommand cmd = new SqlCommand("SELECT COUNT(*) as Count,FilenameP FROM Data WHERE ExperimentID=" + eid + " GROUP BY FilenameP HAVING COUNT(*)>1", sql);
-            SqlDataReader r = cmd.ExecuteReader();
-            while (r.Read())
-                filenameps.Add((int)r["FilenameP"]);
-            r.Close();            
-
-            showNextDupe();
+            Mouse.OverrideCursor = null;
         }
 
         private void ResolveJobQueue()
@@ -48,7 +60,10 @@ namespace ClusterExperiment
             if (filenameps.Count() != 0)
                 throw new Exception("expected empty list");
 
+            Mouse.OverrideCursor = System.Windows.Input.Cursors.Wait;
+
             SqlCommand cmd = new SqlCommand("SELECT COUNT(*) as Count, FilenameP FROM JobQueue WHERE ExperimentID=" + eid + " GROUP BY FilenameP HAVING COUNT(*)>1", sql);
+            cmd.CommandTimeout = 0;
             SqlDataReader r = cmd.ExecuteReader();
             while (r.Read())
                 filenameps.Add((int)r["FilenameP"]);
@@ -72,17 +87,48 @@ namespace ClusterExperiment
                     cmd.ExecuteNonQuery();
                 }
             }
+
+            Mouse.OverrideCursor = null;
+        }
+
+        private void ResolveAcross()
+        {
+            SqlCommand cmd = new SqlCommand("DELETE FROM JobQueue " +
+                                            "WHERE " +
+                                            "ExperimentID=" + eid + " AND " +
+                                            "ID in (SELECT JobQueue.ID " +
+                                                "FROM JobQueue, Data  " +
+                                                "WHERE " +
+                                                "JobQueue.ExperimentID=" + eid + " AND " +
+                                                "Data.ExperimentID=" + eid + " AND " +
+                                                "Data.FilenameP = JobQueue.FilenameP); ", sql);
+            cmd.CommandTimeout = 0;
+            cmd.ExecuteNonQuery();
+        }
+
+        private void ResolveData()
+        {
+            SqlCommand cmd = new SqlCommand("SELECT COUNT(*) as Count,FilenameP FROM Data WHERE ExperimentID=" + eid + " GROUP BY FilenameP HAVING COUNT(*)>1", sql);
+            cmd.CommandTimeout = 0;
+            SqlDataReader r = cmd.ExecuteReader();
+            while (r.Read())
+                filenameps.Add((int)r["FilenameP"]);
+            r.Close();
+
+            showNextDupe();
         }
 
         private void showNextDupe()
         {
             if (filenameps.Count == 0)
             {
-                DialogResult = true;
+                Close();
             }
             else
             {
-                bool not_done = true;
+                Mouse.OverrideCursor = System.Windows.Input.Cursors.Wait;
+
+                bool not_done = true;                
                 do
                 {
                     int next_fnp = filenameps.First();
@@ -94,16 +140,53 @@ namespace ClusterExperiment
                     da.Fill(ds, "Duplicates");
                     dataGrid.ItemsSource = ds.Tables[0].DefaultView;
 
-                    if (resolveTimeouts)
+                    if (resolveTimeouts || resolveSameTime || resolveSlowest && dataGrid.Items.Count > 0)
                     {
+                        bool first = true;
                         bool all_timeouts = true;
+                        bool all_ok = true;
+                        bool all_times_same = true;
+                        double runtime = 0.0;
+                        double min_time = double.MaxValue;
+                        DataRowView min_item = null;
+                        double max_time = double.MinValue;
+                        DataRowView max_item = null;
+
                         foreach (DataRowView r in dataGrid.Items)
                         {
-                            if (((byte)r[2]) != 5) { all_timeouts = false; break; }
+                            byte status = ((byte)r[2]);
+                            double time = ((double)r[4]);
+                            if (status != 5) { all_timeouts = false; }
+                            if (status != 0) { all_ok = false; }
+
+                            if (time < min_time)
+                            {
+                                min_time = time;
+                                min_item = r;
+                            }
+
+                            if (time > max_time)
+                            {
+                                max_time = time;
+                                max_item = r;
+                            }
+
+                            if (first)
+                            {
+                                first = false; runtime = time;
+                            }
+                            else
+                            {
+                                if (time != runtime) all_times_same = false;
+                            }
                         }
 
-                        if (all_timeouts)
+                        if (resolveTimeouts && all_timeouts)
                             Pick((int)((DataRowView)dataGrid.Items[0])["ID"]);
+                        else if (resolveSameTime && all_ok && all_times_same)
+                            Pick((int)((DataRowView)dataGrid.Items[0])["ID"]);
+                        else if (resolveSlowest && all_ok)
+                            Pick((int)(max_item)["ID"]);
                         else
                             not_done = false;
                     }
@@ -111,7 +194,12 @@ namespace ClusterExperiment
                         not_done = false;
                 }
                 while (not_done && filenameps.Count() > 0);
+
+                Mouse.OverrideCursor = null;
             }
+
+            if (filenameps.Count == 0)
+                Close();
         }
 
         private void Pick(int id)
