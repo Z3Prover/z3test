@@ -116,17 +116,35 @@ namespace ClusterExperiment
             }
             else
                 txtDatabase.Text = (string)Registry.GetValue(keyName, "Database", "");
+
+            string okn = keyName + "\\Options";
+            if (Registry.GetValue(okn, "", "") != null)
+            {
+                mnuOptProgress.IsChecked = ((Int32)Registry.GetValue(okn, "ShowProgress", 0)) == 1;
+                mnuOptResolveTimeoutDupes.IsChecked = ((Int32)Registry.GetValue(okn, "ResolveTimeoutDupes", 0)) == 1;
+            }
+        }
+        private void OnClosing(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            Registry.SetValue(keyName, "Database", txtDatabase.Text, RegistryValueKind.String);
+            
+            string okn = keyName + "\\Options";
+            Registry.SetValue(okn, "ShowProgress", mnuOptProgress.IsChecked ? 1 : 0, RegistryValueKind.DWord);
+            Registry.SetValue(okn, "ResolveTimeoutDupes", mnuOptResolveTimeoutDupes.IsChecked ? 1 : 0, RegistryValueKind.DWord);
         }
 
         private void updateDataGrid()
         {
+            if (sql == null || sql.State != ConnectionState.Open)
+                return;
+
             Mouse.OverrideCursor = System.Windows.Input.Cursors.Wait;
 
             SqlDataAdapter da;
 
             string cmd = "SELECT * FROM TitleScreen ";
 
-            bool showProgress = true;
+            bool showProgress = mnuOptProgress.IsChecked;
 
             if (showProgress)
             {
@@ -205,12 +223,7 @@ namespace ClusterExperiment
 
             IsEnabled = true;
             Mouse.OverrideCursor = null;
-        }
-
-        private void OnClosing(object sender, System.ComponentModel.CancelEventArgs e)
-        {
-            Registry.SetValue(keyName, "Database", txtDatabase.Text, RegistryValueKind.String);
-        }
+        }        
 
         private void btnNewJob_Click(object sender, RoutedEventArgs e)
         {
@@ -1198,7 +1211,7 @@ namespace ClusterExperiment
                 if (have_rows)
                 {
                     Mouse.OverrideCursor = null;
-                    Duplicates dlg = new Duplicates(eid, sql);
+                    Duplicates dlg = new Duplicates(eid, mnuOptResolveTimeoutDupes.IsChecked, sql);
                     dlg.Owner = this;
                     dlg.ShowDialog();
                     zero_duplicates = false;
@@ -1553,6 +1566,28 @@ namespace ClusterExperiment
                 
                 updateState();
             }
+        }
+
+        private void mnuOptProgress_Checked(object sender, RoutedEventArgs e)
+        {
+            int c = dataGrid.Columns.Count();
+            dataGrid.Columns[c - 1].Visibility = System.Windows.Visibility.Visible;
+            dataGrid.Columns[c - 2].Visibility = System.Windows.Visibility.Visible;
+            dataGrid.Columns[c - 3].Visibility = System.Windows.Visibility.Visible;
+            dataGrid.Columns[c - 4].Visibility = System.Windows.Visibility.Visible;
+
+            updateDataGrid();
+        }
+
+        private void mnuOptProgress_Unchecked(object sender, RoutedEventArgs e)
+        {
+            int c = dataGrid.Columns.Count();
+            dataGrid.Columns[c - 1].Visibility = System.Windows.Visibility.Hidden;
+            dataGrid.Columns[c - 2].Visibility = System.Windows.Visibility.Hidden;
+            dataGrid.Columns[c - 3].Visibility = System.Windows.Visibility.Hidden;
+            dataGrid.Columns[c - 4].Visibility = System.Windows.Visibility.Hidden;
+
+            updateDataGrid();
         }
     }
 }

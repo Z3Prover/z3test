@@ -23,18 +23,20 @@ namespace ClusterExperiment
         private int eid = 0;
         private SqlConnection sql = null;
         private List<int> filenameps = new List<int>();
+        private bool resolveTimeouts = false;
 
-        public Duplicates(int eid, SqlConnection sql)
+        public Duplicates(int eid, bool resolveTimeouts, SqlConnection sql)
         {
             InitializeComponent();
             this.eid = eid;
             this.sql = sql;
+            this.resolveTimeouts = resolveTimeouts;
 
             SqlCommand cmd = new SqlCommand("SELECT COUNT(*) as Count,FilenameP FROM Data WHERE ExperimentID=" + eid + " GROUP BY FilenameP HAVING COUNT(*)>1", sql);
             SqlDataReader r = cmd.ExecuteReader();
             while (r.Read())
                 filenameps.Add((int)r["FilenameP"]);
-            r.Close();            
+            r.Close();
 
             showNextDupe();
         }
@@ -47,15 +49,51 @@ namespace ClusterExperiment
             }
             else 
             {
-                int next_fnp = filenameps.First();
-                filenameps.RemoveAt(0);
+                bool not_done = true;
+                do
+                {
+                    int next_fnp = filenameps.First();
+                    filenameps.RemoveAt(0);
 
-                SqlDataAdapter da = new SqlDataAdapter("SELECT Data.ID,Strings.s as Filename,ResultCode,ReturnValue,Runtime,stdout,stderr,AcquireTime,FinishTime,SAT,UNSAT,UNKNOWN FROM Data,Strings WHERE ExperimentID=" + eid + " AND FilenameP=" + next_fnp + " AND Strings.ID=FilenameP", sql);
+                    SqlDataAdapter da = new SqlDataAdapter("SELECT Data.ID,Strings.s as Filename,ResultCode,ReturnValue,Runtime,stdout,stderr,AcquireTime,FinishTime,SAT,UNSAT,UNKNOWN FROM Data,Strings WHERE ExperimentID=" + eid + " AND FilenameP=" + next_fnp + " AND Strings.ID=FilenameP", sql);
 
-                DataSet ds = new DataSet();
-                da.Fill(ds, "Duplicates");
-                dataGrid.ItemsSource = ds.Tables[0].DefaultView;
+                    DataSet ds = new DataSet();
+                    da.Fill(ds, "Duplicates");
+                    dataGrid.ItemsSource = ds.Tables[0].DefaultView;
+
+                    if (resolveTimeouts)
+                    {
+                        bool all_timeouts = true;
+                        foreach (DataRowView r in dataGrid.Items)
+                        {
+                            if (((byte)r[2]) != 5) { all_timeouts = false; break; }
+                        }
+
+                        if (all_timeouts)
+                            Pick((int)((DataRowView)dataGrid.Items[0])["ID"]);
+                        else
+                            not_done = true;
+                    }
+                    else
+                        not_done = false;
+                }
+                while (not_done);
             }
+        }
+
+        private void Pick(int id)
+        {
+            foreach (DataRowView drv in dataGrid.Items)
+            {
+                int row_id = (int)drv["ID"];
+                if (row_id != id)
+                {
+                    SqlCommand cmd = new SqlCommand("DELETE FROM Data WHERE ExperimentID=" + eid + " and ID=" + row_id, sql);
+                    cmd.CommandTimeout = 0;
+                    cmd.ExecuteNonQuery();
+                }
+            }
+
         }
 
         private void dataGrid_MouseDoubleClick(object sender, MouseButtonEventArgs e)
@@ -63,18 +101,7 @@ namespace ClusterExperiment
             if (dataGrid.SelectedItems.Count == 1)
             {
                 DataRowView rowView = (DataRowView)dataGrid.SelectedItems[0];
-                int keep_id = (int)rowView["ID"];
-
-                foreach (DataRowView drv in dataGrid.Items)
-                {
-                    int row_id = (int)drv["ID"];
-                    if (row_id != keep_id)
-                    {
-                        SqlCommand cmd = new SqlCommand("DELETE FROM Data WHERE ExperimentID=" + eid + " and ID=" + row_id, sql);
-                        cmd.ExecuteNonQuery();
-                    }
-                }
-
+                Pick((int)rowView["ID"]);
                 showNextDupe();
             }
         }

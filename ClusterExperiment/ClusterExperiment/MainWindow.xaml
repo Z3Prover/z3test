@@ -19,16 +19,20 @@
             <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
 
-        <Menu Grid.Row="0" Grid.ColumnSpan="1"  IsMainMenu="True">            
+        <Menu Grid.Row="0" Grid.ColumnSpan="1"  IsMainMenu="True" Name="mnuMain">            
             <MenuItem Header="_File">
-                <MenuItem Header="_New" Click="showNewJob">
+                <MenuItem Header="_New..." Click="showNewJob">
                     <MenuItem.Icon>
                         <Image Source="Images/NewFile_6276_24.bmp" />
                     </MenuItem.Icon>
                 </MenuItem>
-                <MenuItem Header="_New catch-all job... " Click="showNewCatchall" />
+                <MenuItem Header="_New catch-all... " Click="showNewCatchall" />
                 <Separator />
                 <MenuItem Header="E_xit" Click="MenuItemExit_Click" />
+            </MenuItem>
+            <MenuItem Header="Options" Name="mnuOptions">
+                <MenuItem Header="Show progress" Name="mnuOptProgress" IsCheckable="True" Checked="mnuOptProgress_Checked" Unchecked="mnuOptProgress_Unchecked" />
+                <MenuItem Header="Auto-resolve timeout dupes" Name="mnuOptResolveTimeoutDupes" IsCheckable="True" />
             </MenuItem>
         </Menu>
 
@@ -73,10 +77,10 @@
                         <DataGridTextColumn Binding="{Binding Path=Creator}" Header="Creator" />
                         <DataGridTextColumn Binding="{Binding Path=Note}" Header="Note" />
                         <DataGridCheckBoxColumn Binding="{Binding Path=Flag}" Header="Flag" IsThreeState="False" />
-                        <DataGridTemplateColumn Header="Progress" CellTemplate="{StaticResource ProgressTemplate}" />
-                        <DataGridTextColumn Binding="{Binding Path=Done}" Header="Done" TextBlock.TextAlignment="Right" />
-                        <DataGridTextColumn Binding="{Binding Path=Queued}" Header="Queued" TextBlock.TextAlignment="Right" />
-                        <DataGridTextColumn Binding="{Binding Path=Total}" Header="Total" TextBlock.TextAlignment="Right" />                        
+                        <DataGridTemplateColumn Header="Progress" CellTemplate="{StaticResource ProgressTemplate}" Visibility="Hidden"/>
+                        <DataGridTextColumn Binding="{Binding Path=Done}" Header="Done" TextBlock.TextAlignment="Right" Visibility="Hidden"/>
+                        <DataGridTextColumn Binding="{Binding Path=Queued}" Header="Queued" TextBlock.TextAlignment="Right" Visibility="Hidden"/>
+                        <DataGridTextColumn Binding="{Binding Path=Total}" Header="Total" TextBlock.TextAlignment="Right" Visibility="Hidden"/>
                     </DataGrid.Columns>
                     <DataGrid.CommandBindings>
                         <CommandBinding Command="New" Executed="showNewJob" CanExecute="canShowNewJob" />
