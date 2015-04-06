@@ -12,7 +12,7 @@ print '<channel xmlns:cfi="http://www.microsoft.com/schemas/rss/core/2005/intern
 # print '<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">' 
 # print '<channel>' 
 print '<title>Z3 commits</title>'
-print '<description>Recent commits at z3.codeplex.com</description>'
+print '<description>Recent commits at github.com/z3prover</description>'
 print '<link>http://research.microsoft.com/en-us/um/redmond/projects/z3/z3commits.xml</link>'
 t = datetime.datetime.now()
 s = t.strftime("%A, %d %B %Y, %I:%M%p PST")

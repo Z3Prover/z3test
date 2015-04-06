@@ -96,7 +96,7 @@ def gitcheckout(branch):
 
 def gitpull(branch):
     if subprocess.call([config.GIT, 'pull', '--commit', config.ORIGIN, branch]) != 0:
-        raise Exception("Failed to pull latest changes from branch '%s' (from codeplex) at '%s'" % (branch, os.getcwd()))
+        raise Exception("Failed to pull latest changes from branch '%s' (from github) at '%s'" % (branch, os.getcwd()))
 
 def get_builddir(branch, debug, clang):
     if clang:
