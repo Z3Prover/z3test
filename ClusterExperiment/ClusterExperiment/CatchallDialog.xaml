@@ -1,0 +1,69 @@
+﻿<Window x:Class="ClusterExperiment.CatchallDialog"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="New catchall job... " Height="260" Width="460">
+
+    <Grid HorizontalAlignment="Stretch" Margin="10" Name="grid" VerticalAlignment="Stretch">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="130" />
+            <ColumnDefinition MinWidth="100" />
+            <ColumnDefinition Width="30" />
+        </Grid.ColumnDefinitions>
+
+        <Label Content="Cluster:" Height="28" HorizontalAlignment="Left" Name="lblCluster" VerticalAlignment="Center" Grid.Row="0" Grid.Column="0"/>
+        <TextBox Height="23" HorizontalAlignment="Stretch" Name="txtCluster" VerticalAlignment="Center" Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="3" TabIndex="0" />
+
+        <Label Content="Priority:" Height="28" HorizontalAlignment="Left" Name="lblPriority" VerticalAlignment="Center" Grid.Row="1" Grid.Column="0"/>
+        <ComboBox Height="23" Width="150" HorizontalAlignment="Left" Name="cmbPriority" VerticalAlignment="Top" Grid.Row="1" Grid.Column="1" SelectedIndex="0" TabIndex="13" SelectedItem="0" ToolTip="The job priority.">
+            <ComboBoxItem Content="Lowest" />
+            <ComboBoxItem Content="BelowNormal" />
+            <ComboBoxItem Content="Normal" />
+            <ComboBoxItem Content="AboveNormal" />
+            <ComboBoxItem Content="Highest" />
+        </ComboBox>
+
+        <Label Content="Nodegroup:" Height="28" HorizontalAlignment="Stretch" Name="label7" VerticalAlignment="Center" Grid.Row="2" Grid.Column="0"/>
+        <TextBox Height="23" HorizontalAlignment="Stretch" Name="cmbNodeGroup" VerticalAlignment="Top" Width="Auto" Grid.Row="2" Grid.Column="1" TabIndex="7" IsReadOnly="True" ToolTip="A nodegroup of the cluster to run the job on." />
+        <Button Height="23" Width="Auto" HorizontalAlignment="Stretch" Name="btnSelectNodeGroup" VerticalAlignment="Stretch" Grid.Row="2" Grid.Column="2" TabIndex="8" Click="btnSelectNodeGroup_Click">
+            <Image Source="/ClusterExperiment;component/Images/taskbrowse.ico" />
+        </Button>
+
+        <Label Content="Job locality:" Height="28" HorizontalAlignment="Left" Name="label10" VerticalAlignment="Center" Grid.Row="3" Grid.Column="0"/>
+        <ComboBox Height="23" HorizontalAlignment="Stretch" Name="cmbLocality" VerticalAlignment="Top" Width="Auto" Grid.Row="3" Grid.Column="1" SelectedIndex="0" TabIndex="13" SelectedItem="0" ToolTip="The job locality." SelectionChanged="cmbLocality_SelectionChanged">
+            <ComboBoxItem Content="Core" />
+            <ComboBoxItem Content="Socket" />
+            <ComboBoxItem Content="Node" />
+        </ComboBox>
+
+        <Label Content="Node/Socket/Core Limits:" Height="23" HorizontalAlignment="Left" Name="lblLimits" VerticalAlignment="Center" Grid.Row="4" Grid.Column="0"/>
+        <StackPanel Orientation="Horizontal" Grid.Row="4" Grid.Column="1">
+            <Label Content="Use at least"/>
+            <TextBox Name="txtLimitMin" Width="40" Height="23" ToolTip="Require at least &lt;n&gt; computing elements. This helps the scheduler to allocate more than just 1 element when the job starts."/>
+            <Label Content="and at most"/>
+            <TextBox Name="txtLimitMax" Width="40" Height="23" ToolTip="Use at most &lt;n&gt; computing elements. This helps to avoid situations where we have few benchmarks, but the cluster is not busy." LostFocus="txtLimitMax_LostFocus"/>
+            <Label Content="Sockets" Name="lblLimitsUnit"/>
+        </StackPanel>
+
+        <Label Content="Shared Worker Binary:" Height="28" HorizontalAlignment="Left" Name="label6" VerticalAlignment="Center" Grid.Row="5" Grid.Column="0"/>
+        <TextBox Height="23" HorizontalAlignment="Stretch" Name="txtExecutor" VerticalAlignment="Center" Grid.Row="5" Grid.Column="1" TabIndex="5" ToolTip="Local copy of the worker binary. This will be copied to the shared directory." />
+        <Button Height="23" Width="Auto" HorizontalAlignment="Stretch" Name="btnSelectExecutor" VerticalAlignment="Stretch" Grid.Row="5" Grid.Column="2" TabIndex="6" Click="btnSelectExecutor_Click">
+            <Image Source="/ClusterExperiment;component/Images/taskbrowse.ico" />
+        </Button>
+
+        <StackPanel Grid.Column="0" Grid.Row="7" Grid.ColumnSpan="4" Orientation="Horizontal" HorizontalAlignment="Right">
+            <Button Name="okButton" IsDefault="True" Width="80" Click="okButton_Click" TabIndex="16">OK</Button>
+            <Button Name="cancelButton" IsCancel="True" Width="80" Click="cancelButton_Click" TabIndex="17">Cancel</Button>
+        </StackPanel>
+    </Grid>
+
+</Window>

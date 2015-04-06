@@ -127,7 +127,7 @@ namespace worker
         public string getTempDirectory()
         {
             Console.WriteLine("Creating temporary directory...");
-            string path = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName());
+            string path = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName(), myName);
             Directory.CreateDirectory(path);
             return path;
         }
@@ -402,7 +402,10 @@ namespace worker
                     data[2] == 0x03 && data[3] == 0x04)
                 {
                     // This is a zip file.
-                    Package pkg = Package.Open(e.localExecutable, FileMode.Open);
+                    string tfn = Path.Combine(Path.GetTempFileName() + ".zip");
+                    File.Move(e.localExecutable, tfn);
+                    e.localExecutable = null;
+                    Package pkg = Package.Open(tfn, FileMode.Open);
                     PackageRelationshipCollection rels = pkg.GetRelationships();
 
                     if (rels.Count() != 1)
@@ -423,6 +426,12 @@ namespace worker
                         if (part.Uri == main.TargetUri)
                             e.localExecutable = e.localDir + @"\" + fn;
                     }
+
+                    pkg.Close();
+                    if (e.localExecutable == null)
+                        throw new Exception("Main executable not found in zip.");
+                    try { File.Delete(tfn); }
+                    catch (Exception) { }
                 }
 
                 string ext = Path.GetExtension(e.localExecutable);
@@ -443,6 +452,7 @@ namespace worker
                 try
                 {
                     FileStream tmp = File.OpenRead(localname);
+                    tmp.Close();
                 }
                 catch
                 {
@@ -620,17 +630,27 @@ namespace worker
             {
                 getBinary(e);
 
-                // Console.WriteLine("Running job #" + j.ID);
-                File.Copy(j.filename, j.localFilename, true);
-                if (e.custom_check_sat != null)
-                    replace_checksat(e, j);
-
                 Result r = new Result();
                 r.j = j;
 
+                try
+                {
+                    // Console.WriteLine("Running job #" + j.ID);
+                    File.Copy(j.filename, j.localFilename, true);
+                    if (e.custom_check_sat != null)
+                        replace_checksat(e, j);
+                }
+                catch (System.OutOfMemoryException)
+                {
+                    r.exitCode = "MEMORY";
+                    r.runtime = 0;
+                    results.Add(r);
+                    return;
+                }                
+
                 int output_limit = 134217728; // 128 MB
                 int error_limit = 262144; // 256 KB
-                
+
                 StreamWriter out_writer = new StreamWriter(r.stdout);
                 StreamWriter err_writer = new StreamWriter(r.stderr);
                 Process p = new Process();
@@ -655,9 +675,9 @@ namespace worker
                 }
 
                 // For stdin-only programs like mathsat:
-            //p.StartInfo.RedirectStandardInput = true;
-            //p.StartInfo.Arguments = e.Parameters;
-            //StreamReader fin = new StreamReader(j.localFilename);
+                //p.StartInfo.RedirectStandardInput = true;
+                //p.StartInfo.Arguments = e.Parameters;
+                //StreamReader fin = new StreamReader(j.localFilename);
 
             retry:
                 try
@@ -962,6 +982,7 @@ namespace worker
                               "'" + myName + "'," +
                               "0,0,0,0,0,0); " +
                               "DELETE FROM JobQueue WHERE ID=" + j.ID + ";", sql);
+            cmd.CommandTimeout = 0;
 
             SqlParameter p = cmd.Parameters.Add("@ERRORMESSAGE", System.Data.SqlDbType.VarChar);
             p.Size = x.Length;
@@ -972,7 +993,8 @@ namespace worker
 
         void requeueInfrastructureErrors(Experiment e)
         {
-            SqlCommand cmd = new SqlCommand("SELECT Data.ID, Strings.s as Filename FROM Data, Strings WHERE FilenameP=Strings.ID AND ExperimentID=" + e.ID + " AND stderr like 'INFRASTRUCTURE ERROR%'", sql);
+            SqlCommand cmd = new SqlCommand("SELECT Data.ID, Strings.s as Filename FROM Data, Strings WHERE FilenameP=Strings.ID AND ExperimentID=" + e.ID + " AND ResultCode=4 AND (stderr like 'INFRASTRUCTURE ERROR%' OR ReturnValue=-1073741515)", sql);
+            cmd.CommandTimeout = 0;
             SqlDataReader r = cmd.ExecuteReader();
             Dictionary<int, string> d = new Dictionary<int, string>();
             while (r.Read())
@@ -981,14 +1003,21 @@ namespace worker
             }
             r.Close();
 
+            int cnt = 0;
             foreach (KeyValuePair<int, string> kvp in d)
             {
                 SqlCommand cmd2 = new SqlCommand("AQ " + e.ID + ",'" + kvp.Value + "';", sql);
+                cmd2.CommandTimeout = 0;
                 cmd2.ExecuteNonQuery();
 
                 cmd2 = new SqlCommand("DELETE FROM Data WHERE ExperimentID=" + e.ID + " AND ID=" + kvp.Key, sql);
+                cmd2.CommandTimeout = 0;
                 cmd2.ExecuteNonQuery();
+
+                cnt++;
             }
+
+            System.Console.WriteLine("Re-queued " + cnt + " infrastructure errors.");
         }
 
         void recovery(Experiment e)
@@ -1007,7 +1036,7 @@ namespace worker
         {
             ensureConnected();
             Dictionary<string, Object> rd =
-              SQLRead("SELECT TOP 1 ID FROM Data WHERE ExperimentID=" + e.ID + " AND stderr like 'INFRASTRUCTURE ERROR%'", sql);
+              SQLRead("SELECT TOP 1 ID FROM Data WHERE ExperimentID=" + e.ID + " AND ResultCode=4 AND (stderr like 'INFRASTRUCTURE ERROR%' OR ReturnValue=-1073741515)", sql);
             return rd.Count() != 0;
         }
 

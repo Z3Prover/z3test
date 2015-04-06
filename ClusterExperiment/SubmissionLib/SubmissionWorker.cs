@@ -100,6 +100,7 @@ namespace SubmissionLib
                     par.Size = imageBytes.Count();
                     par.Value = imageBytes;
 
+                    cmd.CommandTimeout = 0;
                     SqlDataReader r = cmd.ExecuteReader();
                     if (!r.Read())
                         throw new Exception("SQL Insert failed");
@@ -123,6 +124,7 @@ namespace SubmissionLib
             else
             {
                 SqlCommand cmd = new SqlCommand("SELECT TOP 1 ID FROM Binaries ORDER BY UploadTime DESC", sql);
+                cmd.CommandTimeout = 0;
                 SqlDataReader r = cmd.ExecuteReader();
                 if (!r.Read())
                     throw new Exception("SQL Insert failed");
@@ -133,7 +135,8 @@ namespace SubmissionLib
             haveBinId = true;
             binId = res;
 
-            ReportProgress(100);
+            if (WorkerReportsProgress)
+                ReportProgress(100);
         }
 
         private void createTables(SqlConnection sql)
@@ -359,6 +362,7 @@ namespace SubmissionLib
             p.Size = note.Length;
             p.Value = note;
 
+            cmd.CommandTimeout = 0;
             r = cmd.ExecuteReader();
             if (!r.Read())
                 throw new Exception("SQL Insert failed");
@@ -380,13 +384,94 @@ namespace SubmissionLib
                 File.Copy(eFullpath, sharedDir + "\\" + sExecutor, true);
 
             cmd = new SqlCommand("UPDATE Experiments SET Executor='" + sExecutor + "' WHERE ID='" + newID.ToString() + "'", sql);
+            cmd.CommandTimeout = 0;
             cmd.ExecuteNonQuery();
 
             return newID;
         }
 
+        public void SubmitCatchall(string db, string cluster, string locality, int priority, string nodegroup, string executor, string min, string max)
+        {            
+            scheduler.Connect(cluster);
+            ISchedulerJob hpcJob = scheduler.CreateJob();
+            try
+            {
+                if (nodegroup != "<Any>")
+                    hpcJob.NodeGroups.Add(nodegroup);
+                hpcJob.Name = "Z3 Performance Test (catchall)";
+                hpcJob.IsExclusive = true;
+                hpcJob.CanPreempt = true;
+                SetPriority(hpcJob, priority);
+                hpcJob.Project = "Z3";
+                hpcJob.Runtime = 604800; /* 1 week */
+
+                uint fmin = 0;
+                uint fmax = 0;
+                string limitsMinTrimmed = min.Trim();
+                string limitsMaxTrimmed = max.Trim();
+                
+                if (limitsMinTrimmed != "")
+                {
+                    try { fmin = Convert.ToUInt32(limitsMinTrimmed); }
+                    catch { fmin = 0; }
+                }
+                if (limitsMaxTrimmed != "")
+                {
+                    try { fmax = Convert.ToUInt32(limitsMaxTrimmed); }
+                    catch { fmax = 0; }
+                }          
+
+                ISchedulerCounters ctrs = scheduler.GetCounters();
+                if (locality == "Socket")
+                {
+                    hpcJob.UnitType = JobUnitType.Socket;
+                    if (fmin > 0) hpcJob.MinimumNumberOfSockets = (int)fmin;
+                    fmax = ((fmax == 0) ? (uint)ctrs.TotalSockets : fmax);
+                    hpcJob.MaximumNumberOfSockets = (int)fmax;
+                }
+                else if (locality == "Core")
+                {
+                    hpcJob.UnitType = JobUnitType.Core;
+                    if (fmin > 0) hpcJob.MinimumNumberOfCores = (int)fmin;
+                    fmax = ((fmax == 0) ? (uint)ctrs.TotalCores : fmax);
+                    hpcJob.MaximumNumberOfCores = (int)fmax;
+                }
+                else if (locality == "Node")
+                {
+                    hpcJob.UnitType = JobUnitType.Node;
+                    if (fmin > 0) hpcJob.MinimumNumberOfNodes = (int)fmin;
+                    fmax = ((fmax == 0) ? (uint)ctrs.TotalNodes : fmax);
+                    hpcJob.MaximumNumberOfNodes = (int)fmax;
+                }
+
+                for (int i = 0; i < fmax; i++)
+                {
+                    // Add worker task.
+                    if (WorkerReportsProgress) ReportProgress(Convert.ToInt32(100.0 * (i + 1) / (double)fmax));
+                    ISchedulerTask task = hpcJob.CreateTask();
+                    SetResources(task, locality);
+                    task.WorkDirectory = Path.GetDirectoryName(Path.GetFullPath(executor));
+                    task.CommandLine = Path.GetFileName(executor) + " \"" + db + "\"";
+                    task.IsExclusive = false;
+                    task.IsRerunnable = true;
+                    task.Name = "Worker";
+                    task.Runtime = 86400; /* 1 day */
+
+                    hpcJob.AddTask(task);
+                }
+
+                scheduler.AddJob(hpcJob);
+                scheduler.SubmitJob(hpcJob, null, null);
+            }
+            catch (Exception ex)
+            {
+                scheduler.CancelJob(hpcJob.Id, "Aborted.");
+                throw ex;
+            }
+        }
+
         public void SubmitHPCJob(string db, bool isNew, int newID, string cluster, string nodegroup, int priority,
-                                 string locality, string limitsMin, string limitsMax, int binID, string sharedDir,
+                                 string locality, string limitsMin, string limitsMax, string sharedDir,
                                  string executor, int nworkers = 0)
         {
             string limitsMinTrimmed = limitsMin.Trim();
@@ -396,7 +481,6 @@ namespace SubmissionLib
             SqlCommand cmd = null;
 
             scheduler.Connect(cluster);
-
             ISchedulerJob hpcJob = scheduler.CreateJob();
             try
             {
@@ -454,7 +538,7 @@ namespace SubmissionLib
                 uint progressTotal = max + 3;
 
                 // Add population task.
-                ReportProgress(Convert.ToInt32(100.0 * 1 / (double)max));
+                if (WorkerReportsProgress) ReportProgress(Convert.ToInt32(100.0 * 1 / (double)max));
                 ISchedulerTask populateTask = hpcJob.CreateTask();
                 SetResources(populateTask, locality);
                 populateTask.IsRerunnable = false;
@@ -467,7 +551,7 @@ namespace SubmissionLib
                 for (int i = 0; i < max; i++)
                 {
                     // Add worker task.
-                    ReportProgress(Convert.ToInt32(100.0 * (i + 1) / (double)max));
+                    if (WorkerReportsProgress) ReportProgress(Convert.ToInt32(100.0 * (i + 1) / (double)max));
                     ISchedulerTask task = hpcJob.CreateTask();
                     SetResources(task, locality);
                     task.WorkDirectory = sharedDir;
@@ -481,7 +565,7 @@ namespace SubmissionLib
                 }
 
                 // Add recovery task.
-                ReportProgress(Convert.ToInt32(100.0 * (progressTotal - 1) / (double)max));
+                if (WorkerReportsProgress) ReportProgress(Convert.ToInt32(100.0 * (progressTotal - 1) / (double)max));
                 ISchedulerTask rTask = hpcJob.CreateTask();
                 SetResources(rTask, locality);
                 rTask.IsRerunnable = true;
@@ -493,7 +577,7 @@ namespace SubmissionLib
                 hpcJob.AddTask(rTask);
 
                 // Add deletion task.
-                ReportProgress(Convert.ToInt32(100.0 * (progressTotal) / (double)max));
+                if (WorkerReportsProgress) ReportProgress(Convert.ToInt32(100.0 * (progressTotal) / (double)max));
                 ISchedulerTask dTask = hpcJob.CreateTask();
                 SetResources(dTask, locality);
                 dTask.IsRerunnable = true;
@@ -510,12 +594,14 @@ namespace SubmissionLib
                 if (isNew)
                 {
                     cmd = new SqlCommand("UPDATE Experiments SET ClusterJobID=" + hpcJob.Id.ToString() + " WHERE ID=" + newID.ToString() + "; ", sql);
+                    cmd.CommandTimeout = 0;
                     cmd.ExecuteNonQuery();
                 }
             }
             catch (Exception ex)
             {
                 cmd = new SqlCommand("DELETE FROM JobQueue WHERE ExperimentID=" + newID + "; DELETE FROM Experiments WHERE ID=" + newID, sql);
+                cmd.CommandTimeout = 0;
                 cmd.ExecuteNonQuery();
                 scheduler.CancelJob(hpcJob.Id, "Aborted.");
                 throw ex;
@@ -746,20 +832,19 @@ namespace SubmissionLib
 
             SqlConnection sql = Connect(DB);
 
-            SqlCommand cmd = new SqlCommand("SELECT SharedDir,Executor,Nodegroup,Locality,Binary FROM Experiments WHERE ID=" + jobID.ToString(), sql);
+            SqlCommand cmd = new SqlCommand("SELECT SharedDir,Executor,Nodegroup,Locality FROM Experiments WHERE ID=" + jobID.ToString(), sql);
             SqlDataReader r = cmd.ExecuteReader();
 
             if (r.Read())
             {
                 string sharedDir = (string)r["SharedDir"];
                 string nodegroup = (string)r["Nodegroup"];
-                string locality = (string)r["Locality"];
-                int binID = (int)r["Binary"];
+                string locality = (string)r["Locality"];                
                 string executor = (string)r["Executor"];
 
                 r.Close();
 
-                SubmitHPCJob(DB, false, jobID, reinforcementCluster, nodegroup, priority, locality, "1", nworkers.ToString(), binID, sharedDir, executor);
+                SubmitHPCJob(DB, false, jobID, reinforcementCluster, nodegroup, priority, locality, "1", nworkers.ToString(), sharedDir, executor);
 
                 ReportProgress(100);
             }

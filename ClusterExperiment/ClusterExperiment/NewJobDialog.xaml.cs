@@ -198,7 +198,7 @@ namespace ClusterExperiment
                         }
                     }
 
-                    if (true) //exe_count != 1)
+                    if (exe_count != 1)
                     {
                         SelectMainExe sme = new SelectMainExe();
                         foreach (string f in dlg.FileNames)
