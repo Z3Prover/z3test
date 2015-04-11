@@ -97,6 +97,12 @@
     <Compile Include="CompareExperiments.xaml.cs">
       <DependentUpon>CompareExperiments.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Progress.xaml.cs">
+      <DependentUpon>Progress.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="ProgressWorker.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="RecoveryDialog.xaml.cs">
       <DependentUpon>RecoveryDialog.xaml</DependentUpon>
     </Compile>
@@ -155,6 +161,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="CompareExperiments.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Progress.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

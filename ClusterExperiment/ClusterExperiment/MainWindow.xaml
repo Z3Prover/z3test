@@ -9,8 +9,14 @@
         ResizeMode="CanResizeWithGrip">
     
     <Window.CommandBindings>
-        <CommandBinding Command="Find" Executed="focusOnFilter" CanExecute="canFocusOnFilter" />        
+        <CommandBinding Command="Find" Executed="focusOnFilter" CanExecute="canFocusOnFilter" />
+        <CommandBinding Command="New" Executed="showNewJob" CanExecute="canShowNewJob" />
     </Window.CommandBindings>
+
+    <Window.InputBindings>
+        <KeyBinding Command="Find" Modifiers="Control" Key="F" />
+        <KeyBinding Command="New" Modifiers="Control" Key="N" />
+    </Window.InputBindings>
 
     <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="0,0,0,0" Name="gridOuter" >
         <Grid.RowDefinitions>
@@ -76,7 +82,7 @@
                         </DataTemplate>
                     </DataGrid.Resources>
                     <DataGrid.Columns>
-                        <DataGridTextColumn Binding="{Binding Path=ID}" Header="ID" />
+                        <DataGridTextColumn Binding="{Binding Path=ID}" Header="ID"  />
                         <DataGridTextColumn Binding="{Binding Path=SubmissionTime}" Header="Submitted" />
                         <DataGridTextColumn Binding="{Binding Path=Category}" Header="Category" />
                         <DataGridTextColumn Binding="{Binding Path=Cluster}" Header="Cluster" />
@@ -88,33 +94,48 @@
                         <DataGridTextColumn Binding="{Binding Path=Queued}" Header="Queued" TextBlock.TextAlignment="Right" Visibility="Hidden"/>
                         <DataGridTextColumn Binding="{Binding Path=Total}" Header="Total" TextBlock.TextAlignment="Right" Visibility="Hidden"/>
                     </DataGrid.Columns>
-                    <DataGrid.CommandBindings>
-                        <CommandBinding Command="New" Executed="showNewJob" CanExecute="canShowNewJob" />
-                        <CommandBinding Command="Delete" Executed="deleteExperiment" CanExecute="canDeleteExperiment" />
-                        <CommandBinding Command="Properties" Executed="showProperties" CanExecute="canShowProperties" />
+                    <DataGrid.CommandBindings>                        
+                        <CommandBinding Command="Delete" Executed="deleteExperiment" CanExecute="canDeleteExperiment" />                                                
+                        <CommandBinding Command="{x:Static custom:MainWindow.CompareCommand}" Executed="showCompare" CanExecute="canShowCompare" />                                                
+                        <CommandBinding Command="{x:Static custom:MainWindow.ScatterplotCommand}" Executed="showScatterplot" CanExecute="canShowScatterplot" />
                         <CommandBinding Command="SaveAs" Executed="showSaveCSV" CanExecute="canShowSaveCSV" />
-                        <CommandBinding Command="{x:Static custom:MainWindow.CompareCommand}" Executed="showCompare" CanExecute="canShowCompare" />
                         <CommandBinding Command="{x:Static custom:MainWindow.CopyCommand}" Executed="showCopy" CanExecute="canShowCopy" />
                         <CommandBinding Command="{x:Static custom:MainWindow.MoveCommand}" Executed="showMove" CanExecute="canShowMove" />
+                        <CommandBinding Command="{x:Static custom:MainWindow.CreateGroupCommand}" Executed="showCreateGroup" CanExecute="canShowCreateGroup" />
+                        <CommandBinding Command="{x:Static custom:MainWindow.SaveBinaryCommand}" Executed="showSaveBinary" CanExecute="canShowSaveBinary" />
+                        <CommandBinding Command="{x:Static custom:MainWindow.UpdateBinaryCommand}" Executed="showUpdateBinaryCommand" CanExecute="canShowUpdateBinaryCommand" />
+                        <CommandBinding Command="{x:Static custom:MainWindow.ReinforcementsCommand}" Executed="showReinforcements" CanExecute="canShowReinforcements" />
+                        <CommandBinding Command="{x:Static custom:MainWindow.RequeueIErrorsCommand}" Executed="showRequeueIErrorsCommand" CanExecute="canShowRequeueIErrorsCommand" />
+                        <CommandBinding Command="{x:Static custom:MainWindow.RestartCommand}" Executed="showRestartCommand" CanExecute="canShowRestartCommand" />
+                        <CommandBinding Command="{x:Static custom:MainWindow.ChangePriorityCommand}" Executed="showChangePriority" CanExecute="canChangePriority" />
+                        <CommandBinding Command="{x:Static custom:MainWindow.RecoveryCommand}" Executed="showRecovery" CanExecute="canShowRecovery" />
+                        <CommandBinding Command="{x:Static custom:MainWindow.DuplicatesCommand}" Executed="showDuplicates" CanExecute="canShowDuplicates" />
+                        <CommandBinding Command="{x:Static custom:MainWindow.FlagCommand}" Executed="showFlag" CanExecute="canShowFlag" />
+                        <CommandBinding Command="{x:Static custom:MainWindow.TallyCommand}" Executed="showTally" CanExecute="canShowTally" />
+                        <CommandBinding Command="{x:Static custom:MainWindow.SaveMetaCSVCommand}" Executed="showSaveMetaCSV" CanExecute="canShowSaveMetaCSV" />
+                        <CommandBinding Command="Properties" Executed="showProperties" CanExecute="canShowProperties" />
                     </DataGrid.CommandBindings>
+                    <DataGrid.InputBindings>
+                        <KeyBinding Command="{x:Static custom:MainWindow.FlagCommand}" Modifiers="Ctrl" Key="T" />
+                    </DataGrid.InputBindings>
                     <DataGrid.ContextMenu>
                         <ContextMenu>
                             <MenuItem Name="mnuDelete" Command="Delete" />
                             <MenuItem Name="mnuCompare" Header="_Compare" Command="{x:Static custom:MainWindow.CompareCommand}" />
                             <MenuItem Name="mnuScatterplot" Header="_Scatterplot" Command="{x:Static custom:MainWindow.ScatterplotCommand}" />
-                            <MenuItem Name="mnuSaveAs" Header="Save CS_V..." Command="{x:Static custom:MainWindow.SaveCSVCommand}"/>
+                            <MenuItem Name="mnuSaveAs" Header="Save CS_V..." Command="SaveAs"/>
                             <MenuItem Name="mnuCopy" Header="Copy _to..." Command="{x:Static custom:MainWindow.CopyCommand}" />
                             <MenuItem Name="mnuMove" Header="_Move to..." Command="{x:Static custom:MainWindow.MoveCommand}" />
                             <MenuItem Name="mnuCreateGroup" Header="Create _group..." Command="{x:Static custom:MainWindow.CreateGroupCommand}" />
                             <MenuItem Name="mnuSaveBinary" Header="Save _binary to..." Command="{x:Static custom:MainWindow.SaveBinaryCommand}" />
+                            <MenuItem Name="mnuUpdateBinary" Header="Update binary..." Command="{x:Static custom:MainWindow.UpdateBinaryCommand}" />
                             <MenuItem Name="mnuReinforcements" Header="Call _reinforcements..." Command="{x:Static custom:MainWindow.ReinforcementsCommand}" />
                             <MenuItem Name="mnuRecovery" Header="Requeue in. errors..." Command="{x:Static custom:MainWindow.RequeueIErrorsCommand}" />
                             <MenuItem Name="mnuRestart" Header="Restart" Command="{x:Static custom:MainWindow.RestartCommand}" />
                             <MenuItem Name="mnuChangePriority" Header="Change priority..." Command="{x:Static custom:MainWindow.ChangePriorityCommand}" />
-                            <MenuItem Name="mnuRequeueIE" Header="Start recovery..." Command="{x:Static custom:MainWindow.RecoveryCommand}" />
-                            <MenuItem Name="mnuUpdateBinary" Header="Update binary..." Command="{x:Static custom:MainWindow.UpdateBinaryCommand}" />
+                            <MenuItem Name="mnuRequeueIE" Header="Start recovery..." Command="{x:Static custom:MainWindow.RecoveryCommand}" />                            
                             <MenuItem Name="mnuDuplicates" Header="Resolve _duplicates..." Command="{x:Static custom:MainWindow.DuplicatesCommand}" />
-                            <MenuItem Name="mnuFlag" Header="Toggle _flag" Command="{x:Static custom:MainWindow.FlagCommand}" />
+                            <MenuItem Name="mnuFlag" Header="Toggle _flag" Command="{x:Static custom:MainWindow.FlagCommand}" InputGestureText="Ctrl-T" />
                             <MenuItem Name="mnuTally" Header="Ta_lly" Command="{x:Static custom:MainWindow.TallyCommand}" />
                             <MenuItem Name="mnuSaveMetaCSV" Header="Save met_a CSV..." Command="{x:Static custom:MainWindow.SaveMetaCSVCommand}"/>
                             <MenuItem Name="mnuProperties" Command="Properties" />
@@ -127,6 +148,7 @@
                 <DataGrid AutoGenerateColumns="True" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="10,10,10,10" Name="jobgroupGrid" IsReadOnly="True" MouseDoubleClick="jobgroupGrid_MouseDoubleClick" >
                     <DataGrid.CommandBindings>
                         <CommandBinding Command="Delete" Executed="deleteJobGroup" CanExecute="canDeleteJobGroup" />
+                        <CommandBinding Command="{x:Static custom:MainWindow.GroupScatterplotCommand}" Executed="showGroupScatterplot" CanExecute="canShowGroupScatterplot" />
                     </DataGrid.CommandBindings>
                     <DataGrid.ContextMenu>
                         <ContextMenu>

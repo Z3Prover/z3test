@@ -16,7 +16,7 @@ namespace sendbuildlog
             Sendmail.Send(c.developers,
                           "Build failed at Windows (x86/x64)", 
                           "The build failed; please check the attached logfile for errors.", 
-                          c.z3_drop_dir + "\\..\\build.log");
+                          c.build_log);
         }
     }
 }

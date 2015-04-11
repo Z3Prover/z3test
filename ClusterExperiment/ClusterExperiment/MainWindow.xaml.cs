@@ -44,7 +44,6 @@ namespace ClusterExperiment
         public static RoutedCommand CompareCommand = new RoutedCommand();
         public static RoutedCommand CopyCommand = new RoutedCommand();
         public static RoutedCommand MoveCommand = new RoutedCommand();
-        public static RoutedCommand SaveCSVCommand = new RoutedCommand();
         public static RoutedCommand ScatterplotCommand = new RoutedCommand();
         public static RoutedCommand CreateGroupCommand = new RoutedCommand();
         public static RoutedCommand GroupScatterplotCommand = new RoutedCommand();
@@ -63,43 +62,6 @@ namespace ClusterExperiment
         public MainWindow()
         {
             InitializeComponent();
-
-            CommandBinding customCommandBinding = new CommandBinding(CompareCommand, showCompare, canShowCompare);
-            CommandBindings.Add(customCommandBinding);
-            customCommandBinding = new CommandBinding(CopyCommand, showCopy, canShowCopy);
-            CommandBindings.Add(customCommandBinding);
-            customCommandBinding = new CommandBinding(MoveCommand, showMove, canShowMove);
-            CommandBindings.Add(customCommandBinding);
-            customCommandBinding = new CommandBinding(SaveCSVCommand, showSaveCSV, canShowSaveCSV);
-            CommandBindings.Add(customCommandBinding);
-            customCommandBinding = new CommandBinding(ScatterplotCommand, showScatterplot, canShowScatterplot);
-            CommandBindings.Add(customCommandBinding);
-            customCommandBinding = new CommandBinding(CreateGroupCommand, showCreateGroup, canShowCreateGroup);
-            CommandBindings.Add(customCommandBinding);
-            customCommandBinding = new CommandBinding(GroupScatterplotCommand, showGroupScatterplot, canShowGroupScatterplot);
-            CommandBindings.Add(customCommandBinding);
-            customCommandBinding = new CommandBinding(SaveBinaryCommand, showSaveBinary, canShowSaveBinary);
-            CommandBindings.Add(customCommandBinding);
-            customCommandBinding = new CommandBinding(ReinforcementsCommand, showReinforcements, canShowReinforcements);
-            CommandBindings.Add(customCommandBinding);
-            customCommandBinding = new CommandBinding(RecoveryCommand, showRecovery, canShowRecovery);
-            CommandBindings.Add(customCommandBinding);
-            customCommandBinding = new CommandBinding(FlagCommand, showFlag, canShowFlag);
-            CommandBindings.Add(customCommandBinding);
-            customCommandBinding = new CommandBinding(DuplicatesCommand, showDuplicates, canShowDuplicates);
-            CommandBindings.Add(customCommandBinding);
-            customCommandBinding = new CommandBinding(TallyCommand, showTally, canShowTally);
-            CommandBindings.Add(customCommandBinding);
-            customCommandBinding = new CommandBinding(ChangePriorityCommand, showChangePriority, canChangePriority);
-            CommandBindings.Add(customCommandBinding);
-            customCommandBinding = new CommandBinding(SaveMetaCSVCommand, showSaveMetaCSV, canShowSaveMetaCSV);
-            CommandBindings.Add(customCommandBinding);
-            customCommandBinding = new CommandBinding(UpdateBinaryCommand, showUpdateBinaryCommand, canShowUpdateBinaryCommand);
-            CommandBindings.Add(customCommandBinding);
-            customCommandBinding = new CommandBinding(RequeueIErrorsCommand, showRequeueIErrorsCommand, canShowRequeueIErrorsCommand);
-            CommandBindings.Add(customCommandBinding);
-            customCommandBinding = new CommandBinding(RestartCommand, showRestartCommand, canShowRestartCommand);
-            CommandBindings.Add(customCommandBinding);
 
             Loaded += new RoutedEventHandler(MainWindow_Loaded);
 
@@ -129,7 +91,7 @@ namespace ClusterExperiment
         private void OnClosing(object sender, System.ComponentModel.CancelEventArgs e)
         {
             Registry.SetValue(keyName, "Database", txtDatabase.Text, RegistryValueKind.String);
-            
+
             string okn = keyName + "\\Options";
             Registry.SetValue(okn, "ShowProgress", mnuOptProgress.IsChecked ? 1 : 0, RegistryValueKind.DWord);
             Registry.SetValue(okn, "ResolveTimeoutDupes", mnuOptResolveTimeoutDupes.IsChecked ? 1 : 0, RegistryValueKind.DWord);
@@ -227,7 +189,7 @@ namespace ClusterExperiment
 
             IsEnabled = true;
             Mouse.OverrideCursor = null;
-        }        
+        }
 
         private void btnNewJob_Click(object sender, RoutedEventArgs e)
         {
@@ -1241,8 +1203,8 @@ namespace ClusterExperiment
                 if (have_rows)
                 {
                     Mouse.OverrideCursor = null;
-                    Duplicates dlg = new Duplicates(eid, 
-                        mnuOptResolveTimeoutDupes.IsChecked, 
+                    Duplicates dlg = new Duplicates(eid,
+                        mnuOptResolveTimeoutDupes.IsChecked,
                         mnuOptResolveSameTimeDupes.IsChecked,
                         mnuOptResolveSlowestDupes.IsChecked,
                         sql);
@@ -1402,46 +1364,86 @@ namespace ClusterExperiment
         }
         private void showRequeueIErrorsCommand(object sender, ExecutedRoutedEventArgs e)
         {
-            Mouse.OverrideCursor = System.Windows.Input.Cursors.Wait;
             int ie_cnt = 0;
             SqlTransaction t = sql.BeginTransaction();
 
             try
             {
-                foreach (DataRowView drv in dataGrid.SelectedItems)
+                double total = (double)dataGrid.SelectedItems.Count;
+                IList drviews = dataGrid.SelectedItems;
+                Mouse.OverrideCursor = System.Windows.Input.Cursors.Wait;
+
+                for (int i = 0; i < total; i++)
                 {
-                    int eid = (int)drv["ID"];
+                    Progress p = new Progress(this, dataGrid.SelectedItems.Count, "Requeueing",
+                        (sndr, ea) =>
+                        {
+                            ProgressWorker w = (ProgressWorker)sndr;
+                            Object[] args = (Object[])ea.Argument;
 
-                    SqlCommand cmd = new SqlCommand("SELECT Data.ID, Strings.s as Filename FROM Data, Strings WHERE FilenameP=Strings.ID AND ExperimentID=" + eid + " AND ResultCode=4 AND (stderr like 'INFRASTRUCTURE ERROR%' OR ReturnValue=-1073741515)", sql, t);
-                    cmd.CommandTimeout = 0;
-                    SqlDataReader r = cmd.ExecuteReader();
-                    Dictionary<int, string> d = new Dictionary<int, string>();
-                    while (r.Read())
-                    {
-                        d[(int)r["ID"]] = (string)r["Filename"];
-                    }
-                    r.Close();
+                            DataRowView drv = (DataRowView)drviews[i];
+                            int eid = (int)drv["ID"];
 
-                    if (d.Count > 0)
-                    {
-                        string tmpCmd = "";
-                        foreach (KeyValuePair<int, string> kvp in d)
-                            tmpCmd += "EXECUTE AQ " + eid + ",'" + kvp.Value + "'; DELETE FROM Data WHERE ID=" + kvp.Key + "; ";
+                            SqlCommand cmd = new SqlCommand("SELECT Data.ID, Strings.s as Filename FROM Data, Strings WHERE FilenameP=Strings.ID AND ExperimentID=" + eid + " AND ResultCode=4 AND (stderr like 'INFRASTRUCTURE ERROR%' OR ReturnValue=-1073741515)", sql, t);
+                            cmd.CommandTimeout = 0;
+                            SqlDataReader r = cmd.ExecuteReader();
+                            Dictionary<int, string> d = new Dictionary<int, string>();
+                            while (r.Read())
+                            {
+                                d[(int)r["ID"]] = (string)r["Filename"];
+                            }
+                            r.Close();
 
-                        cmd = new SqlCommand(tmpCmd, sql, t);
-                        cmd.CommandTimeout = 0;
-                        cmd.ExecuteNonQuery();
+                            int count = d.Count;
+                            if (count > 0)
+                            {
+                                string tmpCmd = "";
+                                int j = 0;
+                                foreach (KeyValuePair<int, string> kvp in d)
+                                {
+                                    tmpCmd += "EXECUTE AQ " + eid + ",'" + kvp.Value + "'; DELETE FROM Data WHERE ID=" + kvp.Key + "; ";
+                                    j++;
 
-                        ie_cnt += d.Count;
-                        t.Commit();
-                        t = sql.BeginTransaction();
-                    }
+                                    if (w.WorkerReportsProgress)
+                                        w.ReportProgress((int)(100.0 * ((double)j / (double)d.Count)));
+
+                                    if (j % 25 == 0)
+                                    {
+                                        cmd = new SqlCommand(tmpCmd, sql, t);
+                                        cmd.CommandTimeout = 0;
+                                        cmd.ExecuteNonQuery();
+
+                                        t.Commit();
+                                        t = sql.BeginTransaction();
+                                        tmpCmd = "";
+                                        count -= 25;
+                                        ie_cnt += 25;
+                                    }
+
+                                    if (w.CancellationPending == true)
+                                    {
+                                        ea.Cancel = true;
+                                        return;
+                                    }
+                                }
+
+                                cmd = new SqlCommand(tmpCmd, sql, t);
+                                cmd.CommandTimeout = 0;
+                                cmd.ExecuteNonQuery();
+
+                                ie_cnt += count;
+                                t.Commit();
+                                t = sql.BeginTransaction();
+                            }
+                        });
+
+                    p.Go();
                 }
+                Mouse.OverrideCursor = null;
 
                 System.Windows.MessageBox.Show(this, "Re-queued " + ie_cnt + " infrastructure errors.", "Infrastructure errors",
                                                 MessageBoxButton.OK, MessageBoxImage.Information);
                 t.Dispose();
-                System.Console.WriteLine();
             }
             catch (Exception ex)
             {
@@ -1449,8 +1451,6 @@ namespace ClusterExperiment
                                                 MessageBoxButton.OK, MessageBoxImage.Error);
                 t.Rollback();
             }
-
-            Mouse.OverrideCursor = null;
         }
 
         private void canShowRestartCommand(object Sender, CanExecuteRoutedEventArgs e)
@@ -1463,97 +1463,123 @@ namespace ClusterExperiment
 
             try
             {
-                foreach (DataRowView drv in dataGrid.SelectedItems)
+                double total = (double)dataGrid.SelectedItems.Count;
+                IList drviews = dataGrid.SelectedItems;
+                Mouse.OverrideCursor = System.Windows.Input.Cursors.Wait;
+
+                for (int i = 0; i < total; i++)
                 {
-                    int eid = (int)drv["ID"];
-
-                    string sharedDir = null;
-                    string cluster = null;
-                    string nodegroup = null;
-                    string locality = null;
-                    int clusterJobID = 0;
-                    string executor = null;
-
-                    int priority = 2;
-                    int min = 1, max = 100;
-
-                    SqlCommand cmd = new SqlCommand("SELECT SharedDir, Cluster, Nodegroup, Locality, ClusterJobID, Executor FROM Experiments WHERE ID=" + eid + ";", sql);
-                    cmd.CommandTimeout = 0;
-                    SqlDataReader r = cmd.ExecuteReader();
-                    while (r.Read())
-                    {
-                        sharedDir = (string)r[0];
-                        cluster = (string)r[1];
-                        nodegroup = (string)r[2];
-                        locality = (string)r[3];
-                        clusterJobID = (int)r[4];
-                        executor = (string)r[5];
-                    }
-                    r.Close();
-
-                    Scheduler scheduler = new Scheduler();
-                    scheduler.Connect(cluster);
-
-                    try
-                    {
-                        ISchedulerJob job = scheduler.OpenJob(clusterJobID);
-                        switch (job.Priority)
+                    Progress p = new Progress(this, dataGrid.SelectedItems.Count, "Restarting",
+                        (sndr, ea) =>
                         {
-                            case JobPriority.Lowest: priority = 0; break;
-                            case JobPriority.BelowNormal: priority = 1; break;
-                            case JobPriority.Normal: priority = 2; break;
-                            case JobPriority.AboveNormal: priority = 3; break;
-                            case JobPriority.Highest: priority = 4; break;
-                        }
+                            ProgressWorker w = (ProgressWorker)sndr;
+                            Object[] args = (Object[])ea.Argument;
+                            DataRowView drv = (DataRowView)drviews[i];
+                            int eid = (int)drv["ID"];
 
-                        if (locality == "Socket")
-                        {
-                            min = job.MinimumNumberOfSockets;
-                            max = job.MaximumNumberOfSockets;
-                        }
-                        else if (locality == "Core")
-                        {
-                            min = job.MinimumNumberOfCores;
-                            max = job.MaximumNumberOfCores;
-                        }
-                        else if (locality == "Node")
-                        {
-                            min = job.MinimumNumberOfNodes;
-                            max = job.MaximumNumberOfNodes;
-                        }
+                            string sharedDir = null;
+                            string cluster = null;
+                            string nodegroup = null;
+                            string locality = null;
+                            int clusterJobID = 0;
+                            string executor = null;
 
-                        JobState state = job.State;
-                        if (state == JobState.Running || state == JobState.Queued ||
-                            state == JobState.Validating || state == JobState.Submitted ||
-                            state == JobState.ExternalValidation)
-                            scheduler.CancelJob(clusterJobID, "", true);
-                    }
-                    catch (Exception ex)
-                    {
-                        System.Windows.MessageBox.Show(this, "Exception: " + ex.Message, "Error",
-                                                MessageBoxButton.OK, MessageBoxImage.Error);
-                    }
+                            int priority = 2;
+                            int min = 1, max = 100;
 
-                    cmd = new SqlCommand("DELETE FROM Data WHERE ExperimentID=" + eid + ";" +
-                                         "DELETE FROM JobQueue WHERE ExperimentID=" + eid + ";", sql);
-                    cmd.CommandTimeout = 0;
-                    cmd.ExecuteNonQuery();
+                            SqlCommand cmd = new SqlCommand("SELECT SharedDir, Cluster, Nodegroup, Locality, ClusterJobID, Executor FROM Experiments WHERE ID=" + eid + ";", sql);
+                            cmd.CommandTimeout = 0;
+                            SqlDataReader r = cmd.ExecuteReader();
+                            while (r.Read())
+                            {
+                                sharedDir = (string)r[0];
+                                cluster = (string)r[1];
+                                nodegroup = (string)r[2];
+                                locality = (string)r[3];
+                                clusterJobID = (int)r[4];
+                                executor = (string)r[5];
+                            }
+                            r.Close();
 
-                    scheduler.Close();
+                            Scheduler scheduler = new Scheduler();
+                            scheduler.Connect(cluster);
 
-                    string wrkrpath = System.IO.Path.Combine(sharedDir, executor);
-                    if (!File.Exists(wrkrpath))
-                    {
-                        string exc = (string)Registry.GetValue(keyName, "Executor", "");
-                        File.Copy(exc, wrkrpath, true);
-                    }
+                            try
+                            {
+                                ISchedulerJob job = scheduler.OpenJob(clusterJobID);
+                                switch (job.Priority)
+                                {
+                                    case JobPriority.Lowest: priority = 0; break;
+                                    case JobPriority.BelowNormal: priority = 1; break;
+                                    case JobPriority.Normal: priority = 2; break;
+                                    case JobPriority.AboveNormal: priority = 3; break;
+                                    case JobPriority.Highest: priority = 4; break;
+                                }
 
-                    WindowInteropHelper helper = new WindowInteropHelper(this);
-                    SubmissionWorker sw = new SubmissionWorker(helper.Handle, 0);
-                    sw.SubmitHPCJob(txtDatabase.Text, true, eid,
-                                    cluster, nodegroup, priority,
-                                    locality, min.ToString(), max.ToString(),
-                                    sharedDir, executor);
+                                if (locality == "Socket")
+                                {
+                                    min = job.MinimumNumberOfSockets;
+                                    max = job.MaximumNumberOfSockets;
+                                }
+                                else if (locality == "Core")
+                                {
+                                    min = job.MinimumNumberOfCores;
+                                    max = job.MaximumNumberOfCores;
+                                }
+                                else if (locality == "Node")
+                                {
+                                    min = job.MinimumNumberOfNodes;
+                                    max = job.MaximumNumberOfNodes;
+                                }
+
+                                JobState state = job.State;
+                                if (state == JobState.Running || state == JobState.Queued ||
+                                    state == JobState.Validating || state == JobState.Submitted ||
+                                    state == JobState.ExternalValidation)
+                                    scheduler.CancelJob(clusterJobID, "", true);
+                            }
+                            catch (SchedulerException)
+                            {
+                                // OK, job doesn't exist anymore.
+                            }
+                            catch (Exception ex)
+                            {
+                                Dispatcher.Invoke(new Action(() =>
+                                    System.Windows.MessageBox.Show(this, "Exception: " + ex.Message, "Error",
+                                                            MessageBoxButton.OK, MessageBoxImage.Error)));
+                                return;
+                            }
+
+                            cmd = new SqlCommand("DELETE FROM Data WHERE ExperimentID=" + eid + ";" +
+                                                 "DELETE FROM JobQueue WHERE ExperimentID=" + eid + ";", sql);
+                            cmd.CommandTimeout = 0;
+                            cmd.ExecuteNonQuery();
+
+                            scheduler.Close();
+
+                            string wrkrpath = System.IO.Path.Combine(sharedDir, executor);
+                            if (!File.Exists(wrkrpath))
+                            {
+                                string exc = (string)Registry.GetValue(keyName, "Executor", "");
+                                File.Copy(exc, wrkrpath, true);
+                            }
+
+
+                            Dispatcher.Invoke(new Action(() =>
+                            {
+                                WindowInteropHelper helper = new WindowInteropHelper(this);
+                                SubmissionWorker sw = new SubmissionWorker(helper.Handle, 0);
+                                sw.SubmitHPCJob(txtDatabase.Text, true, eid,
+                                                cluster, nodegroup, priority,
+                                                locality, min.ToString(), max.ToString(),
+                                                sharedDir, executor);
+                            }));
+
+                            if (w.WorkerReportsProgress)
+                                w.ReportProgress((int)(100.0 * ((double)i / (double)total)));
+                        });
+                    
+                    p.Go();
                 }
             }
             catch (Exception ex)
@@ -1581,7 +1607,7 @@ namespace ClusterExperiment
             dlg.Owner = this;
             if (dlg.ShowDialog() == true)
             {
-                Submission sdlg = new Submission(txtDatabase.Text, 
+                Submission sdlg = new Submission(txtDatabase.Text,
                                                  dlg.txtCluster.Text,
                                                  dlg.cmbLocality.Text,
                                                  dlg.cmbPriority.SelectedIndex,
@@ -1599,7 +1625,7 @@ namespace ClusterExperiment
                                                    System.Windows.MessageBoxButton.OK,
                                                    System.Windows.MessageBoxImage.Error);
                 }
-                
+
                 updateState();
             }
         }

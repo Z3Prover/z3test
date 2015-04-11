@@ -179,10 +179,15 @@ namespace ClusterExperiment
                 this.jobgroupName = groupName;
 
                 int count = 1;
+                //Random rng = new Random((int)DateTime.Now.Ticks);
                 for (Int64 i = from; i <= to; i += step, count++)
                 {
+                    //byte[] rbs = new byte[4];
+                    //rng.NextBytes(rbs);
+                    //uint r = ((uint) rbs[0] << 24) | (uint) rbs[1] << 16 | ((uint) rbs[2] << 8) | ((uint) rbs[3]);
                     submit(db, categories, sharedDir, memout, timeout, executor,
                            parameters.Replace("{0}", i.ToString()),
+                           // parameters.Replace("{0}", r.ToString()),
                            cluster, nodegroup, locality, limitsMin, limitsMax,
                            username, priority, extension,
                            "(" + count.ToString() + "/" + total.ToString() + ") " + note);
