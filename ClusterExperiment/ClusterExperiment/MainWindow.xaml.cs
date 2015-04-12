@@ -1162,57 +1162,68 @@ namespace ClusterExperiment
         private void showDuplicates(object sender, ExecutedRoutedEventArgs e)
         {
             Mouse.OverrideCursor = System.Windows.Input.Cursors.Wait;
+            double total = (double)dataGrid.SelectedItems.Count;
+            IList drviews = dataGrid.SelectedItems;
+            bool stop = false;
             bool zero_duplicates = true;
 
-            foreach (DataRowView drv in dataGrid.SelectedItems)
+            for (int i = 0; i < total && !stop; i++)
             {
-                int eid = (int)drv["ID"];
+                new Progress(this, dataGrid.SelectedItems.Count, "Resolving",
+                    (sndr, ea) =>
+                    {
+                        ProgressWorker w = (ProgressWorker)sndr;
+                        Object[] args = (Object[])ea.Argument;
+                        DataRowView drv = (DataRowView)drviews[i];
+                        int eid = (int)drv["ID"];
 
-                SqlCommand cmd = new SqlCommand("SELECT TOP 1 COUNT(*) as Count,FilenameP FROM Data WHERE ExperimentID=" + eid + " GROUP BY FilenameP HAVING COUNT(*)>1", sql);
-                SqlDataReader r = cmd.ExecuteReader();
+                        SqlCommand cmd = new SqlCommand("SELECT TOP 1 COUNT(*) as Count,FilenameP FROM Data WHERE ExperimentID=" + eid + " GROUP BY FilenameP HAVING COUNT(*)>1", sql);
+                        SqlDataReader r = cmd.ExecuteReader();
 
-                bool have_rows = r.HasRows;
-                r.Close();
+                        bool have_rows = r.HasRows;
+                        r.Close();
 
-                if (!have_rows)
-                {
-                    cmd = new SqlCommand("SELECT TOP 1 COUNT(*) as Count,FilenameP FROM JobQueue WHERE ExperimentID=" + eid + " GROUP BY FilenameP HAVING COUNT(*)>1", sql);
-                    r = cmd.ExecuteReader();
-                    have_rows = r.HasRows;
-                    r.Close();
-                }
+                        if (!have_rows)
+                        {
+                            cmd = new SqlCommand("SELECT TOP 1 COUNT(*) as Count,FilenameP FROM JobQueue WHERE ExperimentID=" + eid + " GROUP BY FilenameP HAVING COUNT(*)>1", sql);
+                            r = cmd.ExecuteReader();
+                            have_rows = r.HasRows;
+                            r.Close();
+                        }
 
-                if (!have_rows)
-                {
-                    cmd = new SqlCommand("SELECT COUNT(*) FROM JobQueue " +
-                                            "WHERE " +
-                                            "ExperimentID=" + eid + " AND " +
-                                            "ID in (SELECT JobQueue.ID " +
-                                                "FROM JobQueue, Data  " +
-                                                "WHERE " +
-                                                "JobQueue.ExperimentID=" + eid + " AND " +
-                                                "Data.ExperimentID=" + eid + " AND " +
-                                                "Data.FilenameP = JobQueue.FilenameP); ", sql);
-                    cmd.CommandTimeout = 0;
-                    r = cmd.ExecuteReader();
-                    if (r.HasRows && r.Read())
-                        have_rows = ((int)r[0]) != 0;
-                    r.Close();
-                }
-
-                if (have_rows)
-                {
-                    Mouse.OverrideCursor = null;
-                    Duplicates dlg = new Duplicates(eid,
-                        mnuOptResolveTimeoutDupes.IsChecked,
-                        mnuOptResolveSameTimeDupes.IsChecked,
-                        mnuOptResolveSlowestDupes.IsChecked,
-                        sql);
-                    dlg.Owner = this;
-                    dlg.ShowDialog();
-                    zero_duplicates = false;
-                    Mouse.OverrideCursor = System.Windows.Input.Cursors.Wait;
-                }
+                        if (!have_rows)
+                        {
+                            cmd = new SqlCommand("SELECT COUNT(*) FROM JobQueue " +
+                                                    "WHERE " +
+                                                    "ExperimentID=" + eid + " AND " +
+                                                    "ID in (SELECT JobQueue.ID " +
+                                                        "FROM JobQueue, Data  " +
+                                                        "WHERE " +
+                                                        "JobQueue.ExperimentID=" + eid + " AND " +
+                                                        "Data.ExperimentID=" + eid + " AND " +
+                                                        "Data.FilenameP = JobQueue.FilenameP); ", sql);
+                            cmd.CommandTimeout = 0;
+                            r = cmd.ExecuteReader();
+                            if (r.HasRows && r.Read())
+                                have_rows = ((int)r[0]) != 0;
+                            r.Close();
+                        }
+                        else
+                        {
+                            Dispatcher.Invoke(new Action(() =>
+                            {
+                                Duplicates dlg = new Duplicates(eid,
+                                    mnuOptResolveTimeoutDupes.IsChecked,
+                                    mnuOptResolveSameTimeDupes.IsChecked,
+                                    mnuOptResolveSlowestDupes.IsChecked,
+                                    sql);
+                                dlg.Owner = this;
+                                dlg.ShowDialog();
+                                zero_duplicates = false;
+                            }
+                            ));
+                        }
+                    }).Go();
             }
 
             if (zero_duplicates)
@@ -1306,52 +1317,69 @@ namespace ClusterExperiment
             if (dlg.ShowDialog() == true)
             {
                 Mouse.OverrideCursor = System.Windows.Input.Cursors.Wait;
+                double total = (double)dataGrid.SelectedItems.Count;
+                IList drviews = dataGrid.SelectedItems;
+                bool stop = false;
 
-                foreach (DataRowView drv in dataGrid.SelectedItems)
+                for (int i = 0; i < total && !stop; i++)
                 {
-                    int eid = (int)drv["ID"];
-
-                    SqlCommand cmd = new SqlCommand("SELECT Cluster, ClusterJobID FROM Experiments WHERE ID=" + eid, sql);
-                    SqlDataReader r = cmd.ExecuteReader();
-
-                    try
-                    {
-                        if (r.Read())
+                    new Progress(this, dataGrid.SelectedItems.Count, "Changing priority",
+                        (sndr, ea) =>
                         {
-                            string cluster = (string)r["Cluster"];
-                            int cjid = (int)r["ClusterJobID"];
+                            ProgressWorker w = (ProgressWorker)sndr;
+                            Object[] args = (Object[])ea.Argument;
+                            DataRowView drv = (DataRowView)drviews[i];
+                            int eid = (int)drv["ID"];
 
-                            Scheduler scheduler = new Scheduler();
-                            scheduler.Connect(cluster);
-                            ISchedulerJob job = scheduler.OpenJob(Convert.ToInt32(cjid));
+                            SqlCommand cmd = new SqlCommand("SELECT Cluster, ClusterJobID FROM Experiments WHERE ID=" + eid, sql);
+                            cmd.CommandTimeout = 0;
+                            SqlDataReader r = cmd.ExecuteReader();
 
-                            JobState state = job.State;
-                            if (state == JobState.Configuring ||
-                                state == JobState.Queued ||
-                                state == JobState.Running ||
-                                state == JobState.Submitted ||
-                                state == JobState.Validating)
+                            try
                             {
-                                switch (dlg.cmbPriority.SelectedIndex)
+                                if (r.Read())
                                 {
-                                    case 0: job.Priority = JobPriority.Lowest; break;
-                                    case 1: job.Priority = JobPriority.BelowNormal; break;
-                                    case 3: job.Priority = JobPriority.AboveNormal; break;
-                                    case 4: job.Priority = JobPriority.Highest; break;
-                                    default: job.Priority = JobPriority.Normal; break;
+                                    string cluster = (string)r["Cluster"];
+                                    int cjid = (int)r["ClusterJobID"];
+
+                                    Scheduler scheduler = new Scheduler();
+                                    scheduler.Connect(cluster);
+                                    ISchedulerJob job = scheduler.OpenJob(Convert.ToInt32(cjid));
+
+                                    JobState state = job.State;
+                                    if (state == JobState.Configuring ||
+                                        state == JobState.Queued ||
+                                        state == JobState.Running ||
+                                        state == JobState.Submitted ||
+                                        state == JobState.Validating)
+                                    {
+                                        switch (dlg.cmbPriority.SelectedIndex)
+                                        {
+                                            case 0: job.Priority = JobPriority.Lowest; break;
+                                            case 1: job.Priority = JobPriority.BelowNormal; break;
+                                            case 3: job.Priority = JobPriority.AboveNormal; break;
+                                            case 4: job.Priority = JobPriority.Highest; break;
+                                            default: job.Priority = JobPriority.Normal; break;
+                                        }
+
+                                        job.Commit();
+                                    }
                                 }
 
-                                job.Commit();
-                            }
-                        }
+                                r.Close();
 
-                        r.Close();
-                    }
-                    catch (Exception ex)
-                    {
-                        System.Windows.MessageBox.Show(this, "Exception: " + ex.Message, "Error",
-                                                       MessageBoxButton.OK, MessageBoxImage.Error);
-                    }
+                                if (w.WorkerReportsProgress)
+                                    w.ReportProgress((int)(100.0 * ((double)i / total)));
+                            }
+                            catch (Exception ex)
+                            {
+                                Dispatcher.Invoke(new Action(() =>
+                                {
+                                    System.Windows.MessageBox.Show(this, "Exception: " + ex.Message, "Error",
+                                                                   MessageBoxButton.OK, MessageBoxImage.Error);
+                                }));
+                            }
+                        }).Go();
                 }
             }
 
@@ -1369,11 +1397,13 @@ namespace ClusterExperiment
 
             try
             {
-                double total = (double)dataGrid.SelectedItems.Count;
-                IList drviews = dataGrid.SelectedItems;
                 Mouse.OverrideCursor = System.Windows.Input.Cursors.Wait;
 
-                for (int i = 0; i < total; i++)
+                double total = (double)dataGrid.SelectedItems.Count;
+                IList drviews = dataGrid.SelectedItems;                
+                bool stop = false;
+
+                for (int i = 0; i < total && !stop; i++)
                 {
                     Progress p = new Progress(this, dataGrid.SelectedItems.Count, "Requeueing",
                         (sndr, ea) =>
@@ -1423,6 +1453,7 @@ namespace ClusterExperiment
                                     if (w.CancellationPending == true)
                                     {
                                         ea.Cancel = true;
+                                        stop = true;
                                         return;
                                     }
                                 }
@@ -1457,17 +1488,20 @@ namespace ClusterExperiment
         {
             e.CanExecute = (sql != null) && (dataGrid.SelectedItems.Count > 0);
         }
+
         private void showRestartCommand(object sender, ExecutedRoutedEventArgs e)
         {
             Mouse.OverrideCursor = System.Windows.Input.Cursors.Wait;
 
             try
             {
-                double total = (double)dataGrid.SelectedItems.Count;
-                IList drviews = dataGrid.SelectedItems;
                 Mouse.OverrideCursor = System.Windows.Input.Cursors.Wait;
 
-                for (int i = 0; i < total; i++)
+                double total = (double)dataGrid.SelectedItems.Count;
+                IList drviews = dataGrid.SelectedItems;
+                bool stop = false;                
+
+                for (int i = 0; i < total && !stop; i++)
                 {
                     Progress p = new Progress(this, dataGrid.SelectedItems.Count, "Restarting",
                         (sndr, ea) =>
@@ -1564,6 +1598,10 @@ namespace ClusterExperiment
                                 File.Copy(exc, wrkrpath, true);
                             }
 
+                            if (w.CancellationPending == true)
+                            {
+                                stop = true;
+                            }
 
                             Dispatcher.Invoke(new Action(() =>
                             {
@@ -1578,7 +1616,7 @@ namespace ClusterExperiment
                             if (w.WorkerReportsProgress)
                                 w.ReportProgress((int)(100.0 * ((double)i / (double)total)));
                         });
-                    
+
                     p.Go();
                 }
             }
