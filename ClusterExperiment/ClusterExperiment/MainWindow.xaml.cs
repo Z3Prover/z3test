@@ -114,7 +114,9 @@ namespace ClusterExperiment
 
             if (showProgress)
             {
-                cmd = "SELECT TitleScreen.*, Done, Queued, Total " +
+                cmd = "SELECT TitleScreen.*, Done, Queued, Total, " +
+                        "(CASE WHEN Queued = 0 THEN 'Done.' ELSE " +
+	                     "CONVERT(varchar, CONVERT(time, DATEADD(s, (Queued * (-DateDiff(s, GetDate(), SubmissionTime) / Done)), 0))) END) as Projection " +
                     // ", Progress" + 
                         "FROM TitleScreen, " +
                         "(SELECT DCT.ID, Done, Queued, (Done+Queued) as Total " +
@@ -124,7 +126,7 @@ namespace ClusterExperiment
                             "FROM TitleScreen LEFT JOIN Data " +
                             "ON TitleScreen.ID=Data.ExperimentID " +
                             "GROUP BY " +
-                            "TitleScreen.ID) DCT " +
+                            "TitleScreen.ID) as DCT " +
                             ", " +
                             "(SELECT TitleScreen.ID, COUNT(JobQueue.ID) as Queued " +
                             "FROM TitleScreen LEFT JOIN JobQueue " +
@@ -1675,6 +1677,7 @@ namespace ClusterExperiment
             dataGrid.Columns[c - 2].Visibility = System.Windows.Visibility.Visible;
             dataGrid.Columns[c - 3].Visibility = System.Windows.Visibility.Visible;
             dataGrid.Columns[c - 4].Visibility = System.Windows.Visibility.Visible;
+            dataGrid.Columns[c - 5].Visibility = System.Windows.Visibility.Visible;
 
             updateDataGrid();
         }
@@ -1686,6 +1689,7 @@ namespace ClusterExperiment
             dataGrid.Columns[c - 2].Visibility = System.Windows.Visibility.Hidden;
             dataGrid.Columns[c - 3].Visibility = System.Windows.Visibility.Hidden;
             dataGrid.Columns[c - 4].Visibility = System.Windows.Visibility.Hidden;
+            dataGrid.Columns[c - 5].Visibility = System.Windows.Visibility.Hidden;
 
             updateDataGrid();
         }

@@ -11,12 +11,19 @@ namespace sendbuildlog
     {
         static void Main(string[] args)
         {
-            Configuration c = new Configuration("config.xml");
-            
-            Sendmail.Send(c.developers,
-                          "Build failed at Windows (x86/x64)", 
-                          "The build failed; please check the attached logfile for errors.", 
-                          c.build_log);
+            try
+            {
+                Configuration c = new Configuration("config.xml");
+
+                Sendmail.Send(c.developers,
+                              "Build failed at Windows (x86/x64)",
+                              "The build failed; please check the attached logfile for errors.",
+                              c.build_log);
+            }
+            catch (Exception ex)
+            {
+                Console.Out.WriteLine("Exception: " + ex.Message);
+            }
         }
     }
 }
