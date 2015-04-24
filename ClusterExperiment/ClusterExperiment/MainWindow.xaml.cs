@@ -107,16 +107,21 @@ namespace ClusterExperiment
             Mouse.OverrideCursor = System.Windows.Input.Cursors.Wait;
 
             SqlDataAdapter da;
-
             string cmd = "SELECT * FROM TitleScreen ";
-
             bool showProgress = mnuOptProgress.IsChecked;
+
+            SortDescription[] sdc = null;
+            if (dataGrid.Items.SortDescriptions.Count > 0)
+            {
+                sdc = new SortDescription[dataGrid.Items.SortDescriptions.Count];
+                dataGrid.Items.SortDescriptions.CopyTo(sdc, 0);
+            }
 
             if (showProgress)
             {
-                cmd = "SELECT TitleScreen.*, Done, Queued, Total, " +
-                        "(CASE WHEN Queued = 0 THEN 'Done.' ELSE " +
-	                     "CONVERT(varchar, CONVERT(time, DATEADD(s, (Queued * (-DateDiff(s, GetDate(), SubmissionTime) / Done)), 0))) END) as Projection " +
+                cmd = "SELECT TitleScreen.*, Done, Queued, Total " +
+                        //", (CASE WHEN Queued = 0 THEN 'Done.' ELSE " +
+                        // "CONVERT(varchar, CONVERT(time, DATEADD(s, (Queued * (-DateDiff(s, GetDate(), SubmissionTime) / Done)), 0))) END) as Projection " +
                     // ", Progress" + 
                         "FROM TitleScreen, " +
                         "(SELECT DCT.ID, Done, Queued, (Done+Queued) as Total " +
@@ -150,13 +155,43 @@ namespace ClusterExperiment
             cmd += "ORDER BY SubmissionTime DESC";
             da = new SqlDataAdapter(cmd, sql);
             DataSet ds = new DataSet();
-            da.Fill(ds, "Experiments");
-            dataGrid.ItemsSource = ds.Tables[0].DefaultView;
+
+            try
+            {
+                da.SelectCommand.CommandTimeout = 0;
+                da.Fill(ds, "Experiments");
+                dataGrid.ItemsSource = ds.Tables[0].DefaultView;
+            }
+            catch (Exception ex)
+            {
+                System.Windows.MessageBox.Show(this, "Error loading experiment table: " + ex.Message, "Error",
+                    System.Windows.MessageBoxButton.OK, 
+                    System.Windows.MessageBoxImage.Error);
+                dataGrid.ItemsSource = null;
+            }
+
+            if (sdc != null)
+            {
+                foreach (SortDescription sd in sdc)
+                    dataGrid.Items.SortDescriptions.Add(new SortDescription(sd.PropertyName, sd.Direction));
+                dataGrid.Items.Refresh();
+            }
 
             da = new SqlDataAdapter("SELECT * FROM JobgroupsView ORDER BY ID DESC", sql);
             ds = new DataSet();
-            da.Fill(ds, "Jobgroups");
-            jobgroupGrid.ItemsSource = ds.Tables[0].DefaultView;
+            try
+            {
+                da.SelectCommand.CommandTimeout = 0;
+                da.Fill(ds, "Jobgroups");
+                jobgroupGrid.ItemsSource = ds.Tables[0].DefaultView;
+            }
+            catch (Exception ex)
+            {
+                System.Windows.MessageBox.Show(this, "Error loading jobgroup table: " + ex.Message, "Error",
+                    System.Windows.MessageBoxButton.OK,
+                    System.Windows.MessageBoxImage.Error);
+                dataGrid.ItemsSource = null;
+            }
 
             Mouse.OverrideCursor = null;
         }
@@ -1402,7 +1437,7 @@ namespace ClusterExperiment
                 Mouse.OverrideCursor = System.Windows.Input.Cursors.Wait;
 
                 double total = (double)dataGrid.SelectedItems.Count;
-                IList drviews = dataGrid.SelectedItems;                
+                IList drviews = dataGrid.SelectedItems;
                 bool stop = false;
 
                 for (int i = 0; i < total && !stop; i++)
@@ -1501,7 +1536,7 @@ namespace ClusterExperiment
 
                 double total = (double)dataGrid.SelectedItems.Count;
                 IList drviews = dataGrid.SelectedItems;
-                bool stop = false;                
+                bool stop = false;
 
                 for (int i = 0; i < total && !stop; i++)
                 {
