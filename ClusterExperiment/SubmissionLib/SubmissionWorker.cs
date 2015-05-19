@@ -451,7 +451,8 @@ namespace SubmissionLib
                     ISchedulerTask task = hpcJob.CreateTask();
                     SetResources(task, locality);
                     task.WorkDirectory = Path.GetDirectoryName(Path.GetFullPath(executor));
-                    task.CommandLine = Path.GetFileName(executor) + " \"" + db + "\"";
+                    task.CommandLine = "pushd " + Path.GetDirectoryName(Path.GetFullPath(executor)) + " & " + Path.GetFileName(executor) + " \"" + db + "\"";
+                    // task.CommandLine = Path.GetFileName(executor) + " \"" + db + "\"";
                     task.IsExclusive = false;
                     task.IsRerunnable = true;
                     task.Name = "Worker";

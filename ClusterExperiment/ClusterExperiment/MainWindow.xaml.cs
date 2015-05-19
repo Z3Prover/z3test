@@ -445,7 +445,7 @@ namespace ClusterExperiment
         {
             public int? rv = null;
             public double runtime = 0.0;
-            public int sat = 0, unsat = 0;
+            public int sat = 0, unsat = 0, unknown = 0;
         }
 
         private void canShowSaveCSV(object sender, CanExecuteRoutedEventArgs e)
@@ -494,7 +494,7 @@ namespace ClusterExperiment
                         ex_timeout = Convert.ToDouble((string)rd["Timeout"]);
                     }
                     rd.Close();
-                    f.Write(",,,");
+                    f.Write(",,,,");
 
                     double error_line = 10.0 * ex_timeout;
 
@@ -503,7 +503,8 @@ namespace ClusterExperiment
                                        " Returnvalue," +
                                        " Runtime," +
                                        " SAT," +
-                                       " UNSAT" +
+                                       " UNSAT," +
+                                       " UNKNOWN" +
                                        " FROM Strings, Data WHERE" +
                                        " Strings.ID=Data.FilenameP AND" +
                                        " Data.ExperimentID=" + id.ToString(), sql);
@@ -519,6 +520,7 @@ namespace ClusterExperiment
                         cur.runtime = (rd["Runtime"].Equals(System.DBNull.Value)) ? ex_timeout : (double)rd["Runtime"];
                         cur.sat = (int)rd["SAT"];
                         cur.unsat = (int)rd["UNSAT"];
+                        cur.unknown = (int)rd["UNKNOWN"];
 
                         bool rv_ok = (rc != 4) &&
                                      ((rc == 5 && cur.rv == null) ||
@@ -529,7 +531,8 @@ namespace ClusterExperiment
                         if (cur.runtime < 0.1)
                             cur.runtime = 0.1;
 
-                        if (fn.StartsWith("QF_BV-sat\\")) fn = fn.Substring(10);
+                        if (fn.StartsWith("QF_BV-sat\\")) 
+                            fn = fn.Substring(10);
                         else if (fn.StartsWith("QF_BV-sat-hard\\"))
                             fn = fn.Substring(15);
 
@@ -548,7 +551,7 @@ namespace ClusterExperiment
                 {
                     DataRowView rowView = (DataRowView)dataGrid.SelectedItems[i];
                     int id = (int)rowView["ID"];
-                    f.Write("R" + id + ",T" + id + ",SAT" + id + ",UNSAT" + id + ",");
+                    f.Write("R" + id + ",T" + id + ",SAT" + id + ",UNSAT" + id + ",UNKNOWN" + id + ",");
                 }
                 f.WriteLine();
 
@@ -582,6 +585,7 @@ namespace ClusterExperiment
                             f.Write(c.runtime + ",");
                             f.Write(c.sat + ",");
                             f.Write(c.unsat + ",");
+                            f.Write(c.unknown + ",");
                         }
                     }
 

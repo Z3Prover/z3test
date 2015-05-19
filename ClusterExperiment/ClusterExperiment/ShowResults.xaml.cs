@@ -30,6 +30,7 @@ namespace ClusterExperiment
         public static RoutedCommand ReclassifyError = new RoutedCommand();
         public static RoutedCommand ReclassifyTimeout = new RoutedCommand();
         public static RoutedCommand ReclassifyMemout = new RoutedCommand();
+        public static RoutedCommand CopyFilename = new RoutedCommand();
 
         public ShowResults(int experimentID, SqlConnection sql)
         {
@@ -46,6 +47,8 @@ namespace ClusterExperiment
             customCommandBinding = new CommandBinding(ReclassifyTimeout, showReclassifyTimeout, canShowReclassify);
             CommandBindings.Add(customCommandBinding);
             customCommandBinding = new CommandBinding(ReclassifyMemout, showReclassifyMemout, canShowReclassify);
+            CommandBindings.Add(customCommandBinding);
+            customCommandBinding = new CommandBinding(CopyFilename, showCopyFilename, canShowCopyFilename);
             CommandBindings.Add(customCommandBinding);
 
             SqlCommand cmd = new SqlCommand("SELECT Timeout, SharedDir FROM Experiments WHERE ID=" + experimentID, sql);
@@ -134,8 +137,10 @@ namespace ClusterExperiment
                     da = new SqlDataAdapter("SELECT Data.ID as ID,Strings.s as Filename,Returnvalue,ResultCode,SAT,UNSAT,UNKNOWN,Runtime,Worker FROM Data,Strings WHERE FilenameP=Strings.ID AND (Strings.s LIKE '%unsat%') AND ExperimentID=" + experimentID, sql);
                 else if ((RadioButton)sender == radioFNTEXT)
                     da = new SqlDataAdapter("SELECT Data.ID as ID,Strings.s as Filename,Returnvalue,ResultCode,SAT,UNSAT,UNKNOWN,Runtime,Worker FROM Data,Strings WHERE FilenameP=Strings.ID AND (Strings.s LIKE '%" + txtFilename.Text + "%') AND ExperimentID=" + experimentID, sql);
+                
                 DataSet ds = new DataSet();
-                da.Fill(ds, "Data");
+                da.SelectCommand.CommandTimeout = 0;
+                da.Fill(ds, "Data");                
                 dataGrid.ItemsSource = ds.Tables[0].DefaultView;
             }
             catch (SqlException ex)
@@ -251,6 +256,18 @@ namespace ClusterExperiment
             Mouse.OverrideCursor = System.Windows.Input.Cursors.Wait;
             ReclassifySelected(6);
             dataGrid.Items.Refresh();
+            Mouse.OverrideCursor = null;
+        }
+
+        private void canShowCopyFilename(object Sender, CanExecuteRoutedEventArgs e)
+        {
+            e.CanExecute = (sql != null) && (dataGrid.SelectedItems.Count == 1);
+        }
+
+        private void showCopyFilename(object sender, ExecutedRoutedEventArgs e)
+        {
+            Mouse.OverrideCursor = System.Windows.Input.Cursors.Wait;
+            Clipboard.SetText((string)((DataRowView)dataGrid.SelectedItem)["Filename"]);
             Mouse.OverrideCursor = null;
         }
     }
