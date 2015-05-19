@@ -544,8 +544,9 @@ namespace SubmissionLib
                 SetResources(populateTask, locality);
                 populateTask.IsRerunnable = false;
                 populateTask.IsExclusive = false;
-                populateTask.WorkDirectory = sharedDir;
-                populateTask.CommandLine = executor + " " + newID + " ? \"" + db + "\"";
+                // populateTask.WorkDirectory = sharedDir;                
+                //populateTask.CommandLine = executor + " " + newID + " ? \"" + db + "\"";
+                populateTask.CommandLine = "pushd " + sharedDir + " & " + Path.GetFileName(executor) + " " + newID + " ? \"" + db + "\"";
                 populateTask.Name = "Populate";
                 hpcJob.AddTask(populateTask);
 
@@ -555,8 +556,9 @@ namespace SubmissionLib
                     if (WorkerReportsProgress) ReportProgress(Convert.ToInt32(100.0 * (i + 1) / (double)max));
                     ISchedulerTask task = hpcJob.CreateTask();
                     SetResources(task, locality);
-                    task.WorkDirectory = sharedDir;
-                    task.CommandLine = executor + " " + newID + " \"" + db + "\"";
+                    // task.WorkDirectory = sharedDir;
+                    // task.CommandLine = executor + " " + newID + " \"" + db + "\"";
+                    task.CommandLine = "pushd " + sharedDir + " & " + Path.GetFileName(executor) + " " + newID + " \"" + db + "\"";
                     task.IsExclusive = false;
                     task.IsRerunnable = true;
                     task.DependsOn.Add("Populate");
@@ -571,8 +573,9 @@ namespace SubmissionLib
                 SetResources(rTask, locality);
                 rTask.IsRerunnable = true;
                 rTask.IsExclusive = false;
-                rTask.WorkDirectory = sharedDir;
-                rTask.CommandLine = executor + " " + newID + " ! \"" + db + "\"";
+                // rTask.WorkDirectory = sharedDir;
+                // rTask.CommandLine = executor + " " + newID + " ! \"" + db + "\"";
+                rTask.CommandLine = "pushd " + sharedDir + " & " + Path.GetFileName(executor) + " " + newID  + " ! \"" + db + "\"";
                 rTask.DependsOn.Add("Worker");
                 rTask.Name = "Recovery";
                 hpcJob.AddTask(rTask);
@@ -583,8 +586,9 @@ namespace SubmissionLib
                 SetResources(dTask, locality);
                 dTask.IsRerunnable = true;
                 dTask.IsExclusive = false;
-                dTask.WorkDirectory = sharedDir;
-                dTask.CommandLine = "del " + sharedDir + "\\" + executor;
+                // dTask.WorkDirectory = sharedDir;
+                // dTask.CommandLine = "del " + sharedDir + "\\" + executor;
+                dTask.CommandLine = "pushd " + sharedDir + " & del " + Path.GetFileName(executor);
                 dTask.Name = "Delete worker";
                 dTask.DependsOn.Add("Recovery");
                 hpcJob.AddTask(dTask);

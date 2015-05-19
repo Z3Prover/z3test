@@ -80,7 +80,7 @@ namespace ClusterSubmit
                 int jid =
                     w.SetupExperiment(config.db, config.category, config.sharedDir, config.memout, config.timeout, config.executor, config.parameters,
                                       bestCluster, config.nodegroup, config.locality, config.minResources, config.maxResources, config.username, config.priority, config.extension, config.note, ref haveBinId, ref binId, ref sExecutor);
-                w.SubmitHPCJob(config.db, true, jid, config.cluster, config.nodegroup, config.priority, config.locality, config.minResources, config.maxResources, config.sharedDir, config.executor);
+                w.SubmitHPCJob(config.db, true, jid, config.cluster, config.nodegroup, config.priority, config.locality, config.minResources, config.maxResources, config.sharedDir, sExecutor);
 
                 saveBinaryDate(executable);
 
