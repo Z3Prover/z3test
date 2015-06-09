@@ -6,10 +6,10 @@ using System.Text;
 using System.Data.SqlClient;
 using System.IO;
 using System.IO.Packaging;
+using System.Text.RegularExpressions;
 using System.Threading;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
-using System.Text.RegularExpressions;
 
 namespace worker
 {
@@ -19,6 +19,8 @@ namespace worker
         string myName = "";
         const int MAXBUF = 16777216;
         Random rng = new Random();
+        uint infrastructure_errors_init = 100;
+        uint infrastructure_errors_max = 100;
 
         class Experiment
         {
@@ -626,6 +628,8 @@ namespace worker
 
         void runJob(Experiment e, Job j)
         {
+        retry_from_scratch:
+
             try
             {
                 getBinary(e);
@@ -646,7 +650,7 @@ namespace worker
                     r.runtime = 0;
                     results.Add(r);
                     return;
-                }                
+                }
 
                 int output_limit = 134217728; // 128 MB
                 int error_limit = 262144; // 256 KB
@@ -743,6 +747,10 @@ namespace worker
                 p.WaitForExit();
 
                 int excode = p.ExitCode;
+
+                if (excode == -1073741515)
+                    logInfrastructureError(j, "Binary could not be executed.");
+
                 double runtime = (exhausted_time ? e.timeout.TotalSeconds : processTime(p).TotalSeconds);
 
                 p.Close();
@@ -758,7 +766,8 @@ namespace worker
             }
             catch (Exception ex)
             {
-                logInfrastructureError(j, ex.Message);
+                if (logInfrastructureError(j, ex.Message + "\n" + ex.StackTrace))
+                    goto retry_from_scratch;
             }
         }
 
@@ -868,6 +877,7 @@ namespace worker
             ResultTarget target = new ResultTarget();
             ResultTarget result = new ResultTarget();
 
+        retry:
             try
             {
                 target = getTarget(r.j.localFilename);
@@ -875,7 +885,8 @@ namespace worker
             }
             catch (Exception ex)
             {
-                logInfrastructureError(r.j, ex.Message);
+                if (logInfrastructureError(r.j, ex.Message + "\n" + ex.StackTrace))
+                    goto retry;
                 return;
             }
 
@@ -919,6 +930,8 @@ namespace worker
             }
 
             cmd.ExecuteNonQuery();
+
+            infrastructure_errors_max = infrastructure_errors_init;
         }
 
         void saveResults()
@@ -969,26 +982,35 @@ namespace worker
             results.Clear();
         }
 
-        void logInfrastructureError(Job j, string message)
+        bool logInfrastructureError(Job j, string message)
         {
-            string x = "INFRASTRUCTURE ERROR: " + message;
-            ensureConnected();
-            SqlCommand cmd = new SqlCommand("INSERT INTO Data " +
-                              "(ExperimentID,FilenameP,ResultCode,stderr,Worker,SAT,UNSAT,UNKNOWN,TargetSAT,TargetUNSAT,TargetUNKNOWN) VALUES (" +
-                              j.experimentID + ", " +
-                              j.filenameP + ", " +
-                              "4," +
-                              "@ERRORMESSAGE, " +
-                              "'" + myName + "'," +
-                              "0,0,0,0,0,0); " +
-                              "DELETE FROM JobQueue WHERE ID=" + j.ID + ";", sql);
-            cmd.CommandTimeout = 0;
+            if (--infrastructure_errors_max == 0)
+            {
+                string x = "INFRASTRUCTURE ERROR: " + message;
+                ensureConnected();
+                SqlCommand cmd = new SqlCommand("INSERT INTO Data " +
+                                  "(ExperimentID,FilenameP,ResultCode,stderr,Worker,SAT,UNSAT,UNKNOWN,TargetSAT,TargetUNSAT,TargetUNKNOWN) VALUES (" +
+                                  j.experimentID + ", " +
+                                  j.filenameP + ", " +
+                                  "4," +
+                                  "@ERRORMESSAGE, " +
+                                  "'" + myName + "'," +
+                                  "0,0,0,0,0,0); " +
+                                  "DELETE FROM JobQueue WHERE ID=" + j.ID + ";", sql);
+                cmd.CommandTimeout = 0;
 
-            SqlParameter p = cmd.Parameters.Add("@ERRORMESSAGE", System.Data.SqlDbType.VarChar);
-            p.Size = x.Length;
-            p.Value = x;
+                SqlParameter p = cmd.Parameters.Add("@ERRORMESSAGE", System.Data.SqlDbType.VarChar);
+                p.Size = x.Length;
+                p.Value = x;
 
-            cmd.ExecuteNonQuery();
+                cmd.ExecuteNonQuery();
+                return false;
+            }
+            else
+            {
+                Thread.Sleep(1000);
+                return true;
+            }
         }
 
         void requeueInfrastructureErrors(Experiment e)
@@ -1076,129 +1098,81 @@ namespace worker
                 return 1;
 
             try
-            {
-                if (args.Count() > 1)
+            {                
+                Console.CancelKeyPress += delegate
                 {
-                    string eId = args[0];
-                    sql = new SqlConnection((args.Count() == 3) ? args[2] : args[1]);
-                    myName = Environment.MachineName + "-" + Process.GetCurrentProcess().Id.ToString();
-                    Experiment e = null;
+                    Console.WriteLine("Worker was interrupted. Removing entries from jobqueue.");
+                    ensureConnected();
+                    SqlCommand cmd = new SqlCommand("UPDATE JobQueue SET Worker=NULL,AcquireTime=NULL WHERE worker='" + myName + "';", sql);
+                    cmd.ExecuteNonQuery();
+                    sql.Close();
+                };
 
-                    Console.CancelKeyPress += delegate
+                string db = args.Count() == 1 ? args[0] : (args.Count() == 3) ? args[2] : args[1];
+                myName = Environment.MachineName + "-" + Process.GetCurrentProcess().Id.ToString();
+                sql = new SqlConnection(db);
+                Experiment e = null;
+
+                if (args.Count() > 1) // One-experiment job
+                {
+                    e = getExperiment(args[0]);
+
+                    if (args.Count() == 3)
                     {
-                        Console.WriteLine("Worker was interrupted. Removing entries from jobqueue.");
-                        ensureConnected();
-                        SqlCommand cmd = new SqlCommand("UPDATE JobQueue SET Worker=NULL,AcquireTime=NULL WHERE worker='" + myName + "';", sql);
-                        cmd.ExecuteNonQuery();
-                        sql.Close();
-                    };
-
-                    try
-                    {
-                        e = getExperiment(eId);
-
-                        if (args.Count() == 3)
-                        {
-                            if (args[1] == "?")
-                                populate(e);
-                            else if (args[1] == "!")
-                                recovery(e);
-                            else if (args[1] == "*")
-                                infrastructureErrorsRecovery(e);
-                            else
-                                oneJob(e, Convert.ToInt32(args[1]));
-                        }
+                        if (args[1] == "?")
+                            populate(e);
+                        else if (args[1] == "!")
+                            recovery(e);
+                        else if (args[1] == "*")
+                            infrastructureErrorsRecovery(e);
                         else
-                        {
-                            manyJobs(e);
-                        }
-                        saveResults();
+                            oneJob(e, Convert.ToInt32(args[1]));
                     }
-                    catch (Exception ex)
+                    else
                     {
-                        Console.WriteLine("Worker dying because of: " + ex.Message);
-                        saveResults();
-                        return 1;
+                        manyJobs(e);
                     }
-
-                    try
-                    {
-                        if (e != null && Directory.Exists(e.localDir))
-                        {
-                            Console.WriteLine("Removing temporary directory...");
-                            Directory.Delete(e.localDir, true);
-                        }
-                    }
-                    catch (Exception ex)
-                    {
-                        Console.WriteLine("Error removing temporary directory: " + ex.Message);
-                    }
-
+                    saveResults();
                 }
-                else
+                else // (args.Count() == 1)
                 {
-                    // Any-experiment job.                    
-                    sql = new SqlConnection(args[0]);
-                    myName = Environment.MachineName + "-" + Process.GetCurrentProcess().Id.ToString();
-
-                    Console.CancelKeyPress += delegate
+                    while (true) // Any-experiment job.                    
                     {
-                        Console.WriteLine("Worker was interrupted. Removing entries from jobqueue.");
                         ensureConnected();
-                        SqlCommand cmd = new SqlCommand("UPDATE JobQueue SET Worker=NULL,AcquireTime=NULL WHERE worker='" + myName + "';", sql);
-                        cmd.ExecuteNonQuery();
-                        sql.Close();
-                    };
+                        Dictionary<string, Object> r =
+                            SQLRead("select TOP(1) ExperimentID from jobqueue order by NEWID()", sql);
 
-                    try
-                    {
-                        while (true)
-                        {
-                            ensureConnected();
-                            Dictionary<string, Object> r =
-                                SQLRead("select TOP(1) experimentid from jobqueue order by NEWID()", sql);
+                        if (r.Count() == 0)
+                            break;
 
-                            if (r.Count() == 0)
-                                break;
+                        e = getExperiment(r["ExperimentID"].ToString());
 
-                            Experiment e = getExperiment(r["experimentid"].ToString());
-
-                            manyJobs(e);
-                            saveResults();
-
-                            try
-                            {
-                                if (e != null && Directory.Exists(e.localDir))
-                                {
-                                    Console.WriteLine("Removing temporary directory...");
-                                    Directory.Delete(e.localDir, true);
-                                }
-                            }
-                            catch (Exception ex)
-                            {
-                                Console.WriteLine("Error removing temporary directory: " + ex.Message);
-                            }
-                        }
-                    }
-                    catch (Exception ex)
-                    {
-                        Console.WriteLine("Worker dying because of: " + ex.Message);
+                        manyJobs(e);
                         saveResults();
-                        return 1;
                     }
                 }
 
                 try
                 {
-                    sql.Close();
+                    if (e != null && Directory.Exists(e.localDir))
+                    {
+                        Console.WriteLine("Removing temporary directory...");
+                        Directory.Delete(e.localDir, true);
+                    }
                 }
-                catch { }
+                catch (Exception ex)
+                {
+                    Console.WriteLine("Error removing temporary directory: " + ex.Message);
+                }
 
+                try { sql.Close(); }
+                catch { }
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                Console.WriteLine("TOPLEVEL EXCEPTION: " + e.Message);
-                Console.WriteLine("AT: " + e.StackTrace);
+                Console.WriteLine("Worker dying because of: " + ex.Message);
+                Console.WriteLine("Stacktrace: " + ex.StackTrace);
+                saveResults();
                 return 1;
             }
 

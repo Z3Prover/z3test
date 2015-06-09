@@ -27,6 +27,8 @@ namespace Z3Data
         public int priority = 2;
         public string extension = "";
         public string note = "";
+        public string minResources = "";
+        public string maxResources = "";
 
         // Where is Z3?
         public string z3_drop_dir = "";
@@ -81,6 +83,8 @@ namespace Z3Data
                                         if ((cluster == null) || (nodegroup == null) ||
                                             (username == null) || (executor == null))
                                             throw new Exception("Invalid cluster config");
+                                        minResources = reader.GetAttribute("minResources");
+                                        maxResources = reader.GetAttribute("maxResources");
                                     }
                                     break;
                                 case "AlternativeCluster":
