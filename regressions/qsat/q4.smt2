@@ -1,4 +1,25 @@
 (assert 
+                 (forall ((z Int)) (=> (<= z 7) 
+                     (iff      (exists ((x Int) (y Int)) (and (>= x 0) (>= y 0) (= z (+ (* 3 x) (* 5 y))))) 
+                          (not (exists ((x Int) (y Int)) (and (>= x 0) (>= y 0) (= (- 7 z) (+ (* 3 x) (* 5 y))))))))) ) (apply qe2) (reset)
+
+
+(assert          (forall ((x Int))
+                   (=> (not (= 0 (mod x 2))) 
+                        (or (= 0 (mod (- x 1) 4)) 
+                            (= 0 (mod (- x 1) 8)) 
+                            (= 0 (mod (- x 3) 8)) 
+                            (= 0 (mod (- x 1) 6)) 
+                            (= 0 (mod (- x 1) 14)) 
+                            (= 0 (mod (- x 9) 14)) 
+                            (= 0 (mod (- x 11) 14)) 
+                            (= 0 (mod (- x 5) 24)) 
+                            (= 0 (mod (- x 11) 24))))))
+
+(apply qe2)
+(reset)
+
+(assert 
   (forall ((x Int) (y Int)) (or (= x 0) (< (* 5 y) (* 6 x)) (> (* 5 y) (* 6 x)))))
 (apply qe2)
 (reset)
@@ -13,7 +34,21 @@
                                          (or (and (not p) (not q) (not p1) q1)
                                              (and (not p) q p1 (not q1))
                                              (and p (not q) p1 q1)
-                                             (and p q p1 q1))
+                                             (and p q p1 q1))(assert          (forall ((x Int))
+                   (=> (not (= 0 (mod x 2))) 
+                        (or (= 0 (mod (- x 1) 4)) 
+                            (= 0 (mod (- x 1) 8)) 
+                            (= 0 (mod (- x 3) 8)) 
+                            (= 0 (mod (- x 1) 6)) 
+                            (= 0 (mod (- x 1) 14)) 
+                            (= 0 (mod (- x 9) 14)) 
+                            (= 0 (mod (- x 11) 14)) 
+                            (= 0 (mod (- x 5) 24)) 
+                            (= 0 (mod (- x 11) 24))))))
+
+(apply qe2)
+(reset)
+
                                          (or (and (not r) (not r1))
                                              (and (= p p1) (= q q1) r r1)
                                              (and (not (and (= p p1) (= q q1))) (not (= r r1)))))))
@@ -189,20 +224,6 @@
 (reset)
 
 
-(assert          (forall ((x Int))
-                   (=> (not (= 0 (mod x 2))) 
-                        (or (= 0 (mod (- x 1) 4)) 
-                            (= 0 (mod (- x 1) 8)) 
-                            (= 0 (mod (- x 3) 8)) 
-                            (= 0 (mod (- x 1) 6)) 
-                            (= 0 (mod (- x 1) 14)) 
-                            (= 0 (mod (- x 9) 14)) 
-                            (= 0 (mod (- x 11) 14)) 
-                            (= 0 (mod (- x 5) 24)) 
-                            (= 0 (mod (- x 11) 24))))))
-
-(apply qe2)
-(reset)
 
 
 (assert
@@ -393,11 +414,6 @@
 (assert (forall ((z Int)) (=> (> z 7) (exists ((x Int) (y Int)) (and (>= x 0) (>= y 0) (= (+ (* 3 x) (* 5 y)) z)))))) (apply qe2) (reset)
 
 (assert (forall ((z Int)) (=> (> z 2) (exists ((x Int) (y Int)) (and (>= x 0) (>= y 0) (= (+ (* 3 x) (* 5 y)) z)))))) (apply qe2) (reset)
-
-(assert 
-                 (forall ((z Int)) (=> (<= z 7) 
-                     (iff      (exists ((x Int) (y Int)) (and (>= x 0) (>= y 0) (= z (+ (* 3 x) (* 5 y))))) 
-                          (not (exists ((x Int) (y Int)) (and (>= x 0) (>= y 0) (= (- 7 z) (+ (* 3 x) (* 5 y))))))))) ) (apply qe2) (reset)
 
 
 (assert 
