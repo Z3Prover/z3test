@@ -1,28 +1,25 @@
-(assert 
-                 (forall ((z Int)) (=> (<= z 7) 
-                     (iff      (exists ((x Int) (y Int)) (and (>= x 0) (>= y 0) (= z (+ (* 3 x) (* 5 y))))) 
-                          (not (exists ((x Int) (y Int)) (and (>= x 0) (>= y 0) (= (- 7 z) (+ (* 3 x) (* 5 y))))))))) ) (apply qe2) (reset)
 
+(assert (exists ((x Real)) (forall ((y Real)) (>= x y)))) (apply qe2) (reset)
+(assert (exists ((x Real)) (forall ((y Real)) (> x y)))) (apply qe2) (reset)
+(assert (exists ((x Real)) (forall ((y Real)) (< x y)))) (apply qe2) (reset)
+(assert (exists ((x Real)) (forall ((y Real)) (<= x y)))) (apply qe2) (reset)
 
-(assert          (forall ((x Int))
-                   (=> (not (= 0 (mod x 2))) 
-                        (or (= 0 (mod (- x 1) 4)) 
-                            (= 0 (mod (- x 1) 8)) 
-                            (= 0 (mod (- x 3) 8)) 
-                            (= 0 (mod (- x 1) 6)) 
-                            (= 0 (mod (- x 1) 14)) 
-                            (= 0 (mod (- x 9) 14)) 
-                            (= 0 (mod (- x 11) 14)) 
-                            (= 0 (mod (- x 5) 24)) 
-                            (= 0 (mod (- x 11) 24))))))
+(assert (exists ((x Real)) (exists ((y Real)) (< x y)))) (apply qe2) (reset)
+(assert (exists ((x Real)) (exists ((y Real)) (<= x y)))) (apply qe2) (reset)
+(assert (exists ((x Real)) (exists ((y Real)) (>= x y)))) (apply qe2) (reset)
+(assert (exists ((x Real)) (exists ((y Real)) (> x y)))) (apply qe2) (reset)
 
-(apply qe2)
-(reset)
+(assert (forall ((x Real)) (exists ((y Real)) (< x y)))) (apply qe2) (reset)
+(assert (forall ((x Real)) (exists ((y Real)) (<= x y)))) (apply qe2) (reset)
+(assert (forall ((x Real)) (exists ((y Real)) (>= x y)))) (apply qe2) (reset)
+(assert (forall ((x Real)) (exists ((y Real)) (> x y)))) (apply qe2) (reset)
 
-(assert 
-  (forall ((x Int) (y Int)) (or (= x 0) (< (* 5 y) (* 6 x)) (> (* 5 y) (* 6 x)))))
-(apply qe2)
-(reset)
+(assert (forall ((x Real)) (forall ((y Real)) (< x y)))) (apply qe2) (reset)
+(assert (forall ((x Real)) (forall ((y Real)) (<= x y)))) (apply qe2) (reset)
+(assert (forall ((x Real)) (forall ((y Real)) (>= x y)))) (apply qe2) (reset)
+
+(assert (forall ((x Real)) (forall ((y Real)) (> x y)))) (apply qe2) (reset)
+
 
 (declare-const p Bool)
 (declare-const q Bool)
@@ -34,51 +31,19 @@
                                          (or (and (not p) (not q) (not p1) q1)
                                              (and (not p) q p1 (not q1))
                                              (and p (not q) p1 q1)
-                                             (and p q p1 q1))(assert          (forall ((x Int))
-                   (=> (not (= 0 (mod x 2))) 
-                        (or (= 0 (mod (- x 1) 4)) 
-                            (= 0 (mod (- x 1) 8)) 
-                            (= 0 (mod (- x 3) 8)) 
-                            (= 0 (mod (- x 1) 6)) 
-                            (= 0 (mod (- x 1) 14)) 
-                            (= 0 (mod (- x 9) 14)) 
-                            (= 0 (mod (- x 11) 14)) 
-                            (= 0 (mod (- x 5) 24)) 
-                            (= 0 (mod (- x 11) 24))))))
-
-(apply qe2)
-(reset)
-
+                                             (and p q p1 q1))
                                          (or (and (not r) (not r1))
                                              (and (= p p1) (= q q1) r r1)
                                              (and (not (and (= p p1) (= q q1))) (not (= r r1)))))))
 
 (apply qe2)
-
-(assert (exists ((x Real)) (forall ((y Real)) (>= x y)))) (apply qe2) (reset) ; false 
-(assert (exists ((x Real)) (forall ((y Real)) (> x y))))  (apply qe2) (reset) ; false 
-(assert (exists ((x Real)) (forall ((y Real)) (< x y))))  (apply qe2) (reset) ; false 
-(assert (exists ((x Real)) (forall ((y Real)) (<= x y)))) (apply qe2) (reset) ; false 
-
-(assert (exists ((x Real)) (exists ((y Real)) (< x y))))  (apply qe2) (reset) ; true 
-(assert (exists ((x Real)) (exists ((y Real)) (<= x y)))) (apply qe2) (reset) ; true 
-(assert (exists ((x Real)) (exists ((y Real)) (>= x y)))) (apply qe2) (reset) ; true 
-(assert (exists ((x Real)) (exists ((y Real)) (> x y))))  (apply qe2) (reset) ; true 
-
-(assert (forall ((x Real)) (exists ((y Real)) (< x y))))  (apply qe2) (reset) ; true 
-(assert (forall ((x Real)) (exists ((y Real)) (<= x y)))) (apply qe2) (reset) ; true 
-(assert (forall ((x Real)) (exists ((y Real)) (>= x y)))) (apply qe2) (reset) ; true 
-(assert (forall ((x Real)) (exists ((y Real)) (> x y))))  (apply qe2) (reset) ; true 
-
-(assert (forall ((x Real)) (forall ((y Real)) (< x y))))  (apply qe2) (reset) ; false 
-(assert (forall ((x Real)) (forall ((y Real)) (<= x y)))) (apply qe2) (reset) ; false 
-(assert (forall ((x Real)) (forall ((y Real)) (>= x y)))) (apply qe2) (reset) ; false 
-(assert (forall ((x Real)) (forall ((y Real)) (> x y))))  (apply qe2) (reset) ; false 
-
-
-
 (reset)
 
+(assert 
+  (forall ((x Int) (y Int)) (or (= x 0) (< (* 5 y) (* 6 x)) (> (* 5 y) (* 6 x)))))
+
+(apply qe2)
+(reset)
 
 (assert
  (forall ((a Int) (b Int)) (exists ((x Int)) (and (< a (* 20 x)) (< (* 20 x) b)))))
@@ -224,6 +189,20 @@
 (reset)
 
 
+(assert          (forall ((x Int))
+                   (=> (not (= 0 (mod x 2))) 
+                        (or (= 0 (mod (- x 1) 4)) 
+                            (= 0 (mod (- x 1) 8)) 
+                            (= 0 (mod (- x 3) 8)) 
+                            (= 0 (mod (- x 1) 6)) 
+                            (= 0 (mod (- x 1) 14)) 
+                            (= 0 (mod (- x 9) 14)) 
+                            (= 0 (mod (- x 11) 14)) 
+                            (= 0 (mod (- x 5) 24)) 
+                            (= 0 (mod (- x 11) 24))))))
+
+(apply qe2)
+(reset)
 
 
 (assert
@@ -415,6 +394,11 @@
 
 (assert (forall ((z Int)) (=> (> z 2) (exists ((x Int) (y Int)) (and (>= x 0) (>= y 0) (= (+ (* 3 x) (* 5 y)) z)))))) (apply qe2) (reset)
 
+(assert 
+                 (forall ((z Int)) (=> (<= z 7) 
+                     (iff      (exists ((x Int) (y Int)) (and (>= x 0) (>= y 0) (= z (+ (* 3 x) (* 5 y))))) 
+                          (not (exists ((x Int) (y Int)) (and (>= x 0) (>= y 0) (= (- 7 z) (+ (* 3 x) (* 5 y))))))))) ) (apply qe2) (reset)
+
 
 (assert 
                  (forall ((x Int))
@@ -465,10 +449,6 @@
                  (exists ((l Int))(forall ((x Int))(=> (>= x l) 
                         (exists ((u Int) (v Int)) (and (>= u 0) (>= v 0) (= x (+ (* 7 u) (* 8 v))))))))) (apply qe2) (reset)
 
-(assert 
-                 (forall ((x Int) (y Int)) 
-                   (iff (exists ((d Int)) (= (+ x y) (* 2 d))) 
-                        (iff (exists ((d Int)) (= x (* 2 d))) (exists ((d Int)) (= y (* 2 d))))))) (apply qe2) (reset)
 
 (assert 
                  (forall ((n Int))

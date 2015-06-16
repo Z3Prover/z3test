@@ -1,5 +1,4 @@
 
-
 (assert (exists ((x Real)) (forall ((y Real)) (>= x y)))) (apply qe) (reset)
 (assert (exists ((x Real)) (forall ((y Real)) (> x y)))) (apply qe) (reset)
 (assert (exists ((x Real)) (forall ((y Real)) (< x y)))) (apply qe) (reset)
@@ -18,6 +17,7 @@
 (assert (forall ((x Real)) (forall ((y Real)) (< x y)))) (apply qe) (reset)
 (assert (forall ((x Real)) (forall ((y Real)) (<= x y)))) (apply qe) (reset)
 (assert (forall ((x Real)) (forall ((y Real)) (>= x y)))) (apply qe) (reset)
+
 (assert (forall ((x Real)) (forall ((y Real)) (> x y)))) (apply qe) (reset)
 
 
@@ -449,10 +449,6 @@
                  (exists ((l Int))(forall ((x Int))(=> (>= x l) 
                         (exists ((u Int) (v Int)) (and (>= u 0) (>= v 0) (= x (+ (* 7 u) (* 8 v))))))))) (apply qe) (reset)
 
-(assert 
-                 (forall ((x Int) (y Int)) 
-                   (iff (exists ((d Int)) (= (+ x y) (* 2 d))) 
-                        (iff (exists ((d Int)) (= x (* 2 d))) (exists ((d Int)) (= y (* 2 d))))))) (apply qe) (reset)
 
 (assert 
                  (forall ((n Int))
