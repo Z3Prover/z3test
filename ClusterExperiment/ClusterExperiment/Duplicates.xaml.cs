@@ -188,7 +188,7 @@ namespace ClusterExperiment
                         else if (resolveSlowest && all_ok)
                             Pick((int)(max_item)["ID"]);
                         else
-                            not_done = false;
+                            not_done = true;
                     }
                     else
                         not_done = false;
@@ -196,10 +196,10 @@ namespace ClusterExperiment
                 while (not_done && filenameps.Count() > 0);
 
                 Mouse.OverrideCursor = null;
-            }
 
-            if (filenameps.Count == 0)
-                Close();
+                if (not_done == false && filenameps.Count() == 0)
+                    Close();
+            }            
         }
 
         private void Pick(int id)
