@@ -110,7 +110,7 @@ namespace AlertLibrary
                 {
                     if (cat != "" && _alerts[cat].Count > 0)
                     {
-                        _reportTextHTML += "<h3><a href='" + _linkPage + "?cat=" + cat+ "' style='text-decoration:none'>" + cat + "</a></h3>";
+                        _reportTextHTML += "<h3><a href='" + _linkPage + "?job=" + id + "&cat=" + cat + "' style='text-decoration:none'>" + cat + "</a></h3>";
                         _reportTextHTML += MakeHTMLTable(cat);
                     }
                 }
