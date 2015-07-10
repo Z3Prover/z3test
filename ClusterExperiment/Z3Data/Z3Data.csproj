@@ -35,11 +35,11 @@
   <ItemGroup>
     <Reference Include="Microsoft.Hpc.Scheduler, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\Program Files\Microsoft HPC Pack 2008 R2 SDK\Bin\Microsoft.Hpc.Scheduler.dll</HintPath>
+      <HintPath>..\..\..\..\Program Files\Microsoft HPC Pack 2012 SDK\Bin\Microsoft.Hpc.Scheduler.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.Hpc.Scheduler.Properties, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\Program Files\Microsoft HPC Pack 2008 R2 SDK\Bin\Microsoft.Hpc.Scheduler.Properties.dll</HintPath>
+      <HintPath>..\..\..\..\Program Files\Microsoft HPC Pack 2012 SDK\Bin\Microsoft.Hpc.Scheduler.Properties.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -65,9 +65,7 @@
     <Compile Include="Sendmail.cs" />
     <Compile Include="Summary.cs" />
     <Compile Include="Tags.cs" />
-    <Compile Include="Timeline.cs">
-      <SubType>Component</SubType>
-    </Compile>
+    <Compile Include="Timeline.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Z3SQLInterface.cs" />
   </ItemGroup>
