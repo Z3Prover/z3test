@@ -528,13 +528,8 @@ namespace ClusterExperiment
                         if (cur.sat == 0 && cur.unsat == 0 && !rv_ok)
                             cur.runtime = error_line;
 
-                        if (cur.runtime < 0.1)
-                            cur.runtime = 0.1;
-
-                        if (fn.StartsWith("QF_BV-sat\\")) 
-                            fn = fn.Substring(10);
-                        else if (fn.StartsWith("QF_BV-sat-hard\\"))
-                            fn = fn.Substring(15);
+                        if (cur.runtime < 0.01)
+                            cur.runtime = 0.01;
 
                         if (!data.ContainsKey(fn))
                             data.Add(fn, new Dictionary<int, CSVDatum>());
