@@ -15,6 +15,12 @@ class TestDriver
             throw new TestFailedException("strings don't match");
     }
 
+    public static void CheckAssertion(string s, bool f)
+    {
+        if(!f)
+           throw new TestFailedException(string.Format("Assertion failed {0}", s));
+    }
+
     public static void CheckSAT(Status s)
     {
         if (s != Status.SATISFIABLE)
