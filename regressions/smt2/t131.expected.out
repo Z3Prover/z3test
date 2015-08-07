@@ -24,4 +24,4 @@ success
 (error "line 27 column 21: unknown sort 'BitVec'")
 success
 success
-(error "line 32 column 32: logic does not support casting operators")
+(error "line 32 column 30: Sort mismatch at argument #1 for function (declare-fun to_real (Int) Real) supplied sort is Real")
