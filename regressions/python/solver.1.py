@@ -17,7 +17,7 @@ unsat
 >>> s.check()
 sat
 >>> s.sexpr()
-'(solver)'
+''
 >>> s.add(False)
 >>> s.check()
 unsat
