@@ -533,7 +533,16 @@ namespace ClusterExperiment
 
                         if (!data.ContainsKey(fn))
                             data.Add(fn, new Dictionary<int, CSVDatum>());
-                        data[fn].Add(id, cur);
+                        if (data[fn].ContainsKey(id)) {
+                            System.Windows.MessageBox.Show(
+                                String.Format("Duplicate in job #{0} ignored", id), 
+                                "Duplicate warning", 
+                                MessageBoxButton.OK, 
+                                MessageBoxImage.Warning, 
+                                MessageBoxResult.OK);
+                        }
+                        else
+                            data[fn].Add(id, cur);
                     }
 
                     rd.Close();
