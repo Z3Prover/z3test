@@ -748,8 +748,11 @@ namespace worker
 
                 int excode = p.ExitCode;
 
+                // CMW: Are these exit codes reliable?
                 if (excode == -1073741515)
                     logInfrastructureError(j, "Binary could not be executed.");
+                else if (excode == -1073741571)
+                    exhausted_memory = true; // .NET StackOverflowException
 
                 double runtime = (exhausted_time ? e.timeout.TotalSeconds : processTime(p).TotalSeconds);
 
@@ -866,6 +869,8 @@ namespace worker
                 if (l.StartsWith("(error") &&
                     l.Contains("check annotation"))
                     res = 3;
+                else if (l.StartsWith("(error \"out of memory\")"))
+                    res = 6; 
             }
             return (res == -1) ? 4 : res; // no bug found means general error.
         }
