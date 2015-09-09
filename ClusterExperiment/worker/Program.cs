@@ -556,76 +556,6 @@ namespace worker
             catch { }
         }
 
-
-        // Try the following?
-        //private string ConvertToString(char[] buffer, int count)
-        //{
-        //    StringBuilder data = new StringBuilder(buffer.Length);
-
-        //    for (int i = 0; i < count; i++)
-        //    {
-        //        data.Append(buffer[i]);
-        //    }
-
-        //    return data.ToString();
-        //}
-
-        //void replace_checksat(Experiment e, Job j)
-        //{
-        //    string fn = j.localFilename;
-        //    string tr = "(check-sat)";
-        //    string rp = e.custom_check_sat;
-        //    int cl = tr.Length;
-
-        //    int ll = cl + rp.Length;
-        //    char[] buffer = new char[ll];
-
-        //    int index = 0;
-        //    int rl = tr.Length;
-
-        //    StreamReader streamReader = new StreamReader(fn);
-        //    StreamWriter streamWriter = new StreamWriter(fn + ".tmp");
-
-        //    while (true)
-        //    {
-        //        streamReader.DiscardBufferedData();
-        //        streamReader.BaseStream.Seek(index, SeekOrigin.Begin);
-        //        int count = streamReader.ReadBlock(buffer, 0, ll);
-        //        if (count == 0) break;
-
-        //        string data = ConvertToString(buffer, count);
-        //        bool isEndReplaced = false;
-        //        if (count >= cl)
-        //            isEndReplaced = (data.LastIndexOf(tr, cl) > 0);
-
-        //        data = data.Replace(tr, rp);
-        //        if (isEndReplaced)
-        //        {
-        //            streamWriter.Write(data);
-        //            index += count;
-        //        }
-        //        else
-        //        {
-        //            if (count >= cl)
-        //            {
-        //                streamWriter.Write(data.Substring(0, data.Length - rl));
-        //                index += cl;
-        //            }
-        //            else
-        //            {
-        //                streamWriter.Write(data);
-        //                index += cl;
-        //            }
-        //        }
-        //    }
-
-        //    streamReader.Close();
-        //    streamWriter.Close();
-
-        //    File.Delete(fn);
-        //    File.Move(fn + ".tmp", fn);
-        //}
-
         void runJob(Experiment e, Job j)
         {
         retry_from_scratch:
@@ -818,13 +748,26 @@ namespace worker
             while (!reader.EndOfStream)
             {
                 string l = reader.ReadLine(); // does not contain \r\n
-                if (l == "sat" || l == "SAT" || l == "SATISFIABLE") // || l == "VERIFICATION FAILED")
+                l.TrimEnd(' ');
+                if (l == "sat" || l == "SAT" || l == "SATISFIABLE" || l == "s SATISFIABLE" || l == "SuccessfulRuns = 1") // || l == "VERIFICATION FAILED")
                     res.sat++;
-                else if (l == "unsat" || l == "UNSAT" || l == "UNSATISFIABLE") // || l == "VERIFICATION SUCCESSFUL")
+                else if (l == "unsat" || l == "UNSAT" || l == "UNSATISFIABLE" || l == "s UNSATISFIABLE") // || l == "VERIFICATION SUCCESSFUL")
                     res.unsat++;
                 else if (l == "unknown" || l == "UNKNOWN" || l == "INDETERMINATE")
                     res.other++;
             }
+
+            //Regex re = new Regex(@"\(restarts: ([0-9]+) flips: ([0-9]+) fps: ([0-9.]+)\)");
+
+            //reader = new StreamReader(r.stderr);
+            //r.stderr.Seek(0, SeekOrigin.Begin);
+            //while (!reader.EndOfStream)
+            //{
+            //    Match m = re.Match(reader.ReadLine());
+            //    if (m.Success)
+            //        res.other += Convert.ToUInt32(m.Groups[2].Value);
+            //}
+
             return res;
         }
 
@@ -899,7 +842,7 @@ namespace worker
                 resultCode = 5; // TIMEOUT
             else if (r.exitCode == "MEMORY")
                 resultCode = 6; // MEMORYOUT
-            else if (r.exitCode == "0") // || r.exitCode == "10" || r.exitCode == "20")
+            else if (r.exitCode == "0" || r.exitCode == "10" || r.exitCode == "20")
             {
                 resultCode = 0; // OK
                 if (result.sat == 0 && result.unsat == 0 && result.other == 0)
@@ -920,8 +863,8 @@ namespace worker
             SqlParameter out_param = cmd.Parameters.Add("@STDOUT", System.Data.SqlDbType.VarChar);
             SqlParameter err_param = cmd.Parameters.Add("@STDERR", System.Data.SqlDbType.VarChar);
 
-            //if (true)
-            if (resultCode >= 3)
+            if (true)
+            // if (resultCode >= 3)
             {
                 r.stdout.Seek(0, SeekOrigin.Begin);
                 out_param.Value = new StreamReader(r.stdout).ReadToEnd();

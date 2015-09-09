@@ -261,7 +261,8 @@ namespace ClusterExperiment
                                                  dlg.txtParametricityTo.Text,
                                                  dlg.txtParametricityStep.Text,
                                                  dlg.chkJobgroup.IsChecked == true,
-                                                 dlg.txtJobgroup.Text);
+                                                 dlg.txtJobgroup.Text,
+                                                 dlg.txtJobTemplate.Text);
                 sdlg.Owner = this;
                 sdlg.ShowDialog();
 
@@ -1149,10 +1150,11 @@ namespace ClusterExperiment
                 int nworkers = Convert.ToInt32(dlg.txtNumWorkers.Text);
                 int jid = (int)rowView["ID"];
                 int priority = dlg.cmbPriority.SelectedIndex;
+                string jobTemplate = dlg.txtJobTemplate.Text;
 
                 Submission sdlg = null;
 
-                sdlg = new Submission(txtDatabase.Text, jid, rcluster, nworkers, priority);
+                sdlg = new Submission(txtDatabase.Text, jid, rcluster, jobTemplate, nworkers, priority);
                 sdlg.Owner = this;
                 sdlg.ShowDialog();
 
@@ -1333,8 +1335,9 @@ namespace ClusterExperiment
                     int numWorkers = Convert.ToInt32(dlg.txtNumWorkers.Text);
                     int priority = dlg.cmbPriority.SelectedIndex;
                     string executor = dlg.txtExecutor.Text;
+                    string jobTemplate = dlg.txtJobTemplate.Text;
 
-                    Submission sdlg = new Submission(txtDatabase.Text, jobid, cluster, numWorkers, priority, executor);
+                    Submission sdlg = new Submission(txtDatabase.Text, jobid, cluster, jobTemplate, numWorkers, priority, executor);
                     sdlg.Owner = this;
                     sdlg.ShowDialog();
 
@@ -1346,6 +1349,7 @@ namespace ClusterExperiment
                         break;
                     }
                 }
+
                 updateState();
             }
         }
@@ -1562,11 +1566,12 @@ namespace ClusterExperiment
                             string locality = null;
                             int clusterJobID = 0;
                             string executor = null;
+                            string jobTemplate = null;
 
                             int priority = 2;
                             int min = 1, max = 100;
 
-                            SqlCommand cmd = new SqlCommand("SELECT SharedDir, Cluster, Nodegroup, Locality, ClusterJobID, Executor FROM Experiments WHERE ID=" + eid + ";", sql);
+                            SqlCommand cmd = new SqlCommand("SELECT SharedDir, Cluster, Nodegroup, Locality, ClusterJobID, Executor, JobTemplate FROM Experiments WHERE ID=" + eid + ";", sql);
                             cmd.CommandTimeout = 0;
                             SqlDataReader r = cmd.ExecuteReader();
                             while (r.Read())
@@ -1577,6 +1582,7 @@ namespace ClusterExperiment
                                 locality = (string)r[3];
                                 clusterJobID = (int)r[4];
                                 executor = (string)r[5];
+                                jobTemplate = (string)r[6];
                             }
                             r.Close();
 
@@ -1655,7 +1661,7 @@ namespace ClusterExperiment
                                 sw.SubmitHPCJob(txtDatabase.Text, true, eid,
                                                 cluster, nodegroup, priority,
                                                 locality, min.ToString(), max.ToString(),
-                                                sharedDir, executor);
+                                                sharedDir, executor, jobTemplate);
                             }));
 
                             if (w.WorkerReportsProgress)
@@ -1697,7 +1703,8 @@ namespace ClusterExperiment
                                                  dlg.cmbNodeGroup.Text,
                                                  dlg.txtExecutor.Text,
                                                  dlg.txtLimitMin.Text,
-                                                 dlg.txtLimitMax.Text);
+                                                 dlg.txtLimitMax.Text,
+                                                 dlg.txtJobTemplate.Text);
 
                 sdlg.Owner = this;
                 sdlg.ShowDialog();

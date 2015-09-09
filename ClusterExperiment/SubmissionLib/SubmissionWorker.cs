@@ -154,6 +154,7 @@ namespace SubmissionLib
                                                            "Binary INT NOT NULL, " +
                                                            "Parameters VARCHAR(512), " +
                                                            "Cluster VARCHAR(512), " +
+                                                           "JobTemplate VARCHAR(256), " +
                                                            "Nodegroup VARCHAR(256), " +
                                                            "Locality VARCHAR(256), " +
                                                            "Creator VARCHAR(256) NOT NULL DEFAULT USER_NAME()," +
@@ -330,6 +331,7 @@ namespace SubmissionLib
                                    string parameters, string cluster, string nodegroup, string locality,
                                    string limitsMin, string limitsMax,
                                    string username, int priority, string extension, string note,
+                                   string jobTemplate,
                                    ref bool haveBinId, ref int binId, ref string sExecutor)
         {
             // Wait for binID
@@ -387,13 +389,22 @@ namespace SubmissionLib
             cmd.CommandTimeout = 0;
             cmd.ExecuteNonQuery();
 
+            if (jobTemplate != null && jobTemplate != "") {
+                cmd = new SqlCommand("UPDATE Experiments SET JobTemplate='" + jobTemplate + "' WHERE ID='" + newID.ToString() + "'", sql);
+                cmd.CommandTimeout = 0;
+                cmd.ExecuteNonQuery();
+            }
+
             return newID;
         }
 
-        public void SubmitCatchall(string db, string cluster, string locality, int priority, string nodegroup, string executor, string min, string max)
+        public void SubmitCatchall(string db, string cluster, string locality, int priority, string nodegroup, string executor, string min, string max, string jobTemplate)
         {            
             scheduler.Connect(cluster);
             ISchedulerJob hpcJob = scheduler.CreateJob();
+            if (jobTemplate != null) 
+                hpcJob.SetJobTemplate(jobTemplate);
+
             try
             {
                 if (nodegroup != "<Any>")
@@ -473,7 +484,9 @@ namespace SubmissionLib
 
         public void SubmitHPCJob(string db, bool isNew, int newID, string cluster, string nodegroup, int priority,
                                  string locality, string limitsMin, string limitsMax, string sharedDir,
-                                 string executor, int nworkers = 0)
+                                 string executor, 
+                                 string jobTemplate,
+                                 int nworkers = 0)
         {
             string limitsMinTrimmed = limitsMin.Trim();
             string limitsMaxTrimmed = limitsMax.Trim();
@@ -483,6 +496,9 @@ namespace SubmissionLib
 
             scheduler.Connect(cluster);
             ISchedulerJob hpcJob = scheduler.CreateJob();
+            if (jobTemplate != null)
+                hpcJob.SetJobTemplate(jobTemplate);
+
             try
             {
                 if (nodegroup != "<Any>")
@@ -608,7 +624,14 @@ namespace SubmissionLib
                 cmd = new SqlCommand("DELETE FROM JobQueue WHERE ExperimentID=" + newID + "; DELETE FROM Experiments WHERE ID=" + newID, sql);
                 cmd.CommandTimeout = 0;
                 cmd.ExecuteNonQuery();
-                scheduler.CancelJob(hpcJob.Id, "Aborted.");
+                if (hpcJob.State == JobState.Configuring ||
+                    hpcJob.State == JobState.ExternalValidation ||
+                    hpcJob.State == JobState.Queued ||                     
+                    hpcJob.State == JobState.Running ||
+                    hpcJob.State == JobState.Submitted ||
+                    hpcJob.State == JobState.Validating)
+                    try { scheduler.CancelJob(hpcJob.Id, "Aborted."); }
+                    catch (Exception) { }                    
                 throw ex;
             }
 
@@ -831,7 +854,7 @@ namespace SubmissionLib
             fromSQL.Close();
         }
 
-        public void Reinforce(string DB, int jobID, string reinforcementCluster, int nworkers, int priority)
+        public void Reinforce(string DB, int jobID, string reinforcementCluster, int nworkers, int priority, string jobTemplate)
         {
             ReportProgress(0);
 
@@ -849,7 +872,7 @@ namespace SubmissionLib
 
                 r.Close();
 
-                SubmitHPCJob(DB, false, jobID, reinforcementCluster, nodegroup, priority, locality, "1", nworkers.ToString(), sharedDir, executor);
+                SubmitHPCJob(DB, false, jobID, reinforcementCluster, nodegroup, priority, locality, "1", nworkers.ToString(), sharedDir, executor, jobTemplate);
 
                 ReportProgress(100);
             }

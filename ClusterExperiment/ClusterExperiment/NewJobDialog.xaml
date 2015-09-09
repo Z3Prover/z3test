@@ -1,23 +1,11 @@
 ﻿<Window x:Class="ClusterExperiment.NewJobDialog"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="New Job ..." Height="600" Width="545" Loaded="Window_Loaded" WindowStartupLocation="CenterOwner" ShowInTaskbar="False" ResizeMode="NoResize">
+        Title="New Job ..." Height="707" Width="545" Loaded="Window_Loaded" WindowStartupLocation="CenterOwner" ShowInTaskbar="False" ResizeMode="NoResize">
     <Grid VerticalAlignment="Stretch">
         <Grid HorizontalAlignment="Stretch" Margin="10" Name="grid" VerticalAlignment="Stretch">
             <Grid.RowDefinitions>
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="Auto" />                
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />                                
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
@@ -30,123 +18,190 @@
                 <ColumnDefinition Width="30" />
             </Grid.ColumnDefinitions>
 
-            <Label Content="Cluster Headnode:" Height="28" HorizontalAlignment="Left" Name="label1" VerticalAlignment="Center" Grid.Row="0"/>
-            <TextBox Height="23" HorizontalAlignment="Stretch" Name="txtCluster" VerticalAlignment="Center" Grid.Row="0"  Grid.Column="1" TabIndex="0" ToolTip="The headnode of the cluster." />
+            <GroupBox Grid.Row="0" Grid.ColumnSpan="3">
+                <GroupBox.Header>Job properties</GroupBox.Header>
+                <Grid Name="grdJob"  VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="180" />
+                        <ColumnDefinition MinWidth="160" />
+                        <ColumnDefinition Width="30" />
+                    </Grid.ColumnDefinitions>
 
-            <Label Content="Shared SMTLIB Directory:" Height="28" HorizontalAlignment="Left" Name="label3" VerticalAlignment="Center" Grid.Row="1" />
-            <TextBox Height="23" HorizontalAlignment="Stretch" Name="txtSharedDir" VerticalAlignment="Center" Grid.Row="1"  Grid.Column="1" TabIndex="1" ToolTip="A shared directory containing the SMT benchmark files. All cluster nodes must have access to this path." />
-            <Button Height="23" Width="Auto" HorizontalAlignment="Stretch" Name="btnSelectSharedDir" VerticalAlignment="Stretch" Grid.Row="1" Grid.Column="2" TabIndex="2" Click="btnSelectSharedDir_Click">
-                <Image Source="/ClusterExperiment;component/Images/taskbrowse.ico" />
-            </Button>
+                    <Label Content="Cluster Headnode:" Height="28" HorizontalAlignment="Left" Name="lblHeadnode" VerticalAlignment="Center" Grid.Row="0"/>
+                    <TextBox Height="23" HorizontalAlignment="Stretch" Name="txtCluster" VerticalAlignment="Center" Grid.Row="0"  Grid.Column="1" TabIndex="0" ToolTip="The headnode of the cluster." />
 
-            <Label Content="Benchmark extension:" Height="28" HorizontalAlignment="Left" Name="label14" VerticalAlignment="Center" Grid.Row="2" Grid.Column="0"/>
-            <TextBox Height="23" HorizontalAlignment="Stretch" Name="txtExtension" VerticalAlignment="Center" Grid.Row="2" Grid.Column="1" TabIndex="3" ToolTip="The extension of benchmark files, e.g., smt2 for SMT-Lib version 2 files." />
-                        
-            <Label Content="Worker Binary:" Height="28" HorizontalAlignment="Left" Name="label6" VerticalAlignment="Center" Grid.Row="4" Grid.Column="0"/>
-            <TextBox Height="23" HorizontalAlignment="Stretch" Name="txtExecutor" VerticalAlignment="Center" Grid.Row="4" Grid.Column="1" TabIndex="5" ToolTip="Local copy of the worker binary. This will be copied to the shared directory." />
-            <Button Height="23" Width="Auto" HorizontalAlignment="Stretch" Name="btnSelectExecutor" VerticalAlignment="Stretch" Grid.Row="4" Grid.Column="2" TabIndex="6" Click="btnSelectExecutor_Click">
-                <Image Source="/ClusterExperiment;component/Images/taskbrowse.ico" />
-            </Button>
-
-            <Label Content="Nodegroup:" Height="28" HorizontalAlignment="Stretch" Name="label7" VerticalAlignment="Center" Grid.Row="5" Grid.Column="0"/>
-            <TextBox Height="23" HorizontalAlignment="Stretch" Name="cmbNodeGroup" VerticalAlignment="Top" Width="Auto" Grid.Row="5" Grid.Column="1" TabIndex="7" IsReadOnly="True" ToolTip="A nodegroup of the cluster to run the job on." />
-            <Button Height="23" Width="Auto" HorizontalAlignment="Stretch" Name="btnSelectNodeGroup" VerticalAlignment="Stretch" Grid.Row="5" Grid.Column="2" TabIndex="8" Click="btnSelectNodeGroup_Click">
-                <Image Source="/ClusterExperiment;component/Images/taskbrowse.ico" />
-            </Button>
-                        
-            <Label Content="SMT Categories:" Height="28" HorizontalAlignment="Left" Name="label8" VerticalAlignment="Center" Grid.Row="6" Grid.Column="0"/>
-            <TextBox Height="23" HorizontalAlignment="Stretch" Name="txtCategories" VerticalAlignment="Top" Width="Auto" Grid.Row="6" Grid.Column="1" TabIndex="9" ToolTip="The SMT categories to draw the benchmarks from." />
-            <Button Height="23" Width="Auto" HorizontalAlignment="Stretch" Name="btnSelectCategories" VerticalAlignment="Stretch" Grid.Row="6" Grid.Column="3" TabIndex="10" Click="btnSelectCategories_Click">
-                <Image Source="/ClusterExperiment;component/Images/taskbrowse.ico" />
-            </Button>
-
-            <Label Content="Executable:" Height="28" HorizontalAlignment="Left" Name="label9" VerticalAlignment="Center" Grid.Row="7" Grid.Column="0"/>
-            <Grid Grid.Row="7" Grid.Column="1">
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="Auto" />
-                </Grid.RowDefinitions>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="Auto"/>
-                    <ColumnDefinition Width="*"/>
-                </Grid.ColumnDefinitions>
-                
-            <RadioButton GroupName="WhichBinary" Content="Use most recent" Name="chkMostRecentBinary" Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" Checked="chkMostRecentBinary_Checked" />
-            <RadioButton GroupName="WhichBinary" Content="New:" Name="chkNewBinary" Grid.Row="1" Grid.Column="0" Margin="0,0,10,0" Checked="chkNewBinary_Checked" />
-            <TextBox Height="23" HorizontalAlignment="Stretch" Name="txtExecutable" VerticalAlignment="Center" TabIndex="11" Grid.Row="1" Grid.Column="1" ToolTip="The Z3 executable." />
-            </Grid>
-            <Button Height="23" HorizontalAlignment="Stretch" Name="btnSelectExecutable" VerticalAlignment="Stretch" TabIndex="12" Grid.Row="7" Grid.Column="2" Click="btnSelectExecutable_Click">
-                <Image Source="/ClusterExperiment;component/Images/taskbrowse.ico" />
-            </Button>
-
-            <Label Content="Job locality:" Height="28" HorizontalAlignment="Left" Name="label10" VerticalAlignment="Center" Grid.Row="8" Grid.Column="0"/>
-            <ComboBox Height="23" HorizontalAlignment="Stretch" Name="cmbLocality" VerticalAlignment="Top" Width="Auto" Grid.Row="8" Grid.Column="1" SelectedIndex="0" TabIndex="13" SelectedItem="0" ToolTip="The job locality." SelectionChanged="cmbLocality_SelectionChanged">
-                <ComboBoxItem Content="Core" />
-                <ComboBoxItem Content="Socket" />
-                <ComboBoxItem Content="Node" />
-            </ComboBox>
-
-            <Label Content="Node/Socket/Core Limits:" Height="23" HorizontalAlignment="Left" Name="lblLimits" VerticalAlignment="Center" Grid.Row="9" Grid.Column="0"/>
-            <StackPanel Orientation="Horizontal" Grid.Row="9" Grid.Column="1">
-                <Label Content="Use at least"/>
-                <TextBox Name="txtLimitMin" Width="40" Height="23" ToolTip="Require at least &lt;n&gt; computing elements. This helps the scheduler to allocate more than just 1 element when the job starts."/>
-                <Label Content="and at most"/>
-                <TextBox Name="txtLimitMax" Width="40" Height="23" ToolTip="Use at most &lt;n&gt; computing elements. This helps to avoid situations where we have few benchmarks, but the cluster is not busy." LostFocus="txtLimitMax_LostFocus"/>
-                <Label Content="Sockets" Name="lblLimitsUnit"/>
-            </StackPanel>
-
-            <Label Content="Priority:" Height="28" HorizontalAlignment="Left" Name="label13" VerticalAlignment="Center" Grid.Row="10" Grid.Column="0"/>
-            <ComboBox Height="23" HorizontalAlignment="Stretch" Name="cmbPriority" VerticalAlignment="Top" Width="Auto" Grid.Row="10" Grid.Column="1" SelectedIndex="0" TabIndex="13" SelectedItem="0" ToolTip="The job priority.">
-                <ComboBoxItem Content="Lowest" />
-                <ComboBoxItem Content="BelowNormal" />
-                <ComboBoxItem Content="Normal" />
-                <ComboBoxItem Content="AboveNormal" />
-                <ComboBoxItem Content="Highest" />
-            </ComboBox>
-            
-            <Label Content="Parameters:" Height="28" HorizontalAlignment="Left" Name="labelParameters" VerticalAlignment="Center" Grid.Row="11" Grid.Column="0"/>
-            <TextBox Height="23" HorizontalAlignment="Stretch" Name="txtParameters" VerticalAlignment="Center" TabIndex="14" Grid.Row="11" Grid.Column="1" ToolTip="Parameteres for Z3." />
-
-            <Label Content="Parametricity:" Height="28" HorizontalAlignment="Left" Name="labelParametricity" VerticalAlignment="Center" Grid.Row="12" Grid.Column="0"/>
-            <GroupBox Name="grpParametricity" Grid.Row="12" Grid.Column="1" Height="Auto">
-                <GroupBox.Header>
-                    <CheckBox Name="chkParametricity" Content="Enable" Checked="chkParametricity_Checked" Unchecked="chkParametricity_Unchecked"></CheckBox>
-                </GroupBox.Header>
-                <StackPanel>
-                <TextBlock Text="Replace {0} in `Parameters' by numbers"/>
-                    <StackPanel Orientation="Horizontal">
-                        <Label Content="from:"/>
-                        <TextBox Name="txtParametricityFrom" Width="50" IsEnabled="False" />
-                        <Label Content="to:"/>
-                        <TextBox Name="txtParametricityTo" Width="50" IsEnabled="False" />
-                        <Label Content="step:"/>
-                        <TextBox Name="txtParametricityStep" Width="50" IsEnabled="False" />
+                    <Label Content="Job template:" Height="28" HorizontalAlignment="Left" Name="lblTemplate" VerticalAlignment="Center" Grid.Row="1"/>
+                    <StackPanel Grid.Row="1"  Grid.Column="1">
+                        <TextBox Height="23" HorizontalAlignment="Stretch" Name="txtJobTemplate" VerticalAlignment="Center" TabIndex="0" ToolTip="The headnode of the cluster." />
+                        <TextBlock>
+                            <Hyperlink NavigateUri="http://gcd-wiki/index.php?title=HPC_Job_Scheduling_Best_Practices" RequestNavigate="Hyperlink_RequestNavigate">
+                                Click here for job template info in the GCD Wiki. 
+                            </Hyperlink>
+                        </TextBlock>
                     </StackPanel>
-                    <GroupBox>
-                        <GroupBox.Header>
-                            <CheckBox Name="chkJobgroup" Content="Create jobgroup" Checked="chkJobgroup_Checked" Unchecked="chkJobgroup_Unchecked" IsEnabled="False"></CheckBox>
-                        </GroupBox.Header>
-                        <TextBox Name="txtJobgroup" Width="255" IsEnabled="False" />
-                    </GroupBox>
-                </StackPanel>
+                    <Button Height="23" Width="Auto" HorizontalAlignment="Stretch" Name="btnSelectTemplate" VerticalAlignment="Stretch" Grid.Row="1" Grid.Column="2" TabIndex="6" Click="btnSelectTemplate_Click">
+                        <Image Source="/ClusterExperiment;component/Images/taskbrowse.ico" />
+                    </Button>
+
+                    <Label Content="Nodegroup:" Height="28" HorizontalAlignment="Stretch" Name="label7" VerticalAlignment="Center" Grid.Row="2" Grid.Column="0"/>
+                    <TextBox Height="23" HorizontalAlignment="Stretch" Name="cmbNodeGroup" VerticalAlignment="Top" Width="Auto" Grid.Row="2" Grid.Column="1" TabIndex="7" IsReadOnly="True" ToolTip="A nodegroup of the cluster to run the job on." />
+                    <Button Height="23" Width="Auto" HorizontalAlignment="Stretch" Name="btnSelectNodeGroup" VerticalAlignment="Stretch" Grid.Row="2" Grid.Column="2" TabIndex="8" Click="btnSelectNodeGroup_Click">
+                        <Image Source="/ClusterExperiment;component/Images/taskbrowse.ico" />
+                    </Button>
+
+                    <Label Content="Job locality:" Height="28" HorizontalAlignment="Left" Name="label10" VerticalAlignment="Center" Grid.Row="3" Grid.Column="0"/>
+                    <ComboBox Height="23" HorizontalAlignment="Stretch" Name="cmbLocality" VerticalAlignment="Top" Width="Auto" Grid.Row="3" Grid.Column="1" SelectedIndex="0" TabIndex="13" SelectedItem="0" ToolTip="The job locality." SelectionChanged="cmbLocality_SelectionChanged">
+                        <ComboBoxItem Content="Core" />
+                        <ComboBoxItem Content="Socket" />
+                        <ComboBoxItem Content="Node" />
+                    </ComboBox>
+
+                    <Label Content="Node/Socket/Core Limits:" Height="23" HorizontalAlignment="Left" Name="lblLimits" VerticalAlignment="Center" Grid.Row="4" Grid.Column="0"/>
+                    <StackPanel Orientation="Horizontal" Grid.Row="4" Grid.Column="1">
+                        <Label Content="Use at least"/>
+                        <TextBox Name="txtLimitMin" Width="40" Height="23" ToolTip="Require at least &lt;n&gt; computing elements. This helps the scheduler to allocate more than just 1 element when the job starts."/>
+                        <Label Content="and at most"/>
+                        <TextBox Name="txtLimitMax" Width="40" Height="23" ToolTip="Use at most &lt;n&gt; computing elements. This helps to avoid situations where we have few benchmarks, but the cluster is not busy." LostFocus="txtLimitMax_LostFocus"/>
+                        <Label Content="Sockets" Name="lblLimitsUnit"/>
+                    </StackPanel>
+
+                    <Label Content="Priority:" Height="28" HorizontalAlignment="Left" Name="label13" VerticalAlignment="Center" Grid.Row="5" Grid.Column="0"/>
+                    <ComboBox Height="23" HorizontalAlignment="Stretch" Name="cmbPriority" VerticalAlignment="Top" Width="Auto" Grid.Row="5" Grid.Column="1" SelectedIndex="0" TabIndex="13" SelectedItem="0" ToolTip="The job priority.">
+                        <ComboBoxItem Content="Lowest" />
+                        <ComboBoxItem Content="BelowNormal" />
+                        <ComboBoxItem Content="Normal" />
+                        <ComboBoxItem Content="AboveNormal" />
+                        <ComboBoxItem Content="Highest" />
+                    </ComboBox>
+
+                    <Label Content="Worker Binary:" Height="28" HorizontalAlignment="Left" Name="label6" VerticalAlignment="Center" Grid.Row="6" Grid.Column="0"/>
+                    <TextBox Height="23" HorizontalAlignment="Stretch" Name="txtExecutor" VerticalAlignment="Center" Grid.Row="6" Grid.Column="1" TabIndex="5" ToolTip="Local copy of the worker binary. This will be copied to the shared directory." />
+                    <Button Height="23" Width="Auto" HorizontalAlignment="Stretch" Name="btnSelectExecutor" VerticalAlignment="Stretch" Grid.Row="6" Grid.Column="2" TabIndex="6" Click="btnSelectExecutor_Click">
+                        <Image Source="/ClusterExperiment;component/Images/taskbrowse.ico" />
+                    </Button>
+                </Grid>
             </GroupBox>
 
-            <Label Content="Memory limit:" Height="28" HorizontalAlignment="Left" Name="labelMemout" VerticalAlignment="Center" Grid.Row="13" Grid.Column="0"/>
-            <TextBox Height="23" HorizontalAlignment="Stretch" Name="txtMemout" VerticalAlignment="Center" TabIndex="15" Grid.Row="13" Grid.Column="1" ToolTip="The memory limit (per benchmark)." />
-            <Label Content="b" HorizontalAlignment="Left" Grid.Row="12" Grid.Column="2"/>
+            
+            <GroupBox Grid.Row="1" Grid.ColumnSpan="3">
+                <GroupBox.Header>Experiment properties</GroupBox.Header>
+                <Grid Name="grdData"  VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="180" />
+                        <ColumnDefinition MinWidth="160" />
+                        <ColumnDefinition Width="30" />
+                    </Grid.ColumnDefinitions>
 
-            <Label Content="Timeout:" Height="28" HorizontalAlignment="Left" Name="label12" VerticalAlignment="Center" Grid.Row="14" Grid.Column="0"/>
-            <TextBox Height="23" HorizontalAlignment="Stretch" Name="txtTimeout" VerticalAlignment="Center" TabIndex="15" Grid.Row="14" Grid.Column="1" ToolTip="The time limit (per benchmark)." />
-            <Label Content="sec" HorizontalAlignment="Left" Grid.Row="13" Grid.Column="2"/>
+                    <Label Content="Shared SMTLIB Directory:" Height="28" HorizontalAlignment="Left" Name="label3" VerticalAlignment="Center" Grid.Row="0" />
+                    <TextBox Height="23" HorizontalAlignment="Stretch" Name="txtSharedDir" VerticalAlignment="Center" Grid.Row="0"  Grid.Column="1" TabIndex="1" ToolTip="A shared directory containing the SMT benchmark files. All cluster nodes must have access to this path." />
+                    <Button Height="23" Width="Auto" HorizontalAlignment="Stretch" Name="btnSelectSharedDir" VerticalAlignment="Stretch" Grid.Row="0" Grid.Column="2" TabIndex="2" Click="btnSelectSharedDir_Click">
+                        <Image Source="/ClusterExperiment;component/Images/taskbrowse.ico" />
+                    </Button>
 
-            <Label Content="Note:" Height="28" HorizontalAlignment="Left" Name="labelNote" VerticalAlignment="Center" Grid.Row="15" Grid.Column="0"/>
-            <TextBox Height="23" HorizontalAlignment="Stretch" Name="txtNote" VerticalAlignment="Center" TabIndex="15" Grid.Row="15" Grid.Column="1" ToolTip="A descriptive note, if you like." MaxLines="1" MaxLength="256" />
+                    <Label Content="Benchmark extension:" Height="28" HorizontalAlignment="Left" Name="label14" VerticalAlignment="Center" Grid.Row="1" Grid.Column="0"/>
+                    <TextBox Height="23" HorizontalAlignment="Stretch" Name="txtExtension" VerticalAlignment="Center" Grid.Row="1" Grid.Column="1" TabIndex="3" ToolTip="The extension of benchmark files, e.g., smt2 for SMT-Lib version 2 files." />
 
-            <StackPanel Grid.Column="1" Grid.Row="17" Grid.ColumnSpan="2" Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Stretch">
+                    <Label Content="SMT Categories:" Height="28" HorizontalAlignment="Left" Name="label8" VerticalAlignment="Center" Grid.Row="2" Grid.Column="0"/>
+                    <TextBox Height="23" HorizontalAlignment="Stretch" Name="txtCategories" VerticalAlignment="Top" Width="Auto" Grid.Row="2" Grid.Column="1" TabIndex="9" ToolTip="The SMT categories to draw the benchmarks from." />
+                    <Button Height="23" Width="Auto" HorizontalAlignment="Stretch" Name="btnSelectCategories" VerticalAlignment="Stretch" Grid.Row="2" Grid.Column="3" TabIndex="10" Click="btnSelectCategories_Click">
+                        <Image Source="/ClusterExperiment;component/Images/taskbrowse.ico" />
+                    </Button>
+
+                    <Label Content="Executable:" Height="28" HorizontalAlignment="Left" Name="label9" VerticalAlignment="Center" Grid.Row="3" Grid.Column="0"/>
+                    <Grid Grid.Row="3" Grid.Column="1">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <RadioButton GroupName="WhichBinary" Content="Use most recent" Name="chkMostRecentBinary" Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" Checked="chkMostRecentBinary_Checked" />
+                        <RadioButton GroupName="WhichBinary" Content="New:" Name="chkNewBinary" Grid.Row="1" Grid.Column="0" Margin="0,0,10,0" Checked="chkNewBinary_Checked" />
+                        <TextBox Height="23" HorizontalAlignment="Stretch" Name="txtExecutable" VerticalAlignment="Center" TabIndex="11" Grid.Row="1" Grid.Column="1" ToolTip="The Z3 executable." />
+                    </Grid>
+                    <Button Height="23" HorizontalAlignment="Stretch" Name="btnSelectExecutable" VerticalAlignment="Stretch" TabIndex="12" Grid.Row="3" Grid.Column="2" Click="btnSelectExecutable_Click">
+                        <Image Source="/ClusterExperiment;component/Images/taskbrowse.ico" />
+                    </Button>
+                    
+                    <Label Content="Parameters:" Height="28" HorizontalAlignment="Left" Name="labelParameters" VerticalAlignment="Center" Grid.Row="4" Grid.Column="0"/>
+                    <TextBox Height="23" HorizontalAlignment="Stretch" Name="txtParameters" VerticalAlignment="Center" TabIndex="14" Grid.Row="4" Grid.Column="1" ToolTip="Parameteres for Z3." />
+
+                    <Label Content="Parametricity:" Height="28" HorizontalAlignment="Left" Name="labelParametricity" VerticalAlignment="Center" Grid.Row="5" Grid.Column="0"/>
+                    <GroupBox Name="grpParametricity" Grid.Row="5" Grid.Column="1" Height="Auto">
+                        <GroupBox.Header>
+                            <CheckBox Name="chkParametricity" Content="Enable" Checked="chkParametricity_Checked" Unchecked="chkParametricity_Unchecked"></CheckBox>
+                        </GroupBox.Header>
+                        <StackPanel>
+                            <TextBlock Text="Replace {0} in `Parameters' by numbers"/>
+                            <StackPanel Orientation="Horizontal">
+                                <Label Content="from:"/>
+                                <TextBox Name="txtParametricityFrom" Width="50" IsEnabled="False" />
+                                <Label Content="to:"/>
+                                <TextBox Name="txtParametricityTo" Width="50" IsEnabled="False" />
+                                <Label Content="step:"/>
+                                <TextBox Name="txtParametricityStep" Width="50" IsEnabled="False" />
+                            </StackPanel>
+                            <GroupBox>
+                                <GroupBox.Header>
+                                    <CheckBox Name="chkJobgroup" Content="Create jobgroup" Checked="chkJobgroup_Checked" Unchecked="chkJobgroup_Unchecked" IsEnabled="False"></CheckBox>
+                                </GroupBox.Header>
+                                <TextBox Name="txtJobgroup" Width="255" IsEnabled="False" />
+                            </GroupBox>
+                        </StackPanel>
+                    </GroupBox>
+
+                    <Label Content="Memory limit:" Height="28" HorizontalAlignment="Left" Name="labelMemout" VerticalAlignment="Center" Grid.Row="6" Grid.Column="0"/>
+                    <TextBox Height="23" HorizontalAlignment="Stretch" Name="txtMemout" VerticalAlignment="Center" TabIndex="15" Grid.Row="6" Grid.Column="1" ToolTip="The memory limit (per benchmark)." />
+                    <Label Content="b" HorizontalAlignment="Left" Grid.Row="6" Grid.Column="2"/>
+
+                    <Label Content="Timeout:" Height="28" HorizontalAlignment="Left" Name="label12" VerticalAlignment="Center" Grid.Row="7" Grid.Column="0"/>
+                    <TextBox Height="23" HorizontalAlignment="Stretch" Name="txtTimeout" VerticalAlignment="Center" TabIndex="15" Grid.Row="7" Grid.Column="1" ToolTip="The time limit (per benchmark)." />
+                    <Label Content="sec" HorizontalAlignment="Left" Grid.Row="7" Grid.Column="2"/>
+                </Grid>
+            </GroupBox>
+
+            <GroupBox Grid.Row="2" Grid.ColumnSpan="3" Height="64">
+                <GroupBox.Header>Other properties</GroupBox.Header>
+                <Grid Grid.Row="3" Grid.Column="1" Height="28">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <Label Content="Note:" Height="28" HorizontalAlignment="Left" Name="labelNote" VerticalAlignment="Center" Grid.Row="0" Grid.Column="0"/>
+                    <TextBox Height="23" HorizontalAlignment="Stretch" Name="txtNote" VerticalAlignment="Center" TabIndex="15" Grid.Row="0" Grid.Column="1" ToolTip="A descriptive note, if you like." MaxLines="1" MaxLength="256" />
+                </Grid>
+            </GroupBox>            
+
+            <StackPanel Grid.Column="1" Grid.Row="5" Grid.ColumnSpan="2" Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Stretch">
                 <Button Name="okButton" IsDefault="True" Width="80" Click="okButton_Click" TabIndex="16">OK</Button>
                 <Button Name="cancelButton" IsCancel="True" Width="80" Click="cancelButton_Click" TabIndex="17">Cancel</Button>
             </StackPanel>
-            
+
         </Grid>
     </Grid>
 </Window>

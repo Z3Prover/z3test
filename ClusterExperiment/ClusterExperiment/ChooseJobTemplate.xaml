@@ -1,0 +1,17 @@
+﻿<Window x:Class="ClusterExperiment.ChooseJobTemplate"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Select job template..." Height="300" Width="300" WindowStartupLocation="CenterOwner" ShowInTaskbar="False">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />            
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition MinWidth="30" />            
+        </Grid.ColumnDefinitions>
+        
+        <Label Height="26" Name="lblState" Content="Connecting..." HorizontalAlignment="Stretch" Grid.Row="0" Grid.Column="0" />
+        <ListBox HorizontalAlignment="Stretch" Margin="0,0,0,0" Name="lstTemplates" VerticalAlignment="Stretch" Grid.Row="1" Grid.Column="0" MouseDoubleClick="lstTemplates_MouseDoubleClick" />
+    </Grid>
+</Window>

@@ -29,6 +29,7 @@ namespace Z3Data
         public string note = "";
         public string minResources = "";
         public string maxResources = "";
+        public string jobTemplate = "";
 
         // Where is Z3?
         public string z3_drop_dir = "";
@@ -85,6 +86,7 @@ namespace Z3Data
                                             throw new Exception("Invalid cluster config");
                                         minResources = reader.GetAttribute("minResources");
                                         maxResources = reader.GetAttribute("maxResources");
+                                        jobTemplate = reader.GetAttribute("jobTemplate");
                                     }
                                     break;
                                 case "AlternativeCluster":

@@ -35,13 +35,16 @@ namespace ClusterExperiment
         cmbPriority.SelectedIndex = (int)Registry.GetValue(keyName, "RecoveryPriority", (int)2);
         string default_excutor = (string)Registry.GetValue(keyName, "Executable", "");
         txtExecutor.Text = (string)Registry.GetValue(keyName, "RecoveryExecutor", default_excutor);
+        txtJobTemplate.Text = (string)Registry.GetValue(keyName, "RecoveryJobTemplate", "");
       }
+
       private void okButton_Click(object sender, RoutedEventArgs e)
       {
         Registry.SetValue(keyName, "RecoveryCluster", txtRCluster.Text, RegistryValueKind.String);
         Registry.SetValue(keyName, "RecoveryNumWorkers", txtNumWorkers.Text, RegistryValueKind.String);
         Registry.SetValue(keyName, "RecoveryPriority", cmbPriority.SelectedIndex, RegistryValueKind.DWord);
         Registry.SetValue(keyName, "RecoveryExecutor", txtExecutor.Text, RegistryValueKind.String);
+        Registry.SetValue(keyName, "RecoveryJobTemplate", txtJobTemplate.Text, RegistryValueKind.String);
         
         DialogResult = true;
       }

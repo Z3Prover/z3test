@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.IO;
@@ -11,6 +12,7 @@ using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using System.Windows.Navigation;
 using System.Windows.Threading;
 using System.Windows.Forms;
 using Microsoft.Win32;
@@ -75,6 +77,8 @@ namespace ClusterExperiment
 
             txtJobgroup.Text = (string)Registry.GetValue(keyName, "JobgroupName", "");
 
+            txtJobTemplate.Text = (string)Registry.GetValue(keyName, "JobTemplate", "Default");
+
             Mouse.SetCursor(System.Windows.Input.Cursors.Arrow);
         }
 
@@ -86,7 +90,7 @@ namespace ClusterExperiment
             Registry.SetValue(keyName, "Parameters", txtParameters.Text, RegistryValueKind.String);
             Registry.SetValue(keyName, "Locality", cmbLocality.SelectedIndex, RegistryValueKind.DWord);
             Registry.SetValue(keyName, "LimitsMin", txtLimitMin.Text, RegistryValueKind.String);
-            Registry.SetValue(keyName, "LimitsMax", txtLimitMax.Text, RegistryValueKind.String);            
+            Registry.SetValue(keyName, "LimitsMax", txtLimitMax.Text, RegistryValueKind.String);
             Registry.SetValue(keyName, "Memout", txtMemout.Text, RegistryValueKind.String);
             Registry.SetValue(keyName, "Timeout", txtTimeout.Text, RegistryValueKind.String);
             Registry.SetValue(keyName, "Cluster", txtCluster.Text, RegistryValueKind.String);
@@ -102,6 +106,7 @@ namespace ClusterExperiment
             Registry.SetValue(keyName, "ParametricityStep", txtParametricityStep.Text, RegistryValueKind.String);
             Registry.SetValue(keyName, "CreateJobgroup", (chkJobgroup.IsChecked == true) ? 1 : 0, RegistryValueKind.DWord);
             Registry.SetValue(keyName, "JobgroupName", txtJobgroup.Text, RegistryValueKind.String);
+            Registry.SetValue(keyName, "JobTemplate", txtJobTemplate.Text, RegistryValueKind.String);
 
             DialogResult = true;
         }
@@ -233,16 +238,21 @@ namespace ClusterExperiment
 
         private void btnSelectNodeGroup_Click(object sender, RoutedEventArgs e)
         {
-            Mouse.OverrideCursor = System.Windows.Input.Cursors.Wait;
-
-            ChooseNodegroup dlg = new ChooseNodegroup(txtCluster.Text);
-            dlg.Owner = this;
-            if (dlg.ShowDialog() == true)
+            if (txtCluster.Text == "")
+                System.Windows.MessageBox.Show("Can't select nodegroup without known headnode.", "Error", MessageBoxButton.OK, MessageBoxImage.Information);
+            else
             {
-                cmbNodeGroup.Text = dlg.listBox.SelectedItem.ToString();
-            }
+                Mouse.OverrideCursor = System.Windows.Input.Cursors.Wait;
 
-            Mouse.OverrideCursor = null;
+                ChooseNodegroup dlg = new ChooseNodegroup(txtCluster.Text);
+                dlg.Owner = this;
+                if (dlg.ShowDialog() == true)
+                {
+                    cmbNodeGroup.Text = dlg.listBox.SelectedItem.ToString();
+                }
+
+                Mouse.OverrideCursor = null;
+            }
         }
 
         private void btnSelectCategories_Click(object sender, RoutedEventArgs e)
@@ -306,7 +316,8 @@ namespace ClusterExperiment
         {
             if (lblLimitsUnit != null & cmbLocality.SelectedItem != null)
             {
-                switch (cmbLocality.SelectedIndex) {
+                switch (cmbLocality.SelectedIndex)
+                {
                     case 0: lblLimitsUnit.Content = "Cores"; break;
                     case 1: lblLimitsUnit.Content = "Sockets"; break;
                     case 2: lblLimitsUnit.Content = "Nodes"; break;
@@ -329,6 +340,33 @@ namespace ClusterExperiment
                 }
             }
             catch { }
+        }
+
+        private void btnSelectTemplate_Click(object sender, RoutedEventArgs e)
+        {
+            if (txtCluster.Text == "")
+                System.Windows.MessageBox.Show("Can't select job template without known headnode.", "Error", MessageBoxButton.OK, MessageBoxImage.Information);
+            else
+            {
+                Mouse.OverrideCursor = System.Windows.Input.Cursors.Wait;
+
+
+
+                ChooseJobTemplate dlg = new ChooseJobTemplate(txtCluster.Text);
+                dlg.Owner = this;
+                if (dlg.ShowDialog() == true)
+                {
+                    txtJobTemplate.Text = dlg.lstTemplates.SelectedItem.ToString();
+                }
+
+                Mouse.OverrideCursor = null;
+            }
+        }
+
+        private void Hyperlink_RequestNavigate(object sender, System.Windows.Navigation.RequestNavigateEventArgs e)
+        {
+            Process.Start(new ProcessStartInfo(e.Uri.AbsoluteUri));
+            e.Handled = true;
         }
     }
 }

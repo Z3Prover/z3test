@@ -34,6 +34,7 @@ namespace ClusterExperiment
       txtRCluster.Text = (string)Registry.GetValue(keyName, "ReinforcementsCluster", "");
       txtNumWorkers.Text = (string)Registry.GetValue(keyName, "ReinforcementsNumWorkers", "");
       cmbPriority.SelectedIndex = (int)Registry.GetValue(keyName, "ReinforcementsPriority", (int)2);
+      txtJobTemplate.Text = (string)Registry.GetValue(keyName, "ReinforcementsJobTemplate", "");
     }
 
     private void okButton_Click(object sender, RoutedEventArgs e)
@@ -41,6 +42,7 @@ namespace ClusterExperiment
       Registry.SetValue(keyName, "ReinforcementsCluster", txtRCluster.Text, RegistryValueKind.String);
       Registry.SetValue(keyName, "ReinforcementsNumWorkers", txtNumWorkers.Text, RegistryValueKind.String);
       Registry.SetValue(keyName, "ReinforcementsPriority", cmbPriority.SelectedIndex, RegistryValueKind.DWord);
+      Registry.SetValue(keyName, "ReinforcementsJobTemplate", txtJobTemplate.Text, RegistryValueKind.DWord);
 
       DialogResult = true;
     }

@@ -33,6 +33,7 @@ namespace ClusterExperiment
             txtExecutor.Text = (string)Registry.GetValue(keyName, "CatchallExecutor", (string)Registry.GetValue(keyName, "Executor", ""));
             txtLimitMin.Text = (string)Registry.GetValue(keyName, "CatchallLimitMin", "1");
             txtLimitMax.Text = (string)Registry.GetValue(keyName, "CatchallLimitMax", "10");
+            txtJobTemplate.Text = (string)Registry.GetValue(keyName, "CatchallJobTemplate", "");
         }
 
         private void okButton_Click(object sender, RoutedEventArgs e)
@@ -43,7 +44,8 @@ namespace ClusterExperiment
             Registry.SetValue(keyName, "CatchallLocality", cmbLocality.SelectedIndex, RegistryValueKind.DWord);
             Registry.SetValue(keyName, "CatchallExecutor", txtExecutor.Text, RegistryValueKind.String);
             Registry.SetValue(keyName, "CatchallLimitMin", txtLimitMin.Text, RegistryValueKind.String);
-            Registry.SetValue(keyName, "CatchallLimitMax", txtLimitMax.Text, RegistryValueKind.String);            
+            Registry.SetValue(keyName, "CatchallLimitMax", txtLimitMax.Text, RegistryValueKind.String);
+            Registry.SetValue(keyName, "CatchallJobTemplate", txtJobTemplate.Text, RegistryValueKind.String);            
             DialogResult = true;
         }
         private void cancelButton_Click(object sender, RoutedEventArgs e)
@@ -114,6 +116,25 @@ namespace ClusterExperiment
                 }
             }
             catch { }
+        }
+
+        private void btnSelectTemplate_Click(object sender, RoutedEventArgs e)
+        {
+            if (txtCluster.Text == "")
+                System.Windows.MessageBox.Show("Can't select job template without known headnode.", "Error", MessageBoxButton.OK, MessageBoxImage.Information);
+            else
+            {
+                Mouse.OverrideCursor = System.Windows.Input.Cursors.Wait;
+
+                ChooseJobTemplate dlg = new ChooseJobTemplate(txtCluster.Text);
+                dlg.Owner = this;
+                if (dlg.ShowDialog() == true)
+                {
+                    txtJobTemplate.Text = dlg.lstTemplates.SelectedItem.ToString();
+                }
+
+                Mouse.OverrideCursor = null;
+            }
         }
 
     }
