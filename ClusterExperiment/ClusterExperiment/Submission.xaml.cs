@@ -149,7 +149,8 @@ namespace ClusterExperiment
                           string username, int priority, string extension, string note, bool parametricity,
                           string pFrom, string pTo, string pStep,
                           bool createGroup, string groupName,
-                          string jobTemplate)
+                          string jobTemplate,
+                          int jobTimeout, int taskTimeout)
         {
             InitializeComponent();
             Mouse.OverrideCursor = System.Windows.Input.Cursors.Wait;
@@ -192,20 +193,22 @@ namespace ClusterExperiment
                            cluster, nodegroup, locality, limitsMin, limitsMax,
                            username, priority, extension,
                            "(" + count.ToString() + "/" + total.ToString() + ") " + note,
-                           jobTemplate);
+                           jobTemplate,
+                           jobTimeout, taskTimeout);
                 }
             }
             else
                 submit(db, categories, sharedDir, memout, timeout, executor, parameters,
                        cluster, nodegroup, locality, limitsMin, limitsMax, username, priority, extension, note,
-                       jobTemplate);
+                       jobTemplate, jobTimeout, taskTimeout);
         }
 
         // Submit a job...
         public Submission(string db, string categories, string sharedDir, string memout, string timeout, string executor,
                           string executable, string parameters, string cluster, string nodegroup, string locality, string limitsMin, string limitsMax,
                           string username, int priority, string extension, string note,
-                          string jobTemplate)
+                          string jobTemplate,
+                          int jobTimeout, int taskTimeout)
         {
             InitializeComponent();
             Mouse.OverrideCursor = System.Windows.Input.Cursors.Wait;
@@ -221,7 +224,7 @@ namespace ClusterExperiment
             uploadBinary(db, executable);
             submit(db, categories, sharedDir, memout, timeout, executor, parameters,
                    cluster, nodegroup, locality, limitsMin, limitsMax, username, priority, extension, note,
-                   jobTemplate);
+                   jobTemplate, jobTimeout, taskTimeout);
         }
 
         // Copy a job...
@@ -280,7 +283,7 @@ namespace ClusterExperiment
         }
 
         // Submit reinforcement job...
-        public Submission(string db, int jobid, string cluster, string jobTemplate, int numWorkers, int priority)
+        public Submission(string db, int jobid, string cluster, string jobTemplate, int numWorkers, int priority, int jobTimeout, int taskTimeout)
         {
             InitializeComponent();
             Mouse.OverrideCursor = System.Windows.Input.Cursors.Wait;
@@ -321,7 +324,7 @@ namespace ClusterExperiment
             outerGrid.Children.Add(p);
 
             pbars.Add(w.id, p);
-            Object[] args = { "Reinforce", db, jobid, cluster, numWorkers, priority, jobTemplate };
+            Object[] args = { "Reinforce", db, jobid, cluster, numWorkers, priority, jobTemplate, jobTimeout, taskTimeout};
             workers.Add(workers.Count(), w);
             w.RunWorkerAsync(args);
 
@@ -329,7 +332,7 @@ namespace ClusterExperiment
         }
 
         // Recovery job submission
-        public Submission(string db, int jobid, string cluster, string jobTemplate, int numWorkers, int priority, string executor)
+        public Submission(string db, int jobid, string cluster, string jobTemplate, int numWorkers, int priority, string executor, int jobTimeout, int taskTimeout)
         {
             InitializeComponent();
             Mouse.OverrideCursor = System.Windows.Input.Cursors.Wait;
@@ -370,7 +373,7 @@ namespace ClusterExperiment
             outerGrid.Children.Add(p);
 
             pbars.Add(w.id, p);
-            Object[] args = { "Recovery", db, jobid, cluster, priority, numWorkers, executor, jobTemplate };
+            Object[] args = { "Recovery", db, jobid, cluster, priority, numWorkers, executor, jobTemplate, jobTimeout, taskTimeout };
             workers.Add(workers.Count(), w);
             w.RunWorkerAsync(args);
 
@@ -378,7 +381,7 @@ namespace ClusterExperiment
         }
 
         // Catchall job submission
-        public Submission(string db, string cluster, string locality, int priority, string nodegroup, string executor, string min, string max, string jobTemplate)
+        public Submission(string db, string cluster, string locality, int priority, string nodegroup, string executor, string min, string max, string jobTemplate, int jobTimeout, int taskTimeout)
         {
             InitializeComponent();
             Mouse.OverrideCursor = System.Windows.Input.Cursors.Wait;
@@ -419,7 +422,7 @@ namespace ClusterExperiment
             outerGrid.Children.Add(p);
 
             pbars.Add(w.id, p);
-            Object[] args = { "Catchall", db, cluster, locality, priority, nodegroup, executor, min, max, jobTemplate};
+            Object[] args = { "Catchall", db, cluster, locality, priority, nodegroup, executor, min, max, jobTemplate, jobTimeout, taskTimeout};
             workers.Add(workers.Count(), w);
             w.RunWorkerAsync(args);
 
@@ -430,7 +433,8 @@ namespace ClusterExperiment
         private void submit(string db, string categories, string sharedDir, string memout, string timeout, string executor,
                             string parameters, string cluster, string nodegroup, string locality, string limitsMin, string limitsMax,
                             string username, int priority, string extension, string note,
-                            string jobTemplate)
+                            string jobTemplate,
+                            int jobTimeout, int taskTimeout)
         {
             string[] cats = categories.Split(',');
             foreach (string category in cats)
@@ -463,7 +467,7 @@ namespace ClusterExperiment
                 pbars.Add(w.id, p);
                 Object[] args = { "Submit", db, category, sharedDir, memout, timeout, executor,
                                   parameters, cluster, nodegroup, locality, limitsMin, limitsMax, username, priority, extension, note,
-                                  jobTemplate};
+                                  jobTemplate, jobTimeout, taskTimeout};
 
                 workers.Add(workers.Count(), w);
                 w.RunWorkerAsync(args);
@@ -605,11 +609,11 @@ namespace ClusterExperiment
                                       (string)args[4], (string)args[5], (string)args[6], (string)args[7],
                                       (string)args[8], (string)args[9], (string)args[10], (string)args[11], (string)args[12],
                                       (string)args[13], (int)args[14], (string)args[15], (string)args[16],
-                                      (string)args[17],
+                                      (string)args[17], (int)args[18], (int)args[19],
                                       ref haveBinId, ref binId, ref sExecutor);
                     w.SubmitHPCJob((string)args[1], true, jobid, (string)args[8], (string)args[9], (int)args[14], 
                                    (string)args[10], (string)args[11], (string)args[12],
-                                   (string)args[3], sExecutor, (string)args[17]);
+                                   (string)args[3], sExecutor, (string)args[17], (int)args[18], (int)args[19]);
 
                     // e.Result = "1 experiment with " + jobs + " jobs submitted.";
                 }
@@ -619,18 +623,19 @@ namespace ClusterExperiment
                 }
                 else if (cmd == "Reinforce")
                 {
-                    w.Reinforce((string)args[1], (int)args[2], (string)args[3], (int)args[4], (int)args[5], (string)args[6]);
+                    w.Reinforce((string)args[1], (int)args[2], (string)args[3], (int)args[4], (int)args[5], (string)args[6], (int)args[7], (int)args[8]);
                 }
                 else if (cmd == "Recovery")
                 {
                     w.SubmitHPCRecoveryJob((string)args[1], (int)args[2], (string)args[3],
-                                           (int)args[4], (int)args[5], (string)args[6]);
+                                           (int)args[4], (int)args[5], (string)args[6], (string)args[7],
+                                           (int)args[8], (int)args[9]);
                 }
                 else if (cmd == "Catchall")
                 {
                     w.SubmitCatchall((string)args[1], (string)args[2], (string)args[3], (int)args[4],
                                      (string)args[5], (string)args[6], (string)args[7], (string)args[8],
-                                     (string)args[9]);
+                                     (string)args[9], (int)args[10], (int)args[11]);
                 }
                 else
                     throw new Exception("Unknown submission operation: " + cmd);

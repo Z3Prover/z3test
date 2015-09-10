@@ -262,7 +262,9 @@ namespace ClusterExperiment
                                                  dlg.txtParametricityStep.Text,
                                                  dlg.chkJobgroup.IsChecked == true,
                                                  dlg.txtJobgroup.Text,
-                                                 dlg.txtJobTemplate.Text);
+                                                 dlg.txtJobTemplate.Text,
+                                                 dlg.timeJob.Value.HasValue ? Convert.ToInt32(dlg.timeJob.Value.Value.TotalSeconds) : 0,
+                                                 dlg.timeTask.Value.HasValue ? Convert.ToInt32(dlg.timeTask.Value.Value.TotalSeconds) : 0);
                 sdlg.Owner = this;
                 sdlg.ShowDialog();
 
@@ -1151,10 +1153,12 @@ namespace ClusterExperiment
                 int jid = (int)rowView["ID"];
                 int priority = dlg.cmbPriority.SelectedIndex;
                 string jobTemplate = dlg.txtJobTemplate.Text;
+                int jobTimeout = dlg.timeJob.Value.HasValue ? Convert.ToInt32(dlg.timeJob.Value.Value.TotalSeconds) : 0;
+                int taskTimeout = dlg.timeTask.Value.HasValue ? Convert.ToInt32(dlg.timeTask.Value.Value.TotalSeconds) : 0;
 
                 Submission sdlg = null;
 
-                sdlg = new Submission(txtDatabase.Text, jid, rcluster, jobTemplate, nworkers, priority);
+                sdlg = new Submission(txtDatabase.Text, jid, rcluster, jobTemplate, nworkers, priority, jobTimeout, taskTimeout);
                 sdlg.Owner = this;
                 sdlg.ShowDialog();
 
@@ -1336,8 +1340,10 @@ namespace ClusterExperiment
                     int priority = dlg.cmbPriority.SelectedIndex;
                     string executor = dlg.txtExecutor.Text;
                     string jobTemplate = dlg.txtJobTemplate.Text;
+                    int jobTimeout = dlg.timeJob.Value.HasValue ? Convert.ToInt32(dlg.timeJob.Value.Value.TotalSeconds) : 0;
+                    int taskTimeout = dlg.timeTask.Value.HasValue ? Convert.ToInt32(dlg.timeTask.Value.Value.TotalSeconds) : 0;
 
-                    Submission sdlg = new Submission(txtDatabase.Text, jobid, cluster, jobTemplate, numWorkers, priority, executor);
+                    Submission sdlg = new Submission(txtDatabase.Text, jobid, cluster, jobTemplate, numWorkers, priority, executor, jobTimeout, taskTimeout);
                     sdlg.Owner = this;
                     sdlg.ShowDialog();
 
@@ -1567,11 +1573,13 @@ namespace ClusterExperiment
                             int clusterJobID = 0;
                             string executor = null;
                             string jobTemplate = null;
+                            int jobTimeout = 0;
+                            int taskTimeout = 0;
 
                             int priority = 2;
                             int min = 1, max = 100;
 
-                            SqlCommand cmd = new SqlCommand("SELECT SharedDir, Cluster, Nodegroup, Locality, ClusterJobID, Executor, JobTemplate FROM Experiments WHERE ID=" + eid + ";", sql);
+                            SqlCommand cmd = new SqlCommand("SELECT SharedDir, Cluster, Nodegroup, Locality, ClusterJobID, Executor, JobTemplate, JobTimeout, TaskTimeout FROM Experiments WHERE ID=" + eid + ";", sql);
                             cmd.CommandTimeout = 0;
                             SqlDataReader r = cmd.ExecuteReader();
                             while (r.Read())
@@ -1583,6 +1591,8 @@ namespace ClusterExperiment
                                 clusterJobID = (int)r[4];
                                 executor = (string)r[5];
                                 jobTemplate = (string)r[6];
+                                jobTimeout = (int)r[7];
+                                taskTimeout = (int)r[8];
                             }
                             r.Close();
 
@@ -1661,7 +1671,8 @@ namespace ClusterExperiment
                                 sw.SubmitHPCJob(txtDatabase.Text, true, eid,
                                                 cluster, nodegroup, priority,
                                                 locality, min.ToString(), max.ToString(),
-                                                sharedDir, executor, jobTemplate);
+                                                sharedDir, executor, jobTemplate,
+                                                jobTimeout, taskTimeout);
                             }));
 
                             if (w.WorkerReportsProgress)
@@ -1696,6 +1707,9 @@ namespace ClusterExperiment
             dlg.Owner = this;
             if (dlg.ShowDialog() == true)
             {
+                int jobTimeout = dlg.timeJob.Value.HasValue ? Convert.ToInt32(dlg.timeJob.Value.Value.TotalSeconds) : 0;
+                int taskTimeout = dlg.timeTask.Value.HasValue ? Convert.ToInt32(dlg.timeTask.Value.Value.TotalSeconds) : 0;
+
                 Submission sdlg = new Submission(txtDatabase.Text,
                                                  dlg.txtCluster.Text,
                                                  dlg.cmbLocality.Text,
@@ -1704,7 +1718,8 @@ namespace ClusterExperiment
                                                  dlg.txtExecutor.Text,
                                                  dlg.txtLimitMin.Text,
                                                  dlg.txtLimitMax.Text,
-                                                 dlg.txtJobTemplate.Text);
+                                                 dlg.txtJobTemplate.Text,
+                                                 jobTimeout, taskTimeout);
 
                 sdlg.Owner = this;
                 sdlg.ShowDialog();

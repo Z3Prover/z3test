@@ -79,8 +79,8 @@ namespace ClusterSubmit
                 string sExecutor = "";
                 int jid =
                     w.SetupExperiment(config.db, config.category, config.sharedDir, config.memout, config.timeout, config.executor, config.parameters,
-                                      bestCluster, config.nodegroup, config.locality, config.minResources, config.maxResources, config.username, config.priority, config.extension, config.note, config.jobTemplate, ref haveBinId, ref binId, ref sExecutor);
-                w.SubmitHPCJob(config.db, true, jid, config.cluster, config.nodegroup, config.priority, config.locality, config.minResources, config.maxResources, config.sharedDir, sExecutor, config.jobTemplate);
+                                      bestCluster, config.nodegroup, config.locality, config.minResources, config.maxResources, config.username, config.priority, config.extension, config.note, config.jobTemplate, config.jobTimeout, config.taskTimeout, ref haveBinId, ref binId, ref sExecutor);
+                w.SubmitHPCJob(config.db, true, jid, config.cluster, config.nodegroup, config.priority, config.locality, config.minResources, config.maxResources, config.sharedDir, sExecutor, config.jobTemplate, config.jobTimeout, config.taskTimeout);
 
                 saveBinaryDate(executable);
 

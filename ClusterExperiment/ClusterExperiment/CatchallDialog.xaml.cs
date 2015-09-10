@@ -34,6 +34,8 @@ namespace ClusterExperiment
             txtLimitMin.Text = (string)Registry.GetValue(keyName, "CatchallLimitMin", "1");
             txtLimitMax.Text = (string)Registry.GetValue(keyName, "CatchallLimitMax", "10");
             txtJobTemplate.Text = (string)Registry.GetValue(keyName, "CatchallJobTemplate", "");
+            timeJob.Value = TimeSpan.FromSeconds((int)Registry.GetValue(keyName, "CatchallJobTimeout", 43200));
+            timeTask.Value = TimeSpan.FromSeconds((int)Registry.GetValue(keyName, "CatchallTaskTimeout", 0));
         }
 
         private void okButton_Click(object sender, RoutedEventArgs e)
@@ -45,7 +47,9 @@ namespace ClusterExperiment
             Registry.SetValue(keyName, "CatchallExecutor", txtExecutor.Text, RegistryValueKind.String);
             Registry.SetValue(keyName, "CatchallLimitMin", txtLimitMin.Text, RegistryValueKind.String);
             Registry.SetValue(keyName, "CatchallLimitMax", txtLimitMax.Text, RegistryValueKind.String);
-            Registry.SetValue(keyName, "CatchallJobTemplate", txtJobTemplate.Text, RegistryValueKind.String);            
+            Registry.SetValue(keyName, "CatchallJobTemplate", txtJobTemplate.Text, RegistryValueKind.String);
+            Registry.SetValue(keyName, "CatchallJobTimeout", (timeJob.Value.HasValue ? Convert.ToInt32(timeJob.Value.Value.TotalSeconds) : 0), RegistryValueKind.QWord);
+            Registry.SetValue(keyName, "CatchallTaskTimeout", (timeTask.Value.HasValue ? Convert.ToInt32(timeTask.Value.Value.TotalSeconds) : 0), RegistryValueKind.QWord);
             DialogResult = true;
         }
         private void cancelButton_Click(object sender, RoutedEventArgs e)

@@ -31,7 +31,7 @@ namespace ClusterExperiment
 
         public NewJobDialog()
         {
-            InitializeComponent();
+            InitializeComponent();            
         }
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
@@ -79,6 +79,9 @@ namespace ClusterExperiment
 
             txtJobTemplate.Text = (string)Registry.GetValue(keyName, "JobTemplate", "Default");
 
+            timeJob.Value = TimeSpan.FromSeconds((int)Registry.GetValue(keyName, "JobTimeout", 43200));
+            timeTask.Value = TimeSpan.FromSeconds((int)Registry.GetValue(keyName, "TaskTimeout", 0));
+
             Mouse.SetCursor(System.Windows.Input.Cursors.Arrow);
         }
 
@@ -107,6 +110,8 @@ namespace ClusterExperiment
             Registry.SetValue(keyName, "CreateJobgroup", (chkJobgroup.IsChecked == true) ? 1 : 0, RegistryValueKind.DWord);
             Registry.SetValue(keyName, "JobgroupName", txtJobgroup.Text, RegistryValueKind.String);
             Registry.SetValue(keyName, "JobTemplate", txtJobTemplate.Text, RegistryValueKind.String);
+            Registry.SetValue(keyName, "JobTimeout", (timeJob.Value.HasValue ? Convert.ToInt32(timeJob.Value.Value.TotalSeconds) : 0), RegistryValueKind.QWord);
+            Registry.SetValue(keyName, "TaskTimeout", (timeTask.Value.HasValue ? Convert.ToInt32(timeTask.Value.Value.TotalSeconds) : 0), RegistryValueKind.QWord);
 
             DialogResult = true;
         }
