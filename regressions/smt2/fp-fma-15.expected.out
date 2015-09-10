@@ -1,0 +1,2 @@
+sat
+(error "line 24 column 10: check annotation that says unsat")

@@ -1,0 +1,17 @@
+(set-logic QF_FP)
+(set-info :status sat)
+(set-option :model_validate true)
+
+(define-sort FPN () (_ FloatingPoint 11 53))
+(declare-fun x () FPN)
+(declare-fun r () FPN)
+(declare-fun q () FPN)
+
+(assert (= x (fp #b0 #b00010110010 #b1011000000000111000000101011000111101100000100000001)))
+(assert (= r (fp #b0 #b00010110010 #b1011000000000111000000101011000111101100000100000001)))
+(assert (= q (fp.abs x)))
+
+(assert (= q r))
+
+(check-sat)
+(get-model)
