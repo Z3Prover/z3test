@@ -503,9 +503,8 @@ namespace SubmissionLib
 
             scheduler.Connect(cluster);
             ISchedulerJob hpcJob = scheduler.CreateJob();
-            if (jobTemplate != null)
-                hpcJob.SetJobTemplate(jobTemplate);
-            hpcJob.Runtime = jobTimeout;
+            if (jobTemplate != null) hpcJob.SetJobTemplate(jobTemplate);
+            if (jobTimeout != 0) hpcJob.Runtime = jobTimeout;
 
             try
             {
@@ -572,7 +571,7 @@ namespace SubmissionLib
                 //populateTask.CommandLine = executor + " " + newID + " ? \"" + db + "\"";
                 populateTask.CommandLine = "pushd " + sharedDir + " & " + Path.GetFileName(executor) + " " + newID + " ? \"" + db + "\"";
                 populateTask.Name = "Populate";
-                populateTask.Runtime = taskTimeout; // 12 hrs
+                if (taskTimeout != 0) populateTask.Runtime = taskTimeout; 
                 hpcJob.AddTask(populateTask);
 
                 for (int i = 0; i < max; i++)
@@ -588,8 +587,7 @@ namespace SubmissionLib
                     task.IsRerunnable = true;
                     task.DependsOn.Add("Populate");
                     task.Name = "Worker";
-                    task.Runtime = taskTimeout;
-
+                    if (taskTimeout != 0) task.Runtime = taskTimeout;
                     hpcJob.AddTask(task);
                 }
 
@@ -604,7 +602,7 @@ namespace SubmissionLib
                 rTask.CommandLine = "pushd " + sharedDir + " & " + Path.GetFileName(executor) + " " + newID  + " ! \"" + db + "\"";
                 rTask.DependsOn.Add("Worker");
                 rTask.Name = "Recovery";
-                rTask.Runtime = taskTimeout;
+                if (taskTimeout != 0) rTask.Runtime = taskTimeout;
                 hpcJob.AddTask(rTask);
 
                 // Add deletion task.
@@ -618,7 +616,7 @@ namespace SubmissionLib
                 dTask.CommandLine = "pushd " + sharedDir + " & del " + Path.GetFileName(executor);
                 dTask.Name = "Delete worker";
                 dTask.DependsOn.Add("Recovery");
-                dTask.Runtime = taskTimeout;
+                if (taskTimeout != 0) dTask.Runtime = taskTimeout;
                 hpcJob.AddTask(dTask);
 
                 scheduler.AddJob(hpcJob);
@@ -973,9 +971,8 @@ namespace SubmissionLib
             scheduler.Connect(cluster);
 
             ISchedulerJob hpcJob = scheduler.CreateJob();
-            if (jobTemplate != null)
-                hpcJob.SetJobTemplate(jobTemplate);
-            hpcJob.Runtime = jobTimeout;
+            if (jobTemplate != null) hpcJob.SetJobTemplate(jobTemplate);
+            if (jobTimeout != 0) hpcJob.Runtime = jobTimeout;
 
             try
             {
@@ -1009,7 +1006,7 @@ namespace SubmissionLib
                 populateTask.WorkDirectory = sharedDir;
                 populateTask.CommandLine = sExecutor + " " + eid + " * \"" + db + "\""; // * means recovery
                 populateTask.Name = "Populate";
-                populateTask.Runtime = taskTimeout;
+                if (taskTimeout != 0) populateTask.Runtime = taskTimeout;
                 hpcJob.AddTask(populateTask);
 
                 for (int i = 0; i < max; i++)
@@ -1024,7 +1021,7 @@ namespace SubmissionLib
                     task.IsRerunnable = true;
                     task.DependsOn.Add("Populate");
                     task.Name = "Worker";
-                    task.Runtime = taskTimeout;
+                    if (taskTimeout != 0) task.Runtime = taskTimeout;
 
                     hpcJob.AddTask(task);
                 }
@@ -1041,7 +1038,7 @@ namespace SubmissionLib
                 dTask.CommandLine = "del " + sharedDir + "\\" + executor;
                 dTask.Name = "Delete worker";
                 dTask.DependsOn.Add("Worker");
-                dTask.Runtime = taskTimeout;
+                if (taskTimeout != 0) dTask.Runtime = taskTimeout;
                 hpcJob.AddTask(dTask);
 
                 scheduler.AddJob(hpcJob);

@@ -36,8 +36,8 @@ namespace ClusterExperiment
         string default_excutor = (string)Registry.GetValue(keyName, "Executable", "");
         txtExecutor.Text = (string)Registry.GetValue(keyName, "RecoveryExecutor", default_excutor);
         txtJobTemplate.Text = (string)Registry.GetValue(keyName, "RecoveryJobTemplate", "");
-        timeJob.Value = TimeSpan.FromSeconds((int)Registry.GetValue(keyName, "RecoveryJobTimeout", 43200));
-        timeTask.Value = TimeSpan.FromSeconds((int)Registry.GetValue(keyName, "RecoveryTaskTimeout", 0));
+        timeJob.Value = TimeSpan.FromSeconds((long)Registry.GetValue(keyName, "RecoveryJobTimeout", 43200));
+        timeTask.Value = TimeSpan.FromSeconds((long)Registry.GetValue(keyName, "RecoveryTaskTimeout", 0));
       }
 
       private void okButton_Click(object sender, RoutedEventArgs e)

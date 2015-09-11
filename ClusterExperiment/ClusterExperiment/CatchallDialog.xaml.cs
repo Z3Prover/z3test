@@ -34,8 +34,8 @@ namespace ClusterExperiment
             txtLimitMin.Text = (string)Registry.GetValue(keyName, "CatchallLimitMin", "1");
             txtLimitMax.Text = (string)Registry.GetValue(keyName, "CatchallLimitMax", "10");
             txtJobTemplate.Text = (string)Registry.GetValue(keyName, "CatchallJobTemplate", "");
-            timeJob.Value = TimeSpan.FromSeconds((int)Registry.GetValue(keyName, "CatchallJobTimeout", 43200));
-            timeTask.Value = TimeSpan.FromSeconds((int)Registry.GetValue(keyName, "CatchallTaskTimeout", 0));
+            timeJob.Value = TimeSpan.FromSeconds((long)Registry.GetValue(keyName, "CatchallJobTimeout", 43200));
+            timeTask.Value = TimeSpan.FromSeconds((long)Registry.GetValue(keyName, "CatchallTaskTimeout", 0));
         }
 
         private void okButton_Click(object sender, RoutedEventArgs e)

@@ -79,8 +79,8 @@ namespace ClusterExperiment
 
             txtJobTemplate.Text = (string)Registry.GetValue(keyName, "JobTemplate", "Default");
 
-            timeJob.Value = TimeSpan.FromSeconds((int)Registry.GetValue(keyName, "JobTimeout", 43200));
-            timeTask.Value = TimeSpan.FromSeconds((int)Registry.GetValue(keyName, "TaskTimeout", 0));
+            timeJob.Value = TimeSpan.FromSeconds((long)Registry.GetValue(keyName, "JobTimeout", 43200));
+            timeTask.Value = TimeSpan.FromSeconds((long)Registry.GetValue(keyName, "TaskTimeout", 0));
 
             Mouse.SetCursor(System.Windows.Input.Cursors.Arrow);
         }
