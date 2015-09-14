@@ -505,6 +505,7 @@ namespace SubmissionLib
             ISchedulerJob hpcJob = scheduler.CreateJob();
             if (jobTemplate != null) hpcJob.SetJobTemplate(jobTemplate);
             if (jobTimeout != 0) hpcJob.Runtime = jobTimeout;
+            hpcJob.FailOnTaskFailure = false;
 
             try
             {
@@ -571,8 +572,9 @@ namespace SubmissionLib
                 //populateTask.CommandLine = executor + " " + newID + " ? \"" + db + "\"";
                 populateTask.CommandLine = "pushd " + sharedDir + " & " + Path.GetFileName(executor) + " " + newID + " ? \"" + db + "\"";
                 populateTask.Name = "Populate";
-                if (taskTimeout != 0) populateTask.Runtime = taskTimeout; 
-                hpcJob.AddTask(populateTask);
+                if (taskTimeout != 0) populateTask.Runtime = taskTimeout;
+                populateTask.FailJobOnFailure = true;
+                hpcJob.AddTask(populateTask);                
 
                 for (int i = 0; i < max; i++)
                 {
@@ -588,6 +590,7 @@ namespace SubmissionLib
                     task.DependsOn.Add("Populate");
                     task.Name = "Worker";
                     if (taskTimeout != 0) task.Runtime = taskTimeout;
+                    populateTask.FailJobOnFailure = false;
                     hpcJob.AddTask(task);
                 }
 
@@ -603,6 +606,7 @@ namespace SubmissionLib
                 rTask.DependsOn.Add("Worker");
                 rTask.Name = "Recovery";
                 if (taskTimeout != 0) rTask.Runtime = taskTimeout;
+                rTask.FailJobOnFailure = true;
                 hpcJob.AddTask(rTask);
 
                 // Add deletion task.
@@ -617,6 +621,7 @@ namespace SubmissionLib
                 dTask.Name = "Delete worker";
                 dTask.DependsOn.Add("Recovery");
                 if (taskTimeout != 0) dTask.Runtime = taskTimeout;
+                dTask.FailJobOnFailure = false;
                 hpcJob.AddTask(dTask);
 
                 scheduler.AddJob(hpcJob);
@@ -1007,6 +1012,7 @@ namespace SubmissionLib
                 populateTask.CommandLine = sExecutor + " " + eid + " * \"" + db + "\""; // * means recovery
                 populateTask.Name = "Populate";
                 if (taskTimeout != 0) populateTask.Runtime = taskTimeout;
+                populateTask.FailJobOnFailure = true;
                 hpcJob.AddTask(populateTask);
 
                 for (int i = 0; i < max; i++)
@@ -1021,8 +1027,8 @@ namespace SubmissionLib
                     task.IsRerunnable = true;
                     task.DependsOn.Add("Populate");
                     task.Name = "Worker";
+                    task.FailJobOnFailure = false;
                     if (taskTimeout != 0) task.Runtime = taskTimeout;
-
                     hpcJob.AddTask(task);
                 }
 
@@ -1039,6 +1045,7 @@ namespace SubmissionLib
                 dTask.Name = "Delete worker";
                 dTask.DependsOn.Add("Worker");
                 if (taskTimeout != 0) dTask.Runtime = taskTimeout;
+                dTask.FailJobOnFailure = false;
                 hpcJob.AddTask(dTask);
 
                 scheduler.AddJob(hpcJob);

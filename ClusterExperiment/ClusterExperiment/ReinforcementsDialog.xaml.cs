@@ -35,8 +35,8 @@ namespace ClusterExperiment
       txtNumWorkers.Text = (string)Registry.GetValue(keyName, "ReinforcementsNumWorkers", "");
       cmbPriority.SelectedIndex = (int)Registry.GetValue(keyName, "ReinforcementsPriority", (int)2);
       txtJobTemplate.Text = (string)Registry.GetValue(keyName, "ReinforcementsJobTemplate", "");
-      timeJob.Value = TimeSpan.FromSeconds((long)Registry.GetValue(keyName, "ReinforcementsJobTimeout", 43200));
-      timeTask.Value = TimeSpan.FromSeconds((long)Registry.GetValue(keyName, "ReinforcementsTaskTimeout", 0));
+      timeJob.Value = new TimeSpan(0, 0, (int)Registry.GetValue(keyName, "ReinforcementsJobTimeout", 43200));
+      timeTask.Value = new TimeSpan(0, 0, (int)Registry.GetValue(keyName, "ReinforcementsTaskTimeout", 0));
     }
 
     private void okButton_Click(object sender, RoutedEventArgs e)
