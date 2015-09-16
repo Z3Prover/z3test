@@ -234,7 +234,7 @@ def test_benchmark(z3exe, benchmark, expected=None):
     producedf = open(produced, 'w')
     errcode = 0
     try:
-        errcode = subprocess.call([z3exe, 'model_validate=true', benchmark], stdout=producedf)
+        errcode = subprocess.call([z3exe, 'model_validate=true', benchmark], stdout=producedf, stderr=producedf)
     except:
         raise Exception("Failed to start Z3: %s" % z3exe)
     producedf.close()
