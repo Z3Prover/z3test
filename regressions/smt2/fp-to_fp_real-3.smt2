@@ -1,4 +1,4 @@
-(set-info :status unsat)
+(set-info :status unknown) ; nlsat may give up due to non-linear encoding of to_fp
 (set-info :source "Handcrafted by C.M. Wintersteiger")
 
 (declare-const X (_ FloatingPoint 5 11))
