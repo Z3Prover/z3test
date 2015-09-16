@@ -1,2 +1,1 @@
-sat
-(error "line 39 column 10: check annotation that says unsat")
+unsat
