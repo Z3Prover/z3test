@@ -47,8 +47,8 @@ namespace ClusterExperiment
         Registry.SetValue(keyName, "RecoveryPriority", cmbPriority.SelectedIndex, RegistryValueKind.DWord);
         Registry.SetValue(keyName, "RecoveryExecutor", txtExecutor.Text, RegistryValueKind.String);
         Registry.SetValue(keyName, "RecoveryJobTemplate", txtJobTemplate.Text, RegistryValueKind.String);
-        Registry.SetValue(keyName, "RecoveryJobTimeout", (timeJob.Value.HasValue ? Convert.ToInt32(timeJob.Value.Value.TotalSeconds) : 0), RegistryValueKind.QWord);
-        Registry.SetValue(keyName, "RecoveryTaskTimeout", (timeTask.Value.HasValue ? Convert.ToInt32(timeTask.Value.Value.TotalSeconds) : 0), RegistryValueKind.QWord);
+        Registry.SetValue(keyName, "RecoveryJobTimeout", (timeJob.Value.HasValue ? Convert.ToInt32(timeJob.Value.Value.TotalSeconds) : 0), RegistryValueKind.DWord);
+        Registry.SetValue(keyName, "RecoveryTaskTimeout", (timeTask.Value.HasValue ? Convert.ToInt32(timeTask.Value.Value.TotalSeconds) : 0), RegistryValueKind.DWord);
         
         DialogResult = true;
       }

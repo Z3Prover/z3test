@@ -110,8 +110,8 @@ namespace ClusterExperiment
             Registry.SetValue(keyName, "CreateJobgroup", (chkJobgroup.IsChecked == true) ? 1 : 0, RegistryValueKind.DWord);
             Registry.SetValue(keyName, "JobgroupName", txtJobgroup.Text, RegistryValueKind.String);
             Registry.SetValue(keyName, "JobTemplate", txtJobTemplate.Text, RegistryValueKind.String);
-            Registry.SetValue(keyName, "JobTimeout", (timeJob.Value.HasValue ? Convert.ToInt32(timeJob.Value.Value.TotalSeconds) : 0), RegistryValueKind.QWord);
-            Registry.SetValue(keyName, "TaskTimeout", (timeTask.Value.HasValue ? Convert.ToInt32(timeTask.Value.Value.TotalSeconds) : 0), RegistryValueKind.QWord);
+            Registry.SetValue(keyName, "JobTimeout", (timeJob.Value.HasValue ? Convert.ToInt32(timeJob.Value.Value.TotalSeconds) : 0), RegistryValueKind.DWord);
+            Registry.SetValue(keyName, "TaskTimeout", (timeTask.Value.HasValue ? Convert.ToInt32(timeTask.Value.Value.TotalSeconds) : 0), RegistryValueKind.DWord);
 
             DialogResult = true;
         }

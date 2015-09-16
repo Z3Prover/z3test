@@ -45,8 +45,8 @@ namespace ClusterExperiment
       Registry.SetValue(keyName, "ReinforcementsNumWorkers", txtNumWorkers.Text, RegistryValueKind.String);
       Registry.SetValue(keyName, "ReinforcementsPriority", cmbPriority.SelectedIndex, RegistryValueKind.DWord);
       Registry.SetValue(keyName, "ReinforcementsJobTemplate", txtJobTemplate.Text, RegistryValueKind.String);
-      Registry.SetValue(keyName, "ReinforcementsJobTimeout", (timeJob.Value.HasValue ? Convert.ToInt32(timeJob.Value.Value.TotalSeconds) : 0), RegistryValueKind.QWord);
-      Registry.SetValue(keyName, "ReinforcementsTaskTimeout", (timeTask.Value.HasValue ? Convert.ToInt32(timeTask.Value.Value.TotalSeconds) : 0), RegistryValueKind.QWord);
+      Registry.SetValue(keyName, "ReinforcementsJobTimeout", (timeJob.Value.HasValue ? Convert.ToInt32(timeJob.Value.Value.TotalSeconds) : 0), RegistryValueKind.DWord);
+      Registry.SetValue(keyName, "ReinforcementsTaskTimeout", (timeTask.Value.HasValue ? Convert.ToInt32(timeTask.Value.Value.TotalSeconds) : 0), RegistryValueKind.DWord);
       DialogResult = true;
     }
 
