@@ -2,12 +2,12 @@
 (set-info :status unsat)
 (set-option :produce-models true)
 
-(declare-const x ( _ FloatingPoint 8 24))
-(declare-const y ( _ FloatingPoint 8 24))
-(declare-const r1 ( _ FloatingPoint 8 24))
-(declare-const r2 ( _ FloatingPoint 8 24))
+(declare-const x ( _ FloatingPoint 5 11))
+(declare-const y ( _ FloatingPoint 5 11))
+(declare-const r1 ( _ FloatingPoint 5 11))
+(declare-const r2 ( _ FloatingPoint 5 11))
 
-(define-const nan (_ FloatingPoint 8 24) (_ NaN 8 24))
+(define-const nan (_ FloatingPoint 5 11) (_ NaN 5 11))
 
 (assert (not (= nan x)))
 (assert (not (= nan y)))
