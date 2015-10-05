@@ -1,4 +1,6 @@
 
+; Copyright (c) 2015 Microsoft Corporation
+
 
 
 (define-fun a () (Array Int Int) ((as const (Array Int Int)) 0))

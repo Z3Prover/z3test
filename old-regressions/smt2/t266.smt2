@@ -1,4 +1,6 @@
 
+; Copyright (c) 2015 Microsoft Corporation
+
 (set-option :pp.max-depth 20)
 (declare-fun f (Int Int) Int)
 (assert (or (forall ((X Int) (Y Int)) (and (> (f X X) 0) (= (f X Y) Y))) (= (f 0 0) 0)))

@@ -1,3 +1,5 @@
+
+; Copyright (c) 2015 Microsoft Corporation
 (declare-sort Obj)
 (set-option :produce-models true)
 (define-sort ObjSet () (Array Obj Bool))

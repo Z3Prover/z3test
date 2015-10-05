@@ -1,4 +1,6 @@
 
+; Copyright (c) 2015 Microsoft Corporation
+
 
 (set-logic QF_FPA)
 (define-sort FPN () (_ FP 11 53))

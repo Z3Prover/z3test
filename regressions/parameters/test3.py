@@ -1,3 +1,5 @@
+
+# Copyright (c) 2015 Microsoft Corporation
 # 3. There is authoritative list on what the global parameters are
 # - E.g., the context_params are not listed.
 

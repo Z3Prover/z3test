@@ -1,3 +1,5 @@
+
+; Copyright (c) 2015 Microsoft Corporation
 (set-option :parser.ignore-bad-patterns false)
 
 (declare-fun f (Int Int) Int)

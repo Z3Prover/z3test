@@ -1,3 +1,5 @@
+
+; Copyright (c) 2015 Microsoft Corporation
 (define-sort W () (_ BitVec 16))
 (declare-const c1 W)
 (declare-const c2 W)

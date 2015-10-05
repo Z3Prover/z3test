@@ -1,3 +1,5 @@
+
+; Copyright (c) 2015 Microsoft Corporation
 (declare-const transition_0_n Int)
 (declare-const transition_1_n Int)
 (declare-const transition_2_n Int)

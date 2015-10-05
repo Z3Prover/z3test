@@ -1,3 +1,5 @@
+
+; Copyright (c) 2015 Microsoft Corporation
 (set-option :auto-config true)
 (set-option :produce-models true)
 (set-logic QF_UFBV)

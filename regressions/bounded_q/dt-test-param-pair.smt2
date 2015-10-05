@@ -1,4 +1,6 @@
 
+; Copyright (c) 2015 Microsoft Corporation
+
 
 (declare-datatypes (T) (
                         (Pair (mk-Pair (first T) (second Int)))))

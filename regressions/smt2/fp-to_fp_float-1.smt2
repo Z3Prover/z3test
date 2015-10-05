@@ -1,3 +1,5 @@
+
+; Copyright (c) 2015 Microsoft Corporation
 ; 
 ; This script shows what possibly is a bug in the cast operation from a smaller to a bigger format.
 ; Subnormal numbers in the IEEE single precision format (8,24) are those with exponent -127.

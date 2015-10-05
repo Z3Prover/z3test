@@ -1,4 +1,6 @@
 
+; Copyright (c) 2015 Microsoft Corporation
+
 (set-logic QF_UFLIA)
 
 (declare-fun real_of_int (Int) Real)

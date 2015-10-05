@@ -1,3 +1,5 @@
+
+; Copyright (c) 2015 Microsoft Corporation
 ; Rounding mode: to positive
 ; Precision: double (11/53)
 ; X = +1.558866885101854560247147674090228974819183349609375p245 {+ 2516912695494422 245 (8.81369e+073)}

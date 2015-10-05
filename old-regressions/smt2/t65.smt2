@@ -1,4 +1,6 @@
 
+; Copyright (c) 2015 Microsoft Corporation
+
 (set-option :produce-proofs true)
 
 (declare-const x Int)

@@ -1,4 +1,6 @@
 
+# Copyright (c) 2015 Microsoft Corporation
+
 # g x y = x
 # twice f x y = f (f x) y
 # neg x y = -x()

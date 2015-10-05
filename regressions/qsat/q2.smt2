@@ -1,3 +1,5 @@
+
+; Copyright (c) 2015 Microsoft Corporation
 (declare-const x Bool)
 (assert  (exists ((y Bool)) (and (or x y) (not y))))
 (apply qe2)

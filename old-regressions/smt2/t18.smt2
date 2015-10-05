@@ -1,3 +1,5 @@
+
+; Copyright (c) 2015 Microsoft Corporation
 (declare-fun p1 () Bool)
 (declare-fun p2 () Bool)
 (declare-fun p3 () Bool)

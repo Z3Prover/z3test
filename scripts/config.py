@@ -1,3 +1,6 @@
+# Copyright (c) 2015 Microsoft Corporation
+
+
 import os
 
 SMTPSERVER='smtp.gmail.com'

@@ -1,3 +1,5 @@
+
+; Copyright (c) 2015 Microsoft Corporation
 (set-option :auto-config true)
 (declare-const x Real)
 (assert (>= x 0.0))

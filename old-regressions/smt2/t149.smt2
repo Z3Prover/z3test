@@ -1,4 +1,6 @@
 
+; Copyright (c) 2015 Microsoft Corporation
+
 (set-option :produce-models true)
 (declare-sort S 0)
 (declare-datatypes (T) ((lst nil (cons (car T) (cdr lst)))))

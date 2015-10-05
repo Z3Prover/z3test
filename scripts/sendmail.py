@@ -1,3 +1,4 @@
+# Copyright (c) 2015 Microsoft Corporation
 import smtplib
 import csv
 from datetime import datetime, timedelta

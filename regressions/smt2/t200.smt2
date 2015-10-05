@@ -1,3 +1,5 @@
+
+; Copyright (c) 2015 Microsoft Corporation
 (set-logic AUFLIA)
 (set-option :smt.mbqi true)
 (set-option :smt.mbqi.max-iterations 10)

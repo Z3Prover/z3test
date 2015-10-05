@@ -1,3 +1,5 @@
+
+; Copyright (c) 2015 Microsoft Corporation
 ; (set-option :print-success false)
 ; (set-info :smt-lib-version 2.0)
 (set-option :auto-config false)

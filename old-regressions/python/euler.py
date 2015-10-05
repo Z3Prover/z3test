@@ -1,3 +1,5 @@
+
+# Copyright (c) 2015 Microsoft Corporation
 # Euler's four square identity
 from z3 import *
 set_option(auto_config=True)

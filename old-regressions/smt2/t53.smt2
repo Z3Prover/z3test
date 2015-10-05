@@ -1,4 +1,6 @@
 
+; Copyright (c) 2015 Microsoft Corporation
+
 
 (simplify (bvshl #x00ff #x0004))
 (simplify (bvshl #x00ff #x0008))

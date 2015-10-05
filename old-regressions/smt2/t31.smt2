@@ -1,4 +1,6 @@
 
+; Copyright (c) 2015 Microsoft Corporation
+
 (declare-fun a () (Array Int Int))
 (declare-fun b () (Array Int Int))
 (declare-fun c () (Array Int Int))

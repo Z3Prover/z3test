@@ -1,3 +1,4 @@
+# Copyright (c) 2015 Microsoft Corporation
 # Test for big machines that have
 #   Java and clang installed
 #   lots of frees space

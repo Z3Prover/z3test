@@ -1,4 +1,6 @@
 
+; Copyright (c) 2015 Microsoft Corporation
+
 
 (set-option :pp.flat-assoc false)
 (set-option :pp.max-depth 20)

@@ -1,4 +1,6 @@
 
+; Copyright (c) 2015 Microsoft Corporation
+
 (set-option :pp.max-depth 100)
 (declare-const skoX Real)
 (poly/factor (+ (* 90000000.0 skoX) (* (- 29.0) skoX skoX skoX)))

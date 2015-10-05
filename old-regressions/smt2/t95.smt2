@@ -1,4 +1,6 @@
 
+; Copyright (c) 2015 Microsoft Corporation
+
 (set-option :produce-models true)
 (set-option :pp.max-depth 100)
 

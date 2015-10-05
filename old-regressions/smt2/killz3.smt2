@@ -1,3 +1,5 @@
+
+; Copyright (c) 2015 Microsoft Corporation
 (set-logic AUFBV)
 
 (set-option :auto-config true)

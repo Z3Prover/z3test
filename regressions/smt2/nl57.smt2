@@ -1,3 +1,5 @@
+
+; Copyright (c) 2015 Microsoft Corporation
 (declare-const x Real)
 (declare-const y Real)
 (assert 

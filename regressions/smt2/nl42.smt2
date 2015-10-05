@@ -1,3 +1,5 @@
+
+; Copyright (c) 2015 Microsoft Corporation
 (simplify (rem (- 2) (- 1)))
 (simplify (div (- 2) (- 1)))
 (simplify (rem (- 2) 1))

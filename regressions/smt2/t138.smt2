@@ -1,3 +1,5 @@
+
+; Copyright (c) 2015 Microsoft Corporation
 (set-option :smt.macro-finder true)
 (set-option :auto-config true)
 

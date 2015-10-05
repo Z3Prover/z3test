@@ -1,4 +1,6 @@
 
+; Copyright (c) 2015 Microsoft Corporation
+
 (set-option :smt.mbqi true)
 (declare-fun f (Real) Real)
 (declare-fun g (Real) Real)

@@ -1,3 +1,5 @@
+
+; Copyright (c) 2015 Microsoft Corporation
 (set-logic QF_LIA)
 (set-option :auto-config true)
 (declare-fun |c@1| () Bool)

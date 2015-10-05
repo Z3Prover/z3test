@@ -1,3 +1,5 @@
+
+; Copyright (c) 2015 Microsoft Corporation
 (declare-fun temp_node189 () Bool)
 (declare-fun temp_node185 () (_ BitVec 1))
 (declare-fun temp_node188 () (_ BitVec 1))

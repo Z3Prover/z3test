@@ -1,4 +1,6 @@
 
+; Copyright (c) 2015 Microsoft Corporation
+
 (set-option :print-success true)
 
 (declare-datatypes (T) ((Stream (seq (val T) (rest Stream)))))

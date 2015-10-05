@@ -1,3 +1,5 @@
+
+# Copyright (c) 2015 Microsoft Corporation
 #let c q = () in
 #let b x q = x 1 in
 #let a x y q = if q=0 then (x 0; y 0) else assert false in

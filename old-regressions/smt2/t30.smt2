@@ -1,4 +1,6 @@
 
+; Copyright (c) 2015 Microsoft Corporation
+
 
 
 (dbg-lt (forall ((y Int)) (< y 0)) (forall ((x Int)) (! (< x 0) :no-pattern (< x 0))))

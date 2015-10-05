@@ -1,4 +1,6 @@
 
+; Copyright (c) 2015 Microsoft Corporation
+
 
 (set-option :print-success 1)
 (set-option :print-success true)

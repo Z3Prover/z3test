@@ -1,4 +1,6 @@
 
+; Copyright (c) 2015 Microsoft Corporation
+
 
 (simplify (+ (^ 2.0 (/ 1.0 101.0))
              (^ 2.0 (/ 1.0 102.0)))

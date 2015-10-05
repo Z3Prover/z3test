@@ -1,3 +1,5 @@
+
+; Copyright (c) 2015 Microsoft Corporation
 (set-option :produce-models true)
 (set-info :source "Handcrafted; from Z3 GitHub issue 222.")
 (set-info :status sat)

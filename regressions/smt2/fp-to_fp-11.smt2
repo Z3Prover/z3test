@@ -1,3 +1,5 @@
+
+; Copyright (c) 2015 Microsoft Corporation
 (set-info :status unsat)
 (set-info :source "C.M. Wintersteiger")
 

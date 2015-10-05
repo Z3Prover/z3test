@@ -1,4 +1,6 @@
 
+; Copyright (c) 2015 Microsoft Corporation
+
 ;; Proofs for some identities found by Ramanujan
 
 

@@ -1,3 +1,5 @@
+
+# Copyright (c) 2015 Microsoft Corporation
 from z3 import *
 
 # f x y = assert (not (x() > 0 && y() < 0))

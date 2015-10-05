@@ -1,4 +1,6 @@
 
+; Copyright (c) 2015 Microsoft Corporation
+
 (declare-sort U 0)
 (declare-sort V 0)
 (declare-sort W 0)

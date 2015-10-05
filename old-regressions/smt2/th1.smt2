@@ -1,4 +1,6 @@
 
+; Copyright (c) 2015 Microsoft Corporation
+
 
 (set-option :auto-config true)
 (set-option :display-installed-theories true)

@@ -1,3 +1,5 @@
+
+; Copyright (c) 2015 Microsoft Corporation
 (declare-fun q (Int) Bool)
 (declare-fun x () Int)
 

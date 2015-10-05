@@ -1,4 +1,6 @@
 
+; Copyright (c) 2015 Microsoft Corporation
+
 (set-option :produce-models true)
 (define-sort A () (Array Int Int Int))
 (define-fun bag-union ((x A) (y A)) A

@@ -1,3 +1,5 @@
+
+; Copyright (c) 2015 Microsoft Corporation
 (declare-sort U 0)
 
 (declare-datatypes () ((D 

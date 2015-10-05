@@ -1,3 +1,5 @@
+
+; Copyright (c) 2015 Microsoft Corporation
 ( set-logic QF_AUFLIRA)
 ( set-info :source | SMT-COMP'06 organizers |)
 ( set-info :smt-lib-version 2.0)

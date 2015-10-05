@@ -1,4 +1,6 @@
 
+; Copyright (c) 2015 Microsoft Corporation
+
 (set-option :model-validate false)
 
 (set-option :auto-config true)

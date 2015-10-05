@@ -1,4 +1,6 @@
 
+# Copyright (c) 2015 Microsoft Corporation
+
 from z3 import *
 
 a1 = Real('x') + 1

@@ -1,3 +1,5 @@
+# Copyright (c) 2015 Microsoft Corporation
+
 import os
 import subprocess
 import config

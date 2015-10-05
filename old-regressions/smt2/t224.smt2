@@ -1,4 +1,6 @@
 
+; Copyright (c) 2015 Microsoft Corporation
+
 
 (declare-const x Real)
 (poly/factor (+ (^ x 4.) (* (- 20.) (^ x 2.)) 36.))

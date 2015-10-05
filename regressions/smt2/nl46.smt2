@@ -1,3 +1,5 @@
+
+; Copyright (c) 2015 Microsoft Corporation
 (declare-const x1 Int)
 (declare-const x2 Int)
 (declare-const x3 Int)

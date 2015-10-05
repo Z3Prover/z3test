@@ -1,3 +1,5 @@
+
+; Copyright (c) 2015 Microsoft Corporation
 (set-info :status sat)
 (set-info :source "Handcrafted by C.M. Wintersteiger from a bug report by wanderseeme (https://github.com/Z3Prover/z3/issues/201).")
 

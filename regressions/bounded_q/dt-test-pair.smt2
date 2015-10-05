@@ -1,4 +1,6 @@
 
+; Copyright (c) 2015 Microsoft Corporation
+
 
 (declare-datatypes () ((Pair (mk-Pair (first Int) (second Int)))))
 (declare-fun p (Pair) Bool)

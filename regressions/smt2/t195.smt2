@@ -1,3 +1,5 @@
+
+; Copyright (c) 2015 Microsoft Corporation
 (set-option :print-success false )
 (declare-fun a () Real )
 (declare-fun c () Real )

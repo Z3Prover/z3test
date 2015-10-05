@@ -1,4 +1,6 @@
 
+; Copyright (c) 2015 Microsoft Corporation
+
 
 (declare-const a1 (Array Int Int))
 (declare-const a2 (Array Int Int))

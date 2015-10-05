@@ -1,4 +1,6 @@
 
+; Copyright (c) 2015 Microsoft Corporation
+
 
 (set-option :pp.max-depth 20)
 (define-sort Double () (_ FP 11 53))

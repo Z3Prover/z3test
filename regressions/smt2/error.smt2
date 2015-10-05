@@ -1,4 +1,6 @@
 
+; Copyright (c) 2015 Microsoft Corporation
+
 (get-info :error-behavior)
 (get-option :smt.relevancy)
 (get-option :error-behavior)

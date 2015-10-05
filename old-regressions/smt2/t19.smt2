@@ -1,3 +1,5 @@
+
+; Copyright (c) 2015 Microsoft Corporation
 (declare-fun f (Int) Bool)
 
 (set-option :pp.flat-assoc false)

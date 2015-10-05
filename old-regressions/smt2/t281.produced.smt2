@@ -1,3 +1,5 @@
+
+; Copyright (c) 2015 Microsoft Corporation
 (goals
 (goal
   (or p1 p2)

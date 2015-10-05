@@ -1,3 +1,4 @@
+# Copyright (c) 2015 Microsoft Corporation
 # Test for win32 Windows machines
 import util
 import os

@@ -1,3 +1,5 @@
+
+; Copyright (c) 2015 Microsoft Corporation
 (set-option :auto-config false)
 (set-option :produce-unsat-cores true)
 (set-logic QF_UF)

@@ -1,4 +1,6 @@
 
+; Copyright (c) 2015 Microsoft Corporation
+
 (declare-const x Real)
 
 (poly/isolate-roots (+ (^ x 7.0)

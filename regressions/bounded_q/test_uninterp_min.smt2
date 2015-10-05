@@ -1,4 +1,6 @@
 
+; Copyright (c) 2015 Microsoft Corporation
+
 (declare-sort U 0)
 (declare-fun p (U U Int) Bool)
 (declare-fun a () U)

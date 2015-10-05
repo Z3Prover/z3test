@@ -1,3 +1,5 @@
+
+; Copyright (c) 2015 Microsoft Corporation
 ; We Enconde each set S of integers as a function S : Int -> Bool
 (declare-fun S1 (Int) Bool)
 ; To assert that A and C are elements of S1, we just assert (S1 A) and (S1 C) 

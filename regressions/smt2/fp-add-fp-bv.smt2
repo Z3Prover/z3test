@@ -1,3 +1,5 @@
+
+; Copyright (c) 2015 Microsoft Corporation
 (set-logic QF_FPBV)
 (set-info :status sat)
 

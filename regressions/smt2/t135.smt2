@@ -1,3 +1,5 @@
+
+; Copyright (c) 2015 Microsoft Corporation
 ;; NOTE: we disable model validation in this example because
 ;; we don't store the interpretation of division by 0 produced by
 ;; Z3. So, the model validation will fail when a division by 0 is found

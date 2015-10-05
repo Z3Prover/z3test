@@ -1,4 +1,6 @@
 
+; Copyright (c) 2015 Microsoft Corporation
+
 (set-option :produce-models true)
 (declare-const x (_ BitVec 8))
 (declare-const y (_ BitVec 8))

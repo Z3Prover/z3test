@@ -1,4 +1,6 @@
 
+; Copyright (c) 2015 Microsoft Corporation
+
 (set-option :enable-assertions false)
 (set-option :produce-models true)
 (declare-fun q (Int) Bool)

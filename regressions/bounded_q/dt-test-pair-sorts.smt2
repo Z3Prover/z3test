@@ -1,4 +1,6 @@
 
+; Copyright (c) 2015 Microsoft Corporation
+
 (define-sort W () (_ BitVec 8))
 (declare-datatypes () ((Pair (mk-Pair (first Int) (second Int)))))
 (declare-fun p (Pair Int Int W) Bool)

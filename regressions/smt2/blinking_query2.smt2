@@ -1,3 +1,5 @@
+
+; Copyright (c) 2015 Microsoft Corporation
 (set-option :smt.mbqi true)
 (set-option :smt.ematching false)
 (set-option :produce-models true)

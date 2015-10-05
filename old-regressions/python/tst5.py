@@ -1,3 +1,5 @@
+
+# Copyright (c) 2015 Microsoft Corporation
 from z3 import *
 
 f = Function('f', IntSort(), RealSort(), IntSort())

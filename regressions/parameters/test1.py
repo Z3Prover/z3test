@@ -1,3 +1,5 @@
+
+# Copyright (c) 2015 Microsoft Corporation
 # You can set a parameter on a solver, 
 # but it is not checked whether it is legal.
 # E.g, there are no error messages on parameters 
