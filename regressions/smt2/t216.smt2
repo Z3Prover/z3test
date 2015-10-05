@@ -1,4 +1,6 @@
 
+; Copyright (c) 2015 Microsoft Corporation
+
 (set-option :pp.decimal true)
 (set-option :pp.decimal-precision 20)
 

@@ -1,3 +1,5 @@
+
+; Copyright (c) 2015 Microsoft Corporation
 (declare-fun p (Int) Bool)
 (declare-fun a () Int)
 (set-option :pp.max-depth 100)

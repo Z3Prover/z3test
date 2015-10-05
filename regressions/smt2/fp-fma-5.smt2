@@ -1,3 +1,5 @@
+
+; Copyright (c) 2015 Microsoft Corporation
 (set-info :status unsat)
 (define-sort FPN () (_ FloatingPoint 11 53))
 

@@ -1,4 +1,6 @@
 
+; Copyright (c) 2015 Microsoft Corporation
+
 (declare-sort S)
 (declare-const a1 S)
 (declare-const a2 S)

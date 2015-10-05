@@ -1,7 +1,7 @@
 true
 (p (to_real x))
 (select a (to_real x))
-(error "line 15 column 21: domain sort and parameter do not match")
+(error "line 17 column 21: domain sort and parameter do not match")
 (select b (to_int y))
 (store a (to_real x) true)
 (store b x true)

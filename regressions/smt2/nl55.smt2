@@ -1,3 +1,5 @@
+
+; Copyright (c) 2015 Microsoft Corporation
 (echo "ABSolver benchmark")
 (set-option :produce-models true)
 (declare-const a Int)

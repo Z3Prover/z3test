@@ -1,4 +1,6 @@
 
+; Copyright (c) 2015 Microsoft Corporation
+
 
 (define-sort B () (_ BitVec 1))
 (define-sort W () (_ BitVec 16))

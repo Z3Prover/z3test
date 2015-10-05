@@ -1,4 +1,6 @@
 
+; Copyright (c) 2015 Microsoft Corporation
+
 
 (define-sort S () (Array Int (Array Bool Int (Array Int Int Int Real))))
 (declare-const A1 S)

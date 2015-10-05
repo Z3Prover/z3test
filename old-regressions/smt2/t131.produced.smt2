@@ -1,3 +1,5 @@
+
+; Copyright (c) 2015 Microsoft Corporation
 (error "line 4 column 21: logic does not support integers")
 (error "line 6 column 19: unknown sort 'List'")
 (error "line 7 column 19: unknown sort 'Array'")

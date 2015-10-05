@@ -1,3 +1,5 @@
+
+; Copyright (c) 2015 Microsoft Corporation
 (set-option :auto-config true)
 (set-logic QF_UFBV)
 (declare-fun f0 ( (_ BitVec 11) (_ BitVec 9) (_ BitVec 15)) (_ BitVec 10))

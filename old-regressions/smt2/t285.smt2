@@ -1,3 +1,5 @@
+
+; Copyright (c) 2015 Microsoft Corporation
 (set-option :auto-config true)
 (set-info :source | KeYmaera example: TRM-essentials-4, node 12210
 Andre Platzer and Edmund M. Clarke. Formal verification of curved flight collision avoidance maneuvers: A case study. In Ana Cavalcanti and Dennis Dams, editors, 16th International Symposium on Formal Methods, FM, Eindhoven, Netherlands, Proceedings, volume 5850 of LNCS, pages 547(- 562.) Springer, 2009.

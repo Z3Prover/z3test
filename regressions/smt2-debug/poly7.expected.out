@@ -1,6 +1,6 @@
 (roots
 (root-obj (+ x 3) 1))
-(error "line 7 column 29: given assignment is not sufficient to make the given polynomial univariate")
+(error "line 9 column 29: given assignment is not sufficient to make the given polynomial univariate")
 (roots
 (root-obj (+ (^ x 5) (* 5 (^ x 4)) (* 10 (^ x 3)) (* 10 (^ x 2)) (* 4 x) 1) 1))
 (roots
@@ -8,7 +8,7 @@
 (roots
 -1.2941162066?)
 1.1673039782?
-(error "line 14 column 31: invalid assignment, argument is not a value")
-(error "line 15 column 30: invalid assignment, argument is not a variable in the given polynomial")
+(error "line 16 column 31: invalid assignment, argument is not a value")
+(error "line 17 column 30: invalid assignment, argument is not a variable in the given polynomial")
 (- 2.1861406616?)
 (- 1.4142135623?)

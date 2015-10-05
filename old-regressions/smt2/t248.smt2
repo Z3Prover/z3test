@@ -1,4 +1,6 @@
 
+; Copyright (c) 2015 Microsoft Corporation
+
 
 
 ;; (to-poly (^ (+ (* (/ 1. 3.) a) (* (/ 1. 5.) b) 2.) 2.))

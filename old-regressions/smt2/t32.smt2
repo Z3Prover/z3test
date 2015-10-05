@@ -1,3 +1,5 @@
+
+; Copyright (c) 2015 Microsoft Corporation
 (set-option :auto-config false)
 (get-option :auto-config)
 (set-logic QF_UFLIA)

@@ -1,3 +1,5 @@
+
+; Copyright (c) 2015 Microsoft Corporation
 (declare-const i_loop Real)
 (declare-const loopex Bool)
 (declare-fun zot-p1 (Real) Bool)

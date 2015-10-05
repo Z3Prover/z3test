@@ -1,4 +1,6 @@
 
+; Copyright (c) 2015 Microsoft Corporation
+
 
 ;; testing macros
 (set-option :auto-config true)

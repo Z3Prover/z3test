@@ -1,3 +1,5 @@
+
+; Copyright (c) 2015 Microsoft Corporation
 (define-fun bvsmod_def ((s (_ BitVec 5)) (t (_ BitVec 5))) (_ BitVec 5)
       (let ((msb_s ((_ extract 4 4) s))
             (msb_t ((_ extract 4 4) t)))

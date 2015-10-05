@@ -1,3 +1,5 @@
+
+; Copyright (c) 2015 Microsoft Corporation
 (set-logic AUFLIA)
 (set-option :auto-config true)
 (set-option :smt.macro-finder true)

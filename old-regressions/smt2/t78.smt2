@@ -1,3 +1,5 @@
+
+; Copyright (c) 2015 Microsoft Corporation
 (declare-const a Int)
 (declare-fun   f (Int Int) Int)
 (declare-fun   g (Int) Int)

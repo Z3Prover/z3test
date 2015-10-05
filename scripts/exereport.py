@@ -1,3 +1,4 @@
+# Copyright (c) 2015 Microsoft Corporation
 # Simple script for executing a command and reporting the result by email
 import sendmail
 import sys

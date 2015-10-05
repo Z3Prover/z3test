@@ -1,3 +1,5 @@
+
+; Copyright (c) 2015 Microsoft Corporation
 (set-logic QF_FP)
 (set-info :status unsat)
 (set-info :source "G Paganelli, W Ahrendt: Verifying (In-)Stability in Floating-Point Programs by Increasing Precision, Using SMT Solving. SYNASC 2013.")

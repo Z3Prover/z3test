@@ -1,4 +1,6 @@
 
+; Copyright (c) 2015 Microsoft Corporation
+
 
 (declare-datatypes () ((D (DA) (DB))))
 (declare-fun p (Int D) Bool)

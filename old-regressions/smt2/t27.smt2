@@ -1,4 +1,6 @@
 
+; Copyright (c) 2015 Microsoft Corporation
+
 
 (simplify (distinct 0 1 2 3 4 5 6))
 (declare-fun a () Int)

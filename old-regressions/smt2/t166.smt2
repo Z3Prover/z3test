@@ -1,3 +1,5 @@
+
+; Copyright (c) 2015 Microsoft Corporation
 (set-option :smt.macro-finder true)
 (set-option :produce-models true)
 (declare-fun f (Int Int) Int)

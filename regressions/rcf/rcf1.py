@@ -1,3 +1,5 @@
+
+# Copyright (c) 2015 Microsoft Corporation
 from z3rcf import *
 
 r1, r2 = MkRoots([-2, 0, 1])

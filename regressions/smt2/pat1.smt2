@@ -1,3 +1,5 @@
+
+; Copyright (c) 2015 Microsoft Corporation
 (set-option :interactive-mode true)
 (set-option :auto-config false)
 (set-option :smt.mbqi false)

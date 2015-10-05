@@ -1,3 +1,5 @@
+
+; Copyright (c) 2015 Microsoft Corporation
 (echo "ACL2 example")
 (set-option :auto-config false)
 (set-option :produce-models true)

@@ -1,3 +1,5 @@
+
+; Copyright (c) 2015 Microsoft Corporation
 (assert 
   (forall ((x Bool) (y Bool))
       (exists ((z Bool)) (and (= x z) y))))

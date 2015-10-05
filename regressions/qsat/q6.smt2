@@ -1,10 +1,13 @@
 
+; Copyright (c) 2015 Microsoft Corporation
+
 (declare-sort  S)
 (define-sort Prop () (Array S Bool))
 (declare-const P Prop)
 (declare-const R Prop)
 (declare-const x S)
 (declare-const y S)
+
 
 (push)
 (assert (exists ((Q Prop)) (forall ((z S)) 
@@ -25,12 +28,11 @@
 (pop)
 (exit)
 
-
-
 (push)
 (assert (exists ((Q Prop)) (forall ((z S)) (and (=> (select Q z) (= x z)) (select Q y)))))
 (apply epr_qe)
 (pop)
+(exit)
 
 
 (push)

@@ -1,4 +1,6 @@
 
+; Copyright (c) 2015 Microsoft Corporation
+
 ;; vsubst does not generate models. 
 (set-option :produce-models false) 
 

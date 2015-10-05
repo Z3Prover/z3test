@@ -1,3 +1,5 @@
+
+; Copyright (c) 2015 Microsoft Corporation
 (set-info :status unsat)
 
 (declare-fun f (Int) (_ FloatingPoint 53 11))

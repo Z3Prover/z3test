@@ -1,3 +1,9 @@
+
+/*++
+Copyright (c) 2015 Microsoft Corporation
+
+--*/
+
 #include<iostream>
 #include<sstream>
 #include<z3++.h>

@@ -1,3 +1,5 @@
+
+; Copyright (c) 2015 Microsoft Corporation
 ;; Z3 fails when using just theory_arith.
 ;; The main problem is that theory_arith implementation is incomplete for non-linear arithmetic, and it does not have any model finding capabilities for 
 ;; QF_NRA benchmarks

@@ -1,4 +1,6 @@
 
+; Copyright (c) 2015 Microsoft Corporation
+
 (simplify #xff)
 (simplify #xfe)
 (set-option :pp.bv-neg true)

@@ -1,4 +1,6 @@
 
+; Copyright (c) 2015 Microsoft Corporation
+
 (set-option :produce-unsat-cores true)
 
 (declare-const a Bool)

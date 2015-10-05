@@ -1,3 +1,5 @@
+
+; Copyright (c) 2015 Microsoft Corporation
 ; test that incremental SAT solver works for QF_BV
 (set-logic QF_BV)
 (declare-const p Bool)

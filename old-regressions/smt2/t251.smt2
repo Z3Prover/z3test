@@ -1,4 +1,6 @@
 
+; Copyright (c) 2015 Microsoft Corporation
+
 (set-option :numeral-as-real true)
 
 (define-fun sqrt ((x Real)) Real

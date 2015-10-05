@@ -1,3 +1,5 @@
+
+; Copyright (c) 2015 Microsoft Corporation
 (set-option :smt.arith.nl false) ;; Z3 should prove this benchmark even when nonlinear support is disabled.
 (set-option :produce-models true)
 (declare-const x1 Real)

@@ -1,4 +1,6 @@
 
+; Copyright (c) 2015 Microsoft Corporation
+
 (declare-const a (_ BitVec 32))
 (declare-const a (_ BitVec 16))
 ;; (declare-const a (_ FP 11 53))

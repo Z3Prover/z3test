@@ -1,4 +1,6 @@
 
+; Copyright (c) 2015 Microsoft Corporation
+
 (set-option :model.compact true)
 (declare-fun p (Int) Bool)
 (declare-fun f (Int Real) Bool)

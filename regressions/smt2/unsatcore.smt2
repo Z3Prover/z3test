@@ -1,3 +1,5 @@
+
+; Copyright (c) 2015 Microsoft Corporation
 (set-option :produce-unsat-cores true)
 (set-option :produce-models false)
 

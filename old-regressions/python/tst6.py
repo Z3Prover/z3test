@@ -1,3 +1,5 @@
+
+# Copyright (c) 2015 Microsoft Corporation
 from z3 import *
 
 print(simplify(Sqrt(2)).sexpr())

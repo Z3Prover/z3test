@@ -1,3 +1,5 @@
+
+; Copyright (c) 2015 Microsoft Corporation
 (set-option :auto-config true)
 (set-option :produce-models true)
 (set-option :global-decls false) ;; tests are executed using SMTLIB2_COMPLIANT=false

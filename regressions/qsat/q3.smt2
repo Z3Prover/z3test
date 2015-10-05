@@ -1,4 +1,6 @@
 
+; Copyright (c) 2015 Microsoft Corporation
+
 (assert (exists ((x Real)) (forall ((y Real)) (>= x y)))) (apply qe) (reset)
 (assert (exists ((x Real)) (forall ((y Real)) (> x y)))) (apply qe) (reset)
 (assert (exists ((x Real)) (forall ((y Real)) (< x y)))) (apply qe) (reset)

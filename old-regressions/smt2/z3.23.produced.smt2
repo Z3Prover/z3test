@@ -1,3 +1,5 @@
+
+; Copyright (c) 2015 Microsoft Corporation
 sat
 (model 
   (define-fun s2 () (Array Int Int Int)

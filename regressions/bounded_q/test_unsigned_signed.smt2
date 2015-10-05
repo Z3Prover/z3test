@@ -1,4 +1,6 @@
 
+; Copyright (c) 2015 Microsoft Corporation
+
 (set-option :pp.max-depth 1000)
 (define-sort W () (_ BitVec 8))
 (declare-fun p (W) Bool)

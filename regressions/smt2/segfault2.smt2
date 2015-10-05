@@ -1,3 +1,5 @@
+
+; Copyright (c) 2015 Microsoft Corporation
 (set-option :produce-models true)
 (set-option :produce-proofs true)
 (set-logic AUFNIRA)

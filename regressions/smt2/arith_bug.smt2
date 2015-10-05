@@ -1,3 +1,5 @@
+
+; Copyright (c) 2015 Microsoft Corporation
 (set-info :source |fuzzsmt|)
 (set-info :smt-lib-version 2.0)
 (set-info :category "random")

@@ -1,3 +1,5 @@
+
+; Copyright (c) 2015 Microsoft Corporation
 (echo "buggy")
 (declare-const x Int)
 (declare-const y Real)

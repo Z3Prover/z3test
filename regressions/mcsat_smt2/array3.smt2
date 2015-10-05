@@ -1,4 +1,6 @@
 
+; Copyright (c) 2015 Microsoft Corporation
+
 
 (declare-const A1 (Array Int (Array Bool Int)))
 (declare-const A2 (Array Int (Array Bool Int)))

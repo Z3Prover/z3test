@@ -1,3 +1,5 @@
+
+# Copyright (c) 2015 Microsoft Corporation
 from z3 import *
 
 # let max max2 x y z = max2 (max2 x y) z

@@ -1,4 +1,6 @@
 
+; Copyright (c) 2015 Microsoft Corporation
+
 
 (define-sort Word () (_ BitVec 32))
 (declare-fun Sel (Word Word) Word)

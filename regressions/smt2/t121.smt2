@@ -1,3 +1,5 @@
+
+; Copyright (c) 2015 Microsoft Corporation
 (set-logic QF_BV)
 (set-info :status unsat)
 (declare-const a (_ BitVec 4))

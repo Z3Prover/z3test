@@ -1,3 +1,5 @@
+
+; Copyright (c) 2015 Microsoft Corporation
 (declare-fun MAX_PACKET () Int)
 (declare-fun PACKET_SIZE () Int)
 (declare-fun buffer (Int) Int)

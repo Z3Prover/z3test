@@ -1,3 +1,5 @@
+
+; Copyright (c) 2015 Microsoft Corporation
 (declare-const p Bool)
 (declare-const q Bool)
 (declare-const r Bool)

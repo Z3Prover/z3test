@@ -1,3 +1,5 @@
+
+; Copyright (c) 2015 Microsoft Corporation
 ; tokeneer3a/enclave/startadminactivity/adminopcanstart 1 
 (set-option :print-success false )
 (set-option :produce-unsat-cores true )

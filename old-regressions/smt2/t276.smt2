@@ -1,4 +1,6 @@
 
+; Copyright (c) 2015 Microsoft Corporation
+
 (set-option :diagnostic-output-channel "stdout")
 (declare-const a Int)
 (declare-const b Int)

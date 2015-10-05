@@ -1,3 +1,5 @@
+
+; Copyright (c) 2015 Microsoft Corporation
 (echo "ACL2 example")
 (set-option :pp.decimal true)
 (set-option :auto-config false)

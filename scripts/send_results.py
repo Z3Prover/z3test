@@ -1,3 +1,4 @@
+# Copyright (c) 2015 Microsoft Corporation
 # Aux script for sending results to developers.
 # This script is useful when collecting the results from a machine that can't send emails.
 import sys

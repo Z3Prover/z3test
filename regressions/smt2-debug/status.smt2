@@ -1,4 +1,6 @@
 
+; Copyright (c) 2015 Microsoft Corporation
+
 
 (set-option :diagnostic-output-channel "stdout")
 (set-info :status unsat)

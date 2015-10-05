@@ -1,3 +1,5 @@
+
+; Copyright (c) 2015 Microsoft Corporation
 ;;segmentation fault instead unsat, 
 ;; the problem disappears when I relax the constraints by commenting the line 22 : (assert (<= PRICE_SUM 100000))
 (set-option :auto-config true)

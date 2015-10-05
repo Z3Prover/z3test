@@ -1,4 +1,6 @@
 
+; Copyright (c) 2015 Microsoft Corporation
+
 (set-logic QF_NRA) 
 (declare-const x Real)
 (declare-const y Real)

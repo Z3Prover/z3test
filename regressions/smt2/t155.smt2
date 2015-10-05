@@ -1,4 +1,6 @@
 
+; Copyright (c) 2015 Microsoft Corporation
+
 (set-option :produce-models true)
 (declare-const s1 (Array Int Int))
 (declare-const s2 (Array Int Int))

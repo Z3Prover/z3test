@@ -1,4 +1,6 @@
 
+; Copyright (c) 2015 Microsoft Corporation
+
 ;; BUG: mpf != fpu [seed=1365513423, num_tests=99781]
 ;; sse2 FPU RM (before) : rm-up 
 ;; sse2 FPU RM (after) : rm-up 

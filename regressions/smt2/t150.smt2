@@ -1,4 +1,6 @@
 
+; Copyright (c) 2015 Microsoft Corporation
+
 
 (define-sort A () (Array Int Int Int))
 (declare-fun foo (Int Int) Int)

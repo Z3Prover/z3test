@@ -1,3 +1,5 @@
+
+# Copyright (c) 2015 Microsoft Corporation
 from z3 import *
 
 # We represent graphs as a list of pair of non-negative integers.

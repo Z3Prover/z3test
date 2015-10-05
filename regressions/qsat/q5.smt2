@@ -1,3 +1,5 @@
+
+; Copyright (c) 2015 Microsoft Corporation
 (declare-datatypes () ((list (nil) (cons (head Int) (tail list)))))
 (declare-const l1 list)
 (declare-const l2 list)

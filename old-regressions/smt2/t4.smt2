@@ -1,3 +1,5 @@
+
+; Copyright (c) 2015 Microsoft Corporation
 (set-option :produce-models false) ;; Models are now enabled by default
 
 (declare-const l1 (List Int))

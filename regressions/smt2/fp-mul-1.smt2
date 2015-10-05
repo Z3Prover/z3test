@@ -1,3 +1,5 @@
+
+; Copyright (c) 2015 Microsoft Corporation
 ;; sse2 FPU RM (before) : rm-down
 ;; sse2 FPU RM (after) : rm-up
 ;; Rounding mode: to positive

@@ -1,3 +1,5 @@
+
+; Copyright (c) 2015 Microsoft Corporation
 (declare-fun T4_16 () (_ BitVec 32))
 (declare-fun T1_19 () (_ BitVec 8))
 (declare-fun T1_18 () (_ BitVec 8))

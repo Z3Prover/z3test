@@ -1,3 +1,5 @@
+
+; Copyright (c) 2015 Microsoft Corporation
 (dbg-some-value Bool)
 (dbg-some-value Int)
 (dbg-some-value Real)

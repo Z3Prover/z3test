@@ -1,4 +1,6 @@
 
+; Copyright (c) 2015 Microsoft Corporation
+
 (set-option :pp.max-depth 100)
 
 (dbg-instantiate (forall ((x Int) (y Real))

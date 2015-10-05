@@ -1,3 +1,5 @@
+
+; Copyright (c) 2015 Microsoft Corporation
 (set-option :smt.mbqi true)
 (set-option :produce-models true)
 (declare-fun s1 ((_ BitVec 16)) (_ BitVec 16))

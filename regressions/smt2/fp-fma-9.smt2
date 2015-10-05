@@ -1,4 +1,6 @@
 
+; Copyright (c) 2015 Microsoft Corporation
+
 ; BUG: mpf != fpu [seed=1365672267, num_tests=55148]
 ; Rounding mode: to negative
 ; Precision: double (11/53)

@@ -1,3 +1,5 @@
+
+# Copyright (c) 2015 Microsoft Corporation
 # 2. Prefixing parameter names with module names or not.
 # At global scope we have to prefix the names. 
 # At local scope they are not prefixed.
