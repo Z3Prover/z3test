@@ -1,3 +1,3 @@
-(error "line 5 column 13: invalid function application, missing arguments f")
-(error "line 6 column 13: no arguments supplied to arithmetical operator")
-(error "line 7 column 11: invalid builtin application =")
+(error "line 7 column 13: invalid function application, missing arguments f")
+(error "line 8 column 13: no arguments supplied to arithmetical operator")
+(error "line 9 column 11: invalid builtin application =")
