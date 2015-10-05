@@ -1,5 +1,5 @@
 (= (+ (to_real 3) 5.0) 10.0)
-(error "line 10 column 24: invalid command, sort mismatch at position 1")
+(error "line 12 column 24: invalid command, sort mismatch at position 1")
 (and (p (to_int 1.0)) (forall ((y1 Int) (y2 Int)) (or (p y1) (p 2))))
 (= (select ((as const (Array Int Int)) 0) 100) (ite true 1 0))
 (p 10)
