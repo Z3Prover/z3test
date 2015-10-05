@@ -5,6 +5,7 @@ import re
 
 cr = re.compile("Copyright")
 aut = re.compile("Automatically generated")
+aut2 = re.compile("auto-generated")
 
 cr_notice = """
 /*++
@@ -35,6 +36,10 @@ def has_cr(file):
 	if m:
 	    ins.close()
 	    return True
+	m = aut2.search(line)
+	if m:
+	    ins.close()
+	    return True		
 	line = ins.readline()
     ins.close()
     return False
@@ -66,5 +71,8 @@ def add_missing_cr(dir):
 		    print "Missing CR for %s" % path
 		    add_cr(path)
 
-add_missing_cr('regressions')
-add_missing_cr('old-regressions')
+#add_missing_cr('regressions')
+#add_missing_cr('old-regressions')
+add_missing_cr('ClusterExperiment')
+
+
