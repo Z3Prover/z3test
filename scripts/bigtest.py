@@ -12,7 +12,7 @@ def bigtest():
     # Build everything:
     #   - using clang and g++
     #   - release and debug modes
-    for b in ['unstable']:
+    for b in ['master']:
         for d in [True, False]:
             for c in [True, False]:
                 util.buildz3(branch=b, everything=True, clean=True, debug=d,  java=True, static=True, jobs=config.NUMJOBS, clang=c)

@@ -143,7 +143,7 @@ def make(branch, debug, everything, clang, jobs):
             raise Exception("Failed to make Z3\n%s\n" % cmd)
         
 
-def buildz3(branch="unstable", everything=False, clean=False, debug=True, java=False, clang=False, static=False, VS64=False, jobs=16, extraflags=[]):
+def buildz3(branch="master", everything=False, clean=False, debug=True, java=False, clang=False, static=False, VS64=False, jobs=16, extraflags=[]):
     z3dir = find_z3depot()
     with cd(z3dir):
         gitcheckout(branch)
@@ -155,7 +155,7 @@ def buildz3(branch="unstable", everything=False, clean=False, debug=True, java=F
         mk_make(branch, debug, java, clang, static, VS64, extraflags)
         make(branch, debug, everything, clang, jobs)
 
-def testz3py(branch="unstable", debug=True, clang=False):
+def testz3py(branch="master", debug=True, clang=False):
     z3dir = find_z3depot()
     bdir = get_builddir(branch, debug, clang)
     p    = os.path.join(z3dir, bdir)
@@ -165,7 +165,7 @@ def testz3py(branch="unstable", debug=True, clang=False):
         if subprocess.call([config.PYTHON, 'z3num.pyc']) != 0:
             raise Exception("Failed to execute Z3 python regression tests 'z3num.pyc' at '%s'" % p)
 
-def testjavaex(branch="unstable", debug=True, clang=False):
+def testjavaex(branch="master", debug=True, clang=False):
     z3dir = find_z3depot()
     bdir = get_builddir(branch, debug, clang)
     p    = os.path.join(z3dir, bdir)
@@ -182,7 +182,7 @@ def testjavaex(branch="unstable", debug=True, clang=False):
                 if subprocess.call([config.JAVA, '-cp', 'com.microsoft.z3.jar:.', 'JavaExample']) != 0:
                     raise Exception("Failed to execute Java example at '%s'" % p)
 
-def testz3ex(exe, branch="unstable", debug=True, clang=False):
+def testz3ex(exe, branch="master", debug=True, clang=False):
     z3dir = find_z3depot()
     bdir = get_builddir(branch, debug, clang)
     p    = os.path.join(z3dir, bdir)
@@ -269,7 +269,7 @@ def test_benchmarks(z3exe, benchdir, ext="smt2", timeout_duration=60.0):
     if error:
         raise Exception("Found errors testing benchmarks at %s using %s" % (benchdir, z3exe))
 
-def test_benchmarks_using_latest(benchdir, branch="unstable", debug=True, clang=False, ext="smt2", timeout_duration=60.0):
+def test_benchmarks_using_latest(benchdir, branch="master", debug=True, clang=False, ext="smt2", timeout_duration=60.0):
     z3dir = find_z3depot()
     bdir  = get_builddir(branch, debug, clang)
     z3exe = os.path.join(z3dir, bdir, 'z3')
@@ -303,7 +303,7 @@ def test_pyscripts(z3libdir, scriptdir, ext="py", timeout_duration=60.0):
                 if error:
                     raise Exception("Found errors testing scripts at '%s' using '%s'" % (scriptdir, z3libdir))
     
-def test_pyscripts_using_latest(scriptdir, branch="unstable", debug=True, clang=False, ext="py", timeout_duration=60.0):
+def test_pyscripts_using_latest(scriptdir, branch="master", debug=True, clang=False, ext="py", timeout_duration=60.0):
     z3dir = find_z3depot()
     bdir  = get_builddir(branch, debug, clang)
     test_pyscripts(os.path.join(z3dir, bdir), scriptdir, ext, timeout_duration)
@@ -359,14 +359,14 @@ def test_cs(z3libdir, csdir, ext="cs", VS64=False, timeout_duration=60.0):
         raise Exception("Found errors testing C# at '%s' using '%s'" % (csdir, z3libdir))
 
     
-def test_cs_using_latest(csdir, branch="unstable", debug=True, clang=False, ext="cs", VS64=False, timeout_duration=60.0):
+def test_cs_using_latest(csdir, branch="master", debug=True, clang=False, ext="cs", VS64=False, timeout_duration=60.0):
     z3dir = find_z3depot()
     bdir  = get_builddir(branch, debug, clang)
     test_cs(os.path.join(z3dir, bdir), csdir, ext, VS64, timeout_duration)
 
 # buildz3(java=True, everything=True)
 # testjavaex()                
-# testz3ex('cpp_example', "unstable", True, True)
+# testz3ex('cpp_example', "master", True, True)
 # testz3ex('c_example')    
 # test_benchmarks('/home/leo/projects/z3/build/debug/z3', 'regressions/smt2')
 # test_benchmark('/home/leo/projects/z3/build/debug/z3', 'regressions/smt2/bad_patterns.smt2')

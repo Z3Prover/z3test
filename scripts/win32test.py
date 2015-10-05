@@ -4,7 +4,7 @@ import os
 import sys
 import datetime
 
-def win32test(b="unstable"):
+def win32test(b="master"):
     print "BUILD DATE:", datetime.date.today()
     sys.stdout.flush()
     # Build debug and release modes
