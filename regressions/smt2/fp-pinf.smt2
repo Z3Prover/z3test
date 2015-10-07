@@ -7,4 +7,5 @@
 (assert (= X (_ +oo 11 53)))
 
 (check-sat)
+(check-sat-using smt)
 (exit)

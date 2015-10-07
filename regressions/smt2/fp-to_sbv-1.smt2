@@ -8,4 +8,5 @@
 (assert (not (= X #xff)))
 
 (check-sat)
+(check-sat-using smt)
 (exit)

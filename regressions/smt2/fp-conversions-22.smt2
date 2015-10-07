@@ -10,4 +10,5 @@
 (assert (= X (fp #b1 #b10000111110 #x0000000000000)))
 
 (check-sat)
+(check-sat-using smt)
 (exit)

@@ -12,4 +12,5 @@
 (assert (not (= X (fp #b0 #b00000000000 #x0000000000000))))
 
 (check-sat)
+(check-sat-using smt)
 (exit)

@@ -8,4 +8,5 @@
 (assert (= (f 2) (_ -oo 53 11)))
 
 (check-sat)
+(check-sat-using smt)
 (exit)

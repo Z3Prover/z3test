@@ -11,3 +11,4 @@
 (assert (not (= (fp.roundToIntegral roundTowardZero x) r)))
 
 (check-sat)
+(check-sat-using smt)

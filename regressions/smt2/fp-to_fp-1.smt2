@@ -9,4 +9,5 @@
 (assert (not (= X (_ +zero 5 11))))
 
 (check-sat)
+(check-sat-using smt)
 (exit)

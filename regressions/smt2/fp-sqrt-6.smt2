@@ -19,3 +19,4 @@
 (assert (not (= q r)))
 
 (check-sat)
+(check-sat-using smt)

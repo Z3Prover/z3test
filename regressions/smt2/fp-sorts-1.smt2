@@ -19,3 +19,4 @@
 (assert (and (= sf4 lf4) (fp.eq sf4 lf4)))
 
 (check-sat)
+(check-sat-using smt)

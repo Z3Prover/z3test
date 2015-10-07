@@ -18,4 +18,5 @@
 (assert (and (= rm5 roundTowardZero) (not (= rm5 RTZ))))
 
 (check-sat)
+(check-sat-using smt)
  

@@ -9,4 +9,5 @@
 (assert (not (= X ((_ to_fp 5 11) RTZ -1.9990234375 15))))
 
 (check-sat)
+(check-sat-using smt)
 (exit)

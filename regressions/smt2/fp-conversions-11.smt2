@@ -11,5 +11,6 @@
 (assert (= X ((_ to_fp 11 53) roundTowardZero S)))
 (assert (not (= X (fp #b1 #b10000000000 #x0000000000000))))
 
-(check-sat) 
+(check-sat)
+(check-sat-using smt) 
 (exit)

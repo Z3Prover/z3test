@@ -16,3 +16,4 @@
 (assert (= q r))
 
 (check-sat)
+(check-sat-using smt)

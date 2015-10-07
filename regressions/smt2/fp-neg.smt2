@@ -9,4 +9,5 @@
 (assert (= Y (fp.neg X)))
 
 (check-sat)
+(check-sat-using smt)
 (exit)

@@ -12,4 +12,5 @@
 (assert (= (fp.to_real (_ NaN 8 24)) (fp.to_real (fp c1 c2 c3))))
 
 (check-sat)
+(check-sat-using smt)
 (exit)

@@ -23,4 +23,5 @@
 (assert (fp.lt (_f X) (_f Y)))
 
 (check-sat)
+(check-sat-using smt)
 (exit)

@@ -16,4 +16,5 @@
 (assert (= (fp.roundToIntegral RTZ q) (fp.roundToIntegral RTZ r)))
 
 (check-sat)
+(check-sat-using smt)
 (get-model)

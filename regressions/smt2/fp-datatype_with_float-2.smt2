@@ -21,4 +21,5 @@
 (assert (fp.eq (_f X) (_f Y)))
 
 (check-sat)
+(check-sat-using smt)
 (exit)

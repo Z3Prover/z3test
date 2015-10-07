@@ -14,4 +14,5 @@
 (assert (= B #x00))
 
 (check-sat)
+(check-sat-using smt)
 (exit)

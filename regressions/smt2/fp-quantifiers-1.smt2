@@ -7,4 +7,5 @@
 			(=> (= x y) (fp.eq x y)))))
 
 (check-sat)
+(check-sat-using smt)
 

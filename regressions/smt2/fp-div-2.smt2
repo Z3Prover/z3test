@@ -25,3 +25,4 @@
 (assert (= q (fp.div roundTowardZero x y)))
 (assert  (not (= q r)))
 (check-sat)
+(check-sat-using smt)

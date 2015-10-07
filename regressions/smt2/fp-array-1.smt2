@@ -7,4 +7,5 @@
 (assert (= (select A 0) (select A 1)))
 
 (check-sat)
+(check-sat-using smt)
 (exit)

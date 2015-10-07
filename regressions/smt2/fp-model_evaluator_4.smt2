@@ -16,4 +16,5 @@
 (assert (= (fp.max q r) (fp.max r q)))
 
 (check-sat)
+(check-sat-using smt)
 (get-model)

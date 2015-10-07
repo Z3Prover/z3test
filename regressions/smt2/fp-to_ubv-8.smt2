@@ -7,4 +7,5 @@
 (assert (= #x00 ((_ fp.to_ubv 8) RTP (fp #b0 #b10111 #b0000000000)))) 
 
 (check-sat)
+(check-sat-using smt)
 (exit)

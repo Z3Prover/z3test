@@ -10,4 +10,5 @@
 (assert (= R (fp.to_real X)))
 
 (check-sat)
+(check-sat-using smt)
 (exit)

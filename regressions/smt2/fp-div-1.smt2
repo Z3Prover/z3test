@@ -24,3 +24,4 @@
 (assert (= q (fp.div roundNearestTiesToEven x y)))
 (assert  (not (= q r)))
 (check-sat)
+(check-sat-using smt)

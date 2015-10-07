@@ -25,4 +25,5 @@
 
 
 (check-sat)
+(check-sat-using smt)
 (exit)

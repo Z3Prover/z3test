@@ -7,4 +7,5 @@
 (assert (fp.lt (select A 1) (select A 0)))
 
 (check-sat)
+(check-sat-using smt)
 (exit)

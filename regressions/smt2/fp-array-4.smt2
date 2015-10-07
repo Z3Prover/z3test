@@ -9,4 +9,5 @@
 (assert (fp.lt (select A x) (select A y)))
 
 (check-sat)
+(check-sat-using smt)
 (exit)

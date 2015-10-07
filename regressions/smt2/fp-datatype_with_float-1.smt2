@@ -20,4 +20,5 @@
 (assert (= (_f X) (_ +zero 8 24)))
 
 (check-sat)
+(check-sat-using smt)
 (exit)

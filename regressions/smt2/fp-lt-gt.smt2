@@ -10,4 +10,5 @@
 (assert (not (fp.gt X Y)))
 
 (check-sat)
+(check-sat-using smt)
 (exit)

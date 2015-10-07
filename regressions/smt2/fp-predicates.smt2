@@ -14,4 +14,5 @@
 (assert (fp.isPositive X))
 
 (check-sat)
+(check-sat-using smt)
 (exit)

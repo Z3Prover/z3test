@@ -6,4 +6,5 @@
 (assert (= (my_rm_uf_rmrm RTP) RTN))
 
 (check-sat)
+(check-sat-using smt)
 (exit)

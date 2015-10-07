@@ -24,3 +24,4 @@
 (assert (not (= q m)))
 
 (check-sat)
+(check-sat-using smt)

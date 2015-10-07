@@ -7,4 +7,5 @@
 (assert (fp.eq X X))
 
 (check-sat)
+(check-sat-using smt)
 (exit)

@@ -7,4 +7,5 @@
 (assert (not (= #x00 ((_ fp.to_sbv 8) RTP (fp #b0 #b11110 #b0000000000)))))
 
 (check-sat)
+(check-sat-using smt)
 (exit)

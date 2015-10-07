@@ -15,3 +15,4 @@
 
 (assert (not (= (fp.fma roundTowardNegative x y z) r)))
 (check-sat)
+(check-sat-using smt)

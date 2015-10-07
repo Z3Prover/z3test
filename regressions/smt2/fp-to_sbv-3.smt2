@@ -11,4 +11,5 @@
 (assert (not (= Xbv #xfe)))
 
 (check-sat)
+(check-sat-using smt)
 (exit)

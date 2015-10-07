@@ -12,4 +12,5 @@
 (assert (>= R 3.0))
 
 (check-sat)
+(check-sat-using smt)
 (exit)

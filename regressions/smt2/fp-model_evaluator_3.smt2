@@ -16,4 +16,5 @@
 (assert (= (fp.min q r) (fp.min r q)))
 
 (check-sat)
+(check-sat-using smt)
 (get-model)

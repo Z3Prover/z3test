@@ -6,4 +6,5 @@
 (assert (not (= (_ NaN 6 8) (fp #b0 #b111111 #b0000001)))) ; should both be NaNs
 
 (check-sat)
+(check-sat-using smt)
 (exit)

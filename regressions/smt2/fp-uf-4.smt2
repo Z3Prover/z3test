@@ -6,4 +6,5 @@
 (assert (= (_ -zero 8 24) (my_uf_bf false)))
 
 (check-sat)
+(check-sat-using smt)
 (exit)

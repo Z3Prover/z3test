@@ -11,4 +11,5 @@
 (assert (fp.isNegative R))
 
 (check-sat)
+(check-sat-using smt)
 

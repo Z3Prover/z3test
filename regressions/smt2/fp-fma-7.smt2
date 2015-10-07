@@ -23,3 +23,4 @@
 (assert (not (= q mpfx)))
 
 (check-sat)
+(check-sat-using smt)

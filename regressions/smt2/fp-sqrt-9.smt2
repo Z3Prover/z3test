@@ -9,5 +9,6 @@
 
 (assert (= (fp.sqrt RNE x) (fp.sqrt RNE (fp #b0 #b000 #b001))))
 (check-sat)
+(check-sat-using smt)
 (get-value (x))
 (exit)

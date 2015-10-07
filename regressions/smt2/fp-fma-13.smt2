@@ -23,3 +23,4 @@
 (assert (= q (fp.fma roundTowardZero x y z)))
 (assert (not (= q r)))
 (check-sat)
+(check-sat-using smt)

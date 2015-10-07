@@ -10,4 +10,5 @@
 (assert (fp.eq X Y))
 
 (check-sat)
+(check-sat-using smt)
 (exit)

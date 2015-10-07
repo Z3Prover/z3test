@@ -6,4 +6,5 @@
 (assert (= ((_ to_fp 8 24) RNE (- 2.0)) (my_uf (_ +oo 8 24))))
 
 (check-sat)
+(check-sat-using smt)
 (exit)

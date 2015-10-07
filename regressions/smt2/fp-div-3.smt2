@@ -21,4 +21,5 @@
 (assert (= r ((_ to_fp 11 53) roundNearestTiesToEven 1.2851409060375420523314460297115147113800048828125 545)))
 (assert (= (fp.div roundNearestTiesToEven x y) r))
 (check-sat)
+(check-sat-using smt)
 

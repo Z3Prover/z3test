@@ -11,4 +11,5 @@
 (assert (= T (fp #b0 #b011 #b00)))
 
 (check-sat)
+(check-sat-using smt)
 (exit)

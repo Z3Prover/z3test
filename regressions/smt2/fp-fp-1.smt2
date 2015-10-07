@@ -12,4 +12,5 @@
 (assert (= X ((_ to_fp 11 53) RTZ 3.5)))
 
 (check-sat)
+(check-sat-using smt)
 (exit)

@@ -15,4 +15,5 @@
 	       ((_ to_fp_unsigned 5 11) RM2 #xFFE0))))
 
 (check-sat)
+(check-sat-using smt)
 (exit)

@@ -11,3 +11,4 @@
 (assert (not (= (fp.abs x) r)))
 
 (check-sat)
+(check-sat-using smt)

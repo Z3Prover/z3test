@@ -9,4 +9,5 @@
 (assert (not (= X #x10)))
 
 (check-sat)
+(check-sat-using smt)
 (exit)

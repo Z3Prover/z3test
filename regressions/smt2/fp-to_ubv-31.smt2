@@ -14,4 +14,5 @@
 (assert (not (= B #x00000001)))
 
 (check-sat)
+(check-sat-using smt)
 (exit)

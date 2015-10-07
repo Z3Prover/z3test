@@ -22,3 +22,4 @@
 (assert (not (= cast ((_ to_fp 11 53) roundNearestTiesToEven 1.0 (- 127)))))
 
 (check-sat)
+(check-sat-using smt)

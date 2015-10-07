@@ -16,3 +16,4 @@
 						( ( _ to_fp 8 24 ) roundNearestTiesToEven 1.0 0)))))
 
 (check-sat)
+(check-sat-using smt)

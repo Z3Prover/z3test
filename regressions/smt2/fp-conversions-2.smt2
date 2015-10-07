@@ -9,5 +9,6 @@
 (assert (not (= X (fp #b0 #b10101010101 #x1234567890abc))))
 
 (check-sat)
+(check-sat-using smt)
 (exit)
 

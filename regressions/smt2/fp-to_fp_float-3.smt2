@@ -16,3 +16,4 @@
 (assert (fp.eq cx cy))
 
 (check-sat)
+(check-sat-using smt)

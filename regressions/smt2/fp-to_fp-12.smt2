@@ -9,3 +9,4 @@
 (assert (fp.eq ((_ to_fp 8 24) roundNearestTiesToEven x_64) x_32))
 
 (check-sat)
+(check-sat-using smt)
