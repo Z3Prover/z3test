@@ -7,7 +7,7 @@ import config
 import sys
 import datetime
 
-def smalltest(b="unstable"):
+def smalltest(b="master"):
     print "BUILD DATE:", datetime.date.today()
     sys.stdout.flush()
     # Build debug and release modes
