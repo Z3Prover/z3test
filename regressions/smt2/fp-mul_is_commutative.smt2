@@ -20,4 +20,3 @@
 (assert (not (fp.eq r1 r2)))
 
 (check-sat)
-(check-sat-using smt)
