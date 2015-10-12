@@ -8,6 +8,9 @@ using System.Data.SqlClient;
 using System.IO;
 using System.Xml;
 
+using Microsoft.Hpc.Scheduler;
+using Microsoft.Hpc.Scheduler.Properties;
+
 using Z3Data;
 using AlertLibrary;
 
@@ -71,6 +74,28 @@ namespace ClusterDownload
                                 r.SendTo(config.developers);
 
                             records.Update(j);
+                        }
+                        else
+                        {
+                            try
+                            {
+                                string cluster = j.MetaData.Cluster;
+                                uint cluster_jid = j.MetaData.ClusterJobId;
+                                if (cluster != "" && cluster_jid != 0)
+                                {
+                                    Scheduler scheduler = new Scheduler();
+                                    scheduler.Connect(cluster);
+                                    ISchedulerJob job = scheduler.OpenJob(Convert.ToInt32(cluster_jid));
+                                    if (job.State == JobState.Canceled &&
+                                        job.ErrorMessage.StartsWith("Canceled by the scheduler"))
+                                    {
+                                        Global.Say("Requeing job #" + j.MetaData.Id + " after the scheduler canceled it (# requeues = " + job.RequeueCount + ").");
+                                        try { job.Requeue(); }
+                                        catch (Exception ex) { Console.WriteLine("requeue-exception: " + ex.Message); }
+                                    }
+                                }
+                            }
+                            catch (SchedulerException) { /* Ignore. */}
                         }
                     }
 
