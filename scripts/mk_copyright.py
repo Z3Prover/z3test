@@ -71,8 +71,8 @@ def add_missing_cr(dir):
 		    print "Missing CR for %s" % path
 		    add_cr(path)
 
-#add_missing_cr('regressions')
+add_missing_cr('regressions')
 #add_missing_cr('old-regressions')
-add_missing_cr('ClusterExperiment')
+#add_missing_cr('ClusterExperiment')
 
 
