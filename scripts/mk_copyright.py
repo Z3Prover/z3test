@@ -68,7 +68,7 @@ def add_missing_cr(dir):
 	    if f.endswith('.cpp') or f.endswith('.h') or f.endswith('.c') or f.endswith('.cs') or f.endswith('.py') or f.endswith('.smt2'):
 		path = "%s\\%s" % (root, f)
 		if not has_cr(path):
-		    print "Missing CR for %s" % path
+		    print("Missing CR for %s" % path)
 		    add_cr(path)
 
 add_missing_cr('regressions')

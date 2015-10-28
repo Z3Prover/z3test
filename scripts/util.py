@@ -172,7 +172,7 @@ def testjavaex(branch="master", debug=True, clang=False):
     bdir = get_builddir(branch, debug, clang)
     p    = os.path.join(z3dir, bdir)
     with cd(p):
-        print p
+        print(p)
         if is_windows():
             if subprocess.call([config.JAVA, '-cp', 'com.microsoft.z3.jar;.', 'JavaExample']) != 0:
                 raise Exception("Failed to execute Java example at '%s'" % p)
@@ -243,30 +243,30 @@ def test_benchmark(z3exe, benchmark, expected=None):
     if errcode != 0 and errcode != 1 and errcode != 105:
         raise Exception("Z3 (%s) returned unexpected error code %s for %s" % (z3exe, errcode, benchmark))
     if not filecmp.cmp(expected, produced):
-        print "EXPECTED"
-        print open(expected, 'r').read()
-        print "======================"
-        print "PRODUCED"
-        print open(produced, 'r').read()
-        print "======================"
-        raise Exception("Z3 (%s) produced unexpected output for %s" % (z3exe, benchmark))
+        print("EXPECTED")
+        print(open(expected, 'r').read())
+        print("======================")
+        print("PRODUCED")
+        print(open(produced, 'r').read())
+        print("======================")
+        raiseException("Z3 (%s) produced unexpected output for %s" % (z3exe, benchmark))
     return True
 
 def test_benchmarks(z3exe, benchdir, ext="smt2", timeout_duration=60.0):
-    print "Testing benchmarks at", benchdir, "using", z3exe
+    print("Testing benchmarks at", benchdir, "using", z3exe)
     error = False
     for benchmark in filter(lambda f: f.endswith(ext), os.listdir(benchdir)):
         try:
             bench = os.path.join(benchdir, benchmark)
-            print "Testing", bench
+            print("Testing", bench)
             if timeout(test_benchmark, 
                        args=(z3exe, bench), 
                        timeout_duration=timeout_duration,
                        default=False) == False:
                 raise Exception("Timeout executing benchmark %s using %s" % (bench, z3exe))
         except Exception as ex:
-            print "Failed"
-            print ex
+            print("Failed")
+            print(ex)
             error = True
     if error:
         raise Exception("Found errors testing benchmarks at %s using %s" % (benchdir, z3exe))
@@ -283,15 +283,15 @@ def exec_script(script):
     return True
 
 def test_pyscripts(z3libdir, scriptdir, ext="py", timeout_duration=60.0):
-    print "Testing scripts at", scriptdir, "using", z3libdir
+    print("Testing scripts at", scriptdir, "using", z3libdir)
     with setenv('LD_LIBRARY_PATH', z3libdir):
         with setenv('PYTHONPATH', z3libdir):
             with setenv('DYLD_LIBRARY_PATH', z3libdir):
-                print "Testing python scripts at", scriptdir, "using", z3libdir
+                print("Testing python scripts at", scriptdir, "using", z3libdir)
                 error = False
                 for script in filter(lambda f: f.endswith(ext), os.listdir(scriptdir)):
                     script = os.path.join(scriptdir, script)
-                    print "Testing", script
+                    print("Testing", script)
                     try:
                         if timeout(exec_script,
                                    args=[script],
@@ -299,8 +299,8 @@ def test_pyscripts(z3libdir, scriptdir, ext="py", timeout_duration=60.0):
                                    default=False) == False:
                             raise Exception("Timeout executing script '%s' at '%s' using '%s'" % (script, scriptdir, z3libdir)) 
                     except Exception as ex:
-                        print "Failed"
-                        print ex
+                        print("Failed")
+                        print(ex)
                         error = True
                 if error:
                     raise Exception("Found errors testing scripts at '%s' using '%s'" % (scriptdir, z3libdir))
@@ -321,7 +321,7 @@ def exec_cs():
     return True
 
 def test_cs(z3libdir, csdir, ext="cs", VS64=False, timeout_duration=60.0):
-    print "Testing C# at", csdir, "using", z3libdir
+    print("Testing C# at", csdir, "using", z3libdir)
     error = False
     platform_arg = "/platform:x86"
     if VS64:
@@ -332,7 +332,7 @@ def test_cs(z3libdir, csdir, ext="cs", VS64=False, timeout_duration=60.0):
             if file == config.CSDRIVER:
                 continue
             file = os.path.join(csdir, file)
-            print "Testing", file
+            print("Testing", file)
             try:
                 # Compile.
                 if timeout(exec_cs_compile,
@@ -352,8 +352,8 @@ def test_cs(z3libdir, csdir, ext="cs", VS64=False, timeout_duration=60.0):
                            default=False) == False:
                     raise Exception("Timeout executing '%s' at '%s' using '%s'" % (file, csdir, z3libdir)) 
             except Exception as ex:
-                print "Failed"
-                print ex
+                print("Failed")
+                print(ex)
                 error = True
             os.remove(config.CSTEMP)
     os.remove("Microsoft.Z3.dll")

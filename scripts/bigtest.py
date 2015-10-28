@@ -8,7 +8,7 @@ import datetime
 import sys
 
 def bigtest():
-    print "BUILD DATE:", datetime.date.today()
+    print("BUILD DATE:", datetime.date.today())
     sys.stdout.flush()
     # Build everything:
     #   - using clang and g++

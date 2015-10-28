@@ -6,7 +6,7 @@ import sys
 import datetime
 
 def win64test(b="master"):
-    print "BUILD DATE:", datetime.date.today()
+    print("BUILD DATE:", datetime.date.today())
     sys.stdout.flush()
     # Build debug and release modes
     for d in [True, False]:
