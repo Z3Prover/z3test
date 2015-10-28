@@ -11,10 +11,10 @@ def win32test(b="master"):
     # Build debug and release modes
     for d in [True, False]:
         util.buildz3(branch=b, everything=True, clean=True, debug=d,  java=True, static=False, jobs=1, clang=False, VS64=False)
-	util.testz3py(branch=b, debug=d, clang=False)
-	util.testjavaex(branch=b, debug=d, clang=False)
+        util.testz3py(branch=b, debug=d, clang=False)
+        util.testjavaex(branch=b, debug=d, clang=False)
         util.testz3ex('cpp_example', branch=b, debug=d, clang=False)
-	util.testz3ex('c_example', branch=b, debug=d, clang=False)
+        util.testz3ex('c_example', branch=b, debug=d, clang=False)
         util.test_benchmarks_using_latest('regressions/smt2', branch=b, debug=d, clang=False)
         util.test_benchmarks_using_latest('regressions/smt2-extra', branch=b, debug=d, clang=False)
         if d:
