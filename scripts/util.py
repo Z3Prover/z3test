@@ -253,12 +253,12 @@ def test_benchmark(z3exe, benchmark, expected=None):
     return True
 
 def test_benchmarks(z3exe, benchdir, ext="smt2", timeout_duration=60.0):
-    print("Testing benchmarks at", benchdir, "using", z3exe)
+    print("Testing benchmarks at %s using %s" % (benchdir, z3exe))
     error = False
     for benchmark in filter(lambda f: f.endswith(ext), os.listdir(benchdir)):
         try:
             bench = os.path.join(benchdir, benchmark)
-            print("Testing", bench)
+            print("Testing %s" % bench)
             if timeout(test_benchmark, 
                        args=(z3exe, bench), 
                        timeout_duration=timeout_duration,
@@ -283,15 +283,15 @@ def exec_script(script):
     return True
 
 def test_pyscripts(z3libdir, scriptdir, ext="py", timeout_duration=60.0):
-    print("Testing scripts at", scriptdir, "using", z3libdir)
+    print("Testing scripts at %s using %s" % (scriptdir, z3libdir))
     with setenv('LD_LIBRARY_PATH', z3libdir):
         with setenv('PYTHONPATH', z3libdir):
             with setenv('DYLD_LIBRARY_PATH', z3libdir):
-                print("Testing python scripts at", scriptdir, "using", z3libdir)
+                print("Testing python scripts at %s using %s" % (scriptdir, z3libdir))
                 error = False
                 for script in filter(lambda f: f.endswith(ext), os.listdir(scriptdir)):
                     script = os.path.join(scriptdir, script)
-                    print("Testing", script)
+                    print("Testing %s" % script)
                     try:
                         if timeout(exec_script,
                                    args=[script],
@@ -321,7 +321,7 @@ def exec_cs():
     return True
 
 def test_cs(z3libdir, csdir, ext="cs", VS64=False, timeout_duration=60.0):
-    print("Testing C# at", csdir, "using", z3libdir)
+    print("Testing C# at %s using %s" % (csdir, z3libdir))
     error = False
     platform_arg = "/platform:x86"
     if VS64:
@@ -332,7 +332,7 @@ def test_cs(z3libdir, csdir, ext="cs", VS64=False, timeout_duration=60.0):
             if file == config.CSDRIVER:
                 continue
             file = os.path.join(csdir, file)
-            print("Testing", file)
+            print("Testing %s" % file)
             try:
                 # Compile.
                 if timeout(exec_cs_compile,
