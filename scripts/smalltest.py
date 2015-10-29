@@ -8,7 +8,7 @@ import sys
 import datetime
 
 def smalltest(b="master"):
-    print("BUILD DATE:", datetime.date.today())
+    print("BUILD DATE: %s" % datetime.date.today())
     sys.stdout.flush()
     # Build debug and release modes
     for d in [True, False]:
