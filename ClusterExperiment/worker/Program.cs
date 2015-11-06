@@ -417,8 +417,8 @@ namespace worker
 
                     foreach (PackagePart part in pkg.GetParts())
                     {
-                        // Uri uriDocumentTarget = PackUriHelper.ResolvePartUri(new Uri("/", UriKind.Relative), rel.TargetUri);            
-                        // PackagePart part = pkg.GetPart(uriDocumentTarget);           
+                        // Uri uriDocumentTarget = PackUriHelper.ResolvePartUri(new Uri("/", UriKind.Relative), rel.TargetUri);
+                        // PackagePart part = pkg.GetPart(uriDocumentTarget);
                         Stream s = part.GetStream(FileMode.Open, FileAccess.Read);
                         string fn = CreateFilenameFromUri(part.Uri).Substring(1);
                         fs = new FileStream(e.localDir + @"\" + fn, FileMode.OpenOrCreate);
@@ -475,8 +475,8 @@ namespace worker
             // Process time
             return p.TotalProcessorTime;
 
-            // Complicated multi-process time. Note that sub-processes may be unavailable after the main process has exited. 
-            //TimeSpan r = new TimeSpan(0);      
+            // Complicated multi-process time. Note that sub-processes may be unavailable after the main process has exited.
+            //TimeSpan r = new TimeSpan(0);
 
             //foreach (Process cp in Process.GetProcessesByName(p.ProcessName))
             //  r += cp.TotalProcessorTime;
@@ -734,7 +734,7 @@ namespace worker
             }
             catch (Exception)
             {
-                // OK, this can happen for bogus filenames, etc. 
+                // OK, this can happen for bogus filenames, etc.
             }
 
             return res;
@@ -774,17 +774,17 @@ namespace worker
         //int getSATorUNSATcode(string filename) {
         //  FileStream f = File.Open(filename, System.IO.FileMode.Open, System.IO.FileAccess.Read);
         //  StreamReader r = new StreamReader(f);
-        //  int res = -1;      
+        //  int res = -1;
 
         //  while (!r.EndOfStream && res == -1)
         //  {
         //    string l = r.ReadLine(); // does not contain \r\n
         //    if (l == ("sat"))
-        //      res = 0; 
+        //      res = 0;
         //    else if (l == ("unsat"))
         //      res = 1;
         //    else if (l == ("unknown"))
-        //      res = 2; 
+        //      res = 2;
         //  }
 
         //  r.Close();
@@ -813,7 +813,7 @@ namespace worker
                     l.Contains("check annotation"))
                     res = 3;
                 else if (l.StartsWith("(error \"out of memory\")"))
-                    res = 6; 
+                    res = 6;
             }
             return (res == -1) ? 4 : res; // no bug found means general error.
         }
@@ -1046,7 +1046,7 @@ namespace worker
                 return 1;
 
             try
-            {                
+            {
                 Console.CancelKeyPress += delegate
                 {
                     Console.WriteLine("Worker was interrupted. Removing entries from jobqueue.");
@@ -1084,7 +1084,7 @@ namespace worker
                 }
                 else // (args.Count() == 1)
                 {
-                    while (true) // Any-experiment job.                    
+                    while (true) // Any-experiment job.
                     {
                         ensureConnected();
                         Dictionary<string, Object> r =
