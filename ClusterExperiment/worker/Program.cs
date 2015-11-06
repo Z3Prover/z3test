@@ -570,6 +570,13 @@ namespace worker
                 try
                 {
                     // Console.WriteLine("Running job #" + j.ID);
+
+                    // We need to avoid this:
+                    // INFRASTRUCTURE ERROR: The specified path, file name, or both are too long.
+                    // The fully qualified file name must be less than 260 characters, and
+                    // the directory name must be less than 248 characters. ...
+                    if (j.filename.Length >= 260) j.localFilename = @"\\?\" + j.localFilename;
+
                     File.Copy(j.filename, j.localFilename, true);
                     if (e.custom_check_sat != null)
                         replace_checksat(e, j);
