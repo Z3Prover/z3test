@@ -1,2 +1,4 @@
-k |-> 1
 sat
+(objectives
+ (k 1)
+)

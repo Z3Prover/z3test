@@ -1,2 +1,4 @@
-x |-> 5
 sat
+(objectives
+ (x 5)
+)

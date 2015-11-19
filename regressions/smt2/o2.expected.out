@@ -1,2 +1,4 @@
-|main::i@4| |-> 1
 sat
+(objectives
+ (|main::i@4| 1)
+)
