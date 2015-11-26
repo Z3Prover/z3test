@@ -93,9 +93,9 @@ namespace Z3Data
                 if (!_cats.ContainsKey(cat))
                 {
                     _cats.Add(cat, new CategoryStatistics());
-                    _catnames.Add(cat);                    
+                    _catnames.Add(cat);
                 }
-                
+
             }
 
             _rows = new ArrayList();
@@ -104,13 +104,16 @@ namespace Z3Data
             {
                 line = f.ReadLine();
                 a = line.Split(',');
-                uint id = Convert.ToUInt32(a[1]);
-                if (id > _lastJobId)
-                    _lastJobId = id;
-                string[] b = new string[a.Count()];
-                for (uint i = 0; i < a.Count(); i++)
-                    b[i] = a[i].Trim('"');
-                _rows.Add(b);
+                if (a.Length > 2)
+                {
+                    uint id = Convert.ToUInt32(a[1]);
+                    if (id > _lastJobId)
+                        _lastJobId = id;
+                    string[] b = new string[a.Count()];
+                    for (uint i = 0; i < a.Count(); i++)
+                        b[i] = a[i].Trim('"');
+                    _rows.Add(b);
+                }
             }
         }
 

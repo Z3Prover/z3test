@@ -3,7 +3,7 @@
   <Profiles />
   <Settings>
     <Setting Name="config_file" Type="System.String" Scope="Application">
-      <Value Profile="(Default)">D:\Nightly\config.xml</Value>
+      <Value Profile="(Default)">C:\Nightly\config.xml</Value>
     </Setting>
   </Settings>
 </SettingsFile>
