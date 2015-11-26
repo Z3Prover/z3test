@@ -15,6 +15,18 @@ namespace worker
 {
     class Program
     {
+        [DllImport("kernel32.dll", CharSet = CharSet.Unicode)]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        internal static extern bool CopyFile(string lpFileNameFrom, string lpFileNameTo, bool failIfExists);
+
+        public static void LongFileNameCopy(string from, string to, bool failIfExists = true)
+        {
+            string f = (from.StartsWith("\\")) ? @"\\?\UNC" + from.Substring(1) : (@"\\?\" + from);
+            string t = (to.StartsWith("\\")) ? @"\\?\UNC" + to.Substring(1) : (@"\\?\" + to);
+            if (!CopyFile(f, t, failIfExists))
+                throw new Exception("Could not copy benchmark " + from);
+        }
+
         SqlConnection sql = null;
         string myName = "";
         const int MAXBUF = 16777216;
@@ -570,14 +582,7 @@ namespace worker
                 try
                 {
                     // Console.WriteLine("Running job #" + j.ID);
-
-                    // We need to avoid this:
-                    // INFRASTRUCTURE ERROR: The specified path, file name, or both are too long.
-                    // The fully qualified file name must be less than 260 characters, and
-                    // the directory name must be less than 248 characters. ...
-                    if (j.filename.Length >= 260) j.localFilename = @"\\?\" + j.localFilename;
-
-                    File.Copy(j.filename, j.localFilename, true);
+                    LongFileNameCopy(j.filename, j.localFilename, false);
                     if (e.custom_check_sat != null)
                         replace_checksat(e, j);
                 }
