@@ -1,0 +1,31 @@
+"ab"""
+false
+true
+false
+true
+true
+true
+true
+0
+1
+2
+"b"
+"bc"
+"bc"
+"c"
+""
+(str.substr "abc" 4 1)
+true
+true
+true
+true
+false
+"a"
+"b"
+"c"
+(str.at "abc" 3)
+"acc"
+"1"
+"100"
+1
+(str.to.int "a")
