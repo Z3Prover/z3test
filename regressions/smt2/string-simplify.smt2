@@ -34,5 +34,12 @@
 (simplify (str.indexof "aabbcc" "bc" 2)) ; 1
 (simplify (str.indexof "aabbcc" "d" 0)) ; (- 1)
 
+(declare-const a String)
+(declare-const b String)
+(declare-const c String)
 
-
+(simplify (str.++ a (str.++ b c))) ; (str.++ (str.++ a b) c)
+(simplify (str.++ a ""))            ; a
+(simplify (str.++ "" a))            ; a
+(simplify (str.++ (str.++ a "a") "b")) ; (str.++ a "ab")
+(simplify (str.len (str.++ a "b"))) ; (+ (str.len a) 1)
