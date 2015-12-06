@@ -33,3 +33,8 @@ false
 0
 1
 (- 1)
+(str.++ (str.++ a b) c)
+a
+a
+"ab"
+(+ (str.len a) 1)
