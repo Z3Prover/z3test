@@ -29,5 +29,10 @@
 (simplify (int.to.str 100))         ; "100"
 (simplify (str.to.int "1"))         ; 1
 (simplify (str.to.int "a"))         ; (str.stoi "a")
+(simplify (str.indexof "aabbcc" "b" 1)) ; 1
+(simplify (str.indexof "aabbcc" "b" 2)) ; 0
+(simplify (str.indexof "aabbcc" "bc" 2)) ; 1
+(simplify (str.indexof "aabbcc" "d" 0)) ; (- 1)
+
 
 
