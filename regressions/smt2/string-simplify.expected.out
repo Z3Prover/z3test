@@ -36,5 +36,5 @@ false
 (str.++ (str.++ a b) c)
 a
 a
-"ab"
+(str.++ a "ab")
 (+ (str.len a) 1)
