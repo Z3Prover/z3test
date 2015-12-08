@@ -38,3 +38,25 @@ a
 a
 (str.++ a "ab")
 (+ (str.len a) 1)
+(= "" b)
+true
+(str.prefixof (str.++ a b) c)
+(str.prefixof c b)
+false
+true
+(str.prefixof "b" c)
+(str.prefixof (str.++ "b" a) c)
+(str.suffixof (str.++ a b) b)
+true
+(str.suffixof (str.++ a b) c)
+(str.suffixof c b)
+false
+true
+(str.suffixof c "a")
+(str.suffixof c (str.++ a "a"))
+(str.contains a b)
+true
+true
+true
+true
+(str.contains (str.++ a c) (str.++ (str.++ a b) c))

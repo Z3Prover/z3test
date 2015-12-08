@@ -43,3 +43,28 @@
 (simplify (str.++ "" a))            ; a
 (simplify (str.++ (str.++ a "a") "b")) ; (str.++ a "ab")
 (simplify (str.len (str.++ a "b"))) ; (+ (str.len a) 1)
+
+(simplify (str.prefixof (str.++ a b) a))
+(simplify (str.prefixof a (str.++ a b)))
+(simplify (str.prefixof (str.++ a b) c))
+(simplify (str.prefixof (str.++ a c) (str.++ a b)))
+(simplify (str.prefixof "a" (str.++ "b" c)))
+(simplify (str.prefixof "a" (str.++ "ab" c)))
+(simplify (str.prefixof "ab" (str.++ "a" c)))
+(simplify (str.prefixof (str.++ "ab" a) (str.++ "a" c)))
+
+(simplify (str.suffixof (str.++ a b) b ))
+(simplify (str.suffixof b (str.++ a b)))
+(simplify (str.suffixof (str.++ a b) c))
+(simplify (str.suffixof (str.++ c a) (str.++ b a)))
+(simplify (str.suffixof (str.++ c "b") "a"))
+(simplify (str.suffixof "a" (str.++ c "ba") ))
+(simplify (str.suffixof (str.++ c "b") "ab"))
+(simplify (str.suffixof (str.++ c "b") (str.++ a "ab")))
+
+(simplify (str.contains a b))
+(simplify (str.contains a (str.++ a b c)))
+(simplify (str.contains b (str.++ a b c)))
+(simplify (str.contains (str.++ a b) (str.++ a b c)))
+(simplify (str.contains (str.++ b c) (str.++ a b c)))
+(simplify (str.contains (str.++ a c) (str.++ a b c)))
