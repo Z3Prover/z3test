@@ -15,11 +15,11 @@ true
 "c"
 ""
 (str.substr "abc" 4 1)
-true
-true
-true
-true
 false
+false
+true
+true
+true
 "a"
 "b"
 "c"
@@ -55,8 +55,8 @@ true
 (str.suffixof c "a")
 (str.suffixof c (str.++ a "a"))
 (str.contains a b)
-true
-true
-true
-true
+(str.contains a (str.++ (str.++ a b) c))
+(str.contains b (str.++ (str.++ a b) c))
+(str.contains (str.++ a b) (str.++ (str.++ a b) c))
+(str.contains (str.++ b c) (str.++ (str.++ a b) c))
 (str.contains (str.++ a c) (str.++ (str.++ a b) c))
