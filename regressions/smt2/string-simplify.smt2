@@ -15,11 +15,16 @@
 (simplify (str.substr "abc" 2 1))    ; "c"
 (simplify (str.substr "abc" 3 1))    ; ""
 (simplify (str.substr "abc" 4 1))    ; (str.substr "abc" 4 1)
-(simplify (str.contains "ab" "abc"))   ; true
-(simplify (str.contains "bc" "abc"))   ; true
+(simplify (str.contains "ab" "abc"))   ; false
+(simplify (str.contains "bc" "abc"))   ; false
 (simplify (str.contains "abc" "abc"))  ; true
 (simplify (str.contains "" ""))        ; true
-(simplify (str.contains "a" ""))       ; false
+(simplify (str.contains "a" ""))       ; true
+(simplify (str.contains "abb" "abc"))  ; false
+(simplify (str.contains "abc" "bc"))   ; true
+(simplify (str.contains "abc" "abc"))  ; true
+(simplify (str.contains "" ""))        ; true
+(simplify (str.contains "" "a"))       ; false
 (simplify (str.at "abc" 0))   ; "a"
 (simplify (str.at "abc" 1))   ; "b"
 (simplify (str.at "abc" 2))   ; "c"
@@ -68,3 +73,10 @@
 (simplify (str.contains (str.++ a b) (str.++ a b c)))
 (simplify (str.contains (str.++ b c) (str.++ a b c)))
 (simplify (str.contains (str.++ a c) (str.++ a b c)))
+
+(simplify (str.contains a b))
+(simplify (str.contains (str.++ a b c) a))
+(simplify (str.contains (str.++ a b c) b))
+(simplify (str.contains (str.++ a b c) (str.++ a b)))
+(simplify (str.contains (str.++ a b c) (str.++ b c)))
+(simplify (str.contains (str.++ a b c) (str.++ a c)))
