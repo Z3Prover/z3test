@@ -108,7 +108,7 @@ def get_builddir(branch, debug, clang):
     else:
         return os.path.join(config.BUILDDIR, branch, 'release')
 
-def mk_make(branch, debug, java, clang, static, VS64, extraflags):
+def mk_make(branch, debug, dotnet, java, clang, static, VS64, extraflags):
     cmd = ['python', os.path.join('scripts', 'mk_make.py'), '-b', get_builddir(branch, debug, clang) ] + extraflags
     if debug:
         cmd.append('-d')
@@ -116,6 +116,8 @@ def mk_make(branch, debug, java, clang, static, VS64, extraflags):
         cmd.append('--parallel=24')
     if VS64 and is_windows():
         cmd.append('-x')
+    if dotnet:
+        cmd.append('--dotnet')
     if java:
         cmd.append('--java')
     if static:
@@ -145,7 +147,7 @@ def make(branch, debug, everything, clang, jobs):
             raise Exception("Failed to make Z3\n%s\n" % cmd)
         
 
-def buildz3(branch="master", everything=False, clean=False, debug=True, java=False, clang=False, static=False, VS64=False, jobs=16, extraflags=[]):
+def buildz3(branch="master", everything=False, clean=False, debug=True, dotnet=False, java=False, clang=False, static=False, VS64=False, jobs=16, extraflags=[]):
     z3dir = find_z3depot()
     with cd(z3dir):
         gitcheckout(branch)
@@ -154,7 +156,7 @@ def buildz3(branch="master", everything=False, clean=False, debug=True, java=Fal
         if clean:
             rmf(bdir)
         mk_dir(bdir)
-        mk_make(branch, debug, java, clang, static, VS64, extraflags)
+        mk_make(branch, debug, dotnet, java, clang, static, VS64, extraflags)
         make(branch, debug, everything, clang, jobs)
 
 def testz3py(branch="master", debug=True, clang=False):

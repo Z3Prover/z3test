@@ -12,7 +12,7 @@ def smalltest(b="master"):
     sys.stdout.flush()
     # Build debug and release modes
     for d in [True, False]:
-        util.buildz3(branch=b, everything=False, clean=True, debug=d,  java=False, static=False, jobs=config.NUMJOBS, clang=False)
+        util.buildz3(branch=b, everything=False, clean=True, debug=d, dotnet=False, java=False, static=False, jobs=config.NUMJOBS, clang=False)
         util.testz3py(branch=b, debug=d, clang=False)
         if d:
             util.test_benchmarks_using_latest('regressions/smt2-debug', branch=b, debug=d, clang=False)
