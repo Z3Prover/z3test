@@ -25,7 +25,7 @@ fi
 if [ -d $TEST_DIR ]; then
     cd $TEST_DIR ; 
     if [ "$?" != "0" ]; then echo "cd failed." && exit 1; fi
-    git pull --rebase ;
+    git pull ;
     if [ "$?" != "0" ]; then echo "git pull failed." && exit 1; fi
     CURRENT_Z3TEST_HASH=`git rev-parse HEAD`
     cd - > /dev/null;

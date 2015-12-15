@@ -173,7 +173,6 @@ def runbuild(vm, vm_port, need_start, file_pattern): # 0 = ok, 1 = infrastructur
         for file in glob.glob('*.zip'):
             if file_pattern in file:
                 # We don't `git rm' old files, but wipe them from the history.
-                # if call_logged(['git', 'rm', file], log) != 0:
                 os.chdir(prev_dir)
                 os.chdir(bin_repo)
                 call_logged(['git', 'filter-branch', '-f', '--prune-empty', '--tree-filter', ' rm -f %s/%s' % (bin_subdir, file), 'HEAD'], log)
@@ -185,6 +184,11 @@ def runbuild(vm, vm_port, need_start, file_pattern): # 0 = ok, 1 = infrastructur
                 if call_logged(['git', 'add', '-v', os.path.basename(file)], log) != 0:
                     os.chdir(prev_dir)
                     return 1
+                shutil.copy(os.path.join(prev_dir, logname), file + '.log')
+                if call_logged(['git', 'add', '-v', os.path.basename(file + '.log')], log) != 0:
+                    os.chdir(prev_dir)
+                    return 1
+
         call_logged(['git', 'commit', '-v', '-m', 'Automatic nightly build.'], log, False)
         if call_logged(['git', 'push', '-v', '--force'], log) != 0:
             os.chdir(prev_dir)
