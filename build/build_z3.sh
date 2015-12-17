@@ -1,5 +1,7 @@
 #!/bin/sh
 
+export PATH=$PATH:/usr/local/bin
+
 ROOT=`pwd`
 TEST_GIT=https://github.com/Z3Prover/z3test.git
 TEST_DIR=z3test
