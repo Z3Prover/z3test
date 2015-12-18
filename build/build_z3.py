@@ -15,10 +15,10 @@ from email import Encoders
 
 vms = [ 
     ['OSX x64', 22, False, 'x64-osx'],
-     ['Ubuntu x86', 1024, True, 'x86-ubuntu'],
-     ['Ubuntu amd64', 1025, True, 'x64-ubuntu'],
-     ['FreeBSD 10 amd64', 1026, True, 'x64-freebsd'],
-     ['Debian 8 amd64', 1027, True, 'x64-debian'],
+    ['Ubuntu x86', 1024, True, 'x86-ubuntu'],
+    ['Ubuntu amd64', 1025, True, 'x64-ubuntu'],
+    ['FreeBSD 10 amd64', 1026, True, 'x64-freebsd'],
+    ['Debian 8 amd64', 1027, True, 'x64-debian'],
     #['OpenBSD 8.5 amd64', 1028, True, 'x64-openbsd']
     ]
 
@@ -102,7 +102,6 @@ def startvm(name, log):
             ec
 
 def stopvm(name, log):
-    # ec = subprocess.call(['VBoxManage', 'controlvm', name, 'pause'], stdin=None, stdout=log, stderr=log
     ec = subprocess.call(['VBoxManage', 'controlvm', name, 'acpipowerbutton'], stdin=None, stdout=log, stderr=log)
     if (ec != 0):
         log.write('Error stopping the VM (or putting to sleep); killing it the hard way.')
@@ -148,6 +147,7 @@ def call_logged(cmd, log, checked=True):
     cs = mk_args(cmd)
     log.write(' '.join(cs) + '\n')
     ec = subprocess.call(cs, stdin=None, stdout=log, stderr=log)
+    log.flush()
     if (checked and ec != 0):
         log.write('Error code: %d\n' % ec)
         raise BuildFailureException('Command failed.')
@@ -156,6 +156,7 @@ def scpput(from_file, to_file, vm_port, vm_user, vm_host, log):
     args = ['scp', '-o', 'ConnectTimeout=60', '-P', '%d' % vm_port, from_file, vm_user + '@' + vm_host + ':' + to_file]
     log.write(' '.join(args) + '\n')
     ec = subprocess.call(args, stdin=None, stdout=log, stderr=log)
+    log.flush()
     if ec != 0: 
         log.write('non-zero exit-code: %d\n' % ec)
         raise BuildFailureException('Could not copy file.')
@@ -164,6 +165,7 @@ def scpget(from_file, to_file, vm_port, vm_user, vm_host, log):
     args = ['scp', '-o', 'ConnectTimeout=60', '-P', '%d' % vm_port, vm_user + '@' + vm_host + ':' + from_file, to_file]
     log.write(' '.join(args) + '\n')
     ec = subprocess.call(args, stdin=None, stdout=log, stderr=log)
+    log.flush()
     if ec != 0: 
         log.write('non-zero exit-code: %d\n' % ec)
         raise BuildFailureException('Could not copy file.')
@@ -173,6 +175,7 @@ def sshrun(cmd, vm_port, vm_user, vm_host, log):
     args = ['ssh', '-o', 'ConnectTimeout=60', vm_user + '@' + vm_host, '-p', '%d' % vm_port] + cs
     log.write(' '.join(args) + '\n')
     ec = subprocess.call(args, stdin=None, stdout=log, stderr=log)
+    log.flush()
     if ec != 0: 
         log.write('non-zero exit-code: %d\n' % ec)
         raise BuildFailureException('Could not execute command.')
@@ -182,6 +185,7 @@ def runbuild(vm, vm_port, need_start, file_pattern): # 0 = ok, 1 = infrastructur
     log = open(logname, 'w')   
     err_code = 0
     start_dir = os.getcwd()
+    log.flush()
 
     try:
         if (need_start): 
@@ -205,7 +209,7 @@ def runbuild(vm, vm_port, need_start, file_pattern): # 0 = ok, 1 = infrastructur
             raise BuildFailureException('Build unsuccessful.')
 
         call_logged('cat temp.log', log)
-        sshrun('cd z3/dist ; ls -l1 *.zip > ../../build_z3.df', vm_port, vm_user, vm_host, log)
+        sshrun('cd z3/dist ; ls -1 *.zip > ../../build_z3.df', vm_port, vm_user, vm_host, log)
         scpget('build_z3.df', 'temp.df', vm_port, vm_user, vm_host, log)
         with open('temp.df') as tf: dfile = tf.readline().strip()
         os.unlink('temp.df')
@@ -290,6 +294,7 @@ def main():
             pass
 
     # push the new bin directory
+    print('Pushing new nightly distros to Github')
     os.chdir(bin_dir)
     call_unlogged('git push -v --force')
     call_unlogged('git gc --aggressive --auto --prune=all', False)
