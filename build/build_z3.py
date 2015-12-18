@@ -220,7 +220,6 @@ def runbuild(vm, vm_port, need_start, file_pattern): # 0 = ok, 1 = infrastructur
 
         # Commit the distro file into bin.        
         os.chdir(bin_dir)
-        call_logged('git pull -v', log)
 
         # We don't `git rm' old files, but wipe them from the history.
         for file in glob.glob('*'):
@@ -268,8 +267,9 @@ def main():
     #clean up bin
     start_dir = os.getcwd()
     os.chdir(bin_dir)
-    subprocess.call(['git', 'reset', '--hard', 'HEAD'])
-    subprocess.call(['git', 'clean', '-f'])
+    call_unlogged('git reset --hard HEAD')
+    call_unlogged('git clean -f')
+    call_unlogged('git pull -v')
     os.chdir(start_dir)
 
     # clean up distros
