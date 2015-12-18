@@ -30,11 +30,11 @@ vm_timeout = 60
 admins = [ 'cwinter@microsoft.com' ]
 
 devs   = [ 'cwinter@microsoft.com',
-           'leonardo@microsoft.com',
-           'nbjorner@microsoft.com',
-           'kenmcmil@microsoft.com',
-           'rybal@microsoft.com',
-           'nlopes@microsoft.com'
+#            'leonardo@microsoft.com',
+#            'nbjorner@microsoft.com',
+#            'kenmcmil@microsoft.com',
+#            'rybal@microsoft.com',
+#            'nlopes@microsoft.com'
            ]
 
 smtp_serv = '127.0.0.1'
@@ -208,7 +208,6 @@ def runbuild(vm, vm_port, need_start, file_pattern): # 0 = ok, 1 = infrastructur
         if not ok:
             raise BuildFailureException('Build unsuccessful.')
 
-        call_logged('cat temp.log', log)
         sshrun('cd z3/dist ; ls -1 *.zip > ../../build_z3.df', vm_port, vm_user, vm_host, log)
         scpget('build_z3.df', 'temp.df', vm_port, vm_user, vm_host, log)
         with open('temp.df') as tf: dfile = tf.readline().strip()
@@ -238,6 +237,7 @@ def runbuild(vm, vm_port, need_start, file_pattern): # 0 = ok, 1 = infrastructur
                 call_logged('git add -v ' + os.path.basename(file) + '.log', log)
                 
         call_logged('git commit -v -m "Automatic nightly build."', log)
+        call_logged('git push -v --force', log)
         
         os.chdir(start_dir)
         log.close()
@@ -293,10 +293,8 @@ def main():
             send_email(admins, 'Build infrastructure failure', 'The infrastructure failed while building at ' + vm, [vm.replace(' ', '_') + '.log'])
             pass
 
-    # push the new bin directory
-    print('Pushing new nightly distros to Github')
-    os.chdir(bin_dir)
-    call_unlogged('git push -v --force')
+    # remove garbage from the bin directory
+    os.chdir(bin_dir)    
     call_unlogged('git gc --aggressive --auto --prune=all', False)
     os.chdir(start_dir)
 
