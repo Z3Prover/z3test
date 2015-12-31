@@ -1,9 +1,9 @@
-@echo off
+@ECHO OFF
 SETLOCAL
 
 SET PATH=%PATH%;C:\Program Files (x86)\Git\bin
 
-SET LOG=build.log
+SET LOG=D:\nightly\build\build.log
 SET TMPDIR=d:\nightly\build\z3
 SET Z3_REPO=https://github.com/Z3Prover/z3.git
 SET Z3TEST_REPO=https://github.com/Z3Prover/z3test.git
@@ -40,7 +40,7 @@ IF NOT EXIST %TMPDIR%. (
 ) ELSE (
   echo Updating existing copy. >> %LOG%
   pushd %TMPDIR%
-  git pull --rebase origin %BRANCH% >> ..\%LOG%
+  git pull --rebase origin %BRANCH% >> %LOG%
   popd
 )
 
@@ -56,7 +56,7 @@ IF NOT EXIST z3test. (
 ) ELSE (
   echo Updating existing copy of z3test. >> %LOG%
   pushd z3test
-  git pull --rebase >> ..\%LOG%
+  git pull --rebase >> %LOG%
   popd
 )
 
@@ -82,25 +82,27 @@ set Z3DIR=%TMPDIR%
 
 pushd z3test
 SET PYTHON=C:\Python35_x32\python.exe
-call %VCVARS% x86 >> ..\%LOG%
-%PYTHON% scripts\win32test.py >> ..\%LOG% 2>&1
+call %VCVARS% x86 >> %LOG%
+%PYTHON% scripts\win32test.py >> %LOG% 2>&1
 IF %ERRORLEVEL% NEQ 0 goto :ERR	
 
-echo DONE WITH W32TEST >> ..\%LOG%
+echo DONE WITH W32TEST >> %LOG%
 
 SET PYTHON=C:\Python35_x64\python.exe
-call %VCVARS% x64 >> ..\%LOG%
-%PYTHON% scripts\win64test.py >> ..\%LOG% 2>&1
+call %VCVARS% x64 >> %LOG%
+%PYTHON% scripts\win64test.py >> %LOG% 2>&1
 IF %ERRORLEVEL% NEQ 0 goto :ERR
 
-echo DONE WITH W64TEST >> ..\%LOG%
+echo DONE WITH W64TEST >> %LOG%
 popd 
-
 
 pushd z3
 IF EXIST %LOCAL_DISTROS%. (
-  del /Q /F %LOCAL_DISTROS%\z3-*-win.zip
-  del /Q /F %LOCAL_DISTROS%\z3-*-win.log
+  del /Q /F %LOCAL_DISTROS%\z3-*-win.zip > NUL
+  del /Q /F %LOCAL_DISTROS%\z3-*-win.log > NUL
+  FOR /D %%I IN (%LOCAL_DISTROS%\z3-*-*-win) DO (
+    rmdir %%I /s /q
+  )
 ) ELSE (
   mkdir %LOCAL_DISTROS%
 )
@@ -108,45 +110,46 @@ IF EXIST %LOCAL_DISTROS%. (
 rmdir build-dist /S /Q
 
 SET PYTHON=C:\Python35_x32\python.exe
-%PYTHON% scripts\mk_win_dist.py -b build-dist\%CURRENT_Z3_HASH% --githash >> ..\%LOG% 2>&1
-echo DONE WITH WIN_DIST >> ..\%LOG%
+%PYTHON% scripts\mk_win_dist.py -b build-dist\%CURRENT_Z3_HASH% --githash >> %LOG% 2>&1
+echo DONE WITH WIN_DIST >> %LOG%
 IF %ERRORLEVEL% NEQ 0 goto :ERR
 
 IF NOT EXIST build-dist\%CURRENT_Z3_HASH%\x86\z3.exe. (
-  echo x86 external binary does not exist; build failed. >> ..\%LOG%
+  echo x86 external binary does not exist; build failed. >> %LOG%
   goto :ERR
 )
 
 
 IF EXIST %DISTROS%. (
   pushd %DISTROS% >> %LOG% 2>&1
-  git pull --rebase -v >> ..\%LOG% 2>&1
-  popd >> ..\%LOG% 2>&1
+  git pull --rebase -v >> %LOG% 2>&1
+  popd >> %LOG% 2>&1
 ) ELSE (
   git clone %Z3_BIN_REPO% %DISTROS% >> %LOG% 2>&1
 )
 
-@pushd %DISTROS%
-git filter-branch -f --prune-empty --tree-filter "rm -f %DISTRO_SUBDIR%/*win.zip" HEAD >> ..\%LOG% 2>&1
-git filter-branch -f --prune-empty --tree-filter "rm -f %DISTRO_SUBDIR%/*win*.log" HEAD >> ..\%LOG% 2>&1
-@popd
+pushd %DISTROS%
+git filter-branch -f --prune-empty --index-filter "git rm --cached --ignore-unmatch %DISTRO_SUBDIR%/*win.zip" HEAD 2>> %LOG% 1>NUL
+git filter-branch -f --prune-empty --index-filter "git rm --cached --ignore-unmatch %DISTRO_SUBDIR%/*win.zip.log" HEAD 2>> %LOG% 1>NUL
+popd
 
 FOR %%I IN (%LOCAL_DISTROS%\z3-*-*-win.zip) DO (
-  @move /Y %%I %DISTROS%\%DISTRO_SUBDIR%\%%~nxI >> %LOG% 2>&1
-  @copy /Y %LOG% %DISTROS%\%DISTRO_SUBDIR%\%%~nxI.log >> %LOG% 2>&1
-  @pushd %DISTROS%\%DISTRO_SUBDIR% >> %LOG% 2>&1  
-  git add -v %%~nxI >> ..\..\%LOG% 2>&1
-  git add -v %%~nxI.log >> ..\..\%LOG% 2>&1
-  @popd >> ..\..\%LOG% 2>&1
+  echo now at %%I
+  move /Y %%I %DISTROS%\%DISTRO_SUBDIR%\%%~nxI >> %LOG% 2>&1
+  copy /Y %LOG% %DISTROS%\%DISTRO_SUBDIR%\%%~nxI.log >> %LOG% 2>&1
+  pushd %DISTROS%\%DISTRO_SUBDIR% >> %LOG% 2>&1  
+  git add -v %%~nxI >> %LOG% 2>&1
+  git add -v %%~nxI.log >> %LOG% 2>&1
+  popd >> %LOG% 2>&1
 )
 
-@pushd %DISTROS% >> %LOG% 2>&1
-git commit -v -m "Automatic nightly build." >> ..\%LOG% 2>&1
-git push -v --force >> ..\%LOG% 2>&1
-git gc --aggressive --auto --prune=all >> ..\%LOG% 2>&1
-@popd >> ..\%LOG% 2>&1
+pushd %DISTROS% >> %LOG% 2>&1
+git commit -v -m "Automatic nightly build." >> %LOG% 2>&1
+git push -v --force >> %LOG% 2>&1
+git gc --aggressive --auto --prune=all >> %LOG% 2>&1
+popd >> %LOG% 2>&1
 
-echo ALL OK. >> ..\%LOG% 2>&1
+echo ALL OK. >> %LOG% 2>&1
 goto :END
 
 :ERR
