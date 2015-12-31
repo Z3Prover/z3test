@@ -31,8 +31,8 @@ IF EXIST last_z3test_hash. (
 del /Q /F %LOG%
 
 echo Last hashes: >> %LOG%
-echo %LAST_Z3_HASH% >> %LOG%
-echo %LAST_Z3TEST_HASH% >> %LOG%
+echo z3: %LAST_Z3_HASH% >> %LOG%
+echo z3test: %LAST_Z3TEST_HASH% >> %LOG%
 
 IF NOT EXIST %TMPDIR%. (
   echo Getting a new copy. >> %LOG%
@@ -70,8 +70,8 @@ echo Current hashes: >> %LOG%
 echo %CURRENT_Z3_HASH% >> %LOG%
 echo %CURRENT_Z3TEST_HASH% >> %LOG%
 
-IF %LAST_Z3_HASH% ==%CURRENT_Z3_HASH% (
-  IF %LAST_Z3TEST_HASH%==%CURRENT_Z3TEST_HASH% (
+IF "%LAST_Z3_HASH%" == "%CURRENT_Z3_HASH%" (
+  IF "%LAST_Z3TEST_HASH%" == "%CURRENT_Z3TEST_HASH%" (
     echo git hashes match previous version - not rebuilding. >> %LOG%
     pushd z3test
     goto :END
