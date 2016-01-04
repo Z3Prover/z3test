@@ -267,7 +267,7 @@ def main():
     #clean up bin
     start_dir = os.getcwd()
     os.chdir(bin_dir)
-    call_unlogged('git reset --hard HEAD')
+    call_unlogged('git reset --hard origin/master')
     call_unlogged('git clean -f')
     call_unlogged('git pull -v')
     os.chdir(start_dir)
