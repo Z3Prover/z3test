@@ -10,6 +10,7 @@ import datetime
 def smalltest(b="master"):
     print("BUILD DATE: %s" % datetime.date.today())
     sys.stdout.flush()
+    os.environ['CXXFLAGS'] = os.getenv('CXXFLAGS', '') + ' -DNO_Z3_DEBUGGER'
     # Build debug and release modes
     for d in [True, False]:
         util.buildz3(branch=b, everything=False, clean=True, debug=d, dotnet=False, java=False, static=False, jobs=config.NUMJOBS, clang=False)

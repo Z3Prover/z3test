@@ -13,6 +13,7 @@ def bigtest():
     # Build everything:
     #   - using clang and g++
     #   - release and debug modes
+    os.environ['CXXFLAGS'] = os.getenv('CXXFLAGS', '') + ' -DNO_Z3_DEBUGGER'
     for b in ['master']:
         for d in [True, False]:
             for c in [True, False]:
