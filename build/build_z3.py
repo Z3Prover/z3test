@@ -15,10 +15,10 @@ from email import Encoders
 
 vms = [ 
     ['OSX x64', 22, False, 'x64-osx'],
-    ['Ubuntu x86', 1024, True, 'x86-ubuntu'],
-    ['Ubuntu amd64', 1025, True, 'x64-ubuntu'],
-    ['FreeBSD 10 amd64', 1026, True, 'x64-freebsd'],
-    ['Debian 8 amd64', 1027, True, 'x64-debian'],
+#     ['Ubuntu x86', 1024, True, 'x86-ubuntu'],
+#     ['Ubuntu amd64', 1025, True, 'x64-ubuntu'],
+#     ['FreeBSD 10 amd64', 1026, True, 'x64-freebsd'],
+#     ['Debian 8 amd64', 1027, True, 'x64-debian'],
     #['OpenBSD 8.5 amd64', 1028, True, 'x64-openbsd']
     ]
 
@@ -226,6 +226,7 @@ def runbuild(vm, vm_port, need_start, file_pattern): # 0 = ok, 1 = infrastructur
                 os.chdir(start_dir)
                 os.chdir(bin_repo)
                 call_logged('git filter-branch -f --prune-empty --tree-filter "rm -f %s/%s" HEAD' % (bin_subdir, file), log)
+                call_logged('git filter-branch -f --prune-empty --tree-filter "rm -f %s/z3-%s-failure-*.log" HEAD' % (bin_subdir, file_pattern), log)
                 os.chdir(start_dir)
                 os.chdir(bin_dir)
 

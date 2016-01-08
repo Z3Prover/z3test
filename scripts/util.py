@@ -208,19 +208,19 @@ def timeout(func, args=(), kwargs={}, timeout_duration=1.0, default=None):
         def __init__(self):
             threading.Thread.__init__(self)
             self.result = None
-            self.exception = False
+            self.exception = None
 
         def run(self):
             try:
                 self.result = func(*args, **kwargs)
-            except:
-                self.exception = True
+            except Exception as ex:
+                self.exception = ex
 
     it = InterruptableThread()
     it.start()
     it.join(timeout_duration)
-    if it.exception:
-        raise Exception("timeout command failed")
+    if it.exception is not None:
+        raise it.exception
     if it.isAlive():
         return default
     else:
