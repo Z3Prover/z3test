@@ -15,26 +15,26 @@ from email import Encoders
 
 vms = [ 
     ['OSX x64', 22, False, 'x64-osx'],
-#     ['Ubuntu x86', 1024, True, 'x86-ubuntu'],
-#     ['Ubuntu amd64', 1025, True, 'x64-ubuntu'],
-#     ['FreeBSD 10 amd64', 1026, True, 'x64-freebsd'],
-#     ['Debian 8 amd64', 1027, True, 'x64-debian'],
+    ['Ubuntu x86', 1024, True, 'x86-ubuntu'],
+    ['Ubuntu amd64', 1025, True, 'x64-ubuntu'],
+    ['FreeBSD 10 amd64', 1026, True, 'x64-freebsd'],
+    ['Debian 8 amd64', 1027, True, 'x64-debian'],
     #['OpenBSD 8.5 amd64', 1028, True, 'x64-openbsd']
     ]
 
 vm_wait_time = 120
-vm_host = 'z3-mac'
+vm_host = 'localhost'
 vm_user = 'nightly'
 vm_timeout = 60
 
 admins = [ 'cwinter@microsoft.com' ]
 
 devs   = [ 'cwinter@microsoft.com',
-#            'leonardo@microsoft.com',
-#            'nbjorner@microsoft.com',
-#            'kenmcmil@microsoft.com',
-#            'rybal@microsoft.com',
-#            'nlopes@microsoft.com'
+           'leonardo@microsoft.com',
+           'nbjorner@microsoft.com',
+           'kenmcmil@microsoft.com',
+           'rybal@microsoft.com',
+           'nlopes@microsoft.com'
            ]
 
 smtp_serv = '127.0.0.1'
@@ -171,7 +171,7 @@ def scpget(from_file, to_file, vm_port, vm_user, vm_host, log):
         raise BuildFailureException('Could not copy file.')
 
 def sshrun(cmd, vm_port, vm_user, vm_host, log):
-    cs = mk_args(cmd)
+    cs = mk_args('"' + cmd + '"')
     args = ['ssh', '-o', 'ConnectTimeout=60', vm_user + '@' + vm_host, '-p', '%d' % vm_port] + cs
     log.write(' '.join(args) + '\n')
     ec = subprocess.call(args, stdin=None, stdout=log, stderr=log)
@@ -194,7 +194,10 @@ def runbuild(vm, vm_port, need_start, file_pattern): # 0 = ok, 1 = infrastructur
 
         scpput('build_z3.sh', 'build_z3.sh', vm_port, vm_user, vm_host, log)
         sshrun('chmod +x build_z3.sh', vm_port, vm_user, vm_host, log)
-        sshrun('./build_z3.sh > build_z3.log 2>&1', vm_port, vm_user, vm_host, log)
+        try:
+            sshrun('./build_z3.sh > build_z3.log 2>&1', vm_port, vm_user, vm_host, log)
+        except BuildFailureException as ex:
+            pass # Build is broken, but we still want the log if there is one.
         scpget('build_z3.log', 'temp.log', vm_port, vm_user, vm_host, log)
 
         ok = False;
@@ -204,7 +207,7 @@ def runbuild(vm, vm_port, need_start, file_pattern): # 0 = ok, 1 = infrastructur
                 ok = True
             log.write(line)
         tl.close()
-        #os.unlink('temp.log')
+        os.unlink('temp.log')
         if not ok:
             raise BuildFailureException('Build unsuccessful.')
 
