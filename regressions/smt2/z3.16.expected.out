@@ -1,12 +1,12 @@
 sat
 (model 
   (define-fun l3 () (List Int)
-    (insert 101 (insert 0 (insert 1 nil))))
+    (insert 101 (insert 0 nil)))
   (define-fun x () Int
     101)
   (define-fun l1 () (List Int)
-    (insert 0 nil))
-  (define-fun l2 () (List Int)
     (insert 0 (insert 1 nil)))
+  (define-fun l2 () (List Int)
+    (insert 0 nil))
 )
 unsat
