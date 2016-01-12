@@ -64,7 +64,7 @@ def is_z3depot(path):
     Return true if the Z3 main repository is located in the given path. 
     The function checks the existence of several files.
     """
-    for f in ["README", "LICENSE.txt", ".git", "RELEASE_NOTES", os.path.join("src", "ast", "ast.cpp")]:
+    for f in ["README.md", "LICENSE.txt", ".git", "RELEASE_NOTES", os.path.join("src", "ast", "ast.cpp")]:
         if not os.path.exists(os.path.join(path, f)):
             return False
     return True
