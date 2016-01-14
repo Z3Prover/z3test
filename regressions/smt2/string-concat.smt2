@@ -435,3 +435,41 @@
 (check-sat)
 (pop)
 
+(push)
+(set-info :status sat)
+ (assert (= (str.++ a "ab") (str.++ "ba" a)))
+ (assert (= (str.len a) 7))
+(check-sat)
+(get-model)
+(pop)
+
+(push)
+(set-info :status unsat)
+ (assert (= (str.++ a "ab") (str.++ "ba" a)))
+ (assert (= (str.len a) 6))
+(check-sat)
+(pop)
+
+ 
+
+(push)
+(set-info :status sat) 
+ (assert (not (=  a b)))
+ (assert (= (str.len a) (str.len b))) 
+ (check-sat)
+(pop)
+
+(push)
+ (set-info :status sat)
+ (assert (not (= (str.++ c a b) (str.++ b a))))
+ (check-sat)
+(pop)
+
+(push)
+ (set-info :status sat)
+ (assert (= (str.++ a "ab" b) (str.++ b "ba" c)))
+ (assert (= c (str.++ a b)))
+ (assert (not (= (str.++ a "a") (str.++ "a" a))))
+ (check-sat)
+ (get-model)
+(pop)
