@@ -1,3 +1,4 @@
+; Copyright (c) 2016 Microsoft Corporation
 (declare-const i Int)
 (declare-const j Int)
 

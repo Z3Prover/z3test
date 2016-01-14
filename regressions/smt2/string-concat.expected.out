@@ -1,0 +1,123 @@
+sat
+(model 
+  (define-fun a () String
+    "a")
+)
+sat
+(model 
+  (define-fun a () String
+    "ab")
+)
+sat
+sat
+sat
+unsat
+sat
+unsat
+unsat
+unsat
+sat
+unsat
+sat
+(model 
+  (define-fun b () String
+    "cd")
+  (define-fun a () String
+    "ab")
+)
+sat
+(model 
+  (define-fun b () String
+    "cd")
+  (define-fun a () String
+    "ab")
+)
+sat
+(model 
+  (define-fun b () String
+    "ab")
+  (define-fun a () String
+    "cd")
+)
+sat
+(model 
+  (define-fun b () String
+    "cd")
+  (define-fun a () String
+    "ab")
+  (define-fun c () String
+    "ef")
+)
+sat
+(model 
+  (define-fun b () String
+    "")
+  (define-fun a () String
+    "")
+)
+sat
+sat
+sat
+(model 
+  (define-fun b () String
+    "cd")
+  (define-fun a () String
+    "ab")
+  (define-fun c () String
+    "ef")
+)
+sat
+(model 
+  (define-fun b () String
+    "c")
+  (define-fun a () String
+    "ab")
+  (define-fun c () String
+    "abc")
+)
+sat
+sat
+sat
+unsat
+sat
+sat
+sat
+sat
+sat
+sat
+sat
+sat
+sat
+sat
+sat
+sat
+sat
+unsat
+sat
+sat
+sat
+sat
+sat
+unsat
+unsat
+sat
+sat
+unsat
+unsat
+sat
+(model 
+  (define-fun b () String
+    "b")
+  (define-fun a () String
+    "a")
+  (define-fun c () String
+    "ab")
+  (define-fun d () String
+    "")
+)
+sat
+unsat
+unsat
+sat
+sat
+sat
