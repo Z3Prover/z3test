@@ -55,7 +55,6 @@
 (set-info :status sat)
 (assert (str.in.re a ((_ re.loop 1 3) (str.to.re "ab"))))
 (check-sat)
-(get-model)
 (pop)
 
 (push)

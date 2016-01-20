@@ -142,7 +142,6 @@
 (assert (= (str.++ b c) "cdef"))
 (assert (not (= b "")))
 (check-sat)
-(get-model)
 (pop)
 
 (push)
