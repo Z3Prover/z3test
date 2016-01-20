@@ -42,7 +42,7 @@ false
 a
 a
 (str.++ a "ab")
-(+ (str.len a) 1)
+(+ 1 (str.len a))
 (= "" b)
 true
 (str.prefixof (str.++ a b) c)

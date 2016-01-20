@@ -5,6 +5,7 @@
 (declare-const i Int)
 (declare-const j Int)
 
+(set-option :model-validate false)
 
 
 ; extract/substr
@@ -366,4 +367,111 @@
 (assert (not (str.suffixof b c)))
 (assert (not (str.suffixof c b)))
 (check-sat)
+(pop)
+
+; length
+(push)
+(set-info :status sat)
+(assert (= a "abcde"))
+(assert (<= (str.len a) 5))
+(check-sat)
+(pop)
+
+
+(push)
+(set-info :status unsat)
+(assert (= a "abcde"))
+(assert (<= (str.len a) 4))
+(check-sat)
+(pop)
+
+(push)
+(set-info :status sat)
+(assert (= a "abcde"))
+(assert (<= (str.len a) 5))
+(check-sat)
+(pop)
+
+(push)
+(set-info :status sat)
+(assert (= (str.++ a b) "abcde"))
+(assert (<= (str.len a) 3))
+(assert (<= (str.len b) 2))
+(check-sat)
+(get-model)
+(pop)
+
+(push)
+(set-info :status unsat)
+(assert (= (str.++ a b) "abcde"))
+(assert (<= (str.len a) 2))
+(assert (<= (str.len b) 2))
+(check-sat)
+(pop)
+
+(push)
+(set-info :status unsat)
+(assert (= (str.++ a b) "abcde"))
+(assert (<= (str.len a) 3))
+(assert (<= (str.len b) 1))
+(check-sat)
+(pop)
+
+(push)
+(set-info :status sat)
+(assert (= (str.++ a b) "abcde"))
+(assert (= (str.len a) 3))
+(check-sat)
+(get-model)
+(pop)
+
+
+; replace
+
+(simplify (str.replace "ab" "a" "A"))
+(push)
+(set-info :status sat)
+(assert (= (str.replace "ab" "a" "A") "Ab"))
+(check-sat)
+(pop)
+
+(push)
+(set-info :status unsat)
+(assert (= (str.replace "ab" "a" "A") "bb"))
+(check-sat)
+(pop)
+
+(push)
+(set-info :status sat)
+(assert (or (= c "a") (= c "b")))
+(assert (= (str.replace "ab" c "A") "Ab"))
+(check-sat)
+(pop)
+
+
+(push)
+(set-info :status unsat)
+(assert (or (= c "c") (= c "b")))
+(assert (= (str.replace "ab" c "A") "Ab"))
+(check-sat)
+(pop)
+
+(push)
+(set-info :status sat)
+(assert (= "ab" (str.replace a "yyy" "ab")))
+(check-sat)
+(pop)
+
+(push)
+(set-info :status sat)
+(assert (= "ab" (str.replace a "yyy" "abb")))
+(check-sat)
+(get-model)
+(pop)
+
+(push)
+(set-info :status sat)
+(assert (= "ab" (str.replace a "ab" "")))
+(check-sat)
+(get-model)
 (pop)

@@ -53,3 +53,38 @@ unsat
 unsat
 sat
 sat
+sat
+unsat
+sat
+sat
+(model 
+  (define-fun b () String
+    "de")
+  (define-fun a () String
+    "abc")
+)
+unsat
+unsat
+sat
+(model 
+  (define-fun b () String
+    "de")
+  (define-fun a () String
+    "abc")
+)
+"Ab"
+sat
+unsat
+sat
+unsat
+sat
+sat
+(model 
+  (define-fun a () String
+    "ab")
+)
+sat
+(model 
+  (define-fun a () String
+    "abab")
+)
