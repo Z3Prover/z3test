@@ -273,7 +273,7 @@ def main():
     os.chdir(bin_dir)
     call_unlogged('git reset --hard origin/master')
     call_unlogged('git clean -f')
-    call_unlogged('git pull -v')
+    call_unlogged('git pull -v -s recursive -Xtheirs')
     os.chdir(start_dir)
 
     # clean up distros
