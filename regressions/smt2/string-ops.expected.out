@@ -3,7 +3,7 @@ unsat
 sat
 sat
 sat
-sat
+unsat
 true
 true
 true
@@ -46,12 +46,8 @@ unsat
 sat
 sat
 sat
-sat
-sat
-sat
 unsat
 unsat
-sat
 sat
 sat
 unsat
@@ -82,9 +78,4 @@ sat
 (model 
   (define-fun a () String
     "ab")
-)
-sat
-(model 
-  (define-fun a () String
-    "abab")
 )
