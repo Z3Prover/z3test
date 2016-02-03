@@ -31,7 +31,7 @@ namespace ClusterExperiment
 
         public NewJobDialog()
         {
-            InitializeComponent();            
+            InitializeComponent();
         }
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
@@ -159,15 +159,6 @@ namespace ClusterExperiment
             Mouse.OverrideCursor = null;
         }
 
-        private static void CopyStream(Stream source, Stream target)
-        {
-            const int bufSize = 0x1000;
-            byte[] buf = new byte[bufSize];
-            int bytesRead = 0;
-            while ((bytesRead = source.Read(buf, 0, bufSize)) > 0)
-                target.Write(buf, 0, bytesRead);
-        }
-
         private void btnSelectExecutable_Click(object sender, RoutedEventArgs e)
         {
             Mouse.OverrideCursor = System.Windows.Input.Cursors.Wait;
@@ -192,11 +183,6 @@ namespace ClusterExperiment
                 }
                 else if (dlg.FileNames.Count() > 1)
                 {
-                    // Create a ZipPackage
-                    string fn = Path.GetTempFileName();
-
-                    ZipPackage pkg = (ZipPackage)ZipPackage.Open(fn, FileMode.Create);
-
                     string mainFile = "";
                     int exe_count = 0;
                     foreach (string f in dlg.FileNames)
@@ -220,16 +206,8 @@ namespace ClusterExperiment
                         Mouse.OverrideCursor = System.Windows.Input.Cursors.Wait;
                     }
 
-                    foreach (string f in dlg.FileNames)
-                    {
-                        Uri uri = PackUriHelper.CreatePartUri(new Uri(Path.GetFileName(f), UriKind.Relative));
-                        ZipPackagePart p = (ZipPackagePart)pkg.CreatePart(uri, System.Net.Mime.MediaTypeNames.Application.Octet, CompressionOption.Maximum);
-                        CopyStream(new FileStream(f, FileMode.Open, FileAccess.Read), p.GetStream());
-                        if (f == mainFile)
-                            pkg.CreateRelationship(uri, TargetMode.Internal, "http://schemas.openxmlformats.org/package/2006/relationships/meta data/thumbnail");
-                    }
-
-                    pkg.Close();
+                    string fn = Path.GetTempFileName();
+                    SubmissionLib.SubmissionWorker.mkZip(fn, dlg.FileNames, mainFile);
 
                     txtExecutable.Text = fn;
                     chkNewBinary.IsChecked = true;

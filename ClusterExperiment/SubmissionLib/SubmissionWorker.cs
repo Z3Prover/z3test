@@ -1,5 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Data.SqlClient;
+using System.Globalization;
+using System.IO;
+using System.IO.Packaging;
 using System.Linq;
 using System.Text;
 using System.Windows;
@@ -13,10 +19,6 @@ using System.Windows.Media.Imaging;
 using System.Windows.Media.Animation;
 using Microsoft.Hpc.Scheduler;
 using Microsoft.Hpc.Scheduler.Properties;
-using System.Data;
-using System.Data.SqlClient;
-using System.IO;
-using System.ComponentModel;
 
 namespace SubmissionLib
 {
@@ -378,7 +380,7 @@ namespace SubmissionLib
             r.Close();
             r.Dispose();
 
-            // Copy the worker to the shared directory      
+            // Copy the worker to the shared directory
             string eFullpath = System.IO.Path.GetFullPath(executor);
             string eFilename = System.IO.Path.GetFileName(executor);
             sExecutor = newID.ToString() + "_" + eFilename;
@@ -405,10 +407,10 @@ namespace SubmissionLib
         }
 
         public void SubmitCatchall(string db, string cluster, string locality, int priority, string nodegroup, string executor, string min, string max, string jobTemplate, int jobTimeout, int taskTimeout)
-        {            
+        {
             scheduler.Connect(cluster);
             ISchedulerJob hpcJob = scheduler.CreateJob();
-            if (jobTemplate != null) 
+            if (jobTemplate != null)
                 hpcJob.SetJobTemplate(jobTemplate);
             if (jobTimeout != 0)
                 hpcJob.Runtime = jobTimeout;
@@ -426,7 +428,7 @@ namespace SubmissionLib
                 uint fmax = 0;
                 string limitsMinTrimmed = min.Trim();
                 string limitsMaxTrimmed = max.Trim();
-                
+
                 if (limitsMinTrimmed != "")
                 {
                     try { fmin = Convert.ToUInt32(limitsMinTrimmed); }
@@ -436,7 +438,7 @@ namespace SubmissionLib
                 {
                     try { fmax = Convert.ToUInt32(limitsMaxTrimmed); }
                     catch { fmax = 0; }
-                }          
+                }
 
                 ISchedulerCounters ctrs = scheduler.GetCounters();
                 if (locality == "Socket")
@@ -490,7 +492,7 @@ namespace SubmissionLib
 
         public void SubmitHPCJob(string db, bool isNew, int newID, string cluster, string nodegroup, int priority,
                                  string locality, string limitsMin, string limitsMax, string sharedDir,
-                                 string executor, 
+                                 string executor,
                                  string jobTemplate,
                                  int jobTimeout, int taskTimeout,
                                  int nworkers = 0)
@@ -543,7 +545,7 @@ namespace SubmissionLib
                 ISchedulerCounters ctrs = scheduler.GetCounters();
                 if (locality == "Socket")
                 {
-                    if (min > 0) hpcJob.MinimumNumberOfSockets = (int) min;                    
+                    if (min > 0) hpcJob.MinimumNumberOfSockets = (int) min;
                     max = ((max == 0) ? (uint)ctrs.TotalSockets: max);
                     hpcJob.MaximumNumberOfSockets = (int)max;
                 }
@@ -552,7 +554,7 @@ namespace SubmissionLib
                     if (min > 0) hpcJob.MinimumNumberOfCores = (int)min;
                     max = ((max == 0) ? (uint)ctrs.TotalCores : max);
                     hpcJob.MaximumNumberOfCores = (int)max;
-                }                    
+                }
                 else if (locality == "Node")
                 {
                     if (min > 0) hpcJob.MinimumNumberOfNodes = (int)min;
@@ -568,13 +570,13 @@ namespace SubmissionLib
                 SetResources(populateTask, locality);
                 populateTask.IsRerunnable = false;
                 populateTask.IsExclusive = false;
-                // populateTask.WorkDirectory = sharedDir;                
+                // populateTask.WorkDirectory = sharedDir;
                 //populateTask.CommandLine = executor + " " + newID + " ? \"" + db + "\"";
                 populateTask.CommandLine = "pushd " + sharedDir + " & " + Path.GetFileName(executor) + " " + newID + " ? \"" + db + "\"";
                 populateTask.Name = "Populate";
                 if (taskTimeout != 0) populateTask.Runtime = taskTimeout;
                 populateTask.FailJobOnFailure = true;
-                hpcJob.AddTask(populateTask);                
+                hpcJob.AddTask(populateTask);
 
                 for (int i = 0; i < max; i++)
                 {
@@ -641,12 +643,12 @@ namespace SubmissionLib
                 cmd.ExecuteNonQuery();
                 if (hpcJob.State == JobState.Configuring ||
                     hpcJob.State == JobState.ExternalValidation ||
-                    hpcJob.State == JobState.Queued ||                     
+                    hpcJob.State == JobState.Queued ||
                     hpcJob.State == JobState.Running ||
                     hpcJob.State == JobState.Submitted ||
                     hpcJob.State == JobState.Validating)
                     try { scheduler.CancelJob(hpcJob.Id, "Aborted."); }
-                    catch (Exception) { }                    
+                    catch (Exception) { }
                 throw ex;
             }
 
@@ -662,8 +664,8 @@ namespace SubmissionLib
             if (r.HasRows)
             {
                 //System.Windows.MessageBoxResult msg =
-                //    System.Windows.MessageBox.Show("An experiment with ID " + jobID + " already exists in the backup database. OK to overwrite? Press No to use a new ID.", 
-                //                                   "Backup Experiment Exists", 
+                //    System.Windows.MessageBox.Show("An experiment with ID " + jobID + " already exists in the backup database. OK to overwrite? Press No to use a new ID.",
+                //                                   "Backup Experiment Exists",
                 //                                   MessageBoxButton.YesNoCancel, MessageBoxImage.Question, MessageBoxResult.Cancel);
 
                 //if (msg != System.Windows.MessageBoxResult.Yes)
@@ -705,7 +707,10 @@ namespace SubmissionLib
             DateTime ut = (DateTime)r[1];
             r.Close();
 
-            string cmdstring = "INSERT INTO Binaries (Binary,UploadTime) VALUES (@BINARYDATA,'" + ut + "'); SELECT SCOPE_IDENTITY () As BinaryID";
+            string cmdstring = "INSERT INTO Binaries (Binary,UploadTime) VALUES (@BINARYDATA,'" +
+                                ut.ToString("d", DateTimeFormatInfo.InvariantInfo) + " " +
+                                ut.ToString("t", DateTimeFormatInfo.InvariantInfo) +
+                                "'); SELECT SCOPE_IDENTITY () As BinaryID";
             cmd = new SqlCommand(cmdstring, toSQL);
             cmd.CommandTimeout = 0;
             SqlParameter par = cmd.Parameters.Add("@BINARYDATA", System.Data.SqlDbType.VarBinary);
@@ -825,7 +830,7 @@ namespace SubmissionLib
                         continue;
                     //if (fieldname == "ExperimentID")
                     //  tocmd.Parameters.AddWithValue("@P" + i.ToString(), newID);
-                    //else          
+                    //else
                     else if (fieldname != "FilenameP" && fieldname != "s")
                         tocmd.Parameters.AddWithValue("@P" + i.ToString(), r[i]);
                 }
@@ -882,7 +887,7 @@ namespace SubmissionLib
             {
                 string sharedDir = (string)r["SharedDir"];
                 string nodegroup = (string)r["Nodegroup"];
-                string locality = (string)r["Locality"];                
+                string locality = (string)r["Locality"];
                 string executor = (string)r["Executor"];
 
                 r.Close();
@@ -1055,6 +1060,30 @@ namespace SubmissionLib
             {
                 MessageBox.Show("Error submitting job: " + ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
+        }
+
+        private static void CopyStream(Stream source, Stream target)
+        {
+            const int bufSize = 0x1000;
+            byte[] buf = new byte[bufSize];
+            int bytesRead = 0;
+            while ((bytesRead = source.Read(buf, 0, bufSize)) > 0)
+                target.Write(buf, 0, bytesRead);
+        }
+
+        public static void mkZip(string filename, string[] files, string mainFile) {
+            ZipPackage pkg = (ZipPackage)ZipPackage.Open(filename, FileMode.Create);
+
+            foreach (string f in files)
+            {
+                Uri uri = PackUriHelper.CreatePartUri(new Uri(Path.GetFileName(f), UriKind.Relative));
+                ZipPackagePart p = (ZipPackagePart)pkg.CreatePart(uri, System.Net.Mime.MediaTypeNames.Application.Octet, CompressionOption.Maximum);
+                CopyStream(new FileStream(f, FileMode.Open, FileAccess.Read), p.GetStream());
+                if (f == mainFile)
+                    pkg.CreateRelationship(uri, TargetMode.Internal, "http://schemas.openxmlformats.org/package/2006/relationships/meta data/thumbnail");
+            }
+
+            pkg.Close();
         }
     };
 }

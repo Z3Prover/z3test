@@ -19,6 +19,7 @@ namespace Z3Data
         public string sharedDir = @"";
         public string executor = @"";
         public string parameters = "";
+        public List<string> support_files = new List<string>();
         public string memout = "";
 
         public string nodegroup = "";
@@ -65,7 +66,7 @@ namespace Z3Data
 
         public Configuration(string configFile)
         {
-            // Console.WriteLine(now() + ": Reading configuration from " + configFile);        
+            // Console.WriteLine(now() + ": Reading configuration from " + configFile);
             XmlTextReader reader = new XmlTextReader(configFile);
 
             while (reader.Read())
@@ -169,6 +170,11 @@ namespace Z3Data
                                 case "Buildlog":
                                     {
                                         build_log = reader.GetAttribute("file");
+                                    }
+                                    break;
+                                case "SupportFile":
+                                    {
+                                        support_files.Add(reader.GetAttribute("name"));
                                     }
                                     break;
                                 default: /* nothing */ break;
