@@ -122,7 +122,7 @@ IF NOT EXIST build-dist\%CURRENT_Z3_HASH%\x86\z3.exe. (
 
 IF EXIST %DISTROS%. (
   pushd %DISTROS% >> %LOG% 2>&1
-  git pull --rebase -v >> %LOG% 2>&1
+  git pull --rebase -v -s recursive -Xtheirs >> %LOG% 2>&1
   popd >> %LOG% 2>&1
 ) ELSE (
   git clone %Z3_BIN_REPO% %DISTROS% >> %LOG% 2>&1

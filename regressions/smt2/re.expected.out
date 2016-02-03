@@ -1,0 +1,77 @@
+true
+true
+true
+true
+true
+true
+true
+true
+true
+true
+true
+true
+true
+true
+true
+true
+true
+true
+true
+true
+true
+true
+true
+true
+true
+true
+true
+true
+true
+true
+true
+true
+true
+true
+true
+true
+true
+true
+true
+true
+true
+(= a (str.++ (seq.unit #x61) (str.++ (seq.unit #x62) (seq.unit #x63))))
+(str.in.re a (re.union (str.to.re "ab") (str.to.re "abc")))
+sat
+sat
+(model 
+  (define-fun a () String
+    "ab")
+)
+sat
+(model 
+  (define-fun a () String
+    "abab")
+)
+sat
+(model 
+  (define-fun a () String
+    "ababab")
+)
+unsat
+unsat
+sat
+(model 
+  (define-fun a () String
+    "abab")
+)
+sat
+(model 
+  (define-fun a () String
+    "abab")
+)
+sat
+(model 
+  (define-fun a () String
+    "ababab")
+)
+unsat

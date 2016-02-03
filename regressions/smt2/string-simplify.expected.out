@@ -11,9 +11,9 @@ true
 2
 "b"
 "bc"
-"bc"
+(str.substr "abc" 1 3)
 "c"
-""
+(str.substr "abc" 3 1)
 (str.substr "abc" 4 1)
 false
 false
@@ -42,7 +42,7 @@ false
 a
 a
 (str.++ a "ab")
-(+ (str.len a) 1)
+(+ 1 (str.len a))
 (= "" b)
 true
 (str.prefixof (str.++ a b) c)
