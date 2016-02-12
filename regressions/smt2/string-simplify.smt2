@@ -11,9 +11,9 @@
 (simplify (str.len "ab"))            ; 2
 (simplify (str.substr "abc" 1 1))    ; "b"
 (simplify (str.substr "abc" 1 2))    ; "bc"
-(simplify (str.substr "abc" 1 3))    ; "bc"
+(simplify (str.substr "abc" 1 3))    ; (str.substr "abc" 1 3) 
 (simplify (str.substr "abc" 2 1))    ; "c"
-(simplify (str.substr "abc" 3 1))    ; ""
+(simplify (str.substr "abc" 3 1))    ; (str.substr "abc" 3 1) 
 (simplify (str.substr "abc" 4 1))    ; (str.substr "abc" 4 1)
 (simplify (str.contains "ab" "abc"))   ; false
 (simplify (str.contains "bc" "abc"))   ; false

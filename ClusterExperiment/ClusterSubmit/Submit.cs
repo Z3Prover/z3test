@@ -74,7 +74,17 @@ namespace ClusterSubmit
                 string bestCluster = SubmissionWorker.FindCluster(config.cluster, config.alternativeClusters);
                 Console.WriteLine(now() + ": Submitting job to " + bestCluster + " with the following binary: " + executable);
 
-                w.UploadBinary(config.db, executable, ref haveBinId, ref binId);
+                if (config.support_files.Count != 0)
+                {
+                    string tZipFN = Path.GetTempFileName();
+                    List<string> files = config.support_files;
+                    if (!files.Contains(executable)) files.Add(executable);
+                    SubmissionWorker.mkZip(tZipFN, files.ToArray(), executable);
+                    w.UploadBinary(config.db, tZipFN, ref haveBinId, ref binId);
+                }
+                else {
+                    w.UploadBinary(config.db, executable, ref haveBinId, ref binId);
+                }
 
                 string sExecutor = "";
                 int jid =
@@ -144,7 +154,7 @@ namespace ClusterSubmit
 
         static void saveBinaryDate(string executable)
         {
-            // save the date of the binary.        
+            // save the date of the binary.
             FileStream of = File.Create("last_binary");
             StreamWriter sw = new StreamWriter(of);
             sw.WriteLine(File.GetLastWriteTime(executable).ToFileTimeUtc());
