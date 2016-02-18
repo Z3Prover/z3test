@@ -251,7 +251,7 @@ def test_benchmark(z3exe, benchmark, expected=None):
         print("PRODUCED")
         print(open(produced, 'r').read())
         print("======================")
-        raiseException("Z3 (%s) produced unexpected output for %s" % (z3exe, benchmark))
+        raise Exception("Z3 (%s) produced unexpected output for %s" % (z3exe, benchmark))
     return True
 
 def test_benchmarks(z3exe, benchdir, ext="smt2", timeout_duration=60.0):
