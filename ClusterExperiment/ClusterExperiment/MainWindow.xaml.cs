@@ -122,7 +122,7 @@ namespace ClusterExperiment
                 cmd = "SELECT TitleScreen.*, Done, Queued, Total " +
                         //", (CASE WHEN Queued = 0 THEN 'Done.' ELSE " +
                         // "CONVERT(varchar, CONVERT(time, DATEADD(s, (Queued * (-DateDiff(s, GetDate(), SubmissionTime) / Done)), 0))) END) as Projection " +
-                    // ", Progress" + 
+                    // ", Progress" +
                         "FROM TitleScreen, " +
                         "(SELECT DCT.ID, Done, Queued, (Done+Queued) as Total " +
                     // ", STR(100.0 * Done/NULLIF(Done+Queued, 0), 6, 2) + '%' as Progress " +
@@ -165,7 +165,7 @@ namespace ClusterExperiment
             catch (Exception ex)
             {
                 System.Windows.MessageBox.Show(this, "Error loading experiment table: " + ex.Message, "Error",
-                    System.Windows.MessageBoxButton.OK, 
+                    System.Windows.MessageBoxButton.OK,
                     System.Windows.MessageBoxImage.Error);
                 dataGrid.ItemsSource = null;
             }
@@ -538,10 +538,10 @@ namespace ClusterExperiment
                             data.Add(fn, new Dictionary<int, CSVDatum>());
                         if (data[fn].ContainsKey(id)) {
                             System.Windows.MessageBox.Show(
-                                String.Format("Duplicate in job #{0} ignored", id), 
-                                "Duplicate warning", 
-                                MessageBoxButton.OK, 
-                                MessageBoxImage.Warning, 
+                                String.Format("Duplicate in job #{0} ignored", id),
+                                "Duplicate warning",
+                                MessageBoxButton.OK,
+                                MessageBoxImage.Warning,
                                 MessageBoxResult.OK);
                         }
                         else
@@ -1733,6 +1733,16 @@ namespace ClusterExperiment
 
                 updateState();
             }
+        }
+
+
+        private void showPurgeOrphans(object sender, RoutedEventArgs e)
+        {
+            Mouse.OverrideCursor = System.Windows.Input.Cursors.Wait;
+            SqlCommand cmd = new SqlCommand("DELETE FROM Binaries WHERE ID NOT IN (SELECT Binaries.ID FROM Experiments, Binaries WHERE Experiments.Binary = Binaries.ID)", sql);
+            cmd.CommandTimeout = 0;
+            cmd.ExecuteNonQuery();
+            Mouse.OverrideCursor = null;
         }
 
         private void mnuOptProgress_Checked(object sender, RoutedEventArgs e)

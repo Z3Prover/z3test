@@ -2,12 +2,12 @@
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:custom="clr-namespace:ClusterExperiment"
-        Title="ClusterExperiment" 
-        Height="511" Width="716" MinHeight="600" MinWidth="450" 
-        Closing="OnClosing" 
-        Icon="/ClusterExperiment;component/Images/servers.ico" 
+        Title="ClusterExperiment"
+        Height="511" Width="716" MinHeight="600" MinWidth="450"
+        Closing="OnClosing"
+        Icon="/ClusterExperiment;component/Images/servers.ico"
         ResizeMode="CanResizeWithGrip">
-    
+
     <Window.CommandBindings>
         <CommandBinding Command="Find" Executed="focusOnFilter" CanExecute="canFocusOnFilter" />
         <CommandBinding Command="New" Executed="showNewJob" CanExecute="canShowNewJob" />
@@ -29,7 +29,7 @@
             <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
 
-        <Menu Grid.Row="0" Grid.ColumnSpan="1"  IsMainMenu="True" Name="mnuMain">            
+        <Menu Grid.Row="0" Grid.ColumnSpan="1"  IsMainMenu="True" Name="mnuMain">
             <MenuItem Header="_File">
                 <MenuItem Header="_New..." Click="showNewJob">
                     <MenuItem.Icon>
@@ -37,6 +37,7 @@
                     </MenuItem.Icon>
                 </MenuItem>
                 <MenuItem Header="_New catch-all... " Click="showNewCatchall" />
+                <MenuItem Header="Purge orphaned binaries" Click="showPurgeOrphans" />
                 <Separator />
                 <MenuItem Header="E_xit" Click="MenuItemExit_Click" />
             </MenuItem>
@@ -95,9 +96,9 @@
                         <DataGridTextColumn Binding="{Binding Path=Total}" Header="Total" TextBlock.TextAlignment="Right" Visibility="Hidden"/>
                         <DataGridTextColumn Binding="{Binding Path=Projection}" Header="Projection" TextBlock.TextAlignment="Right" Visibility="Hidden"/>
                     </DataGrid.Columns>
-                    <DataGrid.CommandBindings>                        
-                        <CommandBinding Command="Delete" Executed="deleteExperiment" CanExecute="canDeleteExperiment" />                                                
-                        <CommandBinding Command="{x:Static custom:MainWindow.CompareCommand}" Executed="showCompare" CanExecute="canShowCompare" />                                                
+                    <DataGrid.CommandBindings>
+                        <CommandBinding Command="Delete" Executed="deleteExperiment" CanExecute="canDeleteExperiment" />
+                        <CommandBinding Command="{x:Static custom:MainWindow.CompareCommand}" Executed="showCompare" CanExecute="canShowCompare" />
                         <CommandBinding Command="{x:Static custom:MainWindow.ScatterplotCommand}" Executed="showScatterplot" CanExecute="canShowScatterplot" />
                         <CommandBinding Command="SaveAs" Executed="showSaveCSV" CanExecute="canShowSaveCSV" />
                         <CommandBinding Command="{x:Static custom:MainWindow.CopyCommand}" Executed="showCopy" CanExecute="canShowCopy" />
@@ -134,7 +135,7 @@
                             <MenuItem Name="mnuRecovery" Header="Requeue in. errors..." Command="{x:Static custom:MainWindow.RequeueIErrorsCommand}" />
                             <MenuItem Name="mnuRestart" Header="Restart" Command="{x:Static custom:MainWindow.RestartCommand}" />
                             <MenuItem Name="mnuChangePriority" Header="Change priority..." Command="{x:Static custom:MainWindow.ChangePriorityCommand}" />
-                            <MenuItem Name="mnuRequeueIE" Header="Start recovery..." Command="{x:Static custom:MainWindow.RecoveryCommand}" />                            
+                            <MenuItem Name="mnuRequeueIE" Header="Start recovery..." Command="{x:Static custom:MainWindow.RecoveryCommand}" />
                             <MenuItem Name="mnuDuplicates" Header="Resolve _duplicates..." Command="{x:Static custom:MainWindow.DuplicatesCommand}" />
                             <MenuItem Name="mnuFlag" Header="Toggle _flag" Command="{x:Static custom:MainWindow.FlagCommand}" InputGestureText="Ctrl-T" />
                             <MenuItem Name="mnuTally" Header="Ta_lly" Command="{x:Static custom:MainWindow.TallyCommand}" />
