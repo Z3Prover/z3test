@@ -39,8 +39,8 @@
                     <TextBox Name="txtSharedDir" IsReadOnly="True" Grid.Row="0" Grid.Column="1"/>
                 </Grid>
 
-                <DataGrid AutoGenerateColumns="True" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" 
-                          Margin="0,0,0,0" Name="dataGrid" Grid.Row="1" Grid.Column="0" IsReadOnly="True" 
+                <DataGrid AutoGenerateColumns="True" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
+                          Margin="0,0,0,0" Name="dataGrid" Grid.Row="1" Grid.Column="0" IsReadOnly="True"
                           RowHeight="23" SelectionUnit="FullRow" MouseDoubleClick="dataGrid_MouseDoubleClick">
                     <DataGrid.ContextMenu>
                         <ContextMenu>
@@ -51,6 +51,7 @@
                                 <MenuItem Name="mnuReclassifyTimeout" Header="_Timeout" Command="{x:Static custom:ShowResults.ReclassifyTimeout}" />
                                 <MenuItem Name="mnuReclassifyMemout" Header="_Memout" Command="{x:Static custom:ShowResults.ReclassifyMemout}" />
                             </MenuItem>
+                            <MenuItem Name="mnuRequeue" Header="Re_queue" Command="{x:Static custom:ShowResults.Requeue}" />
                             <MenuItem Name="mnuCopyFilename" Header="Copy _filename" Command="{x:Static custom:ShowResults.CopyFilename}" />
                         </ContextMenu>
                     </DataGrid.ContextMenu>

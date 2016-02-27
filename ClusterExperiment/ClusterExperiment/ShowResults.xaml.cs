@@ -30,6 +30,7 @@ namespace ClusterExperiment
         public static RoutedCommand ReclassifyError = new RoutedCommand();
         public static RoutedCommand ReclassifyTimeout = new RoutedCommand();
         public static RoutedCommand ReclassifyMemout = new RoutedCommand();
+        public static RoutedCommand Requeue = new RoutedCommand();
         public static RoutedCommand CopyFilename = new RoutedCommand();
 
         public ShowResults(int experimentID, SqlConnection sql)
@@ -47,6 +48,8 @@ namespace ClusterExperiment
             customCommandBinding = new CommandBinding(ReclassifyTimeout, showReclassifyTimeout, canShowReclassify);
             CommandBindings.Add(customCommandBinding);
             customCommandBinding = new CommandBinding(ReclassifyMemout, showReclassifyMemout, canShowReclassify);
+            CommandBindings.Add(customCommandBinding);
+            customCommandBinding = new CommandBinding(Requeue, showRequeue, canShowRequeue);
             CommandBindings.Add(customCommandBinding);
             customCommandBinding = new CommandBinding(CopyFilename, showCopyFilename, canShowCopyFilename);
             CommandBindings.Add(customCommandBinding);
@@ -90,7 +93,7 @@ namespace ClusterExperiment
         {
             Mouse.OverrideCursor = System.Windows.Input.Cursors.Wait;
 
-        retry:
+            retry:
             try
             {
                 SqlDataAdapter da = null;
@@ -137,10 +140,10 @@ namespace ClusterExperiment
                     da = new SqlDataAdapter("SELECT Data.ID as ID,Strings.s as Filename,Returnvalue,ResultCode,SAT,UNSAT,UNKNOWN,Runtime,Worker FROM Data,Strings WHERE FilenameP=Strings.ID AND (Strings.s LIKE '%unsat%') AND ExperimentID=" + experimentID, sql);
                 else if ((RadioButton)sender == radioFNTEXT)
                     da = new SqlDataAdapter("SELECT Data.ID as ID,Strings.s as Filename,Returnvalue,ResultCode,SAT,UNSAT,UNKNOWN,Runtime,Worker FROM Data,Strings WHERE FilenameP=Strings.ID AND (Strings.s LIKE '%" + txtFilename.Text + "%') AND ExperimentID=" + experimentID, sql);
-                
+
                 DataSet ds = new DataSet();
                 da.SelectCommand.CommandTimeout = 0;
-                da.Fill(ds, "Data");                
+                da.Fill(ds, "Data");
                 dataGrid.ItemsSource = ds.Tables[0].DefaultView;
             }
             catch (SqlException ex)
@@ -256,6 +259,38 @@ namespace ClusterExperiment
             Mouse.OverrideCursor = System.Windows.Input.Cursors.Wait;
             ReclassifySelected(6);
             dataGrid.Items.Refresh();
+            Mouse.OverrideCursor = null;
+        }
+
+        private void canShowRequeue(object Sender, CanExecuteRoutedEventArgs e)
+        {
+            e.CanExecute = (sql != null) && (dataGrid.SelectedItems.Count >= 1);
+        }
+
+        private void showRequeue(object sender, ExecutedRoutedEventArgs e)
+        {
+            Mouse.OverrideCursor = System.Windows.Input.Cursors.Wait;
+
+            try
+            {
+                foreach (DataRowView drv in dataGrid.SelectedItems)
+                {
+                    string fn = (string)drv["Filename"];
+                    int id = (int)drv["ID"];
+                    SqlCommand cmd = new SqlCommand("AQ " + experimentID + ",'" + fn + "';" +
+                                                    "DELETE FROM Data WHERE ID=" + id + "", sql);
+                    cmd.CommandTimeout = 0;
+                    cmd.ExecuteNonQuery();
+                }
+
+                System.Console.WriteLine();
+            }
+            catch (Exception ex)
+            {
+                System.Windows.MessageBox.Show(this, "Exception: " + ex.Message, "Error",
+                                                MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+
             Mouse.OverrideCursor = null;
         }
 
