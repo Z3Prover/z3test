@@ -1,4 +1,2 @@
-WARNING: recursive functions are currently only partially supported: they are translated into recursive equations without special handling
-WARNING: recursive functions are currently only partially supported: they are translated into recursive equations without special handling
 (error "line 9 column 38: invalid function definition, sort mismatch. Expcected Bool but function body has sort Int")
 unsat
