@@ -1,5 +1,5 @@
 sat
 (model 
-  (define-fun p ((x!1 Int)) Bool
+  (define-fun p ((x!0 Int)) Bool
     true)
 )
