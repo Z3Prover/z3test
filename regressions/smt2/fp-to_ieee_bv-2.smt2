@@ -10,6 +10,7 @@
 
 (assert (= b (to_ieee_bv x)))
 (assert (fp.isNaN x))
+(assert (= b #xff800003))
 
 (check-sat)
 (get-model)
