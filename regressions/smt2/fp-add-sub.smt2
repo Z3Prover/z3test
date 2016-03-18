@@ -51,4 +51,4 @@
   )
 
 (check-sat)
-(check-sat-using smt)
+(check-sat-using (then simplify smt))
