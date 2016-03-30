@@ -37,7 +37,7 @@ namespace Z3Data
                 Rebuild();
             else
             {
-                if (File.GetLastWriteTime(_filename) < _j.LastDataModification)
+                if (File.GetLastWriteTime(_filename) < _j.MetaData.LastDataModification)
                     Rebuild();
                 else
                 {
@@ -220,7 +220,7 @@ namespace Z3Data
                     }
                 }
                 else if (ResultCode.IsTime(rc))
-                {                    
+                {
                     if (referenceTimes != null && referenceTimes.ContainsKey(r.Filename))
                     {
                         double old_time = referenceTimes[r.Filename];
@@ -240,7 +240,7 @@ namespace Z3Data
                 {
                     if (referenceTimes != null && referenceTimes.ContainsKey(r.Filename))
                     {
-                        double old_time = referenceTimes[r.Filename];                        
+                        double old_time = referenceTimes[r.Filename];
 
                         string fn = r.Filename;
                         string cat = fn.Substring(0, fn.IndexOf('\\'));
