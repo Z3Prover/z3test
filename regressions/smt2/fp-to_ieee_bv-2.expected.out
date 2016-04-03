@@ -1,0 +1,24 @@
+sat
+(model 
+  (define-fun x () (_ FloatingPoint 8 24)
+    (_ NaN 8 24))
+  (define-fun to_ieee_bv_unspecified () (_ BitVec 32)
+    #xff800003)
+  (define-fun b () (_ BitVec 32)
+    #xff800003)
+)
+((b #xff800003))
+(concat ((_ extract 31 31) (_ to_ieee_bv_unspecified 8 24))
+        #xff
+        ((_ extract 22 1) (_ to_ieee_bv_unspecified 8 24))
+        #b1)
+(bvudiv0 b)
+sat
+(model 
+  (define-fun x () (_ FloatingPoint 8 24)
+    (_ NaN 8 24))
+  (define-fun to_ieee_bv_unspecified () (_ BitVec 32)
+    #xff800003)
+  (define-fun b () (_ BitVec 32)
+    #xff800003)
+)

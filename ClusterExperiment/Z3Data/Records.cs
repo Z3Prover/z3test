@@ -43,12 +43,12 @@ namespace Z3Data
             _dataDir = dataDir;
             _filename = dataDir + @"\record_cache.csv";
             _summaryFilename = dataDir + @"\record_cache_summary.csv";
-            _records = new Dictionary<string, Record>(100000);            
+            _records = new Dictionary<string, Record>(100000);
             Load();
-        }        
+        }
 
         public void Update(Job j)
-        {            
+        {
             uint jid = j.MetaData.Id;
             foreach (CSVRow r in j.Rows)
             {
@@ -72,15 +72,12 @@ namespace Z3Data
             }
         }
 
-        public Dictionary<string, CategoryRecord> RecordsByCategory
-        {
-            get { return _summary; }
-        }
+        public Dictionary<string, CategoryRecord> RecordsByCategory { get { return _summary; } }
 
         protected void Update(string filename, double time, uint jobId)
         {
             if (!_records.ContainsKey(filename))
-            {                
+            {
                 _records.Add(filename, new Record(time, jobId));
                 string category = filename.Substring(0, filename.IndexOf(@"\"));
                 if (!_summary.ContainsKey(category)) _summary.Add(category, new CategoryRecord(0.0, 0));
@@ -115,28 +112,23 @@ namespace Z3Data
 
             SaveSummary();
         }
-       
+
         public void Load()
         {
             if (!File.Exists(_filename))
                 Rebuild();
             else
             {
-                FileStream s = new FileStream(_filename, FileMode.Open);
-                StreamReader r = new StreamReader(s);
-
-                while (!r.EndOfStream)
-                {
-                    string[] tokens = r.ReadLine().Split(',');
-                    string fn = tokens[0].Substring(1);
-                    fn = fn.Substring(0, fn.Length-1);
-                    _records.Add(fn,
-                                 new Record(Convert.ToDouble(tokens[1]),
-                                            Convert.ToUInt32(tokens[2])));
-                }
-
-                r.Close();
-                s.Close();
+                using (FileStream s = new FileStream(_filename, FileMode.Open))
+                using (StreamReader r = new StreamReader(s))
+                    while (!r.EndOfStream)
+                    {
+                        string[] tokens = r.ReadLine().Split(',');
+                        string fn = tokens[0].Substring(1);
+                        fn = fn.Substring(0, fn.Length - 1);
+                        _records.Add(fn, new Record(Convert.ToDouble(tokens[1]),
+                                                    Convert.ToUInt32(tokens[2])));
+                    }
             }
 
 
@@ -147,17 +139,13 @@ namespace Z3Data
             {
                 _summary = new Dictionary<string, CategoryRecord>();
 
-                FileStream ss = new FileStream(_summaryFilename, FileMode.Open);
-                StreamReader sr = new StreamReader(ss);
-
-                while (!sr.EndOfStream)
-                {
-                    string[] tokens = sr.ReadLine().Split(',');
-                    _summary.Add(tokens[0], new CategoryRecord(Convert.ToDouble(tokens[1]), Convert.ToUInt32(tokens[2])));
-                }
-
-                sr.Close();
-                ss.Close();
+                using (FileStream ss = new FileStream(_summaryFilename, FileMode.Open))
+                using (StreamReader sr = new StreamReader(ss))
+                    while (!sr.EndOfStream)
+                    {
+                        string[] tokens = sr.ReadLine().Split(',');
+                        _summary.Add(tokens[0], new CategoryRecord(Convert.ToDouble(tokens[1]), Convert.ToUInt32(tokens[2])));
+                    }
             }
         }
 
@@ -165,33 +153,24 @@ namespace Z3Data
         {
             if (_modified)
             {
-                FileStream s = new FileStream(_filename, FileMode.Create);
-                StreamWriter w = new StreamWriter(s);
-
-                foreach (KeyValuePair<string, Record> kvp in _records)
-                    w.WriteLine("\"" + CSVData.Escape(kvp.Key) + "\"," + 
-                                kvp.Value.Time.ToString() + "," +  
-                                kvp.Value.JobId.ToString());
-
-                w.Close();
-                s.Close();
+                using (FileStream s = new FileStream(_filename, FileMode.Create))
+                using (StreamWriter w = new StreamWriter(s))
+                    foreach (KeyValuePair<string, Record> kvp in _records)
+                        w.WriteLine("\"" + CSVData.Escape(kvp.Key) + "\"," +
+                                    kvp.Value.Time.ToString() + "," +
+                                    kvp.Value.JobId.ToString());
 
                 SaveSummary();
-
                 _modified = false;
             }
         }
 
         public void SaveSummary()
         {
-            FileStream s = new FileStream(_summaryFilename, FileMode.Create);
-            StreamWriter w = new StreamWriter(s);
-
-            foreach (KeyValuePair<string, CategoryRecord> kvp in _summary)
-                w.WriteLine(kvp.Key + "," + kvp.Value.Time + "," + kvp.Value.Files);
-
-            w.Close();
-            s.Close();
+            using (FileStream s = new FileStream(_summaryFilename, FileMode.Create))
+            using (StreamWriter w = new StreamWriter(s))
+                foreach (KeyValuePair<string, CategoryRecord> kvp in _summary)
+                    w.WriteLine(kvp.Key + "," + kvp.Value.Time + "," + kvp.Value.Files);
         }
 
         protected void Rebuild()

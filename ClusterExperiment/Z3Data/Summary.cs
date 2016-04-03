@@ -17,13 +17,11 @@ namespace Z3Data
         public Summary(string dataDir, Job j)
         {
             _filename = dataDir + @"\" + j.MetaData.Id.ToString() + "_summary.csv";
-            if (File.Exists(_filename))
-            {
-                if (File.GetLastWriteTime(_filename) < j.LastDataModification)
-                    Rebuild(j);
-            }
-            else
+
+            if (!File.Exists(_filename) ||
+                (File.GetLastWriteTime(_filename) < j.MetaData.LastDataModification))
                 Rebuild(j);
+
             Load();
         }
 
@@ -32,72 +30,70 @@ namespace Z3Data
             _overall = null;
             Clear();
 
-            FileStream fs = File.Open(_filename, FileMode.Open, FileAccess.Read, FileShare.Read);
-            StreamReader f = new StreamReader(fs);
-
-            while (!f.EndOfStream)
+            using (FileStream fs = File.Open(_filename, FileMode.Open, FileAccess.Read, FileShare.Read))
+            using (StreamReader f = new StreamReader(fs))
             {
-                string s = f.ReadLine();
-                string[] tokens = s.Split(',');
+                while (!f.EndOfStream)
+                {
+                    string s = f.ReadLine();
+                    string[] tokens = s.Split(',');
 
-                if (tokens.Count() == 1 && tokens[0] == "") // empty line
-                    continue;
+                    if (tokens.Count() == 1 && tokens[0] == "") // empty line
+                        continue;
 
-                if (tokens.Count() < 13 || tokens.Count() > 14)
-                    throw new Exception("Unexpected number of tokens in summary line (" + _filename + ").");
+                    if (tokens.Count() < 13 || tokens.Count() > 14)
+                        throw new Exception("Unexpected number of tokens in summary line (" + _filename + ").");
 
-                if (!ContainsKey(tokens[0]))
-                    Add(tokens[0], new CategoryStatistics());
+                    if (!ContainsKey(tokens[0]))
+                        Add(tokens[0], new CategoryStatistics());
 
-                base[tokens[0]].Files = Convert.ToUInt32(tokens[1]);
-                base[tokens[0]].SAT = Convert.ToUInt32(tokens[2]);
-                base[tokens[0]].UNSAT = Convert.ToUInt32(tokens[3]);
-                base[tokens[0]].UNKNOWN = Convert.ToUInt32(tokens[4]);
-                base[tokens[0]].Errors = Convert.ToUInt32(tokens[5]);
-                base[tokens[0]].Bugs = Convert.ToUInt32(tokens[6]);
-                base[tokens[0]].Memout = Convert.ToUInt32(tokens[7]);
-                base[tokens[0]].Timeout = Convert.ToUInt32(tokens[8]);
+                    base[tokens[0]].Files = Convert.ToUInt32(tokens[1]);
+                    base[tokens[0]].SAT = Convert.ToUInt32(tokens[2]);
+                    base[tokens[0]].UNSAT = Convert.ToUInt32(tokens[3]);
+                    base[tokens[0]].UNKNOWN = Convert.ToUInt32(tokens[4]);
+                    base[tokens[0]].Errors = Convert.ToUInt32(tokens[5]);
+                    base[tokens[0]].Bugs = Convert.ToUInt32(tokens[6]);
+                    base[tokens[0]].Memout = Convert.ToUInt32(tokens[7]);
+                    base[tokens[0]].Timeout = Convert.ToUInt32(tokens[8]);
 
-                base[tokens[0]].TimeSAT = Convert.ToDouble(tokens[9]);
-                base[tokens[0]].TimeUNSAT = Convert.ToDouble(tokens[10]);
+                    base[tokens[0]].TimeSAT = Convert.ToDouble(tokens[9]);
+                    base[tokens[0]].TimeUNSAT = Convert.ToDouble(tokens[10]);
 
-                base[tokens[0]].Overperformers = Convert.ToUInt32(tokens[11]);
-                base[tokens[0]].UnderPerformers = Convert.ToUInt32(tokens[12]);
+                    base[tokens[0]].Overperformers = Convert.ToUInt32(tokens[11]);
+                    base[tokens[0]].UnderPerformers = Convert.ToUInt32(tokens[12]);
 
-                if (tokens.Count() > 13)
-                    base[tokens[0]].InfrastructureErrors = Convert.ToUInt32(tokens[13]);
+                    if (tokens.Count() > 13)
+                        base[tokens[0]].InfrastructureErrors = Convert.ToUInt32(tokens[13]);
+                }
             }
-
-            f.Close();
-            fs.Close();
         }
 
         public void Save()
         {
-            FileStream fs = File.Open(_filename, FileMode.Create);
-            StreamWriter f = new StreamWriter(fs);
-            Summary.Enumerator e = GetEnumerator();
-            while (e.MoveNext())
+            using (FileStream fs = File.Open(_filename, FileMode.Create))
+            using (StreamWriter f = new StreamWriter(fs))
+            using (Summary.Enumerator e = GetEnumerator())
             {
-                CategoryStatistics s = e.Current.Value;
-                f.Write(e.Current.Key + ",");
-                f.Write(s.Files.ToString() + ",");
-                f.Write(s.SAT.ToString() + ",");
-                f.Write(s.UNSAT.ToString() + ",");
-                f.Write(s.UNKNOWN.ToString() + ",");
-                f.Write(s.Errors.ToString() + ",");
-                f.Write(s.Bugs.ToString() + ",");
-                f.Write(s.Memout.ToString() + ",");
-                f.Write(s.Timeout.ToString() + ",");
-                f.Write(s.TimeSAT.ToString() + ",");
-                f.Write(s.TimeUNSAT.ToString() + ",");
-                f.Write(s.Overperformers.ToString() + ",");
-                f.Write(s.UnderPerformers.ToString() + ",");
-                f.Write(s.InfrastructureErrors.ToString());
-                f.WriteLine();
+                while (e.MoveNext())
+                {
+                    CategoryStatistics s = e.Current.Value;
+                    f.Write(e.Current.Key + ",");
+                    f.Write(s.Files.ToString() + ",");
+                    f.Write(s.SAT.ToString() + ",");
+                    f.Write(s.UNSAT.ToString() + ",");
+                    f.Write(s.UNKNOWN.ToString() + ",");
+                    f.Write(s.Errors.ToString() + ",");
+                    f.Write(s.Bugs.ToString() + ",");
+                    f.Write(s.Memout.ToString() + ",");
+                    f.Write(s.Timeout.ToString() + ",");
+                    f.Write(s.TimeSAT.ToString() + ",");
+                    f.Write(s.TimeUNSAT.ToString() + ",");
+                    f.Write(s.Overperformers.ToString() + ",");
+                    f.Write(s.UnderPerformers.ToString() + ",");
+                    f.Write(s.InfrastructureErrors.ToString());
+                    f.WriteLine();
+                }
             }
-            f.Close();
-            fs.Close();
         }
 
         public CategoryStatistics Overall
@@ -226,7 +222,7 @@ namespace Z3Data
                 default: throw new Exception("Unexpected result code: " + r.ResultCode);
             }
 
-            cs.Files++;            
+            cs.Files++;
 
             return true;
         }

@@ -22,9 +22,6 @@ namespace ClusterDownload
 
         static void Aggregate()
         {
-            if (!Directory.Exists("backup"))
-                Directory.CreateDirectory("backup");
-
             Jobs jobs = new Jobs(config.datadir, true);
             StreamWriter w = new StreamWriter("timeline.csv");
             Timeline.Make(w, ref jobs);
@@ -47,11 +44,10 @@ namespace ClusterDownload
                     // Global.Say(string.Format("Downloaded {0} batches for job #{1}. Average batch time: {2} sec.", j.BatchCount, j.MetaData.Id, j.AverageBatchTime));
                 }
 
-                Jobs jobs = new Jobs(config.datadir); // includes unfinished.
-
                 if (myJobs.Count > 0)
                 {
                     uint lastId = 0;
+                    Jobs jobs = new Jobs(config.datadir); // includes unfinished.
                     foreach (Job j in jobs)
                     {
                         if (j.MetaData.Id >= myJobs.Last().MetaData.Id &&
@@ -72,7 +68,6 @@ namespace ClusterDownload
                             Report r = new Report(j);
                             if (r.IsInteresting)
                                 r.SendTo(config.developers);
-
                             records.Update(j);
                         }
                         else
@@ -83,15 +78,17 @@ namespace ClusterDownload
                                 uint cluster_jid = j.MetaData.ClusterJobId;
                                 if (cluster != "" && cluster_jid != 0)
                                 {
-                                    Scheduler scheduler = new Scheduler();
-                                    scheduler.Connect(cluster);
-                                    ISchedulerJob job = scheduler.OpenJob(Convert.ToInt32(cluster_jid));
-                                    if (job.State == JobState.Canceled &&
-                                        job.ErrorMessage.StartsWith("Canceled by the scheduler"))
+                                    using (Scheduler scheduler = new Scheduler())
                                     {
-                                        Global.Say("Requeing job #" + j.MetaData.Id + " after the scheduler canceled it (# requeues = " + job.RequeueCount + ").");
-                                        try { job.Requeue(); }
-                                        catch (Exception ex) { Console.WriteLine("requeue-exception: " + ex.Message); }
+                                        scheduler.Connect(cluster);
+                                        ISchedulerJob job = scheduler.OpenJob(Convert.ToInt32(cluster_jid));
+                                        if (job.State == JobState.Canceled &&
+                                            job.ErrorMessage.StartsWith("Canceled by the scheduler"))
+                                        {
+                                            Global.Say("Requeing job #" + j.MetaData.Id + " after the scheduler canceled it (# requeues = " + job.RequeueCount + ").");
+                                            try { job.Requeue(); }
+                                            catch (Exception ex) { Console.WriteLine("requeue-exception: " + ex.Message); }
+                                        }
                                     }
                                 }
                             }

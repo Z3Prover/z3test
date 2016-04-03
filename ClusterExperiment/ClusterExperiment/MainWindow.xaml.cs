@@ -720,7 +720,7 @@ namespace ClusterExperiment
             System.Windows.Forms.OpenFileDialog dlg = new System.Windows.Forms.OpenFileDialog();
 
             dlg.DefaultExt = "exe";
-            dlg.Filter = "Executable files (*.exe)|*.exe|All Files (*.*)|*.*";
+            dlg.Filter = "Executable files (*.exe;*.dll)|*.exe;*.dll|All Files (*.*)|*.*";
             dlg.Multiselect = true;
 
             string exe = null;

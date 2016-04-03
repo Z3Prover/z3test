@@ -10,15 +10,12 @@ namespace Z3Data
     {
         public Jobs(string dataDir, bool onlyFinished = false)
         {
-            foreach (string file in Directory.EnumerateFiles(dataDir, "*.csv"))
+            foreach (string file in Directory.EnumerateFiles(dataDir, "*_meta.csv"))
             {
-                if (!file.Contains("_"))
-                {
-                    uint id = Convert.ToUInt32(file.Substring(dataDir.Length, file.IndexOf('.') - dataDir.Length));
-                    Job j = new Job(dataDir, id);
-                    if (!onlyFinished || j.MetaData.isFinished)
-                        Add(j);
-                }
+                uint id = Convert.ToUInt32(file.Substring(dataDir.Length, file.IndexOf('_') - dataDir.Length));
+                Job j = new Job(dataDir, id);
+                if (!onlyFinished || j.MetaData.isFinished)
+                    Add(j);
             }
         }
     }
