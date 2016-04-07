@@ -17,7 +17,7 @@ namespace ClusterExperiment
         public SqlConnection sql = null;
         int eIDX = 0, eIDY = 0;
         string noteX, noteY;
-        private static uint axisMinimum = 1;
+        private static double axisMinimum = 0.1;
         private uint errorLine = 100;
         uint timeoutX = 1800;
         uint timeoutY = 1800;
@@ -80,7 +80,7 @@ namespace ClusterExperiment
                 }
                 else
                 {
-                    // errorLine = axisMaximum + ((newmax - axisMaximum) / 2);                    
+                    // errorLine = axisMaximum + ((newmax - axisMaximum) / 2);
                     axisMaximum = newmax;
                 }
 
@@ -126,7 +126,7 @@ namespace ClusterExperiment
 
             classes.Clear();
 
-            if (!fancy)             
+            if (!fancy)
                 addSeries("default");
         }
 
@@ -224,7 +224,7 @@ namespace ClusterExperiment
                     if ( (!ckSAT.Checked && (sat1 > 0 || sat2 > 0)) ||
                          (!ckUNSAT.Checked && (unsat1 > 0 || unsat2 > 0)) ||
                          (!ckUNKNOWN.Checked && ( (rc1==0 && res1==0) || (rc2==0 && res2 == 0))) ||
-                         (!ckTIME.Checked && (rc1 == 5 || rc2 == 5)))                         
+                         (!ckTIME.Checked && (rc1 == 5 || rc2 == 5)))
                         continue;
 
                     if ((rc1 != 0 && rc1 != 5) || (x != timeoutX && res1 == 0))
@@ -258,7 +258,7 @@ namespace ClusterExperiment
                         s.Points.Last().ToolTip = name;
                     }
                     else
-                    {                        
+                    {
                         if ((sat1 < sat2 && unsat1 == unsat2) ||
                             (sat1 == sat2 && unsat1 < unsat2))
                             chart.Series[4].Points.AddXY(x, y);
