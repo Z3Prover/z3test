@@ -15,15 +15,16 @@ namespace ClusterExperiment
     public partial class Scatterplot : Form
     {
         public SqlConnection sql = null;
-        int eIDX = 0, eIDY = 0;
-        string noteX, noteY;
+        private int eIDX = 0, eIDY = 0;
+        private string category = "";
+        private string noteX, noteY;
         private static double axisMinimum = 0.1;
         private uint errorLine = 100;
-        uint timeoutX = 1800;
-        uint timeoutY = 1800;
-        uint axisMaximum = 1800;
-        Dictionary<string, int> classes = new Dictionary<string, int>();
-        bool fancy = false;
+        private uint timeoutX = 1800;
+        private uint timeoutY = 1800;
+        private uint axisMaximum = 1800;
+        private Dictionary<string, int> classes = new Dictionary<string, int>();
+        private bool fancy = false;
 
         public Scatterplot(int eID1, int eID2, SqlConnection sql)
         {
@@ -33,28 +34,35 @@ namespace ClusterExperiment
             this.eIDY = eID2;
             this.sql = sql;
 
-            SqlCommand cmd = new SqlCommand("SELECT Timeout,Note FROM Experiments WHERE ID=" + eID1, sql);
+            SqlCommand cmd = new SqlCommand("SELECT Timeout,Note,Category FROM Experiments WHERE ID=" + eID1, sql);
             SqlDataReader r = cmd.ExecuteReader();
+            string categoryX = "";
             if (r.Read())
             {
                 timeoutX = Convert.ToUInt32((string)r[0]);
                 noteX = (r[1].Equals(DBNull.Value)) ? "" : (string)r[1];
+                categoryX = (r[2].Equals(DBNull.Value)) ? "" : (string)r[2];
             }
             r.Close();
 
-            cmd = new SqlCommand("SELECT Timeout,Note FROM Experiments WHERE ID=" + eID2, sql);
+            string categoryY = "";
+            cmd = new SqlCommand("SELECT Timeout,Note,Category FROM Experiments WHERE ID=" + eID2, sql);
             r = cmd.ExecuteReader();
             if (r.Read())
             {
                 timeoutY = Convert.ToUInt32((string)r[0]);
                 noteY = (r[1].Equals(DBNull.Value)) ? "" : (string)r[1];
+                categoryY = (r[2].Equals(DBNull.Value)) ? "" : (string)r[2];
             }
             r.Close();
+
+            category = (categoryX == categoryY) ? categoryX : categoryX + " -vs- " + categoryY;
         }
 
         private void setupChart()
         {
             chart.Legends.Clear();
+            chart.Titles.Clear();
 
             axisMaximum = timeoutX;
             if (timeoutY > axisMaximum) axisMaximum = timeoutY;
@@ -87,7 +95,10 @@ namespace ClusterExperiment
                 errorLine = axisMaximum;
             }
 
-            chart.Titles.Add(new Title("ABC"));
+            Title t = new Title(category, Docking.Top);
+            t.Font = new Font(FontFamily.GenericSansSerif, 16.0f, FontStyle.Bold);
+            chart.Titles.Add(t);
+
             chart.ChartAreas[0].AxisX.Title = "Job #" + eIDX + ": " + noteX;
             chart.ChartAreas[0].AxisY.Title = "Job #" + eIDY + ": " + noteY;
             chart.ChartAreas[0].AxisY.TextOrientation = TextOrientation.Rotated270;
