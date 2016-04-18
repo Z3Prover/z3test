@@ -854,7 +854,7 @@ namespace worker
                 resultCode = 5; // TIMEOUT
             else if (r.exitCode == "MEMORY")
                 resultCode = 6; // MEMORYOUT
-            else if (r.exitCode == "0") // || r.exitCode == "10" || r.exitCode == "20")
+            else if (r.exitCode == "0" || r.exitCode == "10" || r.exitCode == "20")
             {
                 resultCode = 0; // OK
                 if (result.sat == 0 && result.unsat == 0 && result.other == 0)

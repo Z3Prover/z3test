@@ -87,6 +87,7 @@ namespace ClusterExperiment
                 errorLine = axisMaximum;
             }
 
+            chart.Titles.Add(new Title("ABC"));
             chart.ChartAreas[0].AxisX.Title = "Job #" + eIDX + ": " + noteX;
             chart.ChartAreas[0].AxisY.Title = "Job #" + eIDY + ": " + noteY;
             chart.ChartAreas[0].AxisY.TextOrientation = TextOrientation.Rotated270;

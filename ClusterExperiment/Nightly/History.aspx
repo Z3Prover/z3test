@@ -1,4 +1,4 @@
-﻿<%@ Page Title="History" Language="C#" MasterPageFile="~/Site.Master" AutoEventWireup="true" 
+﻿<%@ Page Title="History" Language="C#" MasterPageFile="~/Site.Master" AutoEventWireup="true"
     CodeBehind="History.aspx.cs" Inherits="Nightly.History" %>
 
 <%@ Register Assembly="AjaxControlToolkit" Namespace="AjaxControlToolkit" TagPrefix="asp" %>
@@ -8,7 +8,7 @@
 </asp:Content>
 
 <asp:Content ID="BodyContent" ContentPlaceHolderID="MainContent" runat="server">
-    <asp:ToolkitScriptManager ID="ToolkitScriptManager1" runat="server" />
+    <asp:ScriptManager ID="ScriptManager1" runat="server" />
 
     <asp:PlaceHolder runat="server" ID="phTop" />
 
@@ -20,7 +20,7 @@
         <asp:Table ID="tblEntries" runat="server" BorderStyle="Solid" BorderWidth="1" Width="30%">
             <asp:TableHeaderRow BorderStyle="Solid" BackColor="Gray" ForeColor="Black">
                 <asp:TableHeaderCell Width="3%" HorizontalAlign="Left">ID</asp:TableHeaderCell>
-                <asp:TableHeaderCell Width="12%" HorizontalAlign="Center">Submission Time</asp:TableHeaderCell>                
+                <asp:TableHeaderCell Width="12%" HorizontalAlign="Center">Submission Time</asp:TableHeaderCell>
                 <asp:TableHeaderCell Width="7%" HorizontalAlign="Center" ColumnSpan="2">Compare to ...</asp:TableHeaderCell>
             </asp:TableHeaderRow>
         </asp:Table>
