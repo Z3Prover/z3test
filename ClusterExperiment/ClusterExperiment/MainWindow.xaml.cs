@@ -56,6 +56,7 @@ namespace ClusterExperiment
         public static RoutedCommand UpdateBinaryCommand = new RoutedCommand();
         public static RoutedCommand ChangePriorityCommand = new RoutedCommand();
         public static RoutedCommand SaveMetaCSVCommand = new RoutedCommand();
+        public static RoutedCommand SaveMatrixCommand = new RoutedCommand();
         public static RoutedCommand RequeueIErrorsCommand = new RoutedCommand();
         public static RoutedCommand RestartCommand = new RoutedCommand();
 
@@ -122,10 +123,10 @@ namespace ClusterExperiment
                 cmd = "SELECT TitleScreen.*, Done, Queued, Total " +
                         //", (CASE WHEN Queued = 0 THEN 'Done.' ELSE " +
                         // "CONVERT(varchar, CONVERT(time, DATEADD(s, (Queued * (-DateDiff(s, GetDate(), SubmissionTime) / Done)), 0))) END) as Projection " +
-                    // ", Progress" +
+                        // ", Progress" +
                         "FROM TitleScreen, " +
                         "(SELECT DCT.ID, Done, Queued, (Done+Queued) as Total " +
-                    // ", STR(100.0 * Done/NULLIF(Done+Queued, 0), 6, 2) + '%' as Progress " +
+                        // ", STR(100.0 * Done/NULLIF(Done+Queued, 0), 6, 2) + '%' as Progress " +
                         "FROM " +
                             "(SELECT TitleScreen.ID, COUNT(Data.ID) as Done " +
                             "FROM TitleScreen LEFT JOIN Data " +
@@ -536,7 +537,8 @@ namespace ClusterExperiment
 
                         if (!data.ContainsKey(fn))
                             data.Add(fn, new Dictionary<int, CSVDatum>());
-                        if (data[fn].ContainsKey(id)) {
+                        if (data[fn].ContainsKey(id))
+                        {
                             System.Windows.MessageBox.Show(
                                 String.Format("Duplicate in job #{0} ignored", id),
                                 "Duplicate warning",
@@ -1690,6 +1692,132 @@ namespace ClusterExperiment
 
             Mouse.OverrideCursor = null;
         }
+
+        private void canShowSaveMatrix(object sender, CanExecuteRoutedEventArgs e)
+        {
+            if (sql == null || dataGrid.SelectedItems.Count <= 1)
+            {
+                e.CanExecute = false;
+                return;
+            }
+            else
+            {
+                string rc = (string)((DataRowView)dataGrid.SelectedItems[0])["Category"];
+                foreach (DataRowView si in dataGrid.SelectedItems)
+                {
+                    if ((string)(si["Category"]) != rc)
+                    {
+                        e.CanExecute = false;
+                        return;
+                    }
+                }
+            }
+
+            e.CanExecute = true;
+        }
+
+        private void MakeMatrix(StreamWriter f, string condition, string name, string filter)
+        {
+            int numItems = dataGrid.SelectedItems.Count;
+
+            f.WriteLine(@"\begin{table}");
+            f.WriteLine(@"  \centering");
+            f.Write(@"  \begin{tabular}[h]{|l|");
+            for (int i = 0; i < numItems; i++)
+                f.Write(@"c|");
+            f.WriteLine(@"}\cline{2-" + (numItems + 1) + "}");
+
+            // Header line
+            f.Write(@"    \multicolumn{1}{c|}{}");
+            for (int i = 0; i < numItems; i++)
+            {
+                f.Write(@" & \rotatebox{90}{" +
+                        ((string)((DataRowView)dataGrid.SelectedItems[i])["Note"]).Replace(@"\", @"\textbackslash ").Replace(@"_", @"\_") +
+                        @"}");
+            }
+            f.WriteLine(@"\\\hline\hline");
+
+            int example_value = 0;
+            for (int i = 0; i < numItems; i++)
+            {
+                DataRowView rowI = (DataRowView)dataGrid.SelectedItems[i];
+                f.Write(@"    " + ((string)rowI["Note"]).Replace(@"\", @"\textbackslash ").Replace(@"_", @"\_"));
+                for (int j = 0; j < numItems; j++)
+                {
+                    if (i == j)
+                        f.Write(@" & $\pm 0$");
+                    else
+                    {
+                        DataRowView colJ = (DataRowView)dataGrid.SelectedItems[j];
+                        SqlCommand cmd = new SqlCommand(
+                            "SELECT COUNT(*) " +
+                            "FROM Data as x, Data as y, Strings " +
+                            "WHERE x.ExperimentID = " + rowI["ID"] + " AND " +
+                            "y.ExperimentID = " + colJ["ID"] + " AND " +
+                            "x.FilenameP = y.FilenameP AND " +
+                            "x.Filenamep = Strings.ID AND " +
+                            ((filter != "") ? "Strings.s LIKE '%" + filter + "%' AND " : "")+
+                            condition + " AND "+
+                            "(" +
+                            " (x.ResultCode = 0 AND y.ResultCode <> 0) OR " +
+                            " (x.ResultCode = 0 AND y.ResultCode = 0 AND x.Runtime < y.Runtime) " +
+                            ") ", sql);
+
+                        cmd.CommandTimeout = 0;
+                        SqlDataReader rd = cmd.ExecuteReader();
+                        while (rd.Read())
+                        {
+                            int q = (int)rd[0];
+                            f.Write(@" & $" + (q > 0 ? @"+" : (q == 0) ? @"\pm" : @"") + q.ToString() + "$");
+                            if (i == 1 && j == 0) example_value = q;
+                        }
+                        rd.Close();
+                    }
+                }
+
+                f.WriteLine(@"\\\hline");
+            }
+
+            f.WriteLine(@"  \end{tabular}");
+            f.Write(@"  \caption{\label{tbl:mtrx} " + name + " Matrix. ");
+            f.Write(@"For instance, '" + ((DataRowView)dataGrid.SelectedItems[1])["Note"] + "' " +
+                     "outperforms '" + ((DataRowView)dataGrid.SelectedItems[0])["Note"] + "' " +
+                     "on " + example_value + " benchmarks. ");
+            if (filter != "")
+                f.Write("Filtered by '*" + filter.Replace(@"\", @"\textbackslash ").Replace(@"_", @"\_") + "*'.");
+            f.WriteLine(@"}");
+            f.WriteLine(@"\end{table}");
+        }
+
+        private void showSaveMatrix(object target, ExecutedRoutedEventArgs e)
+        {
+            System.Windows.Forms.SaveFileDialog dlg = new System.Windows.Forms.SaveFileDialog();
+            dlg.Filter = "LaTeX files (*.tex)|*.tex|All files (*.*)|*.*";
+            dlg.FilterIndex = 1;
+            dlg.RestoreDirectory = true;
+            dlg.FileName = "matrix.tex";
+
+            if (dlg.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+            {
+                Mouse.OverrideCursor = System.Windows.Input.Cursors.Wait;
+
+                using (StreamWriter f = new StreamWriter(dlg.FileName, false))
+                {
+                    //f.WriteLine("% -*- mode: latex; TeX-master: \"main.tex\"; -*-");
+                    //f.WriteLine();
+
+                    MakeMatrix(f, "((x.SAT + y.SAT > 0) OR (x.UNSAT + y.UNSAT > 0))", "SAT+UNSAT", @"");
+                    MakeMatrix(f, "(x.SAT + y.SAT > 0)", "SAT", @"");
+                    MakeMatrix(f, "(x.UNSAT + y.UNSAT > 0)", "UNSAT", @"");
+                    //MakeMatrix(f, "((x.SAT + y.SAT > 0) OR (x.UNSAT + y.UNSAT > 0))", "SAT+UNSAT", @"QF_BV\pspace\");
+                    //MakeMatrix(f, "(x.SAT + y.SAT > 0)", "SAT", @"QF_BV\pspace\");
+                    //MakeMatrix(f, "(x.UNSAT + y.UNSAT > 0)", "UNSAT", @"QF_BV\pspace\");
+                }
+
+                Mouse.OverrideCursor = null;
+            }
+        }
+
 
         private void MenuItemExit_Click(object sender, RoutedEventArgs e)
         {

@@ -39,6 +39,9 @@
             this.ckSAT = new System.Windows.Forms.CheckBox();
             this.ckUNSAT = new System.Windows.Forms.CheckBox();
             this.gpOptions = new System.Windows.Forms.GroupBox();
+            this.ckMEMORY = new System.Windows.Forms.CheckBox();
+            this.ckBUG = new System.Windows.Forms.CheckBox();
+            this.ckERROR = new System.Windows.Forms.CheckBox();
             this.lblSlower = new System.Windows.Forms.Label();
             this.label5 = new System.Windows.Forms.Label();
             this.lblFaster = new System.Windows.Forms.Label();
@@ -85,24 +88,25 @@
             this.cbFancy.TabIndex = 1;
             this.cbFancy.Text = "Fancy";
             this.cbFancy.UseVisualStyleBackColor = true;
-            this.cbFancy.CheckedChanged += new System.EventHandler(this.cbFancy_CheckedChanged);
+            this.cbFancy.CheckedChanged += new System.EventHandler(this.ckCheckedChanged);
             // 
             // lblAvgSpeedupTxt
             // 
             this.lblAvgSpeedupTxt.AutoSize = true;
             this.lblAvgSpeedupTxt.Location = new System.Drawing.Point(301, 20);
             this.lblAvgSpeedupTxt.Name = "lblAvgSpeedupTxt";
-            this.lblAvgSpeedupTxt.Size = new System.Drawing.Size(167, 13);
+            this.lblAvgSpeedupTxt.Size = new System.Drawing.Size(130, 13);
             this.lblAvgSpeedupTxt.TabIndex = 2;
-            this.lblAvgSpeedupTxt.Text = "Average speedup (excl. timeouts):";
+            this.lblAvgSpeedupTxt.Text = "Avg. speedup (excl. T/O):";
             // 
             // lblAvgSpeedup
             // 
-            this.lblAvgSpeedup.Location = new System.Drawing.Point(474, 20);
+            this.lblAvgSpeedup.Location = new System.Drawing.Point(437, 20);
             this.lblAvgSpeedup.Name = "lblAvgSpeedup";
-            this.lblAvgSpeedup.Size = new System.Drawing.Size(49, 13);
+            this.lblAvgSpeedup.Size = new System.Drawing.Size(72, 16);
             this.lblAvgSpeedup.TabIndex = 3;
             this.lblAvgSpeedup.Text = "label1";
+            this.lblAvgSpeedup.TextAlign = System.Drawing.ContentAlignment.TopRight;
             // 
             // ckSAT
             // 
@@ -115,7 +119,7 @@
             this.ckSAT.TabIndex = 4;
             this.ckSAT.Text = "SAT";
             this.ckSAT.UseVisualStyleBackColor = true;
-            this.ckSAT.CheckedChanged += new System.EventHandler(this.ckSAT_CheckedChanged);
+            this.ckSAT.CheckedChanged += new System.EventHandler(this.ckCheckedChanged);
             // 
             // ckUNSAT
             // 
@@ -128,10 +132,13 @@
             this.ckUNSAT.TabIndex = 5;
             this.ckUNSAT.Text = "UNSAT";
             this.ckUNSAT.UseVisualStyleBackColor = true;
-            this.ckUNSAT.CheckedChanged += new System.EventHandler(this.ckUNSAT_CheckedChanged);
+            this.ckUNSAT.CheckedChanged += new System.EventHandler(this.ckCheckedChanged);
             // 
             // gpOptions
             // 
+            this.gpOptions.Controls.Add(this.ckMEMORY);
+            this.gpOptions.Controls.Add(this.ckBUG);
+            this.gpOptions.Controls.Add(this.ckERROR);
             this.gpOptions.Controls.Add(this.lblSlower);
             this.gpOptions.Controls.Add(this.label5);
             this.gpOptions.Controls.Add(this.lblFaster);
@@ -154,14 +161,53 @@
             this.gpOptions.TabStop = false;
             this.gpOptions.Text = "Options";
             // 
+            // ckMEMORY
+            // 
+            this.ckMEMORY.AutoSize = true;
+            this.ckMEMORY.Checked = true;
+            this.ckMEMORY.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.ckMEMORY.Location = new System.Drawing.Point(128, 65);
+            this.ckMEMORY.Name = "ckMEMORY";
+            this.ckMEMORY.Size = new System.Drawing.Size(74, 17);
+            this.ckMEMORY.TabIndex = 28;
+            this.ckMEMORY.Text = "MEMORY";
+            this.ckMEMORY.UseVisualStyleBackColor = true;
+            this.ckMEMORY.CheckedChanged += new System.EventHandler(this.ckCheckedChanged);
+            // 
+            // ckBUG
+            // 
+            this.ckBUG.AutoSize = true;
+            this.ckBUG.Checked = true;
+            this.ckBUG.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.ckBUG.Location = new System.Drawing.Point(6, 65);
+            this.ckBUG.Name = "ckBUG";
+            this.ckBUG.Size = new System.Drawing.Size(49, 17);
+            this.ckBUG.TabIndex = 27;
+            this.ckBUG.Text = "BUG";
+            this.ckBUG.UseVisualStyleBackColor = true;
+            this.ckBUG.CheckedChanged += new System.EventHandler(this.ckCheckedChanged);
+            // 
+            // ckERROR
+            // 
+            this.ckERROR.AutoSize = true;
+            this.ckERROR.Checked = true;
+            this.ckERROR.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.ckERROR.Location = new System.Drawing.Point(59, 65);
+            this.ckERROR.Name = "ckERROR";
+            this.ckERROR.Size = new System.Drawing.Size(65, 17);
+            this.ckERROR.TabIndex = 26;
+            this.ckERROR.Text = "ERROR";
+            this.ckERROR.UseVisualStyleBackColor = true;
+            this.ckERROR.CheckedChanged += new System.EventHandler(this.ckCheckedChanged);
+            // 
             // lblSlower
             // 
             this.lblSlower.Location = new System.Drawing.Point(418, 69);
             this.lblSlower.Name = "lblSlower";
-            this.lblSlower.Size = new System.Drawing.Size(99, 13);
+            this.lblSlower.Size = new System.Drawing.Size(91, 13);
             this.lblSlower.TabIndex = 25;
             this.lblSlower.Text = "label1";
-            this.lblSlower.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.lblSlower.TextAlign = System.Drawing.ContentAlignment.TopRight;
             // 
             // label5
             // 
@@ -176,10 +222,10 @@
             // 
             this.lblFaster.Location = new System.Drawing.Point(418, 56);
             this.lblFaster.Name = "lblFaster";
-            this.lblFaster.Size = new System.Drawing.Size(99, 13);
+            this.lblFaster.Size = new System.Drawing.Size(91, 13);
             this.lblFaster.TabIndex = 23;
             this.lblFaster.Text = "label1";
-            this.lblFaster.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.lblFaster.TextAlign = System.Drawing.ContentAlignment.TopRight;
             // 
             // label3
             // 
@@ -194,10 +240,10 @@
             // 
             this.lblTotal.Location = new System.Drawing.Point(418, 43);
             this.lblTotal.Name = "lblTotal";
-            this.lblTotal.Size = new System.Drawing.Size(99, 16);
+            this.lblTotal.Size = new System.Drawing.Size(91, 16);
             this.lblTotal.TabIndex = 21;
             this.lblTotal.Text = "label1";
-            this.lblTotal.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.lblTotal.TextAlign = System.Drawing.ContentAlignment.TopRight;
             // 
             // label1
             // 
@@ -222,13 +268,13 @@
             this.ckTIME.AutoSize = true;
             this.ckTIME.Checked = true;
             this.ckTIME.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.ckTIME.Location = new System.Drawing.Point(218, 42);
+            this.ckTIME.Location = new System.Drawing.Point(208, 65);
             this.ckTIME.Name = "ckTIME";
-            this.ckTIME.Size = new System.Drawing.Size(64, 17);
+            this.ckTIME.Size = new System.Drawing.Size(75, 17);
             this.ckTIME.TabIndex = 7;
-            this.ckTIME.Text = "Timeout";
+            this.ckTIME.Text = "TIMEOUT";
             this.ckTIME.UseVisualStyleBackColor = true;
-            this.ckTIME.CheckedChanged += new System.EventHandler(this.ckTIME_CheckedChanged);
+            this.ckTIME.CheckedChanged += new System.EventHandler(this.ckCheckedChanged);
             // 
             // ckUNKNOWN
             // 
@@ -241,7 +287,7 @@
             this.ckUNKNOWN.TabIndex = 6;
             this.ckUNKNOWN.Text = "UNKNOWN";
             this.ckUNKNOWN.UseVisualStyleBackColor = true;
-            this.ckUNKNOWN.CheckedChanged += new System.EventHandler(this.ckUNKNOWN_CheckedChanged);
+            this.ckUNKNOWN.CheckedChanged += new System.EventHandler(this.ckCheckedChanged);
             // 
             // splitContainer1
             // 
@@ -303,5 +349,8 @@
         private System.Windows.Forms.Label lblTotal;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Label lblDatapoints;
+        private System.Windows.Forms.CheckBox ckERROR;
+        private System.Windows.Forms.CheckBox ckMEMORY;
+        private System.Windows.Forms.CheckBox ckBUG;
     }
 }

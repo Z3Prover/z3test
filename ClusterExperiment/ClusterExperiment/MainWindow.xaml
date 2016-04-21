@@ -115,6 +115,7 @@
                         <CommandBinding Command="{x:Static custom:MainWindow.FlagCommand}" Executed="showFlag" CanExecute="canShowFlag" />
                         <CommandBinding Command="{x:Static custom:MainWindow.TallyCommand}" Executed="showTally" CanExecute="canShowTally" />
                         <CommandBinding Command="{x:Static custom:MainWindow.SaveMetaCSVCommand}" Executed="showSaveMetaCSV" CanExecute="canShowSaveMetaCSV" />
+                        <CommandBinding Command="{x:Static custom:MainWindow.SaveMatrixCommand}" Executed="showSaveMatrix" CanExecute="canShowSaveMatrix" />
                         <CommandBinding Command="Properties" Executed="showProperties" CanExecute="canShowProperties" />
                     </DataGrid.CommandBindings>
                     <DataGrid.InputBindings>
@@ -140,6 +141,7 @@
                             <MenuItem Name="mnuFlag" Header="Toggle _flag" Command="{x:Static custom:MainWindow.FlagCommand}" InputGestureText="Ctrl-T" />
                             <MenuItem Name="mnuTally" Header="Ta_lly" Command="{x:Static custom:MainWindow.TallyCommand}" />
                             <MenuItem Name="mnuSaveMetaCSV" Header="Save met_a CSV..." Command="{x:Static custom:MainWindow.SaveMetaCSVCommand}"/>
+                            <MenuItem Name="mnuSaveMatrix" Header="Save matrix..." Command="{x:Static custom:MainWindow.SaveMatrixCommand}"/>
                             <MenuItem Name="mnuProperties" Command="Properties" />
                         </ContextMenu>
                     </DataGrid.ContextMenu>
