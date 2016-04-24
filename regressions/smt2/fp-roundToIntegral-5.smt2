@@ -2,6 +2,7 @@
 
 (set-logic QF_FP)
 (set-info :source "Handcrafted by CM Wintersteiger")
+(set-info :status sat)
 
 (define-sort FPN () (_ FloatingPoint 5 11))
 
@@ -28,5 +29,4 @@
                      sat))
 
 (get-value (r))
-(get-value (m))
 (exit)

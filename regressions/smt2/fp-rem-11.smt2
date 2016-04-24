@@ -6,16 +6,19 @@
 (set-info :category crafted)
 (set-info :status unsat)
 
-(define-fun x () Float16 (fp #b1 #b00000 #b1110111111)) ;; ((_ to_fp 5 11) RTZ -0.9365234375 -14 [- 959 -15 D])
-(define-fun l () Float16 (fp #b1 #b00000 #b0000001110)) 
+(define-fun a () Float16 (fp #b1 #b00000 #b0000000011))
+(define-fun l () Float16 (fp #b1 #b00000 #b0000000001))
 
-(declare-fun y () Float16)
+(declare-fun b () Float16)
 (declare-fun r () Float16)
 (declare-fun s () Float16)
 
-(assert (= l (fp.neg y)))
-(assert (= r (fp.rem x y)))
-(assert (not (= r (fp #b1 #b00000 #b0000000111)))) ;; ((_ to_fp 5 11) RTZ -0.0068359375 -14 [- 7 -15 D])
+(assert (= l (fp.neg b)))
+
+(assert (= r (fp.rem a b))) ;; blasted via fpa2bv
+(assert (= s (fp.rem a (fp.neg l)))) ;; simplified on mpf's.
+
+(assert (not (= r s)))
 
 (check-sat)
 (check-sat-using smt)
