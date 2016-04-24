@@ -612,6 +612,53 @@ namespace ClusterExperiment
             e.CanExecute = (sql != null) && (dataGrid.SelectedItems.Count >= 1);
         }
 
+        private List<int> computeUnique()
+        {
+            List<int> jobs = new List<int>();
+            for (int i = 0; i < dataGrid.SelectedItems.Count; i++)
+            {
+                DataRowView rowView = (DataRowView)dataGrid.SelectedItems[i];
+                int id = (int)rowView["ID"];
+                jobs.Add(id);
+            }
+
+            string basecmd = "SELECT s FROM ";
+            for (int j = 0; j < jobs.Count; j++)
+                basecmd += "Data as d" + j + ", ";
+            basecmd += "Strings WHERE ";
+
+            for (int j = 0; j < jobs.Count; j++)
+            {
+                basecmd += "d" + j + ".ExperimentID=" + jobs[j] + " AND ";
+                if (j > 0) basecmd += "d" + j + ".FilenameP = d0.FilenameP AND ";
+            }
+            basecmd += "d0.FilenameP = Strings.ID ";
+
+            List<int> res = new List<int>();
+            for (int i = 0; i < jobs.Count; i++)
+            {
+                string cmd_str = basecmd;
+
+                for (int j = 0; j < jobs.Count; j++)
+                    cmd_str += " AND d" + j + ".ResultCode" + ((i == j) ? "=" : "<>") + "0 ";
+
+                cmd_str += ";";
+
+                SqlCommand cmd = new SqlCommand(cmd_str, sql);
+                cmd.CommandTimeout = 0;
+                SqlDataReader rd = cmd.ExecuteReader();
+
+                List<string> filenames = new List<string>();
+                while (rd.Read())
+                    filenames.Add((string)rd[0]);
+                rd.Close();
+
+                res.Add(filenames.Count);
+            }
+
+            return res;
+        }
+
         private void showSaveMetaCSV(object target, ExecutedRoutedEventArgs e)
         {
             System.Windows.Forms.SaveFileDialog dlg = new System.Windows.Forms.SaveFileDialog();
@@ -625,10 +672,10 @@ namespace ClusterExperiment
                 Mouse.OverrideCursor = System.Windows.Input.Cursors.Wait;
                 StreamWriter f = new StreamWriter(dlg.FileName, false);
 
-                Dictionary<string, Dictionary<int, CSVDatum>> data =
-                    new Dictionary<string, Dictionary<int, CSVDatum>>();
+                List<int> unique = null;
+                unique = computeUnique();
 
-                f.WriteLine("\"ID\",\"# Total\",\"# SAT\",\"# UNSAT\",\"# UNKNOWN\",\"# Timeout\",\"# Memout\",\"# Bug\",\"# Error\",\"Parameters\",\"Note\"");
+                f.WriteLine("\"ID\",\"# Total\",\"# SAT\",\"# UNSAT\",\"# UNKNOWN\",\"# Timeout\",\"# Memout\",\"# Bug\",\"# Error\",\"# Unique\",\"Parameters\",\"Note\"");
 
                 for (int i = 0; i < dataGrid.SelectedItems.Count; i++)
                 {
@@ -687,7 +734,8 @@ namespace ClusterExperiment
                                     memouts + "," +
                                     bugs + "," +
                                     errors + "," +
-                                    "\"" + ps + "\"," +
+                                    unique[i] + "," +
+                                    "\"'" + ps + "\"," +
                                     "\"" + note + "\"");
                     }
 
@@ -1803,15 +1851,12 @@ namespace ClusterExperiment
 
                 using (StreamWriter f = new StreamWriter(dlg.FileName, false))
                 {
-                    //f.WriteLine("% -*- mode: latex; TeX-master: \"main.tex\"; -*-");
-                    //f.WriteLine();
+                    f.WriteLine("% -*- mode: latex; TeX-master: \"main.tex\"; -*-");
+                    f.WriteLine();
 
                     MakeMatrix(f, "((x.SAT + y.SAT > 0) OR (x.UNSAT + y.UNSAT > 0))", "SAT+UNSAT", @"");
                     MakeMatrix(f, "(x.SAT + y.SAT > 0)", "SAT", @"");
                     MakeMatrix(f, "(x.UNSAT + y.UNSAT > 0)", "UNSAT", @"");
-                    //MakeMatrix(f, "((x.SAT + y.SAT > 0) OR (x.UNSAT + y.UNSAT > 0))", "SAT+UNSAT", @"QF_BV\pspace\");
-                    //MakeMatrix(f, "(x.SAT + y.SAT > 0)", "SAT", @"QF_BV\pspace\");
-                    //MakeMatrix(f, "(x.UNSAT + y.UNSAT > 0)", "UNSAT", @"QF_BV\pspace\");
                 }
 
                 Mouse.OverrideCursor = null;
