@@ -1,4 +1,4 @@
-;; Copyright (c) 2015 Microsoft Corporation
+;; Copyright (c) 2016 Microsoft Corporation
 
 (set-logic QF_FP)
 (set-info :source |Handcrafted by C.M. Wintersteiger from a bug repro by Florian Schanda; GitHub Issue #508|)
@@ -6,13 +6,12 @@
 (set-info :category crafted)
 (set-info :status unsat)
 
-(define-fun a () Float32 (fp #b0 #b00000000 #b00000000000000000000111))
-(define-fun b () Float32 (fp #b0 #b00000000 #b00000000000000000000100))
-
+(define-fun a () Float32 (fp #b0 #b00000000 #b10000000000000000000000))
+(define-fun b () Float32 (fp #b0 #b00000000 #b01000000000000000000000))
 (declare-fun r () Float32)
 
 (assert (= r (fp.rem a b)))
-(assert (not (= r (fp #b1 #b00000000 #b00000000000000000000001))))
+(assert (not (= r (_ +zero 8 24))))
 
 (check-sat)
 (check-sat-using smt)
