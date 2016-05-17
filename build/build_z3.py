@@ -33,8 +33,8 @@ devs   = [ 'cwinter@microsoft.com',
            'leonardo@microsoft.com',
            'nbjorner@microsoft.com',
            'kenmcmil@microsoft.com',
-           'rybal@microsoft.com',
-           'nlopes@microsoft.com'
+           'nlopes@microsoft.com',
+           'mikjan@microsoft.com'
            ]
 
 smtp_serv = '127.0.0.1'
