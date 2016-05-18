@@ -18,3 +18,10 @@
 (assert (not (= q (fp #b1 #b01111111100 #b0110100101101001011010010110100101101001011010001000)))) ;; -0X1.6969696969688P-3 
 
 (check-sat)
+(check-sat-using smt)
+(check-sat-using (then
+                     fpa2bv
+                     (using-params simplify :elim_and true)
+                     bit-blast
+                     sat))
+(exit)
