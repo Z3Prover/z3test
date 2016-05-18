@@ -5,6 +5,7 @@ import subprocess
 import shutil
 import config 
 import filecmp
+import time
 
 def is_windows():
     return os.name == 'nt'
@@ -226,7 +227,21 @@ def timeout(func, args=(), kwargs={}, timeout_duration=1.0, default=None):
     else:
         return it.result
 
-def test_benchmark(z3exe, benchmark, expected=None):
+def subprocess_killer(args, stdin=None, stdout=None, stderr=None, shell=False, timeout=1.0):
+    try:
+        p = subprocess.Popen(args, stdin=stdin, stdout=stdout, stderr=stderr, shell=shell)
+        start = time.time()
+        time.sleep(0.02)
+        while (p.poll() == None):
+            time.sleep(0.1)
+            if (time.time() - start) > timeout:
+                p.kill()
+        return p.returncode
+    except Exception, q:
+        print('Exception: %s' % q)
+        return 0
+
+def test_benchmark(z3exe, benchmark, timeout, expected=None):
     if not os.path.exists(benchmark):
         raise Exception("Benchmark '%s' does not exist" % benchmark)
     base, ext = os.path.splitext(benchmark)
@@ -238,7 +253,7 @@ def test_benchmark(z3exe, benchmark, expected=None):
     producedf = open(produced, 'w')
     errcode = 0
     try:
-        errcode = subprocess.call([z3exe, 'model_validate=true', benchmark], stdout=producedf, stderr=producedf)
+        errcode = subprocess_killer([z3exe, 'model_validate=true', benchmark], stdout=producedf, stderr=producedf, timeout=timeout)
     except:
         raise Exception("Failed to start Z3: %s" % z3exe)
     producedf.close()
@@ -262,7 +277,7 @@ def test_benchmarks(z3exe, benchdir, ext="smt2", timeout_duration=60.0):
             bench = os.path.join(benchdir, benchmark)
             print("Testing %s" % bench)
             if timeout(test_benchmark, 
-                       args=(z3exe, bench), 
+                       args=(z3exe, bench, timeout_duration), 
                        timeout_duration=timeout_duration,
                        default=False) == False:
                 raise Exception("Timeout executing benchmark %s using %s" % (bench, z3exe))
@@ -279,8 +294,8 @@ def test_benchmarks_using_latest(benchdir, branch="master", debug=True, clang=Fa
     z3exe = os.path.join(z3dir, bdir, 'z3')
     test_benchmarks(z3exe, benchdir, ext, timeout_duration)
 
-def exec_script(script):
-    if subprocess.call([config.PYTHON, script]) != 0:
+def exec_script(script, timeout):
+    if subprocess_killer([config.PYTHON, script], timeout) != 0:
         raise Exception("Script '%s' returned non-zero exit code" % script)
     return True
 
@@ -296,7 +311,7 @@ def test_pyscripts(z3libdir, scriptdir, ext="py", timeout_duration=60.0):
                     print("Testing %s" % script)
                     try:
                         if timeout(exec_script,
-                                   args=[script],
+                                   args=[script, timeout_duration],
                                    timeout_duration=timeout_duration,
                                    default=False) == False:
                             raise Exception("Timeout executing script '%s' at '%s' using '%s'" % (script, scriptdir, z3libdir)) 
@@ -312,13 +327,13 @@ def test_pyscripts_using_latest(scriptdir, branch="master", debug=True, clang=Fa
     bdir  = get_builddir(branch, debug, clang)
     test_pyscripts(os.path.join(z3dir, bdir), scriptdir, ext, timeout_duration)
 
-def exec_cs_compile(args):
-    if subprocess.call(args) != 0:
+def exec_cs_compile(args, timeout):
+    if subprocess_killer(args, timeout=timeout) != 0:
         raise Exception("Compilation of '%s' failed" % file)
     return True
 
-def exec_cs():
-    if subprocess.call(config.CSTEMP) != 0:
+def exec_cs(timeout):
+    if subprocess_killer(config.CSTEMP, timeout=timeout) != 0:
         raise Exception("Execution of '%s' failed" % (config.CSTEMP))
     return True
 
@@ -343,13 +358,14 @@ def test_cs(z3libdir, csdir, ext="cs", VS64=False, timeout_duration=60.0):
                                   "/out:%s" % (config.CSTEMP), 
                                   platform_arg, 
                                   "%s\%s" % (csdir, config.CSDRIVER), 
-                                  file]],
+                                  file],
+                                  timeout_duration],
                            timeout_duration=timeout_duration,
                            default=False) == False:
                     raise Exception("Timeout compiling '%s' at '%s' using '%s'" % (file, csdir, z3libdir))
                 # Run.
                 if timeout(exec_cs,
-                           args=[],
+                           args=[timeout_duration],
                            timeout_duration=timeout_duration,
                            default=False) == False:
                     raise Exception("Timeout executing '%s' at '%s' using '%s'" % (file, csdir, z3libdir)) 
