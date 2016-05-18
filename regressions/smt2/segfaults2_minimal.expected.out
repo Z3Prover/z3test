@@ -1,4 +1,4 @@
-WARNING: '=' cannot be used in patterns.
+WARNING: (7,77): '=' cannot be used in patterns.
 (goals
 (goal
   (forall ((s (Array Int Int))) (= s (ff s)))

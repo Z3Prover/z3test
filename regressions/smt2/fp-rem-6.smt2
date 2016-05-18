@@ -1,4 +1,4 @@
-;; Copyright (c) 2015 Microsoft Corporation
+;; Copyright (c) 2016 Microsoft Corporation
 
 (set-logic QF_FP)
 (set-info :source |Handcrafted by C.M. Wintersteiger from a bug repro by Florian Schanda; GitHub Issue #508|)
