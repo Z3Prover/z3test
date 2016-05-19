@@ -237,8 +237,8 @@ def subprocess_killer(args, stdin=None, stdout=None, stderr=None, shell=False, t
             if (time.time() - start) > timeout:
                 p.kill()
         return p.returncode
-    except Exception, q:
-        print('Exception: %s' % q)
+    except Exception as ex:
+        print('Exception: %s' % ex)
         return 0
 
 def test_benchmark(z3exe, benchmark, timeout, expected=None):
