@@ -29,9 +29,8 @@
 (assert (not (= (select (select D 1) 2) (_ -oo 11 53))))
 (assert (not (= (select (select D 2) 3) (_ +oo 11 53))))
 
-(check-sat-using (then simplify fpa2bv smt))
+(check-sat-using smt)
 (get-value ((select A (_ +oo 8 24))))
-(get-value ((select A2 (_ +oo 8 24))))
 (get-value ((select B 0)))
 (get-value ((select B 1)))
 (get-value (C))
