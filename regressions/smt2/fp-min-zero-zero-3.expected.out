@@ -1,18 +1,6 @@
 sat
-(model 
-  (define-fun y () (_ FloatingPoint 11 53)
-    (_ -zero 11 53))
-  (define-fun x () (_ FloatingPoint 11 53)
-    (_ +zero 11 53))
-  (define-fun fp.min_unspecified ((x!0 (_ FloatingPoint 11 53))
-   (x!1 (_ FloatingPoint 11 53))) (_ FloatingPoint 11 53)
-    (ite (and (= x!0 (_ +zero 11 53)) (= x!1 (_ -zero 11 53))) (_ +zero 11 53)
-      (_ -zero 11 53)))
-)
+((x (_ +zero 11 53)))
+((y (_ -zero 11 53)))
 sat
-(model 
-  (define-fun y () (_ FloatingPoint 11 53)
-    (_ +zero 11 53))
-  (define-fun x () (_ FloatingPoint 11 53)
-    (_ -zero 11 53))
-)
+((x (_ -zero 11 53)))
+((y (_ +zero 11 53)))

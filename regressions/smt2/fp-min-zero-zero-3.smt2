@@ -15,7 +15,9 @@
 (assert (not (= x y)))
 
 (check-sat)
-(get-model)
+(get-value (x))
+(get-value (y))
 (check-sat-using smt)
-(get-model)
+(get-value (x))
+(get-value (y))
 (exit)
