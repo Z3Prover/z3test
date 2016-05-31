@@ -29,10 +29,11 @@
 (assert (not (= (select (select D 1) 2) (_ -oo 11 53))))
 (assert (not (= (select (select D 2) 3) (_ +oo 11 53))))
 
+(declare-fun AP () (_ FloatingPoint 11 53))
+(assert (= AP (select A (_ +oo 8 24))))
+
 (check-sat)
-(get-value ((select A (_ +oo 8 24))))
-(get-value ((select B 0)))
-(get-value ((select B 1)))
+(get-value (AP))
 (get-value (C))
 
 (exit)
