@@ -18,11 +18,7 @@
 
 (check-sat)
 (check-sat-using smt)
-(check-sat-using (then
-                     fpa2bv
-                     (using-params simplify :elim_and true)
-                     bit-blast
-                     sat))
+(check-sat-using (then fpa2bv smt))
 (exit)
 
 
