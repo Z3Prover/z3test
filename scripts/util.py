@@ -295,7 +295,7 @@ def test_benchmarks_using_latest(benchdir, branch="master", debug=True, clang=Fa
     test_benchmarks(z3exe, benchdir, ext, timeout_duration)
 
 def exec_script(script, timeout):
-    if subprocess_killer([config.PYTHON, script], timeout) != 0:
+    if subprocess_killer([config.PYTHON, script], timeout=timeout) != 0:
         raise Exception("Script '%s' returned non-zero exit code" % script)
     return True
 
