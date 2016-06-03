@@ -15,7 +15,7 @@
 (assert (= r (fp.rem x y)))
 (assert (not (= r (fp #b0 #b00000000000 #x0000000000000))))
 (check-sat-using qffp)
-(check-sat-using (then fpa2bv smt))
+;; (check-sat-using (then fpa2bv smt))
 (pop)
 
 (push)
@@ -24,7 +24,7 @@
 (assert (= r (fp.rem x y)))
 (assert (not (= r (fp #b1 #b00000000000 #x0000000000000))))
 (check-sat-using qffp)
-(check-sat-using (then fpa2bv smt))
+;; (check-sat-using (then fpa2bv smt))
 (pop)
 
 (push)
@@ -33,7 +33,7 @@
 (assert (= r (fp.rem x y)))
 (assert (not (= r (fp #b1 #b01111010111 #x0000000000000))))
 (check-sat-using qffp)
-(check-sat-using (then fpa2bv smt))
+;; (check-sat-using (then fpa2bv smt))
 (pop)
 
 (push)
@@ -42,7 +42,7 @@
 (assert (= r (fp.rem x y)))
 (assert (not (= r (fp #b0 #b01101111011 #x0000000000000))))
 (check-sat-using qffp)
-(check-sat-using (then fpa2bv smt))
+;; (check-sat-using (then fpa2bv smt))
 (pop)
 
 (exit)

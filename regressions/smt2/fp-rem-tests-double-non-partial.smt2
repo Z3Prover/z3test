@@ -15,7 +15,7 @@
 (assert (= r (fp.rem x y)))
 (assert (not (= r (_ NaN 11 53))))
 (check-sat-using qffp)
-(check-sat-using (then fpa2bv smt))
+;; (check-sat-using (then fpa2bv smt))
 (pop)
 
 (push)
@@ -24,7 +24,7 @@
 (assert (= r (fp.rem x y)))
 (assert (not (= r (_ +zero 11 53))))
 (check-sat-using qffp)
-(check-sat-using (then fpa2bv smt))
+;; (check-sat-using (then fpa2bv smt))
 (pop)
 
 (push)
@@ -33,7 +33,7 @@
 (assert (= r (fp.rem x y)))
 (assert (not (= r (_ -zero 11 53))))
 (check-sat-using qffp)
-(check-sat-using (then fpa2bv smt))
+;; (check-sat-using (then fpa2bv smt))
 (pop)
 
 (push)
@@ -42,7 +42,7 @@
 (assert (= r (fp.rem x y)))
 (assert (not (= r (fp #b1 #b01111111111 #x0000000000000)))) 
 (check-sat-using qffp)
-(check-sat-using (then fpa2bv smt))
+;; (check-sat-using (then fpa2bv smt))
 (pop)
 
 (push)
@@ -51,7 +51,7 @@
 (assert (= r (fp.rem x y)))
 (assert (not (= r (fp #b0 #b01111111110 #xAAAAAAAAAAAAA)))) 
 (check-sat-using qffp)
-(check-sat-using (then fpa2bv smt))
+;; (check-sat-using (then fpa2bv smt))
 (pop)
 
 (push)
@@ -60,7 +60,7 @@
 (assert (= r (fp.rem x y)))
 (assert (not (= r (_ +zero 11 53))))
 (check-sat-using qffp)
-(check-sat-using (then fpa2bv smt))
+;; (check-sat-using (then fpa2bv smt))
 (pop)
 
 (push)
@@ -69,7 +69,7 @@
 (assert (= r (fp.rem x y)))
 (assert (not (= r (_ +zero 11 53))))
 (check-sat-using qffp)
-(check-sat-using (then fpa2bv smt))
+;; (check-sat-using (then fpa2bv smt))
 (pop)
 
 (push)
@@ -78,7 +78,7 @@
 (assert (= r (fp.rem x y)))
 (assert (not (= r (fp #b0 #b00000000000 #x0000000000001))))
 (check-sat-using qffp)
-(check-sat-using (then fpa2bv smt))
+;; (check-sat-using (then fpa2bv smt))
 (pop)
 
 (push)
@@ -87,7 +87,7 @@
 (assert (= r (fp.rem x y)))
 (assert (not (= r (fp #b1 #b01111111101 #xE00000000003C))))
 (check-sat-using qffp)
-(check-sat-using (then fpa2bv smt))
+;; (check-sat-using (then fpa2bv smt))
 (pop)
 
 (push)
@@ -96,7 +96,7 @@
 (assert (= r (fp.rem x y)))
 (assert (not (= r (fp #b0 #b01111111110 #x0000000000000))))
 (check-sat-using qffp)
-(check-sat-using (then fpa2bv smt))
+;; (check-sat-using (then fpa2bv smt))
 (pop)
 
 (push)
@@ -105,7 +105,7 @@
 (assert (= r (fp.rem x y)))
 (assert (not (= r (fp #b1 #b10011110010 #x579A168BF2998))))
 (check-sat-using qffp)
-(check-sat-using (then fpa2bv smt))
+;; (check-sat-using (then fpa2bv smt))
 (pop)
 
 (push)
@@ -114,7 +114,7 @@
 (assert (= r (fp.rem x y)))
 (assert (not (= r (fp #b1 #b11010100110 #x0ECA2604708E0))))
 (check-sat-using qffp)
-(check-sat-using (then fpa2bv smt))
+;; (check-sat-using (then fpa2bv smt))
 (pop)
 
 (push)
@@ -123,7 +123,7 @@
 (assert (= r (fp.rem x y)))
 (assert (not (= r (fp #b1 #b11001100110 #x525558C9DF128))))
 (check-sat-using qffp)
-(check-sat-using (then fpa2bv smt))
+;; (check-sat-using (then fpa2bv smt))
 (pop)
 
 (push)
@@ -132,7 +132,7 @@
 (assert (= r (fp.rem x y)))
 (assert (not (= r (fp #b1 #b01001000110 #x1E1C792E81470))))
 (check-sat-using qffp)
-(check-sat-using (then fpa2bv smt))
+;; (check-sat-using (then fpa2bv smt))
 (pop)
 
 (push)
@@ -141,7 +141,7 @@
 (assert (= r (fp.rem x y)))
 (assert (not (= r (fp #b0 #b00000000000 #x0000000000000))))
 (check-sat-using qffp)
-(check-sat-using (then fpa2bv smt))
+;; (check-sat-using (then fpa2bv smt))
 (pop)
 
 (push)
@@ -150,7 +150,7 @@
 (assert (= r (fp.rem x y)))
 (assert (not (= r (fp #b1 #b00101110100 #x67FAAECFCF929))))
 (check-sat-using qffp)
-(check-sat-using (then fpa2bv smt))
+;; (check-sat-using (then fpa2bv smt))
 (pop)
 
 (push)
@@ -159,7 +159,7 @@
 (assert (= r (fp.rem x y)))
 (assert (not (= r (fp #b0 #b00000000000 #x0000000000001))))
 (check-sat-using qffp)
-(check-sat-using (then fpa2bv smt))
+;; (check-sat-using (then fpa2bv smt))
 (pop)
 
 (push)
@@ -168,7 +168,7 @@
 (assert (= r (fp.rem x y)))
 (assert (not (= r (fp #b1 #b00000000000 #x6058BC5BF9D5D))))
 (check-sat-using qffp)
-(check-sat-using (then fpa2bv smt))
+;; (check-sat-using (then fpa2bv smt))
 (pop)
 
 (push)
@@ -177,7 +177,7 @@
 (assert (= r (fp.rem x y)))
 (assert (not (= r (fp #b0 #b01101000100 #xE821F8D041F88))))
 (check-sat-using qffp)
-(check-sat-using (then fpa2bv smt))
+;; (check-sat-using (then fpa2bv smt))
 (pop)
 
 (exit)

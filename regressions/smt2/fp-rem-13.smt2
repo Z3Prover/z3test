@@ -18,7 +18,7 @@
 
 (check-sat)
 (check-sat-using smt)
-(check-sat-using (then fpa2bv smt))
+;; (check-sat-using (then fpa2bv smt))
 (exit)
 
 
