@@ -86,7 +86,7 @@ namespace ClusterExperiment
                 mnuOptProgress.IsChecked = ((Int32)Registry.GetValue(okn, "ShowProgress", 0)) == 1;
                 mnuOptResolveTimeoutDupes.IsChecked = ((Int32)Registry.GetValue(okn, "ResolveTimeoutDupes", 0)) == 1;
                 mnuOptResolveSameTimeDupes.IsChecked = ((Int32)Registry.GetValue(okn, "ResolveSameTimeDupes", 0)) == 1;
-                mnuOptResolveSlowestDupes.IsChecked = ((Int32)Registry.GetValue(okn, "ResolveSlowestDupes", 0)) == 1;
+                mnuOptResolveSlowestDupes.IsChecked = ((Int32)Registry.GetValue(okn, "ResolveSlowestDupes", 0)) == 1;                
             }
         }
         private void OnClosing(object sender, System.ComponentModel.CancelEventArgs e)
@@ -248,10 +248,14 @@ namespace ClusterExperiment
                 if (dlg.chkMostRecentBinary.IsChecked == true)
                     bin = "";
 
+                string parameters = dlg.txtParameters.Text;
+                if (dlg.chkReplaceCheckSat.IsChecked == true)
+                    parameters += " replace-check-sat=\"" + dlg.txtReplaceCheckSat.Text + "\"";
+
                 Submission sdlg = new Submission(txtDatabase.Text, dlg.txtCategories.Text,
                                                  dlg.txtSharedDir.Text,
                                                  dlg.txtMemout.Text, dlg.txtTimeout.Text, dlg.txtExecutor.Text,
-                                                 bin, dlg.txtParameters.Text,
+                                                 bin, parameters,
                                                  dlg.txtCluster.Text, dlg.cmbNodeGroup.Text, dlg.cmbLocality.Text,
                                                  dlg.txtLimitMin.Text, dlg.txtLimitMax.Text,
                                                  WindowsIdentity.GetCurrent().Name.ToString(),

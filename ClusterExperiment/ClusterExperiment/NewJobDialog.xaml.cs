@@ -82,6 +82,9 @@ namespace ClusterExperiment
             timeJob.Value = new TimeSpan(0, 0, (int)Registry.GetValue(keyName, "JobTimeout", 43200));
             timeTask.Value = new TimeSpan(0, 0, (int)Registry.GetValue(keyName, "TaskTimeout", 0));
 
+            chkReplaceCheckSat.IsChecked = ((int)Registry.GetValue(keyName, "ReplaceCheckSatEnabled", 0)) != 0;
+            txtReplaceCheckSat.Text = (string)Registry.GetValue(keyName, "ReplaceCheckSatText", "");
+
             Mouse.SetCursor(System.Windows.Input.Cursors.Arrow);
         }
 
@@ -112,7 +115,8 @@ namespace ClusterExperiment
             Registry.SetValue(keyName, "JobTemplate", txtJobTemplate.Text, RegistryValueKind.String);
             Registry.SetValue(keyName, "JobTimeout", (timeJob.Value.HasValue ? Convert.ToInt32(timeJob.Value.Value.TotalSeconds) : 0), RegistryValueKind.DWord);
             Registry.SetValue(keyName, "TaskTimeout", (timeTask.Value.HasValue ? Convert.ToInt32(timeTask.Value.Value.TotalSeconds) : 0), RegistryValueKind.DWord);
-
+            Registry.SetValue(keyName, "ReplaceCheckSatEnabled", (chkReplaceCheckSat.IsChecked == true) ? 1 : 0, RegistryValueKind.DWord);
+            Registry.SetValue(keyName, "ReplaceCheckSatText", txtReplaceCheckSat.Text, RegistryValueKind.String);
             DialogResult = true;
         }
 
@@ -350,6 +354,16 @@ namespace ClusterExperiment
         {
             Process.Start(new ProcessStartInfo(e.Uri.AbsoluteUri));
             e.Handled = true;
+        }
+
+        private void chkReplaceCheckSat_Checked(object sender, RoutedEventArgs e)
+        {
+            txtReplaceCheckSat.IsEnabled = true;
+        }
+
+        private void chkReplaceCheckSat_Unchecked(object sender, RoutedEventArgs e)
+        {
+            txtReplaceCheckSat.IsEnabled = false;
         }
     }
 }
