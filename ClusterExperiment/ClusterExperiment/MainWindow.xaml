@@ -116,6 +116,7 @@
                         <CommandBinding Command="{x:Static custom:MainWindow.TallyCommand}" Executed="showTally" CanExecute="canShowTally" />
                         <CommandBinding Command="{x:Static custom:MainWindow.SaveMetaCSVCommand}" Executed="showSaveMetaCSV" CanExecute="canShowSaveMetaCSV" />
                         <CommandBinding Command="{x:Static custom:MainWindow.SaveMatrixCommand}" Executed="showSaveMatrix" CanExecute="canShowSaveMatrix" />
+                        <CommandBinding Command="{x:Static custom:MainWindow.SaveOutputCommand}" Executed="showSaveOutput" CanExecute="canShowSaveOutput" />
                         <CommandBinding Command="Properties" Executed="showProperties" CanExecute="canShowProperties" />
                     </DataGrid.CommandBindings>
                     <DataGrid.InputBindings>
@@ -143,6 +144,7 @@
                                 <MenuItem Name="mnuSaveAs" Header="CS_V..." Command="SaveAs"/>
                                 <MenuItem Name="mnuSaveMetaCSV" Header="_Meta CSV..." Command="{x:Static custom:MainWindow.SaveMetaCSVCommand}"/>
                                 <MenuItem Name="mnuSaveMatrix" Header="Matri_x..." Command="{x:Static custom:MainWindow.SaveMatrixCommand}"/>
+                                <MenuItem Name="mnuSaveOutput" Header="_Output..." Command="{x:Static custom:MainWindow.SaveOutputCommand}"/>
                             </MenuItem>
                             <MenuItem Name="mnuProperties" Command="Properties" />
                         </ContextMenu>

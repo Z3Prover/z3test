@@ -57,6 +57,7 @@ namespace ClusterExperiment
         public static RoutedCommand ChangePriorityCommand = new RoutedCommand();
         public static RoutedCommand SaveMetaCSVCommand = new RoutedCommand();
         public static RoutedCommand SaveMatrixCommand = new RoutedCommand();
+        public static RoutedCommand SaveOutputCommand = new RoutedCommand();
         public static RoutedCommand RequeueIErrorsCommand = new RoutedCommand();
         public static RoutedCommand RestartCommand = new RoutedCommand();
 
@@ -86,7 +87,7 @@ namespace ClusterExperiment
                 mnuOptProgress.IsChecked = ((Int32)Registry.GetValue(okn, "ShowProgress", 0)) == 1;
                 mnuOptResolveTimeoutDupes.IsChecked = ((Int32)Registry.GetValue(okn, "ResolveTimeoutDupes", 0)) == 1;
                 mnuOptResolveSameTimeDupes.IsChecked = ((Int32)Registry.GetValue(okn, "ResolveSameTimeDupes", 0)) == 1;
-                mnuOptResolveSlowestDupes.IsChecked = ((Int32)Registry.GetValue(okn, "ResolveSlowestDupes", 0)) == 1;                
+                mnuOptResolveSlowestDupes.IsChecked = ((Int32)Registry.GetValue(okn, "ResolveSlowestDupes", 0)) == 1;
             }
         }
         private void OnClosing(object sender, System.ComponentModel.CancelEventArgs e)
@@ -1808,8 +1809,8 @@ namespace ClusterExperiment
                             "y.ExperimentID = " + colJ["ID"] + " AND " +
                             "x.FilenameP = y.FilenameP AND " +
                             "x.Filenamep = Strings.ID AND " +
-                            ((filter != "") ? "Strings.s LIKE '%" + filter + "%' AND " : "")+
-                            condition + " AND "+
+                            ((filter != "") ? "Strings.s LIKE '%" + filter + "%' AND " : "") +
+                            condition + " AND " +
                             "(" +
                             " (x.ResultCode = 0 AND y.ResultCode <> 0) OR " +
                             " (x.ResultCode = 0 AND y.ResultCode = 0 AND x.Runtime < y.Runtime) " +
@@ -1944,6 +1945,97 @@ namespace ClusterExperiment
             dataGrid.Columns[c - 5].Visibility = System.Windows.Visibility.Hidden;
 
             updateDataGrid();
+        }
+        private void canShowSaveOutput(object sender, CanExecuteRoutedEventArgs e)
+        {
+            e.CanExecute = (sql != null && dataGrid.SelectedItems.Count == 1);
+        }
+
+        private void showSaveOutput(object sender, ExecutedRoutedEventArgs e)
+        {
+            Mouse.OverrideCursor = System.Windows.Input.Cursors.Wait;
+            System.Windows.Forms.FolderBrowserDialog dlg = new System.Windows.Forms.FolderBrowserDialog();
+            dlg.ShowNewFolderButton = true;
+            if (dlg.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+            {
+                DataRowView drv = (DataRowView)dataGrid.SelectedItems[0];
+                int eid = (int)drv["ID"];
+                string drctry = string.Format(@"{0}\{1}", dlg.SelectedPath, eid.ToString());
+                double total = 0.0;
+
+                Directory.CreateDirectory(drctry);
+
+                SqlCommand cmd = new SqlCommand("SELECT COUNT(*) FROM Data WHERE ExperimentID=" + eid, sql);
+                cmd.CommandTimeout = 0;
+                cmd.ExecuteNonQuery();
+
+                SqlDataReader r = cmd.ExecuteReader();
+                if (r.Read())
+                    total = (double)(int)r[0];
+                r.Close();
+
+                List<string> filenames = new List<string>();
+                List<int> data_ids = new List<int>();
+                cmd = new SqlCommand(
+                    "SELECT Data.ID as ID, Strings.s as Filename " +
+                    "FROM Data, Strings " +
+                    "WHERE " +
+                    "Data.ExperimentID=" + eid + " AND " +
+                    "Strings.ID = Data.FilenameP", sql);
+                r = cmd.ExecuteReader();
+                while (r.Read())
+                {
+                    data_ids.Add((int)r["ID"]);
+                    filenames.Add((string)r["Filename"]);
+                }
+                r.Close();
+
+                Progress p = new Progress(this, (int)total, "Saving",
+                    (sndr, ea) =>
+                    {
+                        ProgressWorker w = (ProgressWorker)sndr;
+
+                        for (int i = 0; i < data_ids.Count(); i++)
+                        {
+                            int did = data_ids[i];
+                            string filename = filenames[i];
+
+                            cmd = new SqlCommand("SELECT stdout, stderr FROM Data WHERE ID=" + did, sql);
+                            r = cmd.ExecuteReader();
+                            if (r.Read())
+                            {
+                                UTF8Encoding enc = new UTF8Encoding();
+                                string stdout = (string)r["stdout"];
+                                string stderr = (string)r["stderr"];
+                                string path = drctry + @"\" + filename;
+                                Directory.CreateDirectory(path.Substring(0, path.LastIndexOf(@"\")));
+
+                                if (stdout != null && stdout.Length > 0)
+                                {                                    
+                                    FileStream stdoutf = File.Open(path + ".out.txt", FileMode.OpenOrCreate);
+                                    stdoutf.Write(enc.GetBytes(stdout), 0, enc.GetByteCount(stdout));
+                                    stdoutf.Close();
+                                }
+
+                                if (stderr != null && stderr.Length > 0)
+                                {
+                                    FileStream stderrf = File.Open(path + ".err.txt", FileMode.OpenOrCreate);
+                                    stderrf.Write(enc.GetBytes(stderr), 0, enc.GetByteCount(stderr));
+                                    stderrf.Close();
+                                }
+                            }
+                            r.Close();
+
+                            if (w.WorkerReportsProgress)
+                                w.ReportProgress((int)(100.0 * ((double)i / total)));
+                        }
+                    });
+
+                p.Go();
+
+                Mouse.OverrideCursor = null;
+            }
+
         }
     }
 }
