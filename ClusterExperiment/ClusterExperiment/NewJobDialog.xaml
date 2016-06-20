@@ -149,9 +149,15 @@
                         <Label Content="Job template:" Height="28" HorizontalAlignment="Left" Name="lblTemplate" Grid.Row="0" Grid.Column="0"/>
                         <TextBox Height="23" HorizontalAlignment="Stretch" Name="txtJobTemplate" TabIndex="0" ToolTip="The headnode of the cluster." Grid.Row="0" Grid.Column="1"/>
                         <TextBlock Grid.Row="1" Grid.Column="1">
-                            <Hyperlink NavigateUri="http://gcd-wiki/index.php?title=HPC_Job_Scheduling_Best_Practices" RequestNavigate="Hyperlink_RequestNavigate">
-                                Click here for job template info in the GCD Wiki. 
+                            See 
+                            <Hyperlink NavigateUri="https://microsoft.sharepoint.com/teams/TnREng/_layouts/15/start.aspx#/GCR%20Wiki/HPC%20Node%20Details.aspx" RequestNavigate="Hyperlink_RequestNavigate">
+                                nodegroup
                             </Hyperlink>
+                            and 
+                            <Hyperlink NavigateUri="https://microsoft.sharepoint.com/teams/TnREng/_layouts/15/start.aspx#/GCR%20Wiki/HPC%20Job%20Scheduling%20Best%20Practices.aspx" RequestNavigate="Hyperlink_RequestNavigate">
+                                job template
+                            </Hyperlink>
+                            info for GCR.
                         </TextBlock>
                         <Button Height="23" Width="Auto" HorizontalAlignment="Stretch" Name="btnSelectTemplate" Grid.Row="0" Grid.Column="2" TabIndex="6" Click="btnSelectTemplate_Click">
                             <Image Source="/ClusterExperiment;component/Images/taskbrowse.ico" />
