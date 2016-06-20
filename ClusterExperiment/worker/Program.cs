@@ -10,6 +10,7 @@ using System.Text.RegularExpressions;
 using System.Threading;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
+using Microsoft.Win32;
 
 namespace worker
 {
@@ -28,11 +29,14 @@ namespace worker
         }
 
         SqlConnection sql = null;
-        string myName = "";
-        const int MAXBUF = 16777216;
-        Random rng = new Random();
-        uint infrastructure_errors_init = 100;
-        uint infrastructure_errors_max = 100;
+        string myName = "";        
+        Random rng = new Random();        
+
+        const int init_buf_size = 16777216;
+        const int output_limit = 1 * (1024*1024); // 1 MB
+        const int error_limit = 256 * 1024; // 256 KB
+        const int infrastructure_errors_init = 100;
+        int infrastructure_errors_max = 100;
 
         class Experiment
         {
@@ -64,8 +68,8 @@ namespace worker
             public Job j;
             public string exitCode;
             public double runtime;
-            public MemoryStream stdout = new MemoryStream(MAXBUF);
-            public MemoryStream stderr = new MemoryStream(MAXBUF);
+            public MemoryStream stdout = new MemoryStream(init_buf_size);
+            public MemoryStream stderr = new MemoryStream(init_buf_size);
         };
 
         private List<Result> results = new List<Result>();
@@ -76,7 +80,7 @@ namespace worker
                 return;
 
             uint retry_cnt = 0;
-        retry:
+            retry:
             try
             {
                 sql.Open();
@@ -92,41 +96,66 @@ namespace worker
             }
         }
 
-        Dictionary<string, Object> SQLRead(string cmdString, SqlConnection sql)
+        void ensureDisconnected()
         {
-            ensureConnected();
-            SqlCommand cmd = new SqlCommand(cmdString, sql);
-            cmd.CommandTimeout = 0;
-            SqlDataReader r = cmd.ExecuteReader();
+            if (sql.State != System.Data.ConnectionState.Open)
+                return;
 
-            bool has_data = false;
-        retry_read:
+            uint retry_cnt = 0;
+            retry:
             try
             {
+                sql.Close();
+            }
+            catch (Exception ex)
+            {
+                Thread.Sleep(1000);
+                Console.WriteLine("Retrying after SQL disconnection failure: " + ex.Message);
+                if (retry_cnt++ < 10)
+                    goto retry;
+                else
+                    throw new Exception("Tried to disconnect from SQL server 10 times, giving up.");
+            }
+        }
+
+        static Dictionary<string, Object> SQLRead(string cmdString, SqlConnection sql)
+        {
+            SqlCommand cmd = null;
+            SqlDataReader r = null;
+
+            bool has_data = false;
+            retry_read:
+            try
+            {
+                cmd = new SqlCommand(cmdString, sql);
+                cmd.CommandTimeout = 0;
+                r = cmd.ExecuteReader();
                 has_data = r.Read();
             }
             catch (Exception ex)
             {
                 Console.WriteLine("Retrying after SQL read failure: " + ex.Message);
                 Thread.Sleep(1000);
+                if (sql.State != System.Data.ConnectionState.Open)
+                    sql.Open(); /* Bail out if this throws something */
                 goto retry_read;
             }
 
 
             Dictionary<string, Object> res = new Dictionary<string, Object>();
 
-            if (has_data)
-            {
+            if (has_data && r != null)
                 for (int i = 0; i < r.FieldCount; i++)
                     res[r.GetName(i)] = r[i];
-            }
 
-            cmd.Cancel();
+            if (cmd != null)
+                cmd.Cancel();
 
-        retry:
+            retry:
             try
             {
-                r.Close();
+                if (r != null)
+                    r.Close();
             }
             catch (Exception ex)
             {
@@ -135,6 +164,14 @@ namespace worker
                 goto retry;
             }
 
+            return res;
+        }
+
+        Dictionary<string, Object> SQLRead(string cmdString)
+        {
+            ensureConnected();
+            Dictionary<string, Object> res = SQLRead(cmdString, sql);
+            ensureDisconnected();
             return res;
         }
 
@@ -148,11 +185,9 @@ namespace worker
 
         Experiment getExperiment(string eId)
         {
-            ensureConnected();
-
             Console.WriteLine("Getting experiment info... ");
             Dictionary<string, Object> r =
-              SQLRead("SELECT Category,SharedDir,Extension,Memout,Timeout,Parameters,Binary,Longparams FROM Experiments WHERE ID=" + eId, sql);
+              SQLRead("SELECT Category,SharedDir,Extension,Memout,Timeout,Parameters,Binary,Longparams FROM Experiments WHERE ID=" + eId);
 
             if (r.Count() == 0)
                 throw new Exception("Experiment not found.");
@@ -192,6 +227,8 @@ namespace worker
 
         void populate(Experiment e)
         {
+            ensureConnected();
+
             // First check whether someone else is populating already.
             int c = 1;
 
@@ -200,14 +237,14 @@ namespace worker
             if (r.Read()) c = ((int)r[0]);
             r.Close();
             if (c != 0)
-                return;
+                goto bailout;
 
             cmd = new SqlCommand("SELECT COUNT(*) FROM JobQueue WHERE ExperimentID=" + e.ID + ";", sql);
             r = cmd.ExecuteReader();
             if (r.Read()) c = ((int)r[0]);
             r.Close();
             if (c != 0)
-                return;
+                goto bailout;
 
 
             int i = 0, pinx;
@@ -256,16 +293,19 @@ namespace worker
                     Console.WriteLine("Retrying after SQL ERROR: " + ex.Message);
                     t.Rollback();
                     Thread.Sleep(1000);
+                    ensureDisconnected();
                     throw ex;
                 }
             }
+
+            bailout:
+            ensureDisconnected();
+            return;
         }
 
         bool haveJobs(Experiment e)
         {
-            ensureConnected();
-            Dictionary<string, Object> rd =
-                SQLRead("SELECT TOP 1 ID FROM JobQueue WHERE ExperimentID=" + e.ID, sql);
+            Dictionary<string, Object> rd = SQLRead("SELECT TOP 1 ID FROM JobQueue WHERE ExperimentID=" + e.ID);
             return rd.Count() != 0;
         }
 
@@ -275,7 +315,9 @@ namespace worker
 
             if (jID == -1)
             {
-            retry:
+                retry:
+                ensureConnected();
+
                 Dictionary<string, Object> r =
                     SQLRead("SELECT TOP 1 ID FROM JobQueue WHERE ExperimentID=" + e.ID, sql);
 
@@ -283,7 +325,6 @@ namespace worker
 
                 jID = (int)r["ID"];
 
-                ensureConnected();
                 SqlCommand cmd = new SqlCommand("UPDATE JobQueue SET Worker='" + myName + "/Recovery',AcquireTime=GETDATE() WHERE ID=" + jID, sql);
                 if (cmd.ExecuteNonQuery() == 0)
                     jID = 0;
@@ -292,6 +333,8 @@ namespace worker
 
                 Dictionary<string, Object> rd =
                     SQLRead("SELECT a.ID as ID,a.FilenameP as FileP,b.s as Filename FROM JobQueue as a,Strings as b WHERE Worker='" + myName + "/Recovery' AND a.FilenameP=b.ID AND ExperimentID=" + e.ID + ";", sql);
+
+                ensureDisconnected();
 
                 if (rd.Count == 0)
                     return null;
@@ -335,7 +378,7 @@ namespace worker
                                  "ExperimentID=" + e.ID + " AND " + cond + ";" +
                                  "UPDATE JobQueue SET Worker='" + myName + "',AcquireTime=GETDATE() WHERE ID=@jid; COMMIT; " +
                                  "SELECT a.ID as ID,a.FilenameP as FileP,b.s as Filename FROM JobQueue as a, Strings as b " +
-                                 "WHERE a.ID=@jid AND a.FilenameP=b.ID;", sql);
+                                 "WHERE a.ID=@jid AND a.FilenameP=b.ID;");
 
                     if (rd.Count == 0)
                         return null;
@@ -402,8 +445,7 @@ namespace worker
 
                 byte[] data = new byte[0];
 
-                Dictionary<string, Object> r =
-                  SQLRead("SELECT Binary FROM Binaries WHERE ID=" + e.binaryID, sql);
+                Dictionary<string, Object> r = SQLRead("SELECT Binary FROM Binaries WHERE ID=" + e.binaryID);
 
                 data = (byte[])r["Binary"];
 
@@ -462,7 +504,7 @@ namespace worker
                         throw new Exception("Local binary missing.");
                 }
                 retry_count = 1000;
-            retry:
+                retry:
                 try
                 {
                     FileStream tmp = File.OpenRead(localname);
@@ -515,7 +557,7 @@ namespace worker
 
         private void processKill(Process p)
         {
-        retry:
+            retry:
             try
             {
                 foreach (Process cp in Process.GetProcessesByName(p.ProcessName))
@@ -570,7 +612,7 @@ namespace worker
 
         void runJob(Experiment e, Job j)
         {
-        retry_from_scratch:
+            retry_from_scratch:
 
             try
             {
@@ -578,6 +620,8 @@ namespace worker
 
                 Result r = new Result();
                 r.j = j;
+                int out_lim = output_limit;
+                int err_lim = error_limit;
 
                 try
                 {
@@ -592,10 +636,7 @@ namespace worker
                     r.runtime = 0;
                     results.Add(r);
                     return;
-                }
-
-                int output_limit = 134217728; // 128 MB
-                int error_limit = 262144; // 256 KB
+                }                
 
                 StreamWriter out_writer = new StreamWriter(r.stdout);
                 StreamWriter err_writer = new StreamWriter(r.stderr);
@@ -610,8 +651,8 @@ namespace worker
                 p.StartInfo.RedirectStandardOutput = true;
                 p.StartInfo.RedirectStandardError = true;
                 p.StartInfo.UseShellExecute = false;
-                p.OutputDataReceived += (sender, args) => WriteToStream(sender, args, out_writer, ref output_limit);
-                p.ErrorDataReceived += (sender, args) => WriteToStream(sender, args, err_writer, ref error_limit);
+                p.OutputDataReceived += (sender, args) => WriteToStream(sender, args, out_writer, ref out_lim);
+                p.ErrorDataReceived += (sender, args) => WriteToStream(sender, args, err_writer, ref err_lim);
                 bool exhausted_time = false, exhausted_memory = false;
 
                 if (e.localExecutable.EndsWith(".cmd") || e.localExecutable.EndsWith(".bat"))
@@ -625,7 +666,7 @@ namespace worker
                 //p.StartInfo.Arguments = e.Parameters;
                 //StreamReader fin = new StreamReader(j.localFilename);
 
-            retry:
+                retry:
                 try
                 {
                     p.Start();
@@ -837,7 +878,7 @@ namespace worker
             ResultTarget target = new ResultTarget();
             ResultTarget result = new ResultTarget();
 
-        retry:
+            retry:
             try
             {
                 target = getTarget(r.j.localFilename);
@@ -875,7 +916,6 @@ namespace worker
             SqlParameter out_param = cmd.Parameters.Add("@STDOUT", System.Data.SqlDbType.VarChar);
             SqlParameter err_param = cmd.Parameters.Add("@STDERR", System.Data.SqlDbType.VarChar);
 
-            // if (true)
             if (resultCode >= 3)
             {
                 r.stdout.Seek(0, SeekOrigin.Begin);
@@ -890,6 +930,7 @@ namespace worker
             }
 
             cmd.ExecuteNonQuery();
+            ensureDisconnected();
 
             infrastructure_errors_max = infrastructure_errors_init;
         }
@@ -897,12 +938,15 @@ namespace worker
         void saveResults()
         {
             List<Result>.Enumerator e;
-            SqlTransaction t = sql.BeginTransaction();
+            SqlTransaction t = null;
 
-        retry:
+            retry:            
             try
             {
+                ensureConnected();
+                t = sql.BeginTransaction();
                 e = results.GetEnumerator();
+                
                 while (e.MoveNext())
                     saveResult(e.Current, ref t);
 
@@ -911,18 +955,28 @@ namespace worker
             catch (SqlException ex)
             {
                 Console.WriteLine("Retrying after SQL ERROR: " + ex.Message);
-                t.Rollback();
-                t.Dispose();
-                t = sql.BeginTransaction();
+                if (t != null)
+                {
+                    try
+                    {
+                        t.Rollback();
+                        t.Dispose();
+                    }
+                    catch (Exception) { /* OK */}
+                }
+                t = null;
                 Thread.Sleep(500);
                 goto retry;
             }
             catch (Exception ex)
             {
-                Console.WriteLine("Fatal error during result submission: " + ex.Message);
-                t.Rollback();
-                t.Dispose();
+                Console.WriteLine("Fatal error during result submission: " + ex.Message);                
+                ensureDisconnected();
                 return;
+            }
+            finally
+            {
+                ensureDisconnected();
             }
 
 
@@ -964,6 +1018,7 @@ namespace worker
                 p.Value = x;
 
                 cmd.ExecuteNonQuery();
+                ensureDisconnected();
                 return false;
             }
             else
@@ -975,14 +1030,14 @@ namespace worker
 
         void requeueInfrastructureErrors(Experiment e)
         {
+            ensureConnected();
+
             SqlCommand cmd = new SqlCommand("SELECT Data.ID, Strings.s as Filename FROM Data, Strings WHERE FilenameP=Strings.ID AND ExperimentID=" + e.ID + " AND ResultCode=4 AND (stderr like 'INFRASTRUCTURE ERROR%' OR ReturnValue=-1073741515)", sql);
             cmd.CommandTimeout = 0;
             SqlDataReader r = cmd.ExecuteReader();
             Dictionary<int, string> d = new Dictionary<int, string>();
             while (r.Read())
-            {
                 d[(int)r["ID"]] = (string)r["Filename"];
-            }
             r.Close();
 
             int cnt = 0;
@@ -999,7 +1054,7 @@ namespace worker
                 cnt++;
             }
 
-            System.Console.WriteLine("Re-queued " + cnt + " infrastructure errors.");
+            ensureDisconnected();
         }
 
         void recovery(Experiment e)
@@ -1016,7 +1071,6 @@ namespace worker
         }
         bool haveInfrastructureErrors(Experiment e)
         {
-            ensureConnected();
             Dictionary<string, Object> rd =
               SQLRead("SELECT TOP 1 ID FROM Data WHERE ExperimentID=" + e.ID + " AND ResultCode=4 AND (stderr like 'INFRASTRUCTURE ERROR%' OR ReturnValue=-1073741515)", sql);
             return rd.Count() != 0;
@@ -1052,10 +1106,57 @@ namespace worker
             }
         }
 
+        private static void GetVersionFromRegistry()
+        {
+            using (RegistryKey ndpKey = RegistryKey.OpenRemoteBaseKey(RegistryHive.LocalMachine, "").OpenSubKey(@"SOFTWARE\Microsoft\NET Framework Setup\NDP\"))
+            {
+                foreach (string versionKeyName in ndpKey.GetSubKeyNames())
+                {
+                    if (versionKeyName.StartsWith("v"))
+                    {
+                        RegistryKey versionKey = ndpKey.OpenSubKey(versionKeyName);
+                        string name = (string)versionKey.GetValue("Version", "");
+                        string sp = versionKey.GetValue("SP", "").ToString();
+                        string install = versionKey.GetValue("Install", "").ToString();
+                        if (install == "")
+                            Console.WriteLine(versionKeyName + "  " + name);
+                        else
+                        {
+                            if (sp != "" && install == "1")
+                                Console.WriteLine(versionKeyName + "  " + name + "  SP" + sp);
+                        }
+
+                        if (name != "")
+                            continue;
+
+                        foreach (string subKeyName in versionKey.GetSubKeyNames())
+                        {
+                            RegistryKey subKey = versionKey.OpenSubKey(subKeyName);
+                            name = (string)subKey.GetValue("Version", "");
+                            if (name != "")
+                                sp = subKey.GetValue("SP", "").ToString();
+                            install = subKey.GetValue("Install", "").ToString();
+                            if (install == "")
+                                Console.WriteLine(versionKeyName + "  " + name);
+                            else
+                            {
+                                if (sp != "" && install == "1")
+                                    Console.WriteLine("  " + subKeyName + "  " + name + "  SP" + sp);
+                                else if (install == "1")
+                                    Console.WriteLine("  " + subKeyName + "  " + name);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
         int main(string[] args)
         {
             if (args.Count() != 1 && args.Count() != 2 && args.Count() != 3)
                 return 1;
+
+            // GetVersionFromRegistry();
 
             try
             {
@@ -1065,10 +1166,11 @@ namespace worker
                     ensureConnected();
                     SqlCommand cmd = new SqlCommand("UPDATE JobQueue SET Worker=NULL,AcquireTime=NULL WHERE worker='" + myName + "';", sql);
                     cmd.ExecuteNonQuery();
-                    sql.Close();
+                    ensureDisconnected();
                 };
 
                 string db = args.Count() == 1 ? args[0] : (args.Count() == 3) ? args[2] : args[1];
+                // Console.WriteLine("Connecting to: {0}", db);
                 myName = Environment.MachineName + "-" + Process.GetCurrentProcess().Id.ToString();
                 sql = new SqlConnection(db);
                 Experiment e = null;
@@ -1098,9 +1200,7 @@ namespace worker
                 {
                     while (true) // Any-experiment job.
                     {
-                        ensureConnected();
-                        Dictionary<string, Object> r =
-                            SQLRead("select TOP(1) ExperimentID from jobqueue order by NEWID()", sql);
+                        Dictionary<string, Object> r = SQLRead("select TOP(1) ExperimentID from jobqueue order by NEWID()");
 
                         if (r.Count() == 0)
                             break;
@@ -1125,7 +1225,7 @@ namespace worker
                     Console.WriteLine("Error removing temporary directory: " + ex.Message);
                 }
 
-                try { sql.Close(); }
+                try { ensureDisconnected(); }
                 catch { }
             }
             catch (Exception ex)
