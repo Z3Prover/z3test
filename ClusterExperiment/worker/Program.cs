@@ -29,11 +29,11 @@ namespace worker
         }
 
         SqlConnection sql = null;
-        string myName = "";        
-        Random rng = new Random();        
+        string myName = "";
+        Random rng = new Random();
 
         const int init_buf_size = 16777216;
-        const int output_limit = 1 * (1024*1024); // 1 MB
+        const int output_limit = 1 * (1024 * 1024); // 1 MB
         const int error_limit = 256 * 1024; // 256 KB
         const int infrastructure_errors_init = 100;
         int infrastructure_errors_max = 100;
@@ -74,7 +74,7 @@ namespace worker
 
         private List<Result> results = new List<Result>();
 
-        void ensureConnected()
+        private void ensureConnected()
         {
             if (sql.State == System.Data.ConnectionState.Open)
                 return;
@@ -96,7 +96,7 @@ namespace worker
             }
         }
 
-        void ensureDisconnected()
+        private void ensureDisconnected()
         {
             if (sql.State != System.Data.ConnectionState.Open)
                 return;
@@ -233,6 +233,7 @@ namespace worker
             int c = 1;
 
             SqlCommand cmd = new SqlCommand("SELECT COUNT(*) FROM Data WHERE ExperimentID=" + e.ID + ";", sql);
+            cmd.CommandTimeout = 0;
             SqlDataReader r = cmd.ExecuteReader();
             if (r.Read()) c = ((int)r[0]);
             r.Close();
@@ -240,6 +241,7 @@ namespace worker
                 goto bailout;
 
             cmd = new SqlCommand("SELECT COUNT(*) FROM JobQueue WHERE ExperimentID=" + e.ID + ";", sql);
+            cmd.CommandTimeout = 0;
             r = cmd.ExecuteReader();
             if (r.Read()) c = ((int)r[0]);
             r.Close();
@@ -263,38 +265,63 @@ namespace worker
                     i = pinx + 1;
                 }
 
-                IEnumerable<string> files = Directory.EnumerateFiles(e.sharedDir + "\\" + e.category + "\\", "*." + cur, SearchOption.AllDirectories);
-                SqlTransaction t = sql.BeginTransaction();
+                IEnumerable<string> files = Directory.EnumerateFiles(e.sharedDir + "\\" + e.category + "\\", "*." + cur, SearchOption.AllDirectories);                
 
+                if (files.Count() == 0)
+                    continue;
+
+                int sl = e.sharedDir.Length + 1;                
+                SqlTransaction t = null;
+
+                IEnumerator<string> batch_start = files.GetEnumerator();
+                batch_start.MoveNext();
+
+                retry:
                 try
                 {
-                    int sl = e.sharedDir.Length + 1;
+                    ensureConnected();
+                    t = sql.BeginTransaction();
                     int cnt = 0;
-                    foreach (String s in files)
+
+                    IEnumerator<string> it = batch_start;
+                    while (true)
                     {
-                        if (Path.GetExtension(s).Substring(1) != cur) continue;
+                        string s = it.Current;
+
+                        if (Path.GetExtension(s).Substring(1) != cur)
+                            continue;
 
                         cmd = new SqlCommand("AQ " + e.ID + ",'" + s.Substring(sl) + "';", sql, t);
-                        cmd.ExecuteNonQuery();
-                        cnt++;
+                        cmd.CommandTimeout = 0;
+                        cmd.ExecuteNonQuery();                     
 
-                        if (cnt == 100)
+                        if (++cnt == 250)
                         {
                             t.Commit();
+                            t.Dispose();
                             t = sql.BeginTransaction();
                             cnt = 0;
+                            if (!it.MoveNext())
+                                break;
+                            else
+                                batch_start = it;                            
+                        }
+                        else
+                        {
+                            if (!it.MoveNext())
+                                break;
                         }
                     }
 
-                    t.Commit();
+                    if (t != null)
+                        t.Commit();
                 }
                 catch (SqlException ex)
                 {
                     Console.WriteLine("Retrying after SQL ERROR: " + ex.Message);
-                    t.Rollback();
+                    try { t.Rollback(); t.Dispose(); } catch (Exception) { }
                     Thread.Sleep(1000);
-                    ensureDisconnected();
-                    throw ex;
+                    goto retry;
                 }
             }
 
@@ -521,7 +548,7 @@ namespace worker
             }
         }
 
-        private TimeSpan processTime(Process p)
+        private static TimeSpan processTime(Process p)
         {
             // Wallclock time
             //return DateTime.Now - p.StartTime;
@@ -538,7 +565,7 @@ namespace worker
             //return r;
         }
 
-        private long processMemory(Process p)
+        private static long processMemory(Process p)
         {
             long r = 0;
 
@@ -555,7 +582,7 @@ namespace worker
             return r;
         }
 
-        private void processKill(Process p)
+        private static void processKill(Process p)
         {
             retry:
             try
@@ -570,7 +597,7 @@ namespace worker
             }
         }
 
-        void WriteToStream(object sender, DataReceivedEventArgs args, StreamWriter stream, ref int limit)
+        static void WriteToStream(object sender, DataReceivedEventArgs args, StreamWriter stream, ref int limit)
         {
             try
             {
@@ -586,7 +613,7 @@ namespace worker
             }
         }
 
-        void replace_checksat(Experiment e, Job j)
+        static void replace_checksat(Experiment e, Job j)
         {
             string tmpf = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName());
             FileStream f = new FileStream(j.localFilename, FileMode.Open, FileAccess.Read);
@@ -636,7 +663,7 @@ namespace worker
                     r.runtime = 0;
                     results.Add(r);
                     return;
-                }                
+                }
 
                 StreamWriter out_writer = new StreamWriter(r.stdout);
                 StreamWriter err_writer = new StreamWriter(r.stderr);
@@ -762,7 +789,7 @@ namespace worker
             public uint sat = 0, unsat = 0, other = 0;
         };
 
-        ResultTarget getTarget(string filename)
+        static ResultTarget getTarget(string filename)
         {
             ResultTarget res = new ResultTarget();
 
@@ -793,7 +820,7 @@ namespace worker
             return res;
         }
 
-        ResultTarget getResultCounts(Result r)
+        static ResultTarget getResultCounts(Result r)
         {
             ResultTarget res = new ResultTarget();
             r.stdout.Seek(0, SeekOrigin.Begin);
@@ -871,7 +898,7 @@ namespace worker
             return (res == -1) ? 4 : res; // no bug found means general error.
         }
 
-        void saveResult(Result r, ref SqlTransaction t)
+        void saveResult(Result r, ref SqlTransaction transaction)
         {
             int resultCode = 4; // ERROR
 
@@ -906,11 +933,10 @@ namespace worker
             else
                 resultCode = getBugCode(r);
 
-            ensureConnected();
             string exitCodeString = (r.exitCode == "TIME" || r.exitCode == "MEMORY") ? "NULL" : r.exitCode;
             SqlCommand cmd = new SqlCommand("SRN " + r.j.experimentID + "," + r.j.ID + "," + r.j.filenameP + "," + exitCodeString + "," + resultCode + "," +
                                             result.sat + "," + result.unsat + "," + result.other + "," + target.sat + "," + target.unsat + "," + target.other + "," +
-                                            r.runtime + ",@STDOUT,@STDERR,'" + myName + "';", sql, t);
+                                            r.runtime + ",@STDOUT,@STDERR,'" + myName + "';", sql, transaction);
             cmd.CommandTimeout = 0;
 
             SqlParameter out_param = cmd.Parameters.Add("@STDOUT", System.Data.SqlDbType.VarChar);
@@ -930,7 +956,6 @@ namespace worker
             }
 
             cmd.ExecuteNonQuery();
-            ensureDisconnected();
 
             infrastructure_errors_max = infrastructure_errors_init;
         }
@@ -940,13 +965,13 @@ namespace worker
             List<Result>.Enumerator e;
             SqlTransaction t = null;
 
-            retry:            
+            retry:
             try
             {
                 ensureConnected();
                 t = sql.BeginTransaction();
                 e = results.GetEnumerator();
-                
+
                 while (e.MoveNext())
                     saveResult(e.Current, ref t);
 
@@ -970,7 +995,7 @@ namespace worker
             }
             catch (Exception ex)
             {
-                Console.WriteLine("Fatal error during result submission: " + ex.Message);                
+                Console.WriteLine("Fatal error during result submission: " + ex.Message);
                 ensureDisconnected();
                 return;
             }
