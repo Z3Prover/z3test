@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
-VisualStudioVersion = 14.0.24720.0
+VisualStudioVersion = 14.0.25123.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClusterExperiment", "ClusterExperiment\ClusterExperiment.csproj", "{33A8D599-9090-49AA-AD81-34B8820387DD}"
 	ProjectSection(ProjectDependencies) = postProject
@@ -59,6 +59,7 @@ Global
 		{33A8D599-9090-49AA-AD81-34B8820387DD}.Release|x86.ActiveCfg = Release|x86
 		{33A8D599-9090-49AA-AD81-34B8820387DD}.Release|x86.Build.0 = Release|x86
 		{AFD1F327-DC13-4838-8D24-1A96B8FCD695}.Debug|Any CPU.ActiveCfg = Debug|x86
+		{AFD1F327-DC13-4838-8D24-1A96B8FCD695}.Debug|Any CPU.Build.0 = Debug|x86
 		{AFD1F327-DC13-4838-8D24-1A96B8FCD695}.Debug|Mixed Platforms.ActiveCfg = Debug|x86
 		{AFD1F327-DC13-4838-8D24-1A96B8FCD695}.Debug|Mixed Platforms.Build.0 = Debug|x86
 		{AFD1F327-DC13-4838-8D24-1A96B8FCD695}.Debug|Win32.ActiveCfg = Debug|x86
