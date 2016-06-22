@@ -167,6 +167,10 @@
                 </DataGrid>
             </TabItem>
 
+            <TabItem Header="DB Connections">
+                <DataGrid AutoGenerateColumns="True" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="10,10,10,10" Name="connectionsGrid" IsReadOnly="True" ColumnWidth="100"/>
+            </TabItem>
+
         </TabControl>
 
         <StatusBar Height="25" HorizontalAlignment="Stretch" Grid.Row="4" Grid.Column="0" Name="statusBar" VerticalAlignment="Bottom">

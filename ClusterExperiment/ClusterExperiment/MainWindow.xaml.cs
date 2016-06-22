@@ -195,6 +195,36 @@ namespace ClusterExperiment
                 dataGrid.ItemsSource = null;
             }
 
+            da = new SqlDataAdapter("SELECT " +
+                                    "    loginame as 'User', " +
+                                    "    cpu as 'CPU Time (cumulative)', " +
+                                    "    memusage as 'Memory', " +
+                                    "    login_time as Since, " +
+                                    "    last_batch as 'Last Batch', " +
+                                    "    hostname as Host, " +
+                                    "    program_name as Program, " +
+                                    "    cmd as 'Current Command' " +
+                                    "FROM " +
+                                    "    sys.sysprocesses " +
+                                    "WHERE " +
+                                    "    dbid > 0 " +
+                                    "ORDER BY " +
+                                    "    'User'", sql);
+            ds = new DataSet();
+            try
+            {
+                da.SelectCommand.CommandTimeout = 0;
+                da.Fill(ds, "Database Connections");
+                connectionsGrid.ItemsSource = ds.Tables[0].DefaultView;
+            }
+            catch (Exception ex)
+            {
+                System.Windows.MessageBox.Show(this, "Error loading database connection stats: " + ex.Message, "Error",
+                    System.Windows.MessageBoxButton.OK,
+                    System.Windows.MessageBoxImage.Error);
+                connectionsGrid.ItemsSource = null;
+            }
+
             Mouse.OverrideCursor = null;
         }
 
@@ -1087,7 +1117,6 @@ namespace ClusterExperiment
         {
             e.CanExecute = (sql != null) && (dataGrid.SelectedItems.Count >= 1);
         }
-
 
         private void jobgroupGrid_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
