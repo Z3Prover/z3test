@@ -265,12 +265,12 @@ namespace worker
                     i = pinx + 1;
                 }
 
-                IEnumerable<string> files = Directory.EnumerateFiles(e.sharedDir + "\\" + e.category + "\\", "*." + cur, SearchOption.AllDirectories);                
+                IEnumerable<string> files = Directory.EnumerateFiles(e.sharedDir + "\\" + e.category + "\\", "*." + cur, SearchOption.AllDirectories);
 
                 if (files.Count() == 0)
                     continue;
 
-                int sl = e.sharedDir.Length + 1;                
+                int sl = e.sharedDir.Length + 1;
                 SqlTransaction t = null;
 
                 IEnumerator<string> batch_start = files.GetEnumerator();
@@ -293,7 +293,7 @@ namespace worker
 
                         cmd = new SqlCommand("AQ " + e.ID + ",'" + s.Substring(sl) + "';", sql, t);
                         cmd.CommandTimeout = 0;
-                        cmd.ExecuteNonQuery();                     
+                        cmd.ExecuteNonQuery();
 
                         if (++cnt == 250)
                         {
@@ -304,7 +304,7 @@ namespace worker
                             if (!it.MoveNext())
                                 break;
                             else
-                                batch_start = it;                            
+                                batch_start = it;
                         }
                         else
                         {
@@ -1126,8 +1126,7 @@ namespace worker
                 }
 
                 saveResults();
-                int sleepy_time = rng.Next(1, 60);
-                Thread.Sleep(sleepy_time * 1000);
+                Thread.Sleep(rng.Next(1000, 5 * 3600));
             }
         }
 
