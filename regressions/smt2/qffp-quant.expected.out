@@ -1,1 +1,1 @@
-(error "tactic failed: smt tactic failed to show goal to be sat/unsat")
+(error "tactic failed: smt tactic failed to show goal to be sat/unsat (incomplete quantifiers)")
