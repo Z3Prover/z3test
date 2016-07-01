@@ -35,6 +35,7 @@ namespace ClusterExperiment
             this.sql = sql;
 
             SqlCommand cmd = new SqlCommand("SELECT Timeout,Note,Category FROM Experiments WHERE ID=" + eID1, sql);
+            cmd.CommandTimeout = 0;
             SqlDataReader r = cmd.ExecuteReader();
             string categoryX = "";
             if (r.Read())
@@ -47,6 +48,7 @@ namespace ClusterExperiment
 
             string categoryY = "";
             cmd = new SqlCommand("SELECT Timeout,Note,Category FROM Experiments WHERE ID=" + eID2, sql);
+            cmd.CommandTimeout = 0;
             r = cmd.ExecuteReader();
             if (r.Read())
             {
@@ -207,6 +209,7 @@ namespace ClusterExperiment
             if (fancy) query += " AND a.FilenameP=Strings.ID";
 
             SqlCommand cmd = new SqlCommand(query, sql);
+            cmd.CommandTimeout = 0;
             SqlDataReader r = null;
 
             double totalX = 0.0, totalY = 0.0;

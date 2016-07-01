@@ -51,4 +51,4 @@
   )
 
 (check-sat)
-(check-sat-using (then simplify smt))
+;;(check-sat-using (then simplify smt)) ;; CMW: Disabled, to slow.

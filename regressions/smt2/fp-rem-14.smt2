@@ -12,16 +12,12 @@
 (declare-fun m () FPN)
 
 (assert (= q (fp.rem
-                 (fp #b0 #b11111111110 #xFFFFFFFFFFFFF)
-                 (fp #b0 #b00000000001 #x0000000000000))))
+                 (fp #b0 #b10000011001 #x0800000000000)    ;; +0X1.0800000000000P+26 
+                 (fp #b0 #b01111100101 #x0A00000000000)))) ;; +0X1.0A00000000000P-26 
 
-(assert (not (= q (_ +zero 11 53))))
+(assert (not (= q (fp #b0 #b01111100011 #b0000100000000000000000000000000000000000000000000000)))) ;; +0X1.0800000000000P-28 
 
 (check-sat)
 (check-sat-using smt)
-(check-sat-using (then
-                     fpa2bv
-                     (using-params simplify :elim_and true)
-                     bit-blast
-                     sat))
+(check-sat-using (then fpa2bv smt))
 (exit)

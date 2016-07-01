@@ -17,16 +17,8 @@
 (get-value (r))
 (check-sat-using smt)
 (get-value (r))
-(check-sat-using (then                     
-                     fpa2bv
-                     (using-params simplify :elim_and true)
-                     bit-blast                     
-                     sat))
+(check-sat-using (then fpa2bv smt))
 (get-value (r))
-(check-sat-using (then
-                     fpa2bv
-                     (using-params simplify :elim_and true)
-                     bit-blast
-                     sat))
+(check-sat-using (then fpa2bv smt))
 (get-value (r))
 (exit)

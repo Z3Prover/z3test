@@ -1,10 +1,3 @@
 sat
-(((select A (_ +oo 8 24)) (select (store ((as const
-                    (Array (_ FloatingPoint 8 24) (_ FloatingPoint 11 53)))
-                 (fp #b0 #b00000000000 #x0000000000001))
-               (fp #b0 #x00 #b00001000000000000000000)
-               (fp #b0 #b00000000000 #x0000000000020))
-        (_ +oo 8 24))))
-(((select B 0) (_ +zero 11 53)))
-(((select B 1) (fp #b0 #b00000000000 #x0000000000001)))
+((AP (fp #b0 #b00000000000 #x0000000000001)))
 ((C (store ((as const (Array (_ FloatingPoint 11 53) Int)) 4) (_ -oo 11 53) 5)))
