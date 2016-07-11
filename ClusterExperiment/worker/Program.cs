@@ -1256,7 +1256,6 @@ namespace worker
             {
                 Console.WriteLine("Worker dying because of: " + ex.Message);
                 Console.WriteLine("Stacktrace: " + ex.StackTrace);
-                saveResults();
                 return 1;
             }
 

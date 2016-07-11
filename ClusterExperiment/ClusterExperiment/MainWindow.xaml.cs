@@ -221,7 +221,7 @@ namespace ClusterExperiment
             Mouse.OverrideCursor = System.Windows.Input.Cursors.Wait;
             IsEnabled = false;
             bool first = true;
-            uint max_retries = 100, retries = 0;
+            uint max_retries = 1, retries = 0;
 
             while (sql == null || sql.State != ConnectionState.Open)
             {
@@ -243,7 +243,7 @@ namespace ClusterExperiment
                             System.Windows.MessageBoxImage.Error);
                         sql = null;
                         updateState();
-                        return;
+                        goto bailout;
                     }
                 }
                 else
@@ -255,6 +255,7 @@ namespace ClusterExperiment
                 first = false;
             }
 
+            bailout:
             IsEnabled = true;
             Mouse.OverrideCursor = null;
         }
