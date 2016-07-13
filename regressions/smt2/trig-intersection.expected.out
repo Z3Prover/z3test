@@ -1,0 +1,5 @@
+sat
+(model 
+  (define-fun theta () Real
+    (asin (root-obj (+ (* 2 (^ x 2)) (- 1)) 1)))
+)
