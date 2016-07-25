@@ -1,8 +1,11 @@
-(declare-datatypes () ((PartID (P1) (P0) (P3))))
-(declare-fun n3_p () PartID)
-(declare-fun n2_p () PartID)
-(declare-fun n1_p () PartID)
-(declare-fun n0_p () PartID)
+; Copyright (c) 2016 Microsoft Corporation
+; Loosely based on https://github.com/Z3Prover/z3/issues/693
+
+(declare-datatypes () ((P (P1) (P0) (P3))))
+(declare-fun n3_p () P)
+(declare-fun n2_p () P)
+(declare-fun n1_p () P)
+(declare-fun n0_p () P)
 (declare-fun imbalance () Int)
 (assert (let ((a!1 (+ 0
               (ite (= n0_p P0) 1 0)
@@ -21,7 +24,7 @@
 (assert (is-P1 n0_p))
 (assert (is-P3 n0_p))
 
-(assert (forall ((x PartID) (y Int) (z Bool))
+(assert (forall ((x P) (y Int) (z Bool))
     (=> z (= x P0))))
 
 (apply dt2bv)
