@@ -71,7 +71,7 @@ cd $Z3_DIR
 if [ "$?" != "0" ]; then echo "cd failed." && exit 1; fi
 rm -rf build build-dist dist
 if [ "$?" != "0" ]; then echo "cleanup2 failed." && exit 1; fi
-python scripts/mk_unix_dist.py --githash
+python scripts/mk_unix_dist.py --githash --dotnet-key=~/secret/z3.snk
 if [ "$?" != "0" ]; then echo "distribution build failed." && exit 1; fi
 git rev-parse HEAD > $ROOT/last_z3_hash 
 cd - > /dev/null
