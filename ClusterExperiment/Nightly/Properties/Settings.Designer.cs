@@ -25,7 +25,7 @@ namespace Nightly.Properties {
         
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("C:\\Nightly\\config.xml")]
+        [global::System.Configuration.DefaultSettingValueAttribute("D:\\Nightly\\config.xml")]
         public string config_file {
             get {
                 return ((string)(this["config_file"]));

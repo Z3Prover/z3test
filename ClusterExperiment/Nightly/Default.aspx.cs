@@ -975,6 +975,15 @@ namespace Nightly
             return tabSummary;
         }
 
+        TabPanel buildStatsTab(Job j, string category)
+        {
+            TabPanel res = new TabPanel();
+            res.HeaderTemplate = new TabHeaderTemplate(AlertLevel.None, "Statistics", "Statistical information about the job.");
+            res.ContentTemplate = new TabContentTemplate(new List<string>());
+            res.Controls.Add(buildStatistics(j, category));
+            return res;
+        }
+
         TableRow buildStatisticsRow(string text, uint value, string unit, Color flagColor)
         {
             TableRow row = new TableRow();
@@ -1081,18 +1090,11 @@ namespace Nightly
             AlertSet catAlerts = alerts[category];
 
             TabContainer tc = new TabContainer();
-            tc.Height = 200;
+            tc.Height = 250;
             tc.ScrollBars = ScrollBars.Vertical;
 
-            TabPanel tabSummary = buildSummaryTab(category, alliswelltext, alerts);
-
-            TabPanel tabStats = new TabPanel();
-            tabStats.HeaderTemplate = new TabHeaderTemplate(AlertLevel.None, "Statistics", "Statistical information about the job.");
-            tabStats.ContentTemplate = new TabContentTemplate(new List<string>());
-            tabStats.Controls.Add(buildStatistics(j, category));
-
-            tc.Tabs.Add(tabSummary);
-            tc.Tabs.Add(tabStats);
+            tc.Tabs.Add(buildSummaryTab(category, alliswelltext, alerts));
+            tc.Tabs.Add(buildStatsTab(j, category));
             tc.Tabs.Add(buildListTab("Errors", AlertLevel.Warning, j.Errors[category], "A benchmark is classified as erroneous when its return value is non-zero (except for memory outs)."));
             tc.Tabs.Add(buildListTab("Bugs", AlertLevel.Critical, j.Bugs[category], "A benchmark is classified as buggy when its result does not agree with its annotation."));
             tc.Tabs.Add(buildListTab("Underperformers", AlertLevel.None, j.Underperformers[category], "A benchmark underperforms when it has SAT/UNSAT annotations and some of them were not achieved."));
