@@ -195,8 +195,7 @@ namespace ClusterExperiment
                 da.SelectCommand.CommandTimeout = 0;
                 da.Fill(ds, "Database Connections");
                 connectionsGrid.ItemsSource = ds.Tables[0].DefaultView;
-
-
+                tiHdrDBConnections.Header = "DB Connections (" + connectionsGrid.Items.Count + ")";
             }
             catch (Exception ex)
             {
@@ -353,6 +352,7 @@ namespace ClusterExperiment
                 dataGrid.ItemsSource = null;
                 btnNewJob.IsEnabled = false;
                 btnUpdate.IsEnabled = false;
+                tiHdrDBConnections.Header = "DB Connections";
             }
         }
 

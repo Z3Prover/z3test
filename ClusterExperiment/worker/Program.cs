@@ -87,9 +87,9 @@ namespace worker
             }
             catch (Exception ex)
             {
-                Thread.Sleep(10000);
+                Thread.Sleep(rng.Next(500, 60000));
                 Console.WriteLine("Retrying after SQL connection failure: " + ex.Message);
-                if (retry_cnt++ < 100)
+                if (retry_cnt++ < 1000)
                     goto retry;
                 else
                     throw new Exception("Tried to connect to SQL server 100 times but could not connect.");
@@ -387,23 +387,19 @@ namespace worker
                     limit += 300; // +5 minutes
 
                     string cond = "((Worker IS NULL) OR (DATEDIFF(second, AcquireTime, GETDATE()) >= " + limit.ToString() + ")";
-                    //string cond = "(Worker IS NULL)";
 
-                    List<Result>.Enumerator en = results.GetEnumerator();
-                    while (en.MoveNext())
-                    {
-                        cond += " AND (ID <> " + en.Current.j.ID + ")";
-                    }
+                    foreach (Result r in results)
+                        cond += " AND (ID <> " + r.j.ID + ")";
 
                     cond += ")";
 
-                    Dictionary<string, Object> rd = new Dictionary<string, object>();
-
-                    rd = SQLRead("DECLARE @jid INT;" +
+                    Dictionary<string, Object> rd = SQLRead(
+                                 "DECLARE @jid INT;" +
                                  "BEGIN TRANSACTION; " +
                                  "SELECT TOP 1 @jid = ID FROM JobQueue WITH (ROWLOCK,UPDLOCK,READPAST) WHERE " +
                                  "ExperimentID=" + e.ID + " AND " + cond + ";" +
-                                 "UPDATE JobQueue SET Worker='" + myName + "',AcquireTime=GETDATE() WHERE ID=@jid; COMMIT; " +
+                                 "UPDATE JobQueue SET Worker='" + myName + "',AcquireTime=GETDATE() WHERE ID=@jid;" +
+                                 "COMMIT; " +
                                  "SELECT a.ID as ID,a.FilenameP as FileP,b.s as Filename FROM JobQueue as a, Strings as b " +
                                  "WHERE a.ID=@jid AND a.FilenameP=b.ID;");
 

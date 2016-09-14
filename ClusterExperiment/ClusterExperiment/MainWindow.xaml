@@ -167,7 +167,7 @@
                 </DataGrid>
             </TabItem>
 
-            <TabItem Header="DB Connections">
+            <TabItem Header="DB Connections" Name="tiHdrDBConnections">
                 <DataGrid AutoGenerateColumns="True" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="10,10,10,10" Name="connectionsGrid" IsReadOnly="True" ColumnWidth="100"/>
             </TabItem>
 
