@@ -300,9 +300,10 @@ def exec_script(script, timeout):
     return True
 
 def test_pyscripts(z3libdir, scriptdir, ext="py", timeout_duration=60.0):
+    pydir = os.path.join(z3libdir, "python")
     print("Testing scripts at %s using %s" % (scriptdir, z3libdir))
     with setenv('LD_LIBRARY_PATH', z3libdir):
-        with setenv('PYTHONPATH', z3libdir):
+        with setenv('PYTHONPATH', pydir):
             with setenv('DYLD_LIBRARY_PATH', z3libdir):
                 print("Testing python scripts at %s using %s" % (scriptdir, z3libdir))
                 error = False
