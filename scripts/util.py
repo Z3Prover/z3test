@@ -165,7 +165,7 @@ def testz3py(branch="master", debug=True, clang=False):
     bdir = get_builddir(branch, debug, clang)
     p    = os.path.join(z3dir, bdir, "python")
     with cd(p):
-        if subprocess.call([config.PYTHON, 'z3test.py']) != 0:
+        if subprocess.call([config.PYTHON, 'z3test.py', 'z3']) != 0:
             raise Exception("Failed to execute Z3 python regression tests 'z3test.py' at '%s'" % p)
         if subprocess.call([config.PYTHON, 'z3test.py', 'z3num']) != 0:
             raise Exception("Failed to execute Z3 python regression tests 'z3num.py' at '%s'" % p)
