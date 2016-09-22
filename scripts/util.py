@@ -163,11 +163,11 @@ def buildz3(branch="master", everything=False, clean=False, debug=True, dotnet=F
 def testz3py(branch="master", debug=True, clang=False):
     z3dir = find_z3depot()
     bdir = get_builddir(branch, debug, clang)
-    p    = os.path.join(z3dir, bdir)
+    p    = os.path.join(z3dir, bdir, "python")
     with cd(p):
         if subprocess.call([config.PYTHON, 'z3test.py']) != 0:
             raise Exception("Failed to execute Z3 python regression tests 'z3test.py' at '%s'" % p)
-        if subprocess.call([config.PYTHON, 'z3num.py']) != 0:
+        if subprocess.call([config.PYTHON, 'z3test.py', 'z3num']) != 0:
             raise Exception("Failed to execute Z3 python regression tests 'z3num.py' at '%s'" % p)
 
 def testjavaex(branch="master", debug=True, clang=False):

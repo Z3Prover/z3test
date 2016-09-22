@@ -7,7 +7,6 @@
 
 (set-option :model_validate true)
 
-
 ; extract/substr
 
 (simplify (= "b" (str.substr "abc" 1 1)))
