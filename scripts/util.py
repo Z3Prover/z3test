@@ -164,11 +164,14 @@ def testz3py(branch="master", debug=True, clang=False):
     z3dir = find_z3depot()
     bdir = get_builddir(branch, debug, clang)
     p    = os.path.join(z3dir, bdir, "python")
+    print('Testing docstrings in %s' % p)
     with cd(p):
+        print('Testing z3test.py z3')
         if subprocess.call([config.PYTHON, 'z3test.py', 'z3']) != 0:
             raise Exception("Failed to execute Z3 python regression tests 'z3test.py' at '%s'" % p)
-#        if subprocess.call([config.PYTHON, 'z3test.py', 'z3num']) != 0:
-#            raise Exception("Failed to execute Z3 python regression tests 'z3num' at '%s'" % p)
+        print('Testing z3test.py z3num')
+        if subprocess.call([config.PYTHON, 'z3test.py', 'z3num']) != 0:
+            raise Exception("Failed to execute Z3 python regression tests 'z3num' at '%s'" % p)
 
 def testjavaex(branch="master", debug=True, clang=False):
     z3dir = find_z3depot()
@@ -300,18 +303,15 @@ def exec_script(script, timeout):
     return True
 
 def test_pyscripts(z3libdir, scriptdir, ext="py", timeout_duration=60.0):
-    if not is_windows():
-       return # disabled pending fixes to ubuntu64, debian, free-bsd, macOS tests
     pydir = os.path.join(z3libdir,"python")
     with setenv('LD_LIBRARY_PATH', z3libdir):
-        with setenv('PYTHONPATH', z3libdir + ";" + pydir):
+        with setenv('PYTHONPATH', z3libdir + os.pathsep + pydir):
             with setenv('DYLD_LIBRARY_PATH', z3libdir):
                 newpath = os.environ['PATH']
                 if is_windows():
-                    newpath += ';' + z3libdir 
+                    newpath += os.pathsep + z3libdir
                 with setenv('PATH', newpath):
                     print("Testing python scripts at %s using %s" % (scriptdir, z3libdir))
-                    print(os.environ['PATH'])
                     error = False
                     for script in filter(lambda f: f.endswith(ext), os.listdir(scriptdir)):
                         script = os.path.join(scriptdir, script)
