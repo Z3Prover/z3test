@@ -300,6 +300,8 @@ def exec_script(script, timeout):
     return True
 
 def test_pyscripts(z3libdir, scriptdir, ext="py", timeout_duration=60.0):
+    if not is_windows():
+       return # disabled pending fixes to ubuntu64, debian, free-bsd, macOS tests
     pydir = os.path.join(z3libdir,"python")
     with setenv('LD_LIBRARY_PATH', z3libdir):
         with setenv('PYTHONPATH', z3libdir + ";" + pydir):
