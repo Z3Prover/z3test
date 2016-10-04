@@ -304,30 +304,28 @@ def exec_script(script, timeout):
 
 def test_pyscripts(z3libdir, scriptdir, ext="py", timeout_duration=60.0):
     pydir = os.path.join(z3libdir,"python")
-    with setenv('LD_LIBRARY_PATH', z3libdir):
-        with setenv('PYTHONPATH', z3libdir + os.pathsep + pydir):
-            with setenv('DYLD_LIBRARY_PATH', z3libdir):
-                newpath = os.environ['PATH']
-                if is_windows():
-                    newpath += os.pathsep + z3libdir
-                with setenv('PATH', newpath):
-                    print("Testing python scripts at %s using %s" % (scriptdir, z3libdir))
-                    error = False
-                    for script in filter(lambda f: f.endswith(ext), os.listdir(scriptdir)):
-                        script = os.path.join(scriptdir, script)
-                        print("Testing %s" % script)
-                        try:
-                            if timeout(exec_script,
-                                   args=[script, timeout_duration],
-                                   timeout_duration=timeout_duration,
-                                   default=False) == False:
-                                raise Exception("Timeout executing script '%s' at '%s' using '%s'" % (script, scriptdir, z3libdir)) 
-                        except Exception as ex:
-                            print("Failed")
-                            print(ex)
-                            error = True
-                    if error:
-                        raise Exception("Found errors testing scripts at '%s' using '%s'" % (scriptdir, z3libdir))
+    if is_linux(): ldvar = 'LD_LIBRARY_PATH'
+    elif is_osx(): ldvar = 'DYLD_LIBRARY_PATH'
+    else: ldvar = 'PATH'
+    with setenv(ldvar, z3libdir):
+        with setenv('PYTHONPATH', pydir):
+            print("Testing python scripts at %s using %s" % (scriptdir, z3libdir))
+            error = False
+            for script in filter(lambda f: f.endswith(ext), os.listdir(scriptdir)):
+                script = os.path.join(scriptdir, script)
+                print("Testing %s" % script)
+                try:
+                    if timeout(exec_script,
+                               args=[script, timeout_duration],
+                               timeout_duration=timeout_duration,
+                               default=False) == False:
+                        raise Exception("Timeout executing script '%s' at '%s' using '%s'" % (script, scriptdir, z3libdir)) 
+                except Exception as ex:
+                    print("Failed")
+                    print(ex)
+                    error = True
+            if error:
+                raise Exception("Found errors testing scripts at '%s' using '%s'" % (scriptdir, z3libdir))
     
 def test_pyscripts_using_latest(scriptdir, branch="master", debug=True, clang=False, ext="py", timeout_duration=60.0):
     z3dir = find_z3depot()
