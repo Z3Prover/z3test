@@ -236,8 +236,9 @@ def subprocess_killer(args, stdin=None, stdout=None, stderr=None, shell=False, e
     try:
         if shell: 
             args = ''.join(a + ' ' for a in args)
-            for k, v in env.items():
-                args = k + '=' + v + ' ' + args
+            if not is_windows():
+                for k, v in env.items():
+                    args = k + '=' + v + ' ' + args
         p = subprocess.Popen(args, stdin=stdin, stdout=stdout, stderr=stderr, shell=shell, env=env)
         start = time.time()
         time.sleep(0.02)
@@ -311,17 +312,18 @@ def exec_pyscript(script, timeout, env):
 def test_pyscripts(z3libdir, scriptdir, ext="py", timeout_duration=60.0):
     pydir = os.path.join(z3libdir, "python")
 
-    if is_linux(): 
-        ldvar = 'LD_LIBRARY_PATH'
-    elif is_osx(): 
-        ldvar = 'DYLD_LIBRARY_PATH'
-    else: 
-        ldvar = 'PATH'
-
     myenv = {}
-    myenv[ldvar] = z3libdir
-    myenv['PYTHONPATH'] = pydir
+    
+    if is_linux(): 
+        myenv['LD_LIBRARY_PATH'] = z3libdir
+    elif is_osx(): 
+        myenv['DYLD_LIBRARY_PATH'] = z3libdir
+    else: 
+        myenv['PATH'] = os.environ['PATH'] + os.pathsep + z3libdir
+        myenv['SYSTEMROOT'] = os.environ['SYSTEMROOT']
 
+    myenv['PYTHONPATH'] = pydir
+    
     print("Testing python scripts at %s using %s" % (scriptdir, z3libdir))
     error = False 
     for script in filter(lambda f: f.endswith(ext), os.listdir(scriptdir)):
