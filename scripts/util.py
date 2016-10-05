@@ -312,13 +312,13 @@ def test_pyscripts(z3libdir, scriptdir, ext="py", timeout_duration=60.0):
 
     myenv = {}
     
-    if is_linux(): 
+    if is_linux() or is_freebsd(): 
         myenv['LD_LIBRARY_PATH'] = z3libdir
     elif is_osx(): 
         myenv['DYLD_LIBRARY_PATH'] = z3libdir
     else: 
-        myenv['PATH'] = os.environ['PATH'] + os.pathsep + z3libdir
-        myenv['SYSTEMROOT'] = os.environ['SYSTEMROOT']
+        myenv['PATH'] = os.getenv('PATH', '') + os.pathsep + z3libdir
+        myenv['SYSTEMROOT'] = os.getenv('SYSTEMROOT', '')
 
     myenv['PYTHONPATH'] = pydir
     
