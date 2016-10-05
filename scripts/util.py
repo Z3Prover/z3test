@@ -41,14 +41,12 @@ class setenv:
         if self.var in os.environ:
             self.old_val = os.environ[self.var]
         os.environ[self.var] = self.val
-        print('setting %s=%s' % (self.var, self.val))
 
     def __exit__(self, etype, value, traceback):
         if self.old_val == None:
             os.environ.pop(self.var)
         else:
             os.environ[self.var] = self.old_val
-            print('setting %s=%s' % (self.var, self.old_val))
 
 def rmf(path):
     if not os.path.exists(path):
