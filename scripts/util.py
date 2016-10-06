@@ -317,9 +317,9 @@ def test_pyscripts(z3libdir, scriptdir, ext="py", timeout_duration=60.0):
     elif is_osx(): 
         myenv['DYLD_LIBRARY_PATH'] = z3libdir
     else: 
-        myenv['PATH'] = os.getenv('PATH', '') + os.pathsep + z3libdir
         myenv['SYSTEMROOT'] = os.getenv('SYSTEMROOT', '')
 
+    myenv['PATH'] = os.getenv('PATH', '') + os.pathsep + z3libdir
     myenv['PYTHONPATH'] = pydir
     
     print("Testing python scripts at %s using %s" % (scriptdir, z3libdir))
