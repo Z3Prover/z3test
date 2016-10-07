@@ -218,11 +218,10 @@ def runbuild(vm, vm_port, need_start, file_pattern): # 0 = ok, 1 = infrastructur
         ldfile = bin_dir + '/' + dfile
         
         if os.path.isfile(ldfile):
-            log.write('Distribution file %s already exists; keeping distribution and log file' % ldfile)
+            log.write('Distribution file %s already exists; keeping distribution and log file.\n' % ldfile)
             if (need_start): stopvm(vm, log)
-            ok = True
         else:
-            log.write('Distribution file %s is new; copying.' % ldfile)
+            log.write('Distribution file %s is new; copying.\n' % ldfile)
             scpget('z3/dist/' + dfile, dist + '/' + dfile, vm_port, vm_user, vm_host, log)
             shutil.copy(logname, dist + '/' + dfile + '.log')
             if (need_start): stopvm(vm, log)
