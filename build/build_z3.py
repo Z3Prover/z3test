@@ -30,11 +30,11 @@ vm_timeout = 60
 admins = [ 'cwinter@microsoft.com' ]
 
 devs   = [ 'cwinter@microsoft.com',
-           'leonardo@microsoft.com',
-           'nbjorner@microsoft.com',
-           'kenmcmil@microsoft.com',
-           'nlopes@microsoft.com',
-           'mikjan@microsoft.com'
+           #'leonardo@microsoft.com',
+           #'nbjorner@microsoft.com',
+           #'kenmcmil@microsoft.com',
+           #'nlopes@microsoft.com',
+           #'mikjan@microsoft.com'
            ]
 
 smtp_serv = '127.0.0.1'
@@ -215,33 +215,40 @@ def runbuild(vm, vm_port, need_start, file_pattern): # 0 = ok, 1 = infrastructur
         scpget('build_z3.df', 'temp.df', vm_port, vm_user, vm_host, log)
         with open('temp.df') as tf: dfile = tf.readline().strip()
         os.unlink('temp.df')
-        scpget('z3/dist/' + dfile, dist + '/' + dfile, vm_port, vm_user, vm_host, log)
-        shutil.copy(logname, dist + '/' + dfile + '.log')
+        ldfile = bin_dir + '/' + dfile
+        
+        if os.path.isfile(ldfile):
+            log.write('Distribution file %s already exists; keeping distribution and log file' % ldfile)
+            if (need_start): stopvm(vm, log)
+            ok = True
+        else:
+            log.write('Distribution file %s is new; copying.' % ldfile)
+            scpget('z3/dist/' + dfile, dist + '/' + dfile, vm_port, vm_user, vm_host, log)
+            shutil.copy(logname, dist + '/' + dfile + '.log')
+            if (need_start): stopvm(vm, log)
 
-        if (need_start): stopvm(vm, log)
+            # Commit the distro file into bin.        
+            os.chdir(bin_dir)
 
-        # Commit the distro file into bin.        
-        os.chdir(bin_dir)
+            # We don't `git rm' old files, but wipe them from the history.
+            for file in glob.glob('*'):
+                if file_pattern in file:
+                    os.chdir(start_dir)
+                    os.chdir(bin_repo)
+                    call_logged('git filter-branch -f --prune-empty --tree-filter "rm -f %s/%s" HEAD' % (bin_subdir, file), log)
+                    call_logged('git filter-branch -f --prune-empty --tree-filter "rm -f %s/z3-%s-failure-*.log" HEAD' % (bin_subdir, file_pattern), log)
+                    os.chdir(start_dir)
+                    os.chdir(bin_dir)
 
-        # We don't `git rm' old files, but wipe them from the history.
-        for file in glob.glob('*'):
-            if file_pattern in file:
-                os.chdir(start_dir)
-                os.chdir(bin_repo)
-                call_logged('git filter-branch -f --prune-empty --tree-filter "rm -f %s/%s" HEAD' % (bin_subdir, file), log)
-                call_logged('git filter-branch -f --prune-empty --tree-filter "rm -f %s/z3-%s-failure-*.log" HEAD' % (bin_subdir, file_pattern), log)
-                os.chdir(start_dir)
-                os.chdir(bin_dir)
-
-        for file in glob.glob('%s/%s/*.zip' % (start_dir, dist)):
-            if file_pattern in file:
-                shutil.copy(file, '.')
-                shutil.copy(file + '.log', '.')
-                call_logged('git add -v ' + os.path.basename(file), log)
-                call_logged('git add -v ' + os.path.basename(file) + '.log', log)
+            for file in glob.glob('%s/%s/*.zip' % (start_dir, dist)):
+                if file_pattern in file:
+                    shutil.copy(file, '.')
+                    shutil.copy(file + '.log', '.')
+                    call_logged('git add -v ' + os.path.basename(file), log)
+                    call_logged('git add -v ' + os.path.basename(file) + '.log', log)
                 
-        call_logged('git commit -v -m "Automatic nightly build."', log)
-        call_logged('git push -v --force', log)
+            call_logged('git commit -v -m "Automatic nightly build."', log)
+            call_logged('git push -v --force', log)
         
         os.chdir(start_dir)
         log.close()
