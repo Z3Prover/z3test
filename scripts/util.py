@@ -1,6 +1,7 @@
 # Copyright (c) 2015 Microsoft Corporation
 
 import os
+import sys
 import subprocess
 import shutil
 import config 
@@ -147,16 +148,26 @@ def make(branch, debug, everything, clang, jobs):
         if subprocess.call(cmd) != 0:
             raise Exception("Failed to make Z3\n%s\n" % cmd)
         
+def print_dirlisting(bdir):
+    print('Content of %s:' % bdir)
+    for dirname, dirnames, filenames in os.walk(bdir):
+        for subdirname in dirnames:
+            print(os.path.join(dirname, subdirname))
 
+        for filename in filenames:
+            print(os.path.join(dirname, filename))
+        
 def buildz3(branch="master", everything=False, clean=False, debug=True, dotnet=False, java=False, clang=False, static=False, VS64=False, jobs=16, extraflags=[]):
     z3dir = find_z3depot()
     with cd(z3dir):
         gitcheckout(branch)
         gitpull(branch)
         bdir = get_builddir(branch, debug, clang)
+        sys.stdout.flush()
         if clean:
             rmf(bdir)
         mk_dir(bdir)
+        print_dirlisting(bdir)
         mk_make(branch, debug, dotnet, java, clang, static, VS64, extraflags)
         make(branch, debug, everything, clang, jobs)
 
@@ -261,7 +272,7 @@ def test_benchmark(z3exe, benchmark, timeout, expected=None):
     producedf = open(produced, 'w')
     errcode = 0
     try:
-        errcode = subprocess_killer([z3exe, 'model_validate=true', benchmark], stdout=producedf, stderr=producedf, timeout=timeout)
+        errcode = subprocess_killer([z3exe, 'model_validate=true', benchmark], stdout=producedf, stderr=producedf, timeout=timeout, env=os.environ)
     except:
         raise Exception("Failed to start Z3: %s" % z3exe)
     producedf.close()
@@ -303,7 +314,8 @@ def test_benchmarks_using_latest(benchdir, branch="master", debug=True, clang=Fa
     test_benchmarks(z3exe, benchdir, ext, timeout_duration)
 
 def exec_pyscript(script, timeout, env):
-    if subprocess_killer([config.PYTHON, script], timeout=timeout, shell=True, env=env) != 0:
+    shell = False if is_windows() else True
+    if subprocess_killer([config.PYTHON, script], timeout=timeout, shell=shell, env=env) != 0:
         raise Exception("Script '%s' returned non-zero exit code" % script)
     return True
 
@@ -319,7 +331,7 @@ def test_pyscripts(z3libdir, scriptdir, ext="py", timeout_duration=60.0):
     else: 
         myenv['SYSTEMROOT'] = os.getenv('SYSTEMROOT', '')
 
-    myenv['PATH'] = os.getenv('PATH', '') + os.pathsep + z3libdir
+    myenv['PATH'] = os.getenv("PATH", "") + os.pathsep + z3libdir
     myenv['PYTHONPATH'] = pydir
     
     print("Testing python scripts at %s using %s" % (scriptdir, z3libdir))
@@ -345,13 +357,13 @@ def test_pyscripts_using_latest(scriptdir, branch="master", debug=True, clang=Fa
     bdir  = get_builddir(branch, debug, clang)
     test_pyscripts(os.path.join(z3dir, bdir), scriptdir, ext, timeout_duration)
 
-def exec_cs_compile(args, timeout):
-    if subprocess_killer(args, timeout=timeout) != 0:
+def exec_cs_compile(args, timeout, env):
+    if subprocess_killer(args, timeout=timeout, env=env) != 0:
         raise Exception("Compilation of '%s' failed" % file)
     return True
 
-def exec_cs(timeout):
-    if subprocess_killer(config.CSTEMP, timeout=timeout) != 0:
+def exec_cs(timeout, env):
+    if subprocess_killer(config.CSTEMP, timeout=timeout, env=env) != 0:
         raise Exception("Execution of '%s' failed" % (config.CSTEMP))
     return True
 
@@ -371,19 +383,20 @@ def test_cs(z3libdir, csdir, ext="cs", VS64=False, timeout_duration=60.0):
             try:
                 # Compile.
                 if timeout(exec_cs_compile,
-                           args=[[config.CSC, "/nologo", 
+                           args=[[config.CSC, "/nologo",
                                   "/reference:%s\Microsoft.Z3.dll" % z3libdir, 
                                   "/out:%s" % (config.CSTEMP), 
                                   platform_arg, 
                                   "%s\%s" % (csdir, config.CSDRIVER), 
                                   file],
-                                  timeout_duration],
+                                 timeout_duration,
+                                 os.environ],
                            timeout_duration=timeout_duration,
                            default=False) == False:
                     raise Exception("Timeout compiling '%s' at '%s' using '%s'" % (file, csdir, z3libdir))
                 # Run.
                 if timeout(exec_cs,
-                           args=[timeout_duration],
+                           args=[timeout_duration, os.environ],
                            timeout_duration=timeout_duration,
                            default=False) == False:
                     raise Exception("Timeout executing '%s' at '%s' using '%s'" % (file, csdir, z3libdir)) 

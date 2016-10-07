@@ -83,14 +83,20 @@ set Z3DIR=%TMPDIR%
 pushd z3test
 SET PYTHON=C:\Python35_x32\python.exe
 call %VCVARS% x86 >> %LOG%
+SET PREPATH=%PATH%
+SET PATH=%PREPATH%;C:\Python35_x32
 %PYTHON% scripts\win32test.py >> %LOG% 2>&1
-IF %ERRORLEVEL% NEQ 0 goto :ERR	
+SET PATH=%PREPATH%
+IF %ERRORLEVEL% NEQ 0 goto :ERR
 
 echo DONE WITH W32TEST >> %LOG%
 
 SET PYTHON=C:\Python35_x64\python.exe
 call %VCVARS% x64 >> %LOG%
+SET PREPATH=%PATH%
+SET PATH=%PREPATH%;C:\Python35_x64
 %PYTHON% scripts\win64test.py >> %LOG% 2>&1
+SET PATH=%PREPATH%
 IF %ERRORLEVEL% NEQ 0 goto :ERR
 
 echo DONE WITH W64TEST >> %LOG%
@@ -110,7 +116,10 @@ IF EXIST %LOCAL_DISTROS%. (
 rmdir build-dist /S /Q
 
 SET PYTHON=C:\Python35_x32\python.exe
+SET PREPATH=%PATH%
+SET PATH=%PREPATH%;C:\Python35_x32
 %PYTHON% scripts\mk_win_dist.py -b build-dist\%CURRENT_Z3_HASH% --githash --dotnet-key=..\secret\z3.snk>> %LOG% 2>&1
+SET PATH=%PREPATH%
 echo DONE WITH WIN_DIST >> %LOG%
 IF %ERRORLEVEL% NEQ 0 goto :ERR
 
