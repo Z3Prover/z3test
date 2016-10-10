@@ -30,11 +30,10 @@ vm_timeout = 60
 admins = [ 'cwinter@microsoft.com' ]
 
 devs   = [ 'cwinter@microsoft.com',
-           #'leonardo@microsoft.com',
-           #'nbjorner@microsoft.com',
-           #'kenmcmil@microsoft.com',
-           #'nlopes@microsoft.com',
-           #'mikjan@microsoft.com'
+           'leonardo@microsoft.com',
+           'nbjorner@microsoft.com',
+           'kenmcmil@microsoft.com',
+           'nlopes@microsoft.com'
            ]
 
 smtp_serv = '127.0.0.1'
