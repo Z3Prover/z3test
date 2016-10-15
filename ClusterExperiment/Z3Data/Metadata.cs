@@ -11,14 +11,16 @@ namespace Z3Data
         public MetaData(string dataDir, uint id)
         {
             _filename = dataDir + @"\" + id.ToString() + "_meta.csv";
+            _dataFilename = dataDir + @"\" + id.ToString() + ".zip";
             _id = id;
 
-            if (File.Exists(_filename))                
+            if (File.Exists(_filename))
                 Load();
-        }        
+        }
 
         public uint Id { get { return _id; } set { _id = value; } }
-        public string Filename { get { return _filename; } set { _filename = value; } }
+        public string MetaFilename { get { return _filename; } }
+        public string DataFilename { get { return _dataFilename; } }
         public DateTime SubmissionTime { get { return _submitTime; } set { _submitTime = value; } }
         public string Cluster { get { return _cluster; } set { _cluster = value; } }
         public uint ClusterJobId { get { return _clusterJobId; } set { _clusterJobId = value; } }
@@ -30,13 +32,14 @@ namespace Z3Data
         public string Nodegroup { get { return _nodeGroup; } set { _nodeGroup = value; } }
         public string Locality { get { return _locality; } set { _locality = value; } }
         public uint Reference { get { return _reference; } set { _reference = value; } }
-        public bool isFinished { get { return _isFinished; } set { _isFinished = value; } }        
+        public bool isFinished { get { return _isFinished; } set { _isFinished = value; } }
+        public DateTime LastDataModification { get { return File.GetLastWriteTime(DataFilename); } }
 
         protected void Load()
         {
             FileStream fs = File.Open(_filename, FileMode.Open, FileAccess.Read, FileShare.Read);
             StreamReader r = new StreamReader(fs);
-            
+
             while (!r.EndOfStream)
             {
                 string line = r.ReadLine();
@@ -108,5 +111,6 @@ namespace Z3Data
         string _locality = "";
         uint _reference = 0;
         bool _isFinished = false;
+        string _dataFilename = null;
     }
 }

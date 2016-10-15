@@ -1,8 +1,7 @@
+;; Copyright (c) 2015 Microsoft Corporation
 
-; Copyright (c) 2015 Microsoft Corporation
-;;(set-info :status unsat)
+(set-info :status unsat)
 (set-info :source "Handcrafted by C.M. Wintersteiger")
-
 (set-option :rewriter.hi_fp_unspecified true)
 
 ; 2^15 = 32768 -> (_ fp.to_sbv_unspecified 8); #x00 is the "hardware interpretation"

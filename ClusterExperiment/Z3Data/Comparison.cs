@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Web;
@@ -412,7 +413,7 @@ namespace Z3Data
             foreach (CSVRow xr in _jX.Rows)
             {
                 if (!xr.Filename.StartsWith(_prefix) ||
-                    (last_x != null && last_x.CompareTo(xr.Filename) == 0)) // ignore duplicates.                    
+                    (last_x != null && last_x.CompareTo(xr.Filename) == 0)) // ignore duplicates.
                     continue;
 
                 do
@@ -436,7 +437,7 @@ namespace Z3Data
                     continue;
 
                 AddStatisticsX(xr);
-                
+
                 if (yr.Filename.CompareTo(xr.Filename) == 0)
                 {
                     AddStatisticsXY(xr, yr);
@@ -444,6 +445,17 @@ namespace Z3Data
                 }
 
                 last_x = xr.Filename;
+            }
+            
+            while (yit.MoveNext())
+            {
+                yr = yit.Current;
+                if (!yr.Filename.StartsWith(_prefix)||
+                    (last_y != null && last_y.CompareTo(yr.Filename) == 0)) // ignore duplicates.
+                    continue;                
+                Debug.Assert(yr.Filename.StartsWith(_prefix));
+                AddStatisticsY(yr);
+                last_y = yr.Filename;
             }
         }
 

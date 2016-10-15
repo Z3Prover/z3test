@@ -44,11 +44,11 @@ namespace ClusterExperiment
         private string username = null;
         private string categories = null;
 
-        public Submission(string db) // Connect...
+        public Submission(string db, bool reconnect) // Connect...
         {
             InitializeComponent();
             Mouse.OverrideCursor = System.Windows.Input.Cursors.Wait;
-            Title = "Connecting...";
+            Title = reconnect ? "Reconnecting..." : "Connecting...";
 
             WindowInteropHelper helper = new WindowInteropHelper(this);
             SubmissionWorker w = new SubmissionWorker(helper.Handle, workers.Count());
@@ -74,7 +74,7 @@ namespace ClusterExperiment
             outerGrid.ColumnDefinitions.Add(c2);
 
             Label l = new Label();
-            l.Content = "Connecting...";
+            l.Content = reconnect ? "Reconnecting..." : "Connecting...";
             l.Height = 26;
             Grid.SetRow(l, 0);
             Grid.SetColumn(l, 0);

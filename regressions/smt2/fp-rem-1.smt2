@@ -1,6 +1,7 @@
+;; Copyright (c) 2016 Microsoft Corporation
 
-; Copyright (c) 2015 Microsoft Corporation
 (set-logic QF_FP)
+(set-info :source |Handcrafted by Christoph M. Wintersteiger (cwinter@microsoft.com).|)
 (set-info :status sat)
 
 (define-sort FPN () (_ FloatingPoint 11 53))
@@ -12,4 +13,6 @@
 
 (check-sat)
 (check-sat-using smt)
+(check-sat-using (then fpa2bv smt))
 (get-model)
+(exit)

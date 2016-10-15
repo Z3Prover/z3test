@@ -115,6 +115,8 @@
                         <CommandBinding Command="{x:Static custom:MainWindow.FlagCommand}" Executed="showFlag" CanExecute="canShowFlag" />
                         <CommandBinding Command="{x:Static custom:MainWindow.TallyCommand}" Executed="showTally" CanExecute="canShowTally" />
                         <CommandBinding Command="{x:Static custom:MainWindow.SaveMetaCSVCommand}" Executed="showSaveMetaCSV" CanExecute="canShowSaveMetaCSV" />
+                        <CommandBinding Command="{x:Static custom:MainWindow.SaveMatrixCommand}" Executed="showSaveMatrix" CanExecute="canShowSaveMatrix" />
+                        <CommandBinding Command="{x:Static custom:MainWindow.SaveOutputCommand}" Executed="showSaveOutput" CanExecute="canShowSaveOutput" />
                         <CommandBinding Command="Properties" Executed="showProperties" CanExecute="canShowProperties" />
                     </DataGrid.CommandBindings>
                     <DataGrid.InputBindings>
@@ -125,11 +127,9 @@
                             <MenuItem Name="mnuDelete" Command="Delete" />
                             <MenuItem Name="mnuCompare" Header="_Compare" Command="{x:Static custom:MainWindow.CompareCommand}" />
                             <MenuItem Name="mnuScatterplot" Header="_Scatterplot" Command="{x:Static custom:MainWindow.ScatterplotCommand}" />
-                            <MenuItem Name="mnuSaveAs" Header="Save CS_V..." Command="SaveAs"/>
                             <MenuItem Name="mnuCopy" Header="Copy _to..." Command="{x:Static custom:MainWindow.CopyCommand}" />
                             <MenuItem Name="mnuMove" Header="_Move to..." Command="{x:Static custom:MainWindow.MoveCommand}" />
                             <MenuItem Name="mnuCreateGroup" Header="Create _group..." Command="{x:Static custom:MainWindow.CreateGroupCommand}" />
-                            <MenuItem Name="mnuSaveBinary" Header="Save _binary to..." Command="{x:Static custom:MainWindow.SaveBinaryCommand}" />
                             <MenuItem Name="mnuUpdateBinary" Header="Update binary..." Command="{x:Static custom:MainWindow.UpdateBinaryCommand}" />
                             <MenuItem Name="mnuReinforcements" Header="Call _reinforcements..." Command="{x:Static custom:MainWindow.ReinforcementsCommand}" />
                             <MenuItem Name="mnuRecovery" Header="Requeue in. errors..." Command="{x:Static custom:MainWindow.RequeueIErrorsCommand}" />
@@ -139,7 +139,13 @@
                             <MenuItem Name="mnuDuplicates" Header="Resolve _duplicates..." Command="{x:Static custom:MainWindow.DuplicatesCommand}" />
                             <MenuItem Name="mnuFlag" Header="Toggle _flag" Command="{x:Static custom:MainWindow.FlagCommand}" InputGestureText="Ctrl-T" />
                             <MenuItem Name="mnuTally" Header="Ta_lly" Command="{x:Static custom:MainWindow.TallyCommand}" />
-                            <MenuItem Name="mnuSaveMetaCSV" Header="Save met_a CSV..." Command="{x:Static custom:MainWindow.SaveMetaCSVCommand}"/>
+                            <MenuItem Name="mnuSave" Header="Save...">
+                                <MenuItem Name="mnuSaveBinary" Header="_Binary to..." Command="{x:Static custom:MainWindow.SaveBinaryCommand}" />
+                                <MenuItem Name="mnuSaveAs" Header="CS_V..." Command="SaveAs"/>
+                                <MenuItem Name="mnuSaveMetaCSV" Header="_Meta CSV..." Command="{x:Static custom:MainWindow.SaveMetaCSVCommand}"/>
+                                <MenuItem Name="mnuSaveMatrix" Header="Matri_x..." Command="{x:Static custom:MainWindow.SaveMatrixCommand}"/>
+                                <MenuItem Name="mnuSaveOutput" Header="_Output..." Command="{x:Static custom:MainWindow.SaveOutputCommand}"/>
+                            </MenuItem>
                             <MenuItem Name="mnuProperties" Command="Properties" />
                         </ContextMenu>
                     </DataGrid.ContextMenu>
@@ -159,6 +165,10 @@
                         </ContextMenu>
                     </DataGrid.ContextMenu>
                 </DataGrid>
+            </TabItem>
+
+            <TabItem Header="DB Connections" Name="tiHdrDBConnections">
+                <DataGrid AutoGenerateColumns="True" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="10,10,10,10" Name="connectionsGrid" IsReadOnly="True" ColumnWidth="100"/>
             </TabItem>
 
         </TabControl>

@@ -495,7 +495,8 @@ namespace SubmissionLib
                                  string executor,
                                  string jobTemplate,
                                  int jobTimeout, int taskTimeout,
-                                 int nworkers = 0)
+                                 int nworkers = 0,
+                                 bool deleteExperimentOnError = true)
         {
             string limitsMinTrimmed = limitsMin.Trim();
             string limitsMaxTrimmed = limitsMax.Trim();
@@ -638,7 +639,8 @@ namespace SubmissionLib
             }
             catch (Exception ex)
             {
-                cmd = new SqlCommand("DELETE FROM JobQueue WHERE ExperimentID=" + newID + "; DELETE FROM Experiments WHERE ID=" + newID, sql);
+                cmd = new SqlCommand("DELETE FROM JobQueue WHERE ExperimentID=" + newID + ";" + 
+                                     (deleteExperimentOnError ? " DELETE FROM Experiments WHERE ID=" + newID : ""), sql);
                 cmd.CommandTimeout = 0;
                 cmd.ExecuteNonQuery();
                 if (hpcJob.State == JobState.Configuring ||
@@ -892,7 +894,7 @@ namespace SubmissionLib
 
                 r.Close();
 
-                SubmitHPCJob(DB, false, jobID, reinforcementCluster, nodegroup, priority, locality, "1", nworkers.ToString(), sharedDir, executor, jobTemplate, jobTimeout, taskTimeout);
+                SubmitHPCJob(DB, false, jobID, reinforcementCluster, nodegroup, priority, locality, "1", nworkers.ToString(), sharedDir, executor, jobTemplate, jobTimeout, taskTimeout, 0, false);
 
                 ReportProgress(100);
             }

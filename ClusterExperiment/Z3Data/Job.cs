@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Data;
-using System.Data.OleDb;
 using System.Data.SqlClient;
 using System.IO;
 using System.Diagnostics;
@@ -34,10 +33,9 @@ namespace Z3Data
     public class Job : IComparable<Job>, IDisposable
     {
         #region Internal
-        // internal stuff
         string _dataDir = null;
-        string _dataFilename = null;
         bool _needSummaryRebuild = false;
+        bool _readOnly = false;
 
         CSVData _data = null;
         MetaData _metaData = null;
@@ -55,12 +53,8 @@ namespace Z3Data
             if (id == 0)
                 throw new Exception("Job must have non-zero id.");
 
+            _readOnly = readOnly;
             _dataDir = dataDir;
-            _dataFilename = _dataDir + @"\" + id.ToString() + ".csv";
-
-            if (readOnly && !File.Exists(_dataFilename))
-                throw new FileNotFoundException("File not found: " + _dataFilename);
-
             _metaData = new MetaData(dataDir, id);
             _summary = new Summary(dataDir, this);
             // if the summary is rebuilt, it will load all the data,
@@ -69,36 +63,20 @@ namespace Z3Data
             _cache = new JobCache(dataDir, this);
         }
 
-        public double AverageBatchTime
-        {
-            get
-            {
-                return _downloadTime.TotalSeconds / _downloadBatches;
-            }
-        }
-
-        public uint BatchCount
-        {
-            get { return _downloadBatches; }
-        }
-
-        public Job(uint id, SQLInterface sql)
-        {
-            _metaData.Id = id;
-            Download(sql);
-        }
-
         public void Dispose()
         {
-            RebuildSummary();
-            _dataDir = null;
-            _dataFilename = null;
+            if (_needSummaryRebuild)
+            {
+                _summary.Rebuild(this);
+                _needSummaryRebuild = false;
+            }
+
             if (_data != null) _data.Dispose();
             _data = null;
-            _metaData = null;            
+            _metaData = null;
             _summary = null;
             if (_cache != null) _cache.Dispose();
-            _cache = null;            
+            _cache = null;
         }
 
         public void Download(SQLInterface sql)
@@ -131,7 +109,7 @@ namespace Z3Data
 
             r.Clear();
 
-            _data = new CSVData(_dataFilename);
+            LoadData();
 
             bool have_new_data = false;
             while (GetBatch(sql) > 0) have_new_data = true;
@@ -211,6 +189,8 @@ namespace Z3Data
                 if (!r.HasRows) { r.Close(); return 0; }
                 //Global.Say("Query time: " + (DateTime.Now - before).TotalSeconds + " sec");
 
+                _data.BeginAddingRows();
+
                 while (r.Read())
                 {
                     string fn = (string)r["Filename"];
@@ -231,6 +211,8 @@ namespace Z3Data
 
                     ids.Add(Convert.ToInt32(r["ID"]));
                 }
+
+                _data.EndAddingRows();
 
                 r.Close();
             }
@@ -268,15 +250,6 @@ namespace Z3Data
             return ids.Count;
         }
 
-        public void RebuildSummary()
-        {
-            if (_needSummaryRebuild)
-            {
-                _summary.Rebuild(this);
-                _needSummaryRebuild = false;
-            }
-        }
-
         public int CompareTo(Job other)
         {
             return MetaData.Id.CompareTo(other.MetaData.Id);
@@ -285,37 +258,28 @@ namespace Z3Data
         #region Properties
         public MetaData MetaData { get { return _metaData; } }
         public Summary Summary { get { return _summary; } }
-        public string DataFilename { get { return _dataFilename; } }
+
+        private void LoadData()
+        {
+            if (_data == null)
+                _data = new CSVData(_dataDir, _metaData.Id, _readOnly);
+        }
 
         public string[] Columns
         {
             get
             {
-                if (_data == null) _data = new CSVData(_dataFilename);
+                LoadData();
                 return _data.ColumnNames;
             }
-        }
-
-        public void AddRow(CSVRow r)
-        {
-            if (_data == null) _data = new CSVData(_dataFilename);
-            _data.AddRow(r);
         }
 
         public CSVRowList Rows
         {
             get
             {
-                if (_data == null) _data = new CSVData(_dataFilename);
+                LoadData();
                 return _data.Rows;
-            }
-        }
-
-        public DateTime LastDataModification
-        {
-            get
-            {
-                return File.GetLastWriteTime(_dataFilename);
             }
         }
 
@@ -349,7 +313,7 @@ namespace Z3Data
             {
                 return _cache.Dippers;
             }
-        }        
-        #endregion        
+        }
+        #endregion
     }
 }

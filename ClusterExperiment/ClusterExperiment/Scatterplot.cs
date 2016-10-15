@@ -15,15 +15,16 @@ namespace ClusterExperiment
     public partial class Scatterplot : Form
     {
         public SqlConnection sql = null;
-        int eIDX = 0, eIDY = 0;
-        string noteX, noteY;
-        private static uint axisMinimum = 1;
+        private int eIDX = 0, eIDY = 0;
+        private string category = "";
+        private string noteX, noteY;
+        private static double axisMinimum = 0.1;
         private uint errorLine = 100;
-        uint timeoutX = 1800;
-        uint timeoutY = 1800;
-        uint axisMaximum = 1800;
-        Dictionary<string, int> classes = new Dictionary<string, int>();
-        bool fancy = false;
+        private uint timeoutX = 1800;
+        private uint timeoutY = 1800;
+        private uint axisMaximum = 1800;
+        private Dictionary<string, int> classes = new Dictionary<string, int>();
+        private bool fancy = false;
 
         public Scatterplot(int eID1, int eID2, SqlConnection sql)
         {
@@ -33,28 +34,37 @@ namespace ClusterExperiment
             this.eIDY = eID2;
             this.sql = sql;
 
-            SqlCommand cmd = new SqlCommand("SELECT Timeout,Note FROM Experiments WHERE ID=" + eID1, sql);
+            SqlCommand cmd = new SqlCommand("SELECT Timeout,Note,Category FROM Experiments WHERE ID=" + eID1, sql);
+            cmd.CommandTimeout = 0;
             SqlDataReader r = cmd.ExecuteReader();
+            string categoryX = "";
             if (r.Read())
             {
                 timeoutX = Convert.ToUInt32((string)r[0]);
                 noteX = (r[1].Equals(DBNull.Value)) ? "" : (string)r[1];
+                categoryX = (r[2].Equals(DBNull.Value)) ? "" : (string)r[2];
             }
             r.Close();
 
-            cmd = new SqlCommand("SELECT Timeout,Note FROM Experiments WHERE ID=" + eID2, sql);
+            string categoryY = "";
+            cmd = new SqlCommand("SELECT Timeout,Note,Category FROM Experiments WHERE ID=" + eID2, sql);
+            cmd.CommandTimeout = 0;
             r = cmd.ExecuteReader();
             if (r.Read())
             {
                 timeoutY = Convert.ToUInt32((string)r[0]);
                 noteY = (r[1].Equals(DBNull.Value)) ? "" : (string)r[1];
+                categoryY = (r[2].Equals(DBNull.Value)) ? "" : (string)r[2];
             }
             r.Close();
+
+            category = (categoryX == categoryY) ? categoryX : categoryX + " -vs- " + categoryY;
         }
 
         private void setupChart()
         {
             chart.Legends.Clear();
+            chart.Titles.Clear();
 
             axisMaximum = timeoutX;
             if (timeoutY > axisMaximum) axisMaximum = timeoutY;
@@ -80,12 +90,16 @@ namespace ClusterExperiment
                 }
                 else
                 {
-                    // errorLine = axisMaximum + ((newmax - axisMaximum) / 2);                    
+                    // errorLine = axisMaximum + ((newmax - axisMaximum) / 2);
                     axisMaximum = newmax;
                 }
 
                 errorLine = axisMaximum;
             }
+
+            Title t = new Title(category, Docking.Top);
+            t.Font = new Font(FontFamily.GenericSansSerif, 16.0f, FontStyle.Bold);
+            chart.Titles.Add(t);
 
             chart.ChartAreas[0].AxisX.Title = "Job #" + eIDX + ": " + noteX;
             chart.ChartAreas[0].AxisY.Title = "Job #" + eIDY + ": " + noteY;
@@ -126,7 +140,7 @@ namespace ClusterExperiment
 
             classes.Clear();
 
-            if (!fancy)             
+            if (!fancy)
                 addSeries("default");
         }
 
@@ -195,10 +209,11 @@ namespace ClusterExperiment
             if (fancy) query += " AND a.FilenameP=Strings.ID";
 
             SqlCommand cmd = new SqlCommand(query, sql);
+            cmd.CommandTimeout = 0;
             SqlDataReader r = null;
 
             double totalX = 0.0, totalY = 0.0;
-            uint total = 0, faster = 0, slower = 0;
+            uint total = 0, y_faster = 0, y_slower = 0;
 
             try
             {
@@ -224,7 +239,10 @@ namespace ClusterExperiment
                     if ( (!ckSAT.Checked && (sat1 > 0 || sat2 > 0)) ||
                          (!ckUNSAT.Checked && (unsat1 > 0 || unsat2 > 0)) ||
                          (!ckUNKNOWN.Checked && ( (rc1==0 && res1==0) || (rc2==0 && res2 == 0))) ||
-                         (!ckTIME.Checked && (rc1 == 5 || rc2 == 5)))                         
+                         (!ckBUG.Checked && (rc1 == 3 || rc2 == 3)) ||
+                         (!ckERROR.Checked && (rc1 == 4 || rc2 == 4)) ||
+                         (!ckTIME.Checked && (rc1 == 5 || rc2 == 5)) ||
+                         (!ckMEMORY.Checked && (rc1 == 6 || rc2 == 6)))
                         continue;
 
                     if ((rc1 != 0 && rc1 != 5) || (x != timeoutX && res1 == 0))
@@ -258,7 +276,7 @@ namespace ClusterExperiment
                         s.Points.Last().ToolTip = name;
                     }
                     else
-                    {                        
+                    {
                         if ((sat1 < sat2 && unsat1 == unsat2) ||
                             (sat1 == sat2 && unsat1 < unsat2))
                             chart.Series[4].Points.AddXY(x, y);
@@ -267,10 +285,9 @@ namespace ClusterExperiment
                             chart.Series[5].Points.AddXY(x, y);
                         else
                             chart.Series[3].Points.AddXY(x, y);
-
-                        if (x > y) faster++; else if (y > x) slower++;
                     }
 
+                    if (x > y) y_faster++; else if (y > x) y_slower++;
                     total++;
                 }
             }
@@ -281,15 +298,15 @@ namespace ClusterExperiment
             }
 
             double avgSpeedup = totalX / totalY;
-            lblAvgSpeedup.Text = Convert.ToString(avgSpeedup);
+            lblAvgSpeedup.Text = avgSpeedup.ToString("N3");
             if (avgSpeedup >= 1.0)
                 lblAvgSpeedup.ForeColor = Color.Green;
             else if (avgSpeedup < 1.0)
                 lblAvgSpeedup.ForeColor = Color.Red;
 
             lblTotal.Text = total.ToString();
-            lblFaster.Text = faster.ToString();
-            lblSlower.Text = slower.ToString();
+            lblFaster.Text = y_faster.ToString();
+            lblSlower.Text = y_slower.ToString();
         }
 
         private void ScatterTest_Load(object sender, EventArgs e)
@@ -300,43 +317,7 @@ namespace ClusterExperiment
             Mouse.OverrideCursor = null;
         }
 
-        private void cbFancy_CheckedChanged(object sender, EventArgs e)
-        {
-            Mouse.OverrideCursor = System.Windows.Input.Cursors.Wait;
-            fancy = cbFancy.Checked;
-            setupChart();
-            refreshChart();
-            Mouse.OverrideCursor = null;
-        }
-
-        private void ckSAT_CheckedChanged(object sender, EventArgs e)
-        {
-            Mouse.OverrideCursor = System.Windows.Input.Cursors.Wait;
-            fancy = cbFancy.Checked;
-            setupChart();
-            refreshChart();
-            Mouse.OverrideCursor = null;
-        }
-
-        private void ckUNSAT_CheckedChanged(object sender, EventArgs e)
-        {
-            Mouse.OverrideCursor = System.Windows.Input.Cursors.Wait;
-            fancy = cbFancy.Checked;
-            setupChart();
-            refreshChart();
-            Mouse.OverrideCursor = null;
-        }
-
-        private void ckUNKNOWN_CheckedChanged(object sender, EventArgs e)
-        {
-            Mouse.OverrideCursor = System.Windows.Input.Cursors.Wait;
-            fancy = cbFancy.Checked;
-            setupChart();
-            refreshChart();
-            Mouse.OverrideCursor = null;
-        }
-
-        private void ckTIME_CheckedChanged(object sender, EventArgs e)
+        private void ckCheckedChanged(object sender, EventArgs e)
         {
             Mouse.OverrideCursor = System.Windows.Input.Cursors.Wait;
             fancy = cbFancy.Checked;

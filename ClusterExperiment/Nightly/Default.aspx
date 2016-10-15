@@ -8,7 +8,7 @@
 </asp:Content>
 
 <asp:Content ID="BodyContent" runat="server" ContentPlaceHolderID="MainContent">
-    <asp:ToolkitScriptManager ID="ToolkitScriptManager1" runat="server" />
+    <asp:ScriptManager ID="ScriptManager1" runat="server" />
 
     <asp:PlaceHolder runat="server" ID="phTop" />
 
