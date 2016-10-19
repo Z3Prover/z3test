@@ -1,6 +1,7 @@
 # Copyright (c) 2015 Microsoft Corporation
 
 import os
+import sys
 import subprocess
 import shutil
 import config 
@@ -147,16 +148,26 @@ def make(branch, debug, everything, clang, jobs):
         if subprocess.call(cmd) != 0:
             raise Exception("Failed to make Z3\n%s\n" % cmd)
         
+def print_dirlisting(bdir):
+    print('Content of %s:' % bdir)
+    for dirname, dirnames, filenames in os.walk(bdir):
+        for subdirname in dirnames:
+            print(os.path.join(dirname, subdirname))
 
+        for filename in filenames:
+            print(os.path.join(dirname, filename))
+        
 def buildz3(branch="master", everything=False, clean=False, debug=True, dotnet=False, java=False, clang=False, static=False, VS64=False, jobs=16, extraflags=[]):
     z3dir = find_z3depot()
     with cd(z3dir):
         gitcheckout(branch)
         gitpull(branch)
         bdir = get_builddir(branch, debug, clang)
+        sys.stdout.flush()
         if clean:
             rmf(bdir)
         mk_dir(bdir)
+        print_dirlisting(bdir)
         mk_make(branch, debug, dotnet, java, clang, static, VS64, extraflags)
         make(branch, debug, everything, clang, jobs)
 
@@ -230,9 +241,14 @@ def timeout(func, args=(), kwargs={}, timeout_duration=1.0, default=None):
     else:
         return it.result
 
-def subprocess_killer(args, stdin=None, stdout=None, stderr=None, shell=False, timeout=1.0):
+def subprocess_killer(args, stdin=None, stdout=None, stderr=None, shell=False, env=None, timeout=1.0):
     try:
-        p = subprocess.Popen(args, stdin=stdin, stdout=stdout, stderr=stderr, shell=shell)
+        if shell: 
+            args = ''.join(a + ' ' for a in args)
+            if not is_windows():
+                for k, v in env.items():
+                    args = k + '=' + v + ' ' + args
+        p = subprocess.Popen(args, stdin=stdin, stdout=stdout, stderr=stderr, shell=shell, env=env)
         start = time.time()
         time.sleep(0.02)
         while (p.poll() == None):
@@ -256,7 +272,7 @@ def test_benchmark(z3exe, benchmark, timeout, expected=None):
     producedf = open(produced, 'w')
     errcode = 0
     try:
-        errcode = subprocess_killer([z3exe, 'model_validate=true', benchmark], stdout=producedf, stderr=producedf, timeout=timeout)
+        errcode = subprocess_killer([z3exe, 'model_validate=true', benchmark], stdout=producedf, stderr=producedf, timeout=timeout, env=os.environ)
     except:
         raise Exception("Failed to start Z3: %s" % z3exe)
     producedf.close()
@@ -297,50 +313,57 @@ def test_benchmarks_using_latest(benchdir, branch="master", debug=True, clang=Fa
     z3exe = os.path.join(z3dir, bdir, 'z3')
     test_benchmarks(z3exe, benchdir, ext, timeout_duration)
 
-def exec_script(script, timeout):
-    if subprocess_killer([config.PYTHON, script], timeout=timeout) != 0:
+def exec_pyscript(script, timeout, env):
+    shell = False if is_windows() else True
+    if subprocess_killer([config.PYTHON, script], timeout=timeout, shell=shell, env=env) != 0:
         raise Exception("Script '%s' returned non-zero exit code" % script)
     return True
 
 def test_pyscripts(z3libdir, scriptdir, ext="py", timeout_duration=60.0):
-    pydir = os.path.join(z3libdir,"python")
-    with setenv('LD_LIBRARY_PATH', z3libdir):
-        with setenv('PYTHONPATH', z3libdir + os.pathsep + pydir):
-            with setenv('DYLD_LIBRARY_PATH', z3libdir):
-                newpath = os.environ['PATH']
-                if is_windows():
-                    newpath += os.pathsep + z3libdir
-                with setenv('PATH', newpath):
-                    print("Testing python scripts at %s using %s" % (scriptdir, z3libdir))
-                    error = False
-                    for script in filter(lambda f: f.endswith(ext), os.listdir(scriptdir)):
-                        script = os.path.join(scriptdir, script)
-                        print("Testing %s" % script)
-                        try:
-                            if timeout(exec_script,
-                                   args=[script, timeout_duration],
-                                   timeout_duration=timeout_duration,
-                                   default=False) == False:
-                                raise Exception("Timeout executing script '%s' at '%s' using '%s'" % (script, scriptdir, z3libdir)) 
-                        except Exception as ex:
-                            print("Failed")
-                            print(ex)
-                            error = True
-                    if error:
-                        raise Exception("Found errors testing scripts at '%s' using '%s'" % (scriptdir, z3libdir))
+    pydir = os.path.join(z3libdir, "python")
+
+    myenv = {}
+    
+    if is_linux() or is_freebsd(): 
+        myenv['LD_LIBRARY_PATH'] = z3libdir
+    elif is_osx(): 
+        myenv['DYLD_LIBRARY_PATH'] = z3libdir
+    else: 
+        myenv['SYSTEMROOT'] = os.getenv('SYSTEMROOT', '')
+
+    myenv['PATH'] = os.getenv("PATH", "") + os.pathsep + z3libdir
+    myenv['PYTHONPATH'] = pydir
+    
+    print("Testing python scripts at %s using %s" % (scriptdir, z3libdir))
+    error = False 
+    for script in filter(lambda f: f.endswith(ext), os.listdir(scriptdir)):
+        script_file = os.path.join(scriptdir, script)
+        print("Testing %s" % script_file)
+        try:
+            if timeout(exec_pyscript,
+                       args=[script_file, timeout_duration, myenv],
+                       timeout_duration=timeout_duration,
+                       default=False) == False:
+                raise Exception("Timeout executing script '%s' at '%s' using '%s'" % (script, scriptdir, z3libdir)) 
+        except Exception as ex:
+            print("Failed")
+            print(ex)
+            error = True
+    if error:
+        raise Exception("Found errors testing scripts at '%s' using '%s'" % (scriptdir, z3libdir))
     
 def test_pyscripts_using_latest(scriptdir, branch="master", debug=True, clang=False, ext="py", timeout_duration=60.0):
     z3dir = find_z3depot()
     bdir  = get_builddir(branch, debug, clang)
     test_pyscripts(os.path.join(z3dir, bdir), scriptdir, ext, timeout_duration)
 
-def exec_cs_compile(args, timeout):
-    if subprocess_killer(args, timeout=timeout) != 0:
+def exec_cs_compile(args, timeout, env):
+    if subprocess_killer(args, timeout=timeout, env=env) != 0:
         raise Exception("Compilation of '%s' failed" % file)
     return True
 
-def exec_cs(timeout):
-    if subprocess_killer(config.CSTEMP, timeout=timeout) != 0:
+def exec_cs(timeout, env):
+    if subprocess_killer(config.CSTEMP, timeout=timeout, env=env) != 0:
         raise Exception("Execution of '%s' failed" % (config.CSTEMP))
     return True
 
@@ -360,19 +383,20 @@ def test_cs(z3libdir, csdir, ext="cs", VS64=False, timeout_duration=60.0):
             try:
                 # Compile.
                 if timeout(exec_cs_compile,
-                           args=[[config.CSC, "/nologo", 
+                           args=[[config.CSC, "/nologo",
                                   "/reference:%s\Microsoft.Z3.dll" % z3libdir, 
                                   "/out:%s" % (config.CSTEMP), 
                                   platform_arg, 
                                   "%s\%s" % (csdir, config.CSDRIVER), 
                                   file],
-                                  timeout_duration],
+                                 timeout_duration,
+                                 os.environ],
                            timeout_duration=timeout_duration,
                            default=False) == False:
                     raise Exception("Timeout compiling '%s' at '%s' using '%s'" % (file, csdir, z3libdir))
                 # Run.
                 if timeout(exec_cs,
-                           args=[timeout_duration],
+                           args=[timeout_duration, os.environ],
                            timeout_duration=timeout_duration,
                            default=False) == False:
                     raise Exception("Timeout executing '%s' at '%s' using '%s'" % (file, csdir, z3libdir)) 

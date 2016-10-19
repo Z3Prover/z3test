@@ -4,6 +4,8 @@
 (set-info :source "Handcrafted by C.M. Wintersteiger")
 (set-option :rewriter.hi_fp_unspecified true)
 
+(set-option :rewriter.hi_fp_unspecified true)
+
 ; X = 2^8 = 256 -> (_ fp.to_ubv_unspecified 8); #x00 is the "hardware interpretation"
 
 (declare-const X (_ FloatingPoint 5 11))

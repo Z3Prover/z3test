@@ -4,6 +4,8 @@
 (set-info :source "Handcrafted by C.M. Wintersteiger")
 (set-option :rewriter.hi_fp_unspecified true)
 
+(set-option :rewriter.hi_fp_unspecified true)
+
 (declare-const X (_ BitVec 8))
 
 ; 1.9921875p6 == 127.5 -> (_ fp.to_sbv_unspecified 8) because of RTP; #x00 is the "hardware interpretation"
