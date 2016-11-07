@@ -67,12 +67,16 @@ def send_email(recipients, subject, body, files=[]):
     smtp.sendmail(smtp_from, recipients, mail.as_string())
     smtp.quit()  
 
-def startvm(name, log):
+def get_vm_state(name): 
     vmstate = 'unknown'
     info = subprocess.check_output(['VBoxManage', 'showvminfo', name, '--machinereadable'])
     for line in info.splitlines():
         if line.startswith('VMState='):
             vmstate = line[8:].strip('"')
+    return vmstate
+
+def startvm(name, log):
+    vmstate =  get_vm_state(name)
     log.write('VM state: %s\n' % vmstate)
     ec = 0
     if vmstate == 'running':
@@ -109,8 +113,13 @@ def stopvm(name, log):
             log.write('VM refuses to be stopped; may be left running.')
     else:
         # Some systems need to be poked a second time.
-        time.sleep(vm_wait_time)
+        time.sleep(vm_timeout)
         subprocess.call(['VBoxManage', 'controlvm', name, 'acpipowerbutton'], stdin=None, stdout=log, stderr=log)
+        time.sleep(vm_timeout)
+        if get_vm_state(name) != 'poweroff':
+            log.write('VM would not shut down voluntarily; killing it the hard way.')
+            ec = subprocess.call(['VBoxManage', 'controlvm', name, 'poweroff'], stdin=None, stdout=log, stderr=log)
+        
 
 class BuildFailureException(Exception):
     pass
