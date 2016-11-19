@@ -245,6 +245,8 @@ namespace Z3Data
                         string fn = r.Filename;
                         string cat = fn.Substring(0, fn.IndexOf('\\'));
                         string msg = fn + " [went from " + old_time + " sec. to memory-out]";
+                        if (!_dippersByCategory.ContainsKey(cat))
+                            _dippersByCategory.Add(cat, new List<string>());
                         _dippersByCategory[cat].Add(msg);
                         _dippersByCategory[""].Add(msg);
                     }

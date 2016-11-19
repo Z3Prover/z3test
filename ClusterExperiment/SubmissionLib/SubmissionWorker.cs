@@ -145,6 +145,9 @@ namespace SubmissionLib
         {
             // Create table
             SqlCommand
+            cmd = new SqlCommand("ALTER DATABASE [dbo] SET PARAMETERIZATION FORCED");
+            cmd.ExecuteNonQuery();
+
             cmd = new SqlCommand("CREATE TABLE [dbo].[Experiments](ID INT IDENTITY(1,1) NOT NULL, " +
                                                            "SubmissionTime DATETIME NOT NULL DEFAULT GETDATE(), " +
                                                            "CompletionTime DATETIME, " +
@@ -639,7 +642,7 @@ namespace SubmissionLib
             }
             catch (Exception ex)
             {
-                cmd = new SqlCommand("DELETE FROM JobQueue WHERE ExperimentID=" + newID + ";" + 
+                cmd = new SqlCommand("DELETE FROM JobQueue WHERE ExperimentID=" + newID + ";" +
                                      (deleteExperimentOnError ? " DELETE FROM Experiments WHERE ID=" + newID : ""), sql);
                 cmd.CommandTimeout = 0;
                 cmd.ExecuteNonQuery();

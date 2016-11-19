@@ -15,20 +15,20 @@ namespace Nightly
     public class Global : System.Web.HttpApplication
     {
         public Configuration config = null;
-        public DateTime configDate;        
+        public DateTime configDate;
 
         internal Configuration Configuration
-        {                        
+        {
             get
             {
                 #if DEBUG
-                string fn = "C:\\Nightly\\config.xml";
+                string fn = @"F:\Nightly\config.xml";
                 #else
                 string fn = Properties.Settings.Default.config_file;
                 #endif
-                
+
                 if (config == null || File.GetLastWriteTime(fn) > configDate)
-                {                    
+                {
                     config = new Configuration(fn);
                     configDate = File.GetLastWriteTime(fn);
                 }
@@ -37,10 +37,10 @@ namespace Nightly
         }
 
         void Application_Start(object sender, EventArgs e)
-        {            
-            // Code that runs on application startup            
+        {
+            // Code that runs on application startup
             Application["Configuration"] = Configuration;
-        }        
+        }
 
         void Application_End(object sender, EventArgs e)
         {
@@ -62,9 +62,9 @@ namespace Nightly
 
         void Session_End(object sender, EventArgs e)
         {
-            // Code that runs when a session ends. 
+            // Code that runs when a session ends.
             // Note: The Session_End event is raised only when the sessionstate mode
-            // is set to InProc in the Web.config file. If session mode is set to StateServer 
+            // is set to InProc in the Web.config file. If session mode is set to StateServer
             // or SQLServer, the event is not raised.
 
         }
