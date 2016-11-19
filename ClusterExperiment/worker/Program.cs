@@ -16,16 +16,20 @@ namespace worker
 {
     class Program
     {
-        [DllImport("kernel32.dll", CharSet = CharSet.Unicode)]
+        [DllImport("kernel32.dll", SetLastError = true, CharSet = CharSet.Unicode)]
         [return: MarshalAs(UnmanagedType.Bool)]
         internal static extern bool CopyFile(string lpFileNameFrom, string lpFileNameTo, bool failIfExists);
 
         public static void LongFileNameCopy(string from, string to, bool failIfExists = true)
         {
-            string f = (from.StartsWith("\\")) ? @"\\?\UNC" + from.Substring(1) : (@"\\?\" + from);
+            string f = (from.StartsWith("\\")) ? @"\\?\UNC" + from.Substring(1): (@"\\?\" + from);
             string t = (to.StartsWith("\\")) ? @"\\?\UNC" + to.Substring(1) : (@"\\?\" + to);
             if (!CopyFile(f, t, failIfExists))
+            {
+                int last_error = Marshal.GetLastWin32Error();
+                Console.WriteLine("Win32 error: " + last_error);
                 throw new Exception("Could not copy benchmark " + from);
+            }
         }
 
         SqlConnection sql = null;
@@ -36,6 +40,7 @@ namespace worker
         const int output_limit = 1 * (1024 * 1024); // 1 MB
         const int error_limit = 256 * 1024; // 256 KB
         const int infrastructure_errors_init = 100;
+        const int resultsBatchSize = 1;
         int infrastructure_errors_max = 100;
 
         class Experiment
@@ -118,7 +123,7 @@ namespace worker
             }
         }
 
-        static Dictionary<string, Object> SQLRead(string cmdString, SqlConnection sql)
+        Dictionary<string, Object> SQLRead(string cmdString, SqlConnection sql)
         {
             SqlCommand cmd = null;
             SqlDataReader r = null;
@@ -135,6 +140,7 @@ namespace worker
             catch (Exception ex)
             {
                 Console.WriteLine("Retrying after SQL read failure: " + ex.Message);
+                // Thread.Sleep(rng.Next(500, 60000));
                 Thread.Sleep(1000);
                 if (sql.State != System.Data.ConnectionState.Open)
                     sql.Open(); /* Bail out if this throws something */
@@ -160,7 +166,7 @@ namespace worker
             catch (Exception ex)
             {
                 Console.WriteLine("Retrying after SQL Exception in reader.Close(): " + ex.Message);
-                Thread.Sleep(1000);
+                Thread.Sleep(rng.Next(500, 60000));
                 goto retry;
             }
 
@@ -205,7 +211,7 @@ namespace worker
                 res.Parameters = (string)r["Longparams"];
             else
                 res.Parameters = (string)r["Parameters"];
-            res.localExecutable = res.localDir + "\\z3.exe";
+            res.localExecutable = Path.Combine(res.localDir, "z3.exe");
             res.binaryID = (int)r["Binary"];
             res.custom_check_sat = null;
 
@@ -216,7 +222,7 @@ namespace worker
                 if (m.Groups.Count > 0)
                 {
                     string new_cs = m.Groups[1].Value;
-                    Console.WriteLine("new check-sat: " + new_cs);
+                    // Console.WriteLine("new check-sat: " + new_cs);
                     res.Parameters = res.Parameters.Replace("replace-check-sat=\"" + new_cs + "\"", "");
                     res.custom_check_sat = new_cs;
                 }
@@ -265,12 +271,13 @@ namespace worker
                     i = pinx + 1;
                 }
 
-                IEnumerable<string> files = Directory.EnumerateFiles(e.sharedDir + "\\" + e.category + "\\", "*." + cur, SearchOption.AllDirectories);
+                var p = Path.Combine(e.sharedDir, e.category);
+                IEnumerable<string> files = Directory.EnumerateFiles(p, "*." + cur, SearchOption.AllDirectories);
 
                 if (files.Count() == 0)
                     continue;
 
-                int sl = e.sharedDir.Length + 1;
+                int sl = e.sharedDir.Length;
                 SqlTransaction t = null;
 
                 IEnumerator<string> batch_start = files.GetEnumerator();
@@ -370,9 +377,9 @@ namespace worker
                     jID = (int)rd["ID"];
                     j.ID = jID.ToString();
                     j.experimentID = e.ID;
-                    j.filename = e.sharedDir + "\\" + (string)rd["Filename"];
+                    j.filename = Path.Combine(e.sharedDir, (string)rd["Filename"]);
                     j.filenameP = (int)rd["FileP"];
-                    j.localFilename = e.localDir + "\\" + j.ID + Path.GetExtension(j.filename);
+                    j.localFilename = Path.Combine(e.localDir, j.ID + Path.GetExtension(j.filename));
                 }
 
                 if (e.ID != j.experimentID)
@@ -385,6 +392,7 @@ namespace worker
                     TimeSpan x = e.timeout;
                     int limit = Convert.ToInt32(x.TotalSeconds);
                     limit += 300; // +5 minutes
+                    // limit = (10 * limit) + 300; // for batches of 10, plus some slack
 
                     string cond = "((Worker IS NULL) OR (DATEDIFF(second, AcquireTime, GETDATE()) >= " + limit.ToString() + ")";
 
@@ -410,9 +418,9 @@ namespace worker
                         jID = (int)rd["ID"];
                         j.ID = jID.ToString();
                         j.experimentID = e.ID;
-                        j.filename = e.sharedDir + "\\" + (string)rd["Filename"];
+                        j.filename = Path.Combine(e.sharedDir, (string)rd["Filename"]);
                         j.filenameP = (int)rd["FileP"];
-                        j.localFilename = e.localDir + "\\" + j.ID + Path.GetExtension(j.filename);
+                        j.localFilename = Path.Combine(e.localDir, j.ID + Path.GetExtension(j.filename));
                     }
 
                     if (e.ID != j.experimentID)
@@ -498,12 +506,12 @@ namespace worker
                         // PackagePart part = pkg.GetPart(uriDocumentTarget);
                         Stream s = part.GetStream(FileMode.Open, FileAccess.Read);
                         string fn = CreateFilenameFromUri(part.Uri).Substring(1);
-                        fs = new FileStream(e.localDir + @"\" + fn, FileMode.OpenOrCreate);
+                        fs = new FileStream(Path.Combine(e.localDir, fn), FileMode.OpenOrCreate);
                         CopyStream(s, fs);
                         fs.Close();
 
                         if (part.Uri == main.TargetUri)
-                            e.localExecutable = e.localDir + @"\" + fn;
+                            e.localExecutable = Path.Combine(e.localDir, fn);
                     }
 
                     pkg.Close();
@@ -547,7 +555,7 @@ namespace worker
         private static TimeSpan processTime(Process p)
         {
             // Wallclock time
-            //return DateTime.Now - p.StartTime;
+            // return DateTime.Now - p.StartTime;
 
             // Process time
             return p.TotalProcessorTime;
@@ -609,7 +617,7 @@ namespace worker
             }
         }
 
-        static void replace_checksat(Experiment e, Job j)
+        static void replaceChecksat(Experiment e, Job j)
         {
             string tmpf = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName());
             FileStream f = new FileStream(j.localFilename, FileMode.Open, FileAccess.Read);
@@ -651,7 +659,7 @@ namespace worker
                     // Console.WriteLine("Running job #" + j.ID);
                     LongFileNameCopy(j.filename, j.localFilename, false);
                     if (e.custom_check_sat != null)
-                        replace_checksat(e, j);
+                        replaceChecksat(e, j);
                 }
                 catch (System.OutOfMemoryException)
                 {
@@ -1115,14 +1123,20 @@ namespace worker
         {
             while (haveJobs(e))
             {
-                for (Job j = getJob(e); j != null; j = getJob(e))
+                Job j = null;
+                for (j = getJob(e); j != null; j = getJob(e))
                 {
                     runJob(e, j);
-                    if (results.Count >= 1) saveResults();
+                    if (results.Count >= resultsBatchSize) saveResults();
                 }
 
                 saveResults();
-                Thread.Sleep(rng.Next(1000, 5 * 3600));
+
+                if (j != null)
+                {
+                    ensureDisconnected();
+                    Thread.Sleep(rng.Next(5000, 60000));
+                }
             }
         }
 
