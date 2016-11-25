@@ -224,6 +224,9 @@ namespace SubmissionLib
                                  "CREATE INDEX ID_INX ON Jobqueue (ID);", sql);
             cmd.ExecuteNonQuery();
 
+            cmd = new SqlCommand("CREATE NONCLUSTERED INDEX JQInx ON [dbo].[JobQueue] ([ExperimentID]) INCLUDE ([AcquireTime], [ID], [Worker]) WITH (ONLINE = ON)", sql);
+            cmd.ExecuteNonQuery();
+
             cmd = new SqlCommand("CREATE TABLE [dbo].[Binaries] (ID INT IDENTITY(1,1) NOT NULL, " +
                                                           "Binary VARBINARY(MAX), " +
                                                           "UploadTime DATETIME NOT NULL)", sql);
