@@ -22,13 +22,12 @@ namespace worker
 
         public static void LongFileNameCopy(string from, string to, bool failIfExists = true)
         {
-            string f = (from.StartsWith("\\")) ? @"\\?\UNC" + from.Substring(1): (@"\\?\" + from);
-            string t = (to.StartsWith("\\")) ? @"\\?\UNC" + to.Substring(1) : (@"\\?\" + to);
+            string f = (from.StartsWith("\\")) ? @"\\?\UNC\" + from.Substring(1) : @"\\?\" + from;
+            string t = (to.StartsWith("\\")) ? @"\\?\UNC\" + to.Substring(1) : @"\\?\" + to;
             if (!CopyFile(f, t, failIfExists))
             {
                 int last_error = Marshal.GetLastWin32Error();
-                Console.WriteLine("Win32 error: " + last_error);
-                throw new Exception("Could not copy benchmark " + from);
+                throw new Exception("Could not copy benchmark from " + f + " to " + t + " (Win32 error: " + last_error + ")");
             }
         }
 
@@ -211,7 +210,7 @@ namespace worker
                 res.Parameters = (string)r["Longparams"];
             else
                 res.Parameters = (string)r["Parameters"];
-            res.localExecutable = Path.Combine(res.localDir, "z3.exe");
+            res.localExecutable = (res.localDir + @"\z3.exe").Replace(@"\\", @"\");
             res.binaryID = (int)r["Binary"];
             res.custom_check_sat = null;
 
@@ -271,8 +270,7 @@ namespace worker
                     i = pinx + 1;
                 }
 
-                var p = Path.Combine(e.sharedDir, e.category);
-                IEnumerable<string> files = Directory.EnumerateFiles(p, "*." + cur, SearchOption.AllDirectories);
+                IEnumerable<string> files = Directory.EnumerateFiles(e.sharedDir + @"\" + e.category + @"\", "*." + cur, SearchOption.AllDirectories);
 
                 if (files.Count() == 0)
                     continue;
@@ -377,9 +375,9 @@ namespace worker
                     jID = (int)rd["ID"];
                     j.ID = jID.ToString();
                     j.experimentID = e.ID;
-                    j.filename = Path.Combine(e.sharedDir, (string)rd["Filename"]);
+                    j.filename = (e.sharedDir + "\\" + (string)rd["Filename"]).Replace(@"\\", @"\");
                     j.filenameP = (int)rd["FileP"];
-                    j.localFilename = Path.Combine(e.localDir, j.ID + Path.GetExtension(j.filename));
+                    j.localFilename = (e.localDir + "\\" + j.ID + Path.GetExtension(j.filename)).Replace(@"\\", @"\");
                 }
 
                 if (e.ID != j.experimentID)
@@ -418,9 +416,9 @@ namespace worker
                         jID = (int)rd["ID"];
                         j.ID = jID.ToString();
                         j.experimentID = e.ID;
-                        j.filename = Path.Combine(e.sharedDir, (string)rd["Filename"]);
+                        j.filename = (e.sharedDir + "\\" + (string)rd["Filename"]).Replace(@"\\", @"\");
                         j.filenameP = (int)rd["FileP"];
-                        j.localFilename = Path.Combine(e.localDir, j.ID + Path.GetExtension(j.filename));
+                        j.localFilename = (e.localDir + "\\" + j.ID + Path.GetExtension(j.filename)).Replace(@"\\", @"\");
                     }
 
                     if (e.ID != j.experimentID)
@@ -489,7 +487,7 @@ namespace worker
                     data[2] == 0x03 && data[3] == 0x04)
                 {
                     // This is a zip file.
-                    string tfn = Path.Combine(Path.GetTempFileName() + ".zip");
+                    string tfn = Path.GetTempFileName() + ".zip";
                     File.Move(e.localExecutable, tfn);
                     e.localExecutable = null;
                     Package pkg = Package.Open(tfn, FileMode.Open);
@@ -506,12 +504,12 @@ namespace worker
                         // PackagePart part = pkg.GetPart(uriDocumentTarget);
                         Stream s = part.GetStream(FileMode.Open, FileAccess.Read);
                         string fn = CreateFilenameFromUri(part.Uri).Substring(1);
-                        fs = new FileStream(Path.Combine(e.localDir, fn), FileMode.OpenOrCreate);
+                        fs = new FileStream((e.localDir + @"\" + fn).Replace(@"\\", @"\"), FileMode.OpenOrCreate);
                         CopyStream(s, fs);
                         fs.Close();
 
                         if (part.Uri == main.TargetUri)
-                            e.localExecutable = Path.Combine(e.localDir, fn);
+                            e.localExecutable = (e.localDir + @"\" + fn).Replace(@"\\", @"\");
                     }
 
                     pkg.Close();
@@ -1029,25 +1027,34 @@ namespace worker
         {
             if (--infrastructure_errors_max == 0)
             {
-                string x = "INFRASTRUCTURE ERROR: " + message;
-                ensureConnected();
-                SqlCommand cmd = new SqlCommand("INSERT INTO Data " +
-                                  "(ExperimentID,FilenameP,ResultCode,stderr,Worker,SAT,UNSAT,UNKNOWN,TargetSAT,TargetUNSAT,TargetUNKNOWN) VALUES (" +
-                                  j.experimentID + ", " +
-                                  j.filenameP + ", " +
-                                  "4," +
-                                  "@ERRORMESSAGE, " +
-                                  "'" + myName + "'," +
-                                  "0,0,0,0,0,0); " +
-                                  "DELETE FROM JobQueue WHERE ID=" + j.ID + ";", sql);
-                cmd.CommandTimeout = 0;
+                for (int retry_count = 0; retry_count < 100; retry_count++)
+                {
+                    try
+                    {
+                        string x = "INFRASTRUCTURE ERROR: " + message;
+                        ensureConnected();
+                        SqlCommand cmd = new SqlCommand("INSERT INTO Data " +
+                                          "(ExperimentID,FilenameP,ResultCode,stderr,Worker,SAT,UNSAT,UNKNOWN,TargetSAT,TargetUNSAT,TargetUNKNOWN) VALUES (" +
+                                          j.experimentID + ", " +
+                                          j.filenameP + ", " +
+                                          "4," +
+                                          "@ERRORMESSAGE, " +
+                                          "'" + myName + "'," +
+                                          "0,0,0,0,0,0); " +
+                                          "DELETE FROM JobQueue WHERE ID=" + j.ID + ";", sql);
+                        cmd.CommandTimeout = 0;
 
-                SqlParameter p = cmd.Parameters.Add("@ERRORMESSAGE", System.Data.SqlDbType.VarChar);
-                p.Size = x.Length;
-                p.Value = x;
+                        SqlParameter p = cmd.Parameters.Add("@ERRORMESSAGE", System.Data.SqlDbType.VarChar);
+                        p.Size = x.Length;
+                        p.Value = x;
 
-                cmd.ExecuteNonQuery();
-                ensureDisconnected();
+                        cmd.ExecuteNonQuery();
+                        ensureDisconnected();
+                        return false;
+                    }
+                    catch (SqlException ex) { /* OK, retry */ }
+                }
+
                 return false;
             }
             else
