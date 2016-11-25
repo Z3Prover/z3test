@@ -1763,8 +1763,8 @@ namespace ClusterExperiment
                                     cluster = (string)r[1];
                                     nodegroup = (string)r[2];
                                     locality = (string)r[3];
-                                    clusterJobID = (int)r[4];
-                                    executor = (string)r[5];
+                                    clusterJobID = (r[4] == DBNull.Value) ? 0 : (int)r[4];
+                                    executor = (r[5] == DBNull.Value) ? (eid + "_worker.exe") : (string)r[5];
                                     jobTemplate = (string)r[6];
                                     jobTimeout = (int)r[7];
                                     taskTimeout = (int)r[8];
