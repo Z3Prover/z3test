@@ -121,6 +121,8 @@ namespace ClusterExperiment
 
         private void showNextDupe()
         {
+            Hide();
+
             if (filenameps.Count == 0)
             {
                 Close();
@@ -194,6 +196,7 @@ namespace ClusterExperiment
                         else
                         {
                             not_done = true;
+                            Show();
                             Mouse.OverrideCursor = null;
                             return;
                         }
@@ -231,7 +234,6 @@ namespace ClusterExperiment
             {
                 DataRowView rowView = (DataRowView)dataGrid.SelectedItems[0];
                 Pick((int)rowView["ID"]);
-                Close();
                 showNextDupe();
             }
         }
