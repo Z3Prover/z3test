@@ -275,7 +275,7 @@ namespace worker
                 if (files.Count() == 0)
                     continue;
 
-                int sl = e.sharedDir.Length;
+                int sl = e.sharedDir.Length + 1;
                 SqlTransaction t = null;
 
                 IEnumerator<string> batch_start = files.GetEnumerator();
