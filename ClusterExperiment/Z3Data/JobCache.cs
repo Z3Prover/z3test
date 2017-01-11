@@ -181,6 +181,8 @@ namespace Z3Data
                 {
                     string fn = r.Filename;
                     string cat = fn.Substring(0, fn.IndexOf('\\'));
+                    if (!_bugsByCategory.ContainsKey(cat))
+                        _bugsByCategory.Add(cat, new List<string>());
                     _bugsByCategory[cat].Add(fn);
                     _bugsByCategory[""].Add(fn);
                 }
@@ -188,6 +190,8 @@ namespace Z3Data
                 {
                     string fn = r.Filename;
                     string cat = fn.Substring(0, fn.IndexOf('\\'));
+                    if (!_errorsByCategory.ContainsKey(cat))
+                        _errorsByCategory.Add(cat, new List<string>());
                     _errorsByCategory[cat].Add(fn);
                     _errorsByCategory[""].Add(fn);
                 }
@@ -199,6 +203,8 @@ namespace Z3Data
                     {
                         string fn = r.Filename;
                         string cat = fn.Substring(0, fn.IndexOf('\\'));
+                        if (!_underperformersByCategory.ContainsKey(cat))
+                            _underperformersByCategory.Add(cat, new List<string>());
                         _underperformersByCategory[cat].Add(fn);
                         _underperformersByCategory[""].Add(fn);
                     }
@@ -214,6 +220,8 @@ namespace Z3Data
                             string fn = r.Filename;
                             string cat = fn.Substring(0, fn.IndexOf('\\'));
                             string msg = fn + " [" + (new_time - old_time) + " sec. slower]";
+                            if (!_dippersByCategory.ContainsKey(cat))
+                                _dippersByCategory.Add(cat, new List<string>());
                             _dippersByCategory[cat].Add(msg);
                             _dippersByCategory[""].Add(msg);
                         }
@@ -231,6 +239,8 @@ namespace Z3Data
                             string fn = r.Filename;
                             string cat = fn.Substring(0, fn.IndexOf('\\'));
                             string msg = fn + " [more than " + (new_time-old_time) + " sec. slower]";
+                            if (!_dippersByCategory.ContainsKey(cat))
+                            _dippersByCategory.Add(cat, new List<string>());
                             _dippersByCategory[cat].Add(msg);
                             _dippersByCategory[""].Add(msg);
                         }

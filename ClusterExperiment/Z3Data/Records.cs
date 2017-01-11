@@ -196,4 +196,50 @@ namespace Z3Data
 
         }
     }
+
+
+    public class RecordJob : Job
+    {
+        private Records _records = null;
+
+        public RecordJob(string dataDir) : base(dataDir) {
+            _records = new Records(dataDir);
+
+            _readOnly = true;
+            _metaData = new MetaData(dataDir, uint.MaxValue);
+            _summary = null;
+            _data = null;
+            _cache = null;
+        }
+
+        public override void Download(SQLInterface sql) {
+            throw new Exception("RecordJob does not support downloading from an SQL DB.");
+        }
+
+        public override int CompareTo(Job other)
+        {
+            //return MetaData.Id.CompareTo(other.MetaData.Id);
+            throw new NotImplementedException("CompareTo");
+        }
+
+        private void LoadData()
+        {
+            if (_data == null)
+                _data = new CSVData(_dataDir, _metaData.Id, _readOnly);
+        }
+
+        public override CSVRowList Rows
+        {
+            get
+            {
+                LoadData();
+                return _data.Rows;
+            }
+        }
+
+        public override Dictionary<string, List<string>> Errors { get { return new Dictionary<string, List<string>>(); } }
+        public override Dictionary<string, List<string>> Bugs { get { return new Dictionary<string, List<string>>(); } }
+        public override Dictionary<string, List<string>> Underperformers { get { return new Dictionary<string, List<string>>(); } }
+        public override Dictionary<string, List<string>> Dippers { get { return new Dictionary<string, List<string>>(); } }
+    }
 }

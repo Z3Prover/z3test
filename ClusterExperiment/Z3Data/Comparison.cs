@@ -446,13 +446,13 @@ namespace Z3Data
 
                 last_x = xr.Filename;
             }
-            
+
             while (yit.MoveNext())
             {
                 yr = yit.Current;
                 if (!yr.Filename.StartsWith(_prefix)||
                     (last_y != null && last_y.CompareTo(yr.Filename) == 0)) // ignore duplicates.
-                    continue;                
+                    continue;
                 Debug.Assert(yr.Filename.StartsWith(_prefix));
                 AddStatisticsY(yr);
                 last_y = yr.Filename;

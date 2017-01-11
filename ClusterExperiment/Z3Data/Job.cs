@@ -4,8 +4,8 @@ using System.Linq;
 using System.Text;
 using System.Data;
 using System.Data.SqlClient;
-using System.IO;
 using System.Diagnostics;
+using System.IO;
 using Microsoft.Hpc.Scheduler;
 using Microsoft.Hpc.Scheduler.Properties;
 
@@ -33,14 +33,14 @@ namespace Z3Data
     public class Job : IComparable<Job>, IDisposable
     {
         #region Internal
-        string _dataDir = null;
-        bool _needSummaryRebuild = false;
-        bool _readOnly = false;
+        protected string _dataDir = null;
+        protected bool _needSummaryRebuild = false;
+        protected bool _readOnly = false;
 
-        CSVData _data = null;
-        MetaData _metaData = null;
-        Summary _summary = null;
-        JobCache _cache = null;
+        protected CSVData _data = null;
+        protected MetaData _metaData = null;
+        protected Summary _summary = null;
+        protected JobCache _cache = null;
 
         TimeSpan _downloadTime = new TimeSpan(0);
         uint _downloadBatches = 0;
@@ -63,6 +63,19 @@ namespace Z3Data
             _cache = new JobCache(dataDir, this);
         }
 
+        internal Job(string dataDir)
+        {
+            if (!Directory.Exists(dataDir))
+                throw new Exception("Data directory does not exist.");
+
+            _readOnly = true;
+            _dataDir = dataDir;
+            _metaData = null;
+            _summary = null;
+            _data = null;
+            _cache = null;
+        }
+
         public void Dispose()
         {
             if (_needSummaryRebuild)
@@ -79,7 +92,7 @@ namespace Z3Data
             _cache = null;
         }
 
-        public void Download(SQLInterface sql)
+        public virtual void Download(SQLInterface sql)
         {
             // Global.Say("Downloading #" + _metaData.Id);
 
@@ -171,7 +184,7 @@ namespace Z3Data
             }
         }
 
-        protected int GetBatch(SQLInterface sql)
+        private int GetBatch(SQLInterface sql)
         {
             Stopwatch timer = new Stopwatch();
             timer.Restart();
@@ -250,7 +263,7 @@ namespace Z3Data
             return ids.Count;
         }
 
-        public int CompareTo(Job other)
+        public virtual int CompareTo(Job other)
         {
             return MetaData.Id.CompareTo(other.MetaData.Id);
         }
@@ -265,16 +278,7 @@ namespace Z3Data
                 _data = new CSVData(_dataDir, _metaData.Id, _readOnly);
         }
 
-        public string[] Columns
-        {
-            get
-            {
-                LoadData();
-                return _data.ColumnNames;
-            }
-        }
-
-        public CSVRowList Rows
+        public virtual CSVRowList Rows
         {
             get
             {
@@ -283,37 +287,10 @@ namespace Z3Data
             }
         }
 
-        public Dictionary<string, List<string>> Errors
-        {
-            get
-            {
-                return _cache.Errors;
-            }
-        }
-
-        public Dictionary<string, List<string>> Bugs
-        {
-            get
-            {
-                return _cache.Bugs;
-            }
-        }
-
-        public Dictionary<string, List<string>> Underperformers
-        {
-            get
-            {
-                return _cache.Underperformers;
-            }
-        }
-
-        public Dictionary<string, List<string>> Dippers
-        {
-            get
-            {
-                return _cache.Dippers;
-            }
-        }
+        public virtual Dictionary<string, List<string>> Errors { get { return _cache.Errors; } }
+        public virtual Dictionary<string, List<string>> Bugs { get { return _cache.Bugs; } }
+        public virtual Dictionary<string, List<string>> Underperformers { get { return _cache.Underperformers; } }
+        public virtual Dictionary<string, List<string>> Dippers { get { return _cache.Dippers; } }
         #endregion
     }
 }
