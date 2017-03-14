@@ -28,7 +28,7 @@ false
 "a"
 "b"
 "c"
-(str.at "abc" 3)
+""
 "acc"
 "1"
 "100"
