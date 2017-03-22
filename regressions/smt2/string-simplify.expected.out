@@ -11,10 +11,10 @@ true
 2
 "b"
 "bc"
-(str.substr "abc" 1 3)
+"bc"
 "c"
-(str.substr "abc" 3 1)
-(str.substr "abc" 4 1)
+""
+""
 false
 false
 true
