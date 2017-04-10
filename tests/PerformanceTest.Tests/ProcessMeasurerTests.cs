@@ -2,7 +2,6 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using PerformanceTest;
 using System.Threading.Tasks;
-
 using Measurement;
 using System.Diagnostics;
 using System.IO;
@@ -24,7 +23,7 @@ namespace UnitTests
 
             var ptime = m.TotalProcessorTime.TotalMilliseconds;
             var wctime = m.WallClockTime.TotalMilliseconds;
-            Assert.IsTrue(ptime <= 1000 && wctime - ptime >= 100, "Total processor time must be very small because Delay.exe mostly sleeps but it is " + ptime);
+            Assert.IsTrue(ptime <= 1000 && wctime >= ptime, "Total processor time must be very small because Delay.exe mostly sleeps but it is " + ptime);
             Assert.IsTrue(wctime >= 100 && wctime <= 200, "Wall-clock time must be greater than given delay");
 
             StreamReader reader = new StreamReader(m.StdOut);
