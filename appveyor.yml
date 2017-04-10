@@ -1,0 +1,41 @@
+version: 1.0.{build}
+
+#---------------------------------#
+#    environment configuration    #
+#---------------------------------#
+
+# Build worker image (VM template)
+image: Visual Studio 2015
+
+init:
+  - git config --global core.autocrlf input
+
+
+#---------------------------------#
+#       build configuration       #
+#---------------------------------#
+
+platform:
+  - Any CPU
+
+configuration:
+  - Release
+
+build:
+  parallel: true                  # enable MSBuild parallel builds
+  project: PerformanceTest.sln      # path to Visual Studio solution or project
+
+#---------------------------------#
+#       tests configuration       #
+#---------------------------------#
+
+# to run tests again only selected assemblies and/or categories
+test:
+  assemblies:
+    only:
+      - UnitTests.dll
+
+  
+artifacts:
+  - path: bin
+    name: bin
