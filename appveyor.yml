@@ -21,9 +21,12 @@ platform:
 configuration:
   - Release
 
+before_build:
+  - nuget restore
+
 build:
   parallel: true                  # enable MSBuild parallel builds
-  project: PerformanceTest.sln      # path to Visual Studio solution or project
+  project: PerformanceTest.sln      # path to Visual Studio solution or project  
 
 #---------------------------------#
 #       tests configuration       #
