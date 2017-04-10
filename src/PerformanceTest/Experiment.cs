@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Measurement;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -11,13 +12,15 @@ namespace PerformanceTest
 {
     public class ExperimentDefinition
     {
-        public static ExperimentDefinition Create(string executable, string benchmarkContainer, string benchmarkFileExtension)
+        public static ExperimentDefinition Create(string executable, string benchmarkContainer, string benchmarkFileExtension, string parameters, TimeSpan timeout)
         {
             return new ExperimentDefinition()
             {
                 Executable = executable,
                 BenchmarkContainer = benchmarkContainer,
-                BenchmarkFileExtension = benchmarkFileExtension
+                BenchmarkFileExtension = benchmarkFileExtension,
+                Parameters = parameters,
+                BenchmarkTimeout = timeout
             };
         }
 
@@ -43,6 +46,12 @@ namespace PerformanceTest
         /// </summary>
         public string BenchmarkContainer { get; private set; }
 
+
+        /// <summary>
+        /// A category name to draw benchmarks from. Can be null or empty string.
+        /// </summary>
+        public string Category { get; private set; }
+
         /// <summary>
         /// The extension of benchmark files, e.g., "smt2" for SMT-Lib version 2 files.
         /// </summary>
@@ -52,8 +61,9 @@ namespace PerformanceTest
 
         /// <summary>
         /// The memory limit per benchmark (bytes).
+        /// Zero means no limit.
         /// </summary>
-        public int MemoryLimit { get; private set; }
+        public long MemoryLimit { get; private set; }
 
         /// <summary>
         /// The time limit per benchmark.
@@ -113,35 +123,37 @@ namespace PerformanceTest
     /// </summary>
     public class BenchmarkResult
     {
-        public int JobID;
+        public BenchmarkResult(int experimentId, string benchmarkFileName, string workerInformation, double normalizedRuntime, DateTime acquireTime, ProcessRunMeasure measure)
+        {
+            this.ExperimentID = experimentId;
+            this.BenchmarkFileName = benchmarkFileName;
+            this.WorkerInformation = workerInformation;
+            this.NormalizedRuntime = normalizedRuntime;
+            this.Measurements = measure;
+            this.AcquireTime = acquireTime;
+        }
 
         /// <summary>
-        /// An experiment this job is part of.
+        /// An experiment this benchmark is part of.
         /// </summary>
-        public int ExperimentID;
+        public int ExperimentID { get; private set; }
+
+        public ProcessRunMeasure Measurements { get; private set; }
 
         /// <summary>
         /// A normalized total processor time that indicates the amount of time that the associated process has spent utilizing the CPU.
         /// </summary>
-        public double NormalizedRuntime;
-        public double ActualRuntime;
-        public string WorkerInformation;
+        public double NormalizedRuntime { get; private set; }
+        public string WorkerInformation { get; private set; }
 
-        public string StdOut;
-        public string StdErr;
 
         /// <summary>
         /// Name of a file that is passed as an argument to the target executable.
         /// </summary>
         /// <example>smtlib-latest\sample\z3.01234.smt2</example>
-        public string BenchmarkFileName;
+        public string BenchmarkFileName { get; private set; }
 
-        public int ReturnValue;
-        public ResultCode ResultCode;
-        public Dictionary<string, string> CustomResults;
-
-        public DateTime AcquireTime;
-        public DateTime FinishTime;
+        public DateTime AcquireTime { get; private set; }
     }
 
    public class Group

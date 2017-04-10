@@ -15,6 +15,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FailingTool", "src\TargetPr
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PerformanceTest.Tests", "tests\PerformanceTest.Tests\PerformanceTest.Tests.csproj", "{1EED9387-18C3-43EF-96E9-C1490D918A03}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LinearEquationSolver", "src\TargetProjects\LinearEquationSolver\LinearEquationSolver.csproj", "{F47B9C4D-EB12-4968-89C8-31C7FAD68B07}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -41,6 +43,10 @@ Global
 		{1EED9387-18C3-43EF-96E9-C1490D918A03}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1EED9387-18C3-43EF-96E9-C1490D918A03}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1EED9387-18C3-43EF-96E9-C1490D918A03}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F47B9C4D-EB12-4968-89C8-31C7FAD68B07}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F47B9C4D-EB12-4968-89C8-31C7FAD68B07}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F47B9C4D-EB12-4968-89C8-31C7FAD68B07}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F47B9C4D-EB12-4968-89C8-31C7FAD68B07}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -48,5 +54,6 @@ Global
 	GlobalSection(NestedProjects) = preSolution
 		{D070FDFD-BDF2-47C6-9325-DC2101869AA4} = {A96102DB-4EF7-47B1-8A80-017FF6DF6F11}
 		{E722F30B-1666-4D52-B06E-1ED63E6580F8} = {A96102DB-4EF7-47B1-8A80-017FF6DF6F11}
+		{F47B9C4D-EB12-4968-89C8-31C7FAD68B07} = {A96102DB-4EF7-47B1-8A80-017FF6DF6F11}
 	EndGlobalSection
 EndGlobal

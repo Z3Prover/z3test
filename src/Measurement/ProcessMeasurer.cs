@@ -5,7 +5,6 @@ using System.Threading;
 
 namespace Measurement
 {
-
     public static class ProcessMeasurer
     {
         /// <summary>
