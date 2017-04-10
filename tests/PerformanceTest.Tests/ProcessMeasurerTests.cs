@@ -114,7 +114,7 @@ namespace UnitTests
 
             Assert.AreEqual(Measure.CompletionStatus.Error, m.Status);
             Assert.IsTrue(m.ExitCode < 0, "Exit code");
-            Assert.IsTrue(m.PeakMemorySize > 100 << 20, "Memory size seems too low");
+            Assert.IsTrue(m.PeakMemorySize > 1 << 20, "Memory size seems too low");
 
 
             var ptime = m.TotalProcessorTime.TotalMilliseconds;
