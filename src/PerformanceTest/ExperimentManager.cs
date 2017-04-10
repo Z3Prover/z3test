@@ -56,6 +56,7 @@ namespace PerformanceTest
 
         public abstract Task<ExperimentID> StartExperiment(ExperimentDefinition definition);
 
-        public abstract Task<BenchmarkResult[]> Result(ExperimentID experimentId);
+        public abstract Task<BenchmarkResult[]> AllResults(ExperimentID experimentId);
+        public abstract Task<BenchmarkResult>[] Results(ExperimentID experimentId);
     }
 }

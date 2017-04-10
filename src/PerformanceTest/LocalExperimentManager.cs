@@ -54,12 +54,22 @@ namespace PerformanceTest
             return Task.FromResult(id);
         }
 
-        public override Task<BenchmarkResult[]> Result(int experimentId)
+        public override Task<BenchmarkResult>[] Results(int experimentId)
         {
             ExperimentInstance experiment;
             if (experiments.TryGetValue(experimentId, out experiment))
             {
                 return experiment.Results;
+            }
+            else throw new ArgumentException("Experiment not found");
+        }
+
+        public override Task<BenchmarkResult[]> AllResults(int experimentId)
+        {
+            ExperimentInstance experiment;
+            if (experiments.TryGetValue(experimentId, out experiment))
+            {
+                return Task.WhenAll(experiment.Results);
             }
             else throw new ArgumentException("Experiment not found");
         }
@@ -76,43 +86,42 @@ namespace PerformanceTest
             factory = new TaskFactory(scheduler);
         }
 
-        public Task<BenchmarkResult[]> Enqueue(ExperimentID id, ExperimentDefinition experiment)
+        public Task<BenchmarkResult>[] Enqueue(ExperimentID id, ExperimentDefinition experiment)
         {
             if (experiment == null) throw new ArgumentNullException("experiment");
-
-            Task<BenchmarkResult[]> task = factory.StartNew(_state => RunExperiment(id, (ExperimentDefinition)_state),
-                (object)experiment, TaskCreationOptions.LongRunning);
-            return task;
+            return RunExperiment(id, experiment, factory);
         }
 
-        private static BenchmarkResult[] RunExperiment(ExperimentID id, ExperimentDefinition experiment)
+        private static Task<BenchmarkResult>[] RunExperiment(ExperimentID id, ExperimentDefinition experiment, TaskFactory factory)
         {
             if (!File.Exists(experiment.Executable)) throw new ArgumentException("Executable not found");
 
             var workerInfo = GetWorkerInfo();
-
-
             string benchmarkFolder = string.IsNullOrEmpty(experiment.Category) ? experiment.BenchmarkContainer : Path.Combine(experiment.BenchmarkContainer, experiment.Category);
             var benchmarks = Directory.EnumerateFiles(benchmarkFolder, "*." + experiment.BenchmarkFileExtension, SearchOption.AllDirectories).ToArray();
 
-            BenchmarkResult[] results = new BenchmarkResult[benchmarks.Length]; 
+            var results = new Task<BenchmarkResult>[benchmarks.Length]; 
             for (int i = 0; i < benchmarks.Length; i++)
             {
-                string benchmark = benchmarks[i];
-                Trace.WriteLine("Running benchmark " + Path.GetFileName(benchmark));
+                results[i] =
+                    factory.StartNew(_benchmark =>
+                    {
+                        string benchmark = (string)_benchmark;
+                        Trace.WriteLine("Running benchmark " + Path.GetFileName(benchmark));
 
-                string args = experiment.Parameters;
-                if(args != null)
-                {
-                    args = args.Replace("{0}", benchmark);
-                }
+                        string args = experiment.Parameters;
+                        if (args != null)
+                        {
+                            args = args.Replace("{0}", benchmark);
+                        }
 
-                DateTime acq = DateTime.Now;
-                var m = ProcessMeasurer.Measure(experiment.Executable, args, experiment.BenchmarkTimeout, experiment.MemoryLimit == 0 ? null : new Nullable<long>(experiment.MemoryLimit));
-                Trace.WriteLine(String.Format("Done in {0}", m.WallClockTime));
+                        DateTime acq = DateTime.Now;
+                        var m = ProcessMeasurer.Measure(experiment.Executable, args, experiment.BenchmarkTimeout, experiment.MemoryLimit == 0 ? null : new Nullable<long>(experiment.MemoryLimit));
+                        Trace.WriteLine(String.Format("Done in {0}", m.WallClockTime));
 
-                var performanceIndex = Normalize(m.TotalProcessorTime);
-                results[i] = new BenchmarkResult(id, benchmark, workerInfo, performanceIndex, acq, m);
+                        var performanceIndex = Normalize(m.TotalProcessorTime);
+                        return new BenchmarkResult(id, benchmark, workerInfo, performanceIndex, acq, m);
+                    }, benchmarks[i], TaskCreationOptions.LongRunning);
             }
 
             return results;
@@ -134,9 +143,9 @@ namespace PerformanceTest
         private readonly ExperimentID id;
         private readonly ExperimentDefinition def;
 
-        private Task<BenchmarkResult[]> results;
+        private Task<BenchmarkResult>[] results;
 
-        public ExperimentInstance(ExperimentID id, ExperimentDefinition def, Task<BenchmarkResult[]> results)
+        public ExperimentInstance(ExperimentID id, ExperimentDefinition def, Task<BenchmarkResult>[] results)
         {
             if (def == null) throw new ArgumentNullException("def");
             this.id = id;
@@ -145,7 +154,7 @@ namespace PerformanceTest
             this.results = results;
         }
 
-        public Task<BenchmarkResult[]> Results { get { return results; } }
+        public Task<BenchmarkResult>[] Results { get { return results; } }
     }
     
 }
