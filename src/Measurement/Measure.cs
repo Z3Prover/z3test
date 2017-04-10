@@ -46,5 +46,13 @@ namespace Measurement
         public int ExitCode { get; private set; }
         public Stream StdOut { get; private set; }
         public Stream StdErr { get; private set; }
+
+        public string OutputToString()
+        {
+            StreamReader r = new StreamReader(StdOut);
+            string s = r.ReadToEnd();
+            StdOut.Position = 0L;
+            return s;
+        }
     }
 }

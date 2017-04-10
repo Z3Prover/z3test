@@ -58,6 +58,15 @@
     <None Include="benchmarks_1\identity3x3.csv">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Include="benchmarks_2\IdentitySquare\identity3x3.csv">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="benchmarks_2\IdentitySquare\identity100x100.csv">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="benchmarks_2\IdentitySquare\identity50x50.csv">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\src\Measurement\Measurement.csproj">
