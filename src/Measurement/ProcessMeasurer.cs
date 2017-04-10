@@ -155,8 +155,9 @@ namespace Measurement
                 retry = false;
                 try
                 {
-                    foreach (Process cp in Process.GetProcessesByName(p.ProcessName))
-                        if(!cp.HasExited) cp.Kill();
+                    if (!p.HasExited) p.Kill();
+                    //foreach (Process cp in Process.GetProcessesByName(p.ProcessName))
+                    //    if(!cp.HasExited) cp.Kill();
                 }
                 catch
                 {
@@ -186,8 +187,9 @@ namespace Measurement
         {
             long r = 0;
 
-            foreach (Process cp in Process.GetProcessesByName(p.ProcessName))
-                try { r += cp.PeakVirtualMemorySize64; } catch { /* OK */ }
+            //foreach (Process cp in Process.GetProcessesByName(p.ProcessName))
+            //    try { r += cp.PeakVirtualMemorySize64; } catch { /* OK */ }
+            r = p.PeakVirtualMemorySize64;
 
             return r;
         }

@@ -71,6 +71,10 @@
       <Project>{d070fdfd-bdf2-47c6-9325-dc2101869aa4}</Project>
       <Name>Delay</Name>
     </ProjectReference>
+    <ProjectReference Include="..\TargetProjects\FailingTool\FailingTool.csproj">
+      <Project>{e722f30b-1666-4d52-b06e-1ed63e6580f8}</Project>
+      <Name>FailingTool</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets" Condition="Exists('$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets')" />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

@@ -59,5 +59,77 @@ namespace UnitTests
             string error = reader.ReadToEnd();
             Assert.IsTrue(String.IsNullOrEmpty(error), "Error output");
         }
+
+        [TestMethod]
+        public void MeasureProcessExitCode()
+        {
+            Measurement.ProcessRunMeasure m = ProcessMeasurer.Measure("Delay.exe", "10000 extraArgument", TimeSpan.FromMilliseconds(10000));
+
+            Assert.AreEqual(Measure.CompletionStatus.Error, m.Status);
+            Assert.AreEqual(42, m.ExitCode, "Exit code");
+            Assert.IsTrue(m.PeakMemorySize > 1024 * 1024, "Memory size seems too low");
+
+
+            var ptime = m.TotalProcessorTime.TotalMilliseconds;
+            var wctime = m.WallClockTime.TotalMilliseconds;
+            Assert.IsTrue(ptime > 0 && ptime <= 100, "Total processor time");
+            Assert.IsTrue(wctime > 0 && wctime <= 10000, "Wall-clock time must be greater than given timeout");
+
+            StreamReader reader = new StreamReader(m.StdOut);
+            string output = reader.ReadToEnd();
+            Assert.IsTrue(output.Contains("Use: Delay.exe"), "Output must contain certain text.");
+
+            reader = new StreamReader(m.StdErr);
+            string error = reader.ReadToEnd();
+            Assert.IsTrue(String.IsNullOrEmpty(error), "Error output");
+        }
+
+        [TestMethod]
+        public void MeasureProcessThrowsException()
+        {
+            Measurement.ProcessRunMeasure m = ProcessMeasurer.Measure("FailingTool.exe", "arg1 arg2", TimeSpan.FromMilliseconds(10000));
+
+            Assert.AreEqual(Measure.CompletionStatus.Error, m.Status);
+            Assert.IsTrue(m.ExitCode < 0, "Exit code");
+            Assert.IsTrue(m.PeakMemorySize > 1024 * 1024, "Memory size seems too low");
+
+
+            var ptime = m.TotalProcessorTime.TotalMilliseconds;
+            var wctime = m.WallClockTime.TotalMilliseconds;
+            Assert.IsTrue(ptime <= 100, "Total processor time");
+            Assert.IsTrue(wctime <= 10000, "Wall-clock time");
+
+            StreamReader reader = new StreamReader(m.StdOut);
+            string output = reader.ReadToEnd();
+            reader = new StreamReader(m.StdErr);
+            string error = reader.ReadToEnd();
+
+            Assert.IsTrue(String.IsNullOrEmpty(output), "Output");
+            Assert.IsTrue(error.Contains("Unhandled Exception"), "Error must contain certain text.");
+        }
+
+        [TestMethod]
+        public void MeasureProcessOutOfMemory()
+        {
+            Measurement.ProcessRunMeasure m = ProcessMeasurer.Measure("FailingTool.exe", "out-of-memory", TimeSpan.FromMinutes(10));
+
+            Assert.AreEqual(Measure.CompletionStatus.Error, m.Status);
+            Assert.IsTrue(m.ExitCode < 0, "Exit code");
+            Assert.IsTrue(m.PeakMemorySize > 100 << 20, "Memory size seems too low");
+
+
+            var ptime = m.TotalProcessorTime.TotalMilliseconds;
+            var wctime = m.WallClockTime.TotalMilliseconds;
+            Assert.IsTrue(ptime <= 100000, "Total processor time");
+            Assert.IsTrue(wctime <= 100000, "Wall-clock time");
+
+            StreamReader reader = new StreamReader(m.StdOut);
+            string output = reader.ReadToEnd();
+            reader = new StreamReader(m.StdErr);
+            string error = reader.ReadToEnd();
+
+            Assert.IsTrue(output.Contains("i = 0"), "Output");
+            Assert.IsTrue(error.Contains("OutOfMemoryException"), "Error must contain certain text.");
+        }
     }
 }
