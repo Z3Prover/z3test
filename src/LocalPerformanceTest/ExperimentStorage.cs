@@ -39,7 +39,7 @@ namespace PerformanceTest
             if (File.Exists(tableFile))
             {
                 experimentsTable =
-                    Table.OfRows( // FSharpFunc<Tuple<int, string>, FSharpOption<Type>>.
+                    Table.OfRows( 
                         Table.Load(tableFile, new ReadSettings(Delimiter.Comma, true, true, None,
                             FSharpOption<FSharpFunc<Tuple<int, string>, FSharpOption<Type>>>.Some(FSharpFunc<Tuple<int, string>, FSharpOption<Type>>.FromConverter(tuple =>
                             {
