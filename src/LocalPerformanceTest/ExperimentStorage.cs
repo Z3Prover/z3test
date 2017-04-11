@@ -19,11 +19,35 @@ namespace PerformanceTest
         private readonly DirectoryInfo dir;
         private readonly DirectoryInfo dirBenchmarks;
 
+        private Table<ExperimentsTableRow> experimentsTable;
+
 
         private ExperimentStorage(string storageName)
         {
             dir = Directory.CreateDirectory(storageName);
             dirBenchmarks = dir.CreateSubdirectory("benchmarks");
+
+            string tableFile = Path.Combine(dir.FullName, "experiments.csv");
+            if (File.Exists(tableFile))
+            {
+                experimentsTable =
+                    Table.OfRows( // FSharpFunc<Tuple<int, string>, FSharpOption<Type>>.
+                        Table.Load(tableFile, new ReadSettings(Delimiter.Comma, true, true, None,
+                            FSharpOption<FSharpFunc<Tuple<int, string>, FSharpOption<Type>>>.Some(FSharpFunc<Tuple<int, string>, FSharpOption<Type>>.FromConverter(tuple =>
+                            {
+                                var colName = tuple.Item2;
+                                switch (colName)
+                                {
+                                    case "ID": return FSharpOption<Type>.Some(typeof(int));
+                                    case "MemoryLimit": return FSharpOption<Type>.Some(typeof(int));
+                                }
+                                return FSharpOption<Type>.None;
+                            }))))
+                        .ToRows<ExperimentsTableRow>());
+            }else
+            {
+                experimentsTable = Table.OfRows<ExperimentsTableRow>(new ExperimentsTableRow[0]);
+            }
         }
 
         public static ExperimentStorage Open(string storageName)
@@ -31,28 +55,35 @@ namespace PerformanceTest
             return new ExperimentStorage(storageName);
         }
 
-        public void Save(int id, ExperimentDefinition experiment, BenchmarkResult[] benchamrks)
+        public int MaxExperimentId
         {
-            var table = Table.OfColumns(new []
+            get
             {
-                Column.CreateFromUntyped("ID", new [] { id }),
-                Column.CreateFromUntyped("Executable", new [] { experiment.Executable }),
-                Column.CreateFromUntyped("Version", new [] { GetVersion(experiment.Executable) }),
-                Column.CreateFromUntyped("Parameters", new [] { experiment.Parameters }),
-                Column.CreateFromUntyped("BenchmarkContainer", new [] { experiment.BenchmarkContainer }),
-                Column.CreateFromUntyped("Category", new [] { experiment.Category }),
-                Column.CreateFromUntyped("BenchmarkFileExtension", new [] { experiment.BenchmarkFileExtension }),
-                Column.CreateFromUntyped("MemoryLimit", new [] { (int)experiment.MemoryLimit }),
-                Column.CreateFromUntyped("BenchmarkTimeout", new [] { experiment.BenchmarkTimeout.TotalSeconds }),
-                Column.CreateFromUntyped("ExperimentTimeout", new [] { experiment.ExperimentTimeout.TotalSeconds }),
-                Column.CreateFromUntyped("ExperimentPriority", new [] { experiment.ExperimentPriority }),
-                Column.CreateFromUntyped("Note", new [] { experiment.Note }),
-                Column.CreateFromUntyped("GroupName", new [] { experiment.GroupName })
-            });
-            Table.Save(table, Path.Combine(dir.FullName, "experiments.csv"), new WriteSettings(Delimiter.Comma, true, true));
+                if (experimentsTable.RowsCount > 0)
+                    return experimentsTable["ID"].Rows.AsInt.Max();
+                else return 0;
+            }
+        }
 
-            
-            SaveBenchmarks(Path.Combine(dirBenchmarks.FullName, id.ToString("000000") + ".csv"), benchamrks);
+        public void Add(int id, ExperimentDefinition experiment, BenchmarkResult[] benchmarks)
+        {
+            experimentsTable = experimentsTable.AddRow(new ExperimentsTableRow
+            {
+                ID = id,
+                Executable = experiment.Executable,
+                Version = GetVersion(experiment.Executable),
+                Parameters = experiment.Parameters,
+                BenchmarkContainer = experiment.BenchmarkContainer,
+                BenchmarkFileExtension = experiment.BenchmarkFileExtension,
+                Category = experiment.Category,
+                BenchmarkTimeout = experiment.BenchmarkTimeout.TotalSeconds,
+                ExperimentTimeout = experiment.ExperimentTimeout.TotalSeconds,
+                MemoryLimit = (int)(experiment.MemoryLimit >> 20), // bytes to MB
+                GroupName = experiment.GroupName,
+                Note = experiment.Note,
+            });
+            Table.Save(experimentsTable, Path.Combine(dir.FullName, "experiments.csv"), new WriteSettings(Delimiter.Comma, true, true));
+            SaveBenchmarks(Path.Combine(dirBenchmarks.FullName, id.ToString("000000") + ".csv"), benchmarks);
         }
 
         private void SaveBenchmarks(string fileName, BenchmarkResult[] benchmarks)
@@ -91,5 +122,30 @@ namespace PerformanceTest
             var versionInfo = FileVersionInfo.GetVersionInfo(pathToExe);
             return versionInfo.ProductVersion;
         }
+    }
+
+    public class ExperimentsTableRow
+    {
+        public int ID { get; set; }
+        public string Executable { get; set; }
+        public string Version { get; set; }
+        public string Parameters { get; set; }
+        public string BenchmarkContainer { get; set; }
+        public string Category { get; set; }
+        public string BenchmarkFileExtension { get; set; }
+        /// <summary>
+        /// MegaBytes.
+        /// </summary>
+        public int MemoryLimit { get; set; }
+        /// <summary>
+        /// Seconds.
+        /// </summary>
+        public double BenchmarkTimeout { get; set; }
+        /// <summary>
+        /// Seconds.
+        /// </summary>
+        public double ExperimentTimeout { get; set; }
+        public string Note { get; set; }
+        public string GroupName { get; set; }
     }
 }

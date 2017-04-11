@@ -24,10 +24,11 @@ namespace Measure
             string version = GetVersion(args[0]);
             Print(String.Format("\n\nMeasuring performance of {0} {1}...\n", args[0], version));
 
-            ExperimentManager manager = new LocalExperimentManager();
+            ExperimentStorage storage = ExperimentStorage.Open("measure");
+            ExperimentManager manager = new LocalExperimentManager(storage);
             int expId = Run(manager, definition).Result;
 
-            Save(manager, expId).Wait();
+            Save(storage, manager, expId).Wait();
 
             return 0;
         }
@@ -43,12 +44,11 @@ namespace Measure
         }
 
 
-        private static async Task Save(ExperimentManager manager, int expId)
-        {
-            ExperimentStorage storage = ExperimentStorage.Open("measure");
+        private static async Task Save(ExperimentStorage storage, ExperimentManager manager, int expId)
+        {            
             ExperimentDefinition experiment = await manager.GetExperiment(expId);
             BenchmarkResult[] benchmarks = await manager.AllResults(expId);
-            storage.Save(expId, experiment, benchmarks);
+            storage.Add(expId, experiment, benchmarks);
         }
 
 

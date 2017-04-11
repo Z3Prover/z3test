@@ -18,8 +18,16 @@ namespace PerformanceTest
     {
         private readonly ConcurrentDictionary<ExperimentID, ExperimentInstance> experiments;
         private readonly LocalExperimentRunner runner;
+        private readonly ExperimentStorage storage;
 
-        private int nextId = 0;
+        private int lastId = 0;
+
+        public LocalExperimentManager(ExperimentStorage storage) : this()
+        {
+            if (storage == null) throw new ArgumentNullException("storage");
+            this.storage = storage;
+            lastId = storage.MaxExperimentId;            
+        }
 
         public LocalExperimentManager()
         {
@@ -49,7 +57,7 @@ namespace PerformanceTest
 
         public override Task<ExperimentID> StartExperiment(ExperimentDefinition definition)
         {
-            ExperimentID id = Interlocked.Increment(ref nextId);
+            ExperimentID id = Interlocked.Increment(ref lastId);
 
             var results = runner.Enqueue(id, definition);
             ExperimentInstance experiment = new ExperimentInstance(id, definition, results);

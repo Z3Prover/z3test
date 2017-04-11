@@ -78,13 +78,6 @@ namespace PerformanceTest
         public TimeSpan ExperimentTimeout { get; private set; }
 
         /// <summary>
-        /// A higher-priority experiment have scheduling precedence over lower-priority experiment.
-        /// A greater value corresponds to a higher priority.
-        /// </summary>
-        public int ExperimentPriority { get; private set; }
-
-
-        /// <summary>
         /// A descriptive note, if you like.
         /// </summary>
         public string Note { get; private set; }
