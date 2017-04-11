@@ -45,11 +45,12 @@ namespace PerformanceTest
         public abstract Task<ExperimentDefinition> GetExperiment(int expId);
 
 
+
         /// <summary>
         /// Returns information about completed jobs of the given experiment.
         /// </summary>
         /// <returns></returns>
-        public abstract Task<BenchmarkResult[]> GetExperimentResults();
+        public abstract Task<BenchmarkResult[]> GetExperimentResults(int expId);
 
         public abstract Task<Group[]> GetGroups();
 

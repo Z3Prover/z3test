@@ -40,9 +40,9 @@ namespace PerformanceTest
             return Task.FromResult(experiments[expId].Definition);
         }
 
-        public override Task<BenchmarkResult[]> GetExperimentResults()
+        public override Task<BenchmarkResult[]> GetExperimentResults(int expId)
         {
-            throw new NotImplementedException();
+            return Task.FromResult(storage.GetResults(expId));
         }
 
         public override Task<ExperimentStatus[]> GetExperiments(bool showProgress, string categoryFilter = null, string noteFilter = null, string creatorFilter = null)
@@ -84,6 +84,16 @@ namespace PerformanceTest
                 return Task.WhenAll(experiment.Results);
             }
             else throw new ArgumentException("Experiment not found");
+        }
+
+        public Task<ExperimentsTableRow[]> GetExperiments(string benchmarkContainer, string category, string executable, string parameters)
+        {
+            var experiments = storage.GetExperiments();
+            var result = experiments
+                .Where(e => e.BenchmarkContainer == benchmarkContainer && e.Category == category && e.Executable == executable && e.Parameters == parameters)
+                .ToArray();
+
+            return Task.FromResult(result);
         }
     }
 

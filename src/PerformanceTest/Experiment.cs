@@ -12,7 +12,7 @@ namespace PerformanceTest
 {
     public class ExperimentDefinition
     {
-        public static ExperimentDefinition Create(string executable, string benchmarkContainer, string benchmarkFileExtension, string parameters, TimeSpan timeout,
+        public static ExperimentDefinition Create(string executable, string benchmarkContainer, string benchmarkFileExtension, string parameters, TimeSpan benchmarkTimeout,
             string category = null)
         {
             return new ExperimentDefinition()
@@ -21,7 +21,7 @@ namespace PerformanceTest
                 BenchmarkContainer = benchmarkContainer,
                 BenchmarkFileExtension = benchmarkFileExtension,
                 Parameters = parameters,
-                BenchmarkTimeout = timeout,
+                BenchmarkTimeout = benchmarkTimeout,
                 Category = category
             };
         }
