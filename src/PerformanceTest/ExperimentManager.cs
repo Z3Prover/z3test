@@ -42,6 +42,8 @@ namespace PerformanceTest
         /// </summary>
         public abstract Task<ExperimentStatus[]> GetExperiments(bool showProgress, string categoryFilter = null, string noteFilter = null, string creatorFilter = null);
 
+        public abstract Task<ExperimentDefinition> GetExperiment(int expId);
+
 
         /// <summary>
         /// Returns information about completed jobs of the given experiment.

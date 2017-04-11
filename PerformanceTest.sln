@@ -19,6 +19,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LinearEquationSolver", "src
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Measure", "src\Measure\Measure.csproj", "{28A4FBC0-843D-4119-A690-E156816E69F4}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LocalPerformanceTest", "src\LocalPerformanceTest\LocalPerformanceTest.csproj", "{879E906F-D5A6-4332-97A7-6952F3C00ABC}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -53,6 +55,10 @@ Global
 		{28A4FBC0-843D-4119-A690-E156816E69F4}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{28A4FBC0-843D-4119-A690-E156816E69F4}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{28A4FBC0-843D-4119-A690-E156816E69F4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{879E906F-D5A6-4332-97A7-6952F3C00ABC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{879E906F-D5A6-4332-97A7-6952F3C00ABC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{879E906F-D5A6-4332-97A7-6952F3C00ABC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{879E906F-D5A6-4332-97A7-6952F3C00ABC}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

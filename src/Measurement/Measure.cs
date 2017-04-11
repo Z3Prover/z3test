@@ -54,5 +54,12 @@ namespace Measurement
             StdOut.Position = 0L;
             return s;
         }
+        public string ErrorToString()
+        {
+            StreamReader r = new StreamReader(StdErr);
+            string s = r.ReadToEnd();
+            StdErr.Position = 0L;
+            return s;
+        }
     }
 }

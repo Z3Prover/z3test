@@ -27,6 +27,10 @@ namespace PerformanceTest
             runner = new LocalExperimentRunner();
         }
 
+        public override Task<ExperimentDefinition> GetExperiment(int expId)
+        {
+            return Task.FromResult(experiments[expId].Definition);
+        }
 
         public override Task<BenchmarkResult[]> GetExperimentResults()
         {
@@ -153,6 +157,8 @@ namespace PerformanceTest
 
             this.results = results;
         }
+
+        public ExperimentDefinition Definition { get { return def; } }
 
         public Task<BenchmarkResult>[] Results { get { return results; } }
     }

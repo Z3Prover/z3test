@@ -188,7 +188,15 @@ namespace Measurement
 
             //foreach (Process cp in Process.GetProcessesByName(p.ProcessName))
             //    try { r += cp.PeakVirtualMemorySize64; } catch { /* OK */ }
-            r = p.PeakVirtualMemorySize64;
+            try
+            {
+                if (!p.HasExited)
+                    r = p.PeakVirtualMemorySize64;
+            }
+            catch
+            {
+                // OK because the process has a chance to exit.
+            }
 
             return r;
         }

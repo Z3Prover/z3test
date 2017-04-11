@@ -25,18 +25,33 @@ namespace Measure
             Print(String.Format("\n\nMeasuring performance of {0} {1}...\n", args[0], version));
 
             ExperimentManager manager = new LocalExperimentManager();
-            Run(manager, definition).Wait();
+            int expId = Run(manager, definition).Result;
+
+            Save(manager, expId).Wait();
+
             return 0;
         }
 
-        static async Task Run(ExperimentManager manager, ExperimentDefinition definition)
+        static async Task<int> Run(ExperimentManager manager, ExperimentDefinition definition)
         {
             int id = await manager.StartExperiment(definition);
             var results = manager.Results(id);
 
             var print = results.Select(task => task.ContinueWith(benchmark => PrintBenchmark(benchmark.Result))).ToArray();
             await Task.WhenAll(print);
+            return id;
         }
+
+
+        private static async Task Save(ExperimentManager manager, int expId)
+        {
+            ExperimentStorage storage = ExperimentStorage.Open("measure");
+            ExperimentDefinition experiment = await manager.GetExperiment(expId);
+            BenchmarkResult[] benchmarks = await manager.AllResults(expId);
+            storage.Save(expId, experiment, benchmarks);
+        }
+
+
 
         static void PrintBenchmark(BenchmarkResult result)
         {
@@ -60,6 +75,7 @@ namespace Measure
                 PrintError("Timeout    " + info);
             }
         }
+
 
         static void Print(string s)
         {
