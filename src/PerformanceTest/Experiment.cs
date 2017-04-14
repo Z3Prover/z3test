@@ -10,6 +10,20 @@ using ExperimentID = System.Int32;
 
 namespace PerformanceTest
 {
+    public sealed class Experiment
+    {
+        public ExperimentID ID { get; }
+
+        public Task<ExperimentDefinition> Definition { get; }
+
+        public Task<ExperimentStatus> GetStatus()
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<BenchmarkResult>[] Results { get; }
+    }
+
     public class ExperimentDefinition
     {
         public static ExperimentDefinition Create(string executable, string benchmarkContainer, string benchmarkFileExtension, string parameters, TimeSpan benchmarkTimeout,
@@ -94,24 +108,18 @@ namespace PerformanceTest
         public ExperimentID ID;
         
         public DateTime SubmissionTime;
-        public string Category;
         public string Creator;
+        public string ExecutableVersion;
+
+        public string Category;
         public string Note;
         public bool Flag;
 
-        public int BenchmarksDone;
-        public int BenchmarksQueued;
-        public int BenchmarksTotal { get { return this.BenchmarksDone + this.BenchmarksQueued; } }
+        public int BenchmarksDone { get; private set; }
+        public int BenchmarksTotal { get; private set; }
+        public int BenchmarksQueued { get { return this.BenchmarksTotal - this.BenchmarksDone; } }
     }
 
-    public enum ResultCode
-    {
-        Success = 0,
-        Bug = 3,
-        Error = 4,
-        Timeout = 5,
-        OutOfMemory = 6,
-    }
 
     /// <summary>
     /// Aka "Data".
@@ -150,17 +158,5 @@ namespace PerformanceTest
 
         public DateTime AcquireTime { get; private set; }
     }
-
-   public class Group
-    {
-        public string Name;
-
-        public string Creator;
-
-        public string Category;
-
-        public string Note;
-    }
-
 
 }

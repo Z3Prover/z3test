@@ -15,10 +15,9 @@ namespace UnitTests
             ExperimentDefinition def = ExperimentDefinition.Create("LinearEquationSolver.exe", "benchmarks_1", "csv", "{0}", TimeSpan.FromSeconds(10));
 
             ExperimentManager manager = new LocalExperimentManager();
-
             var expId = await manager.StartExperiment(def);
-            var results = await manager.AllResults(expId);
 
+            var results = await Task.WhenAll(manager.GetResults(expId));
             Assert.AreEqual(1, results.Length, "Number of completed benchmarks");
 
             var res = results[0];
@@ -34,10 +33,9 @@ namespace UnitTests
                 category: "IdentitySquare");
 
             ExperimentManager manager = new LocalExperimentManager();
-
             var expId = await manager.StartExperiment(def);
-            var results = await manager.AllResults(expId);
 
+            var results = await Task.WhenAll(manager.GetResults(expId));
             Assert.AreEqual(3, results.Length, "Number of completed benchmarks");
 
             foreach (var res in results)

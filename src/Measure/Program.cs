@@ -22,32 +22,36 @@ namespace Measure
             ExperimentDefinition definition = ExperimentDefinition.Create(args[0], args[2], args[4], args[1], timeout, category: args[3]);
             string version = GetVersion(args[0]);
 
-            Print(String.Format("\n\nMeasuring performance of {0} {1}...\n", args[0], version));
+            Print(String.Format("\nMeasuring performance of {0} {1}...\n", args[0], version));
 
 
-            ExperimentStorage storage = ExperimentStorage.Open("measure");
-            LocalExperimentManager manager = new LocalExperimentManager(storage);
+            FileStorage storage = FileStorage.Open("measure");
+            ExperimentManager manager = new LocalExperimentManager(storage);
+                        
+            Run(manager, definition).Wait();
             
-            int expId = Run(manager, definition).Result;
-            
-
-            Save(storage, manager, expId).Wait();
-
-
             return 0;
         }
 
-        static async Task<int> Run(LocalExperimentManager manager, ExperimentDefinition definition)
+        static async Task Run(ExperimentManager manager, ExperimentDefinition definition)
         {
             int id = await manager.StartExperiment(definition);
-            var results = manager.Results(id);
-            
-            var history = await manager.GetExperiments(definition.BenchmarkContainer, definition.Category, definition.Executable, definition.Parameters);
-            var last = history.OrderByDescending(e => e.ID).FirstOrDefault();
-            Dictionary<string, BenchmarkResult> lastBenchmarks = new Dictionary<string, BenchmarkResult>();
-            if (last != null)
+            var results = manager.GetResults(id);
+
+
+            var filter = new ExperimentManager.ExperimentFilter
             {
-                var lastResults = await manager.GetExperimentResults(last.ID);
+                BencmarkContainerEquals = definition.BenchmarkContainer,
+                CategoryEquals = definition.Category,
+                ExecutableEquals = definition.Executable,
+                ParametersEquals = definition.Parameters
+            };
+            var history = (await manager.FindExperiments(filter)).ToArray();
+
+            Dictionary<string, BenchmarkResult> lastBenchmarks = new Dictionary<string, BenchmarkResult>();
+            if (history.Length != 0)
+            {
+                var lastResults = await Task.WhenAll(manager.GetResults(history.Max()));
                 foreach(var b in lastResults)
                 {
                     lastBenchmarks[b.BenchmarkFileName] = b;
@@ -63,19 +67,7 @@ namespace Measure
                     PrintBenchmark(benchmark.Result, lastBenchmark);
                 })).ToArray();
             await Task.WhenAll(print);
-
-
-            return id;
         }
-
-
-        private static async Task Save(ExperimentStorage storage, ExperimentManager manager, int expId)
-        {            
-            ExperimentDefinition experiment = await manager.GetExperiment(expId);
-            BenchmarkResult[] benchmarks = await manager.AllResults(expId);
-            storage.Add(expId, experiment, benchmarks);
-        }
-
 
 
         static void PrintBenchmark(BenchmarkResult result, BenchmarkResult lastResult = null)

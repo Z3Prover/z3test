@@ -40,8 +40,8 @@ namespace LinearEquationSolver
             Vector<double> x = null;
             for (var i = 0; i < n; i++)
             {
-                x = A.Solve(b);
-                //x = A.SolveIterative(b, solver, monitor);
+                //x = A.Solve(b);
+                x = A.SolveIterative(b, solver, monitor);
             }
 
             Table result = Table.OfColumns(new[] { Column.Create("x", x.ToArray(), FSharpOption<int>.None) });

@@ -12,14 +12,14 @@ using Measurement;
 
 namespace PerformanceTest
 {
-    public class ExperimentStorage
+    public class FileStorage
     {
         private static FSharpOption<int> None = FSharpOption<int>.None;
 
 
-        public static ExperimentStorage Open(string storageName)
+        public static FileStorage Open(string storageName)
         {
-            return new ExperimentStorage(storageName);
+            return new FileStorage(storageName);
         }
 
 
@@ -30,7 +30,7 @@ namespace PerformanceTest
         private Table<ExperimentsTableRow> experimentsTable;
 
 
-        private ExperimentStorage(string storageName)
+        private FileStorage(string storageName)
         {
             dir = Directory.CreateDirectory(storageName);
             dirBenchmarks = dir.CreateSubdirectory("benchmarks");

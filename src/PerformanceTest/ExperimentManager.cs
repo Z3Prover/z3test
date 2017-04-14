@@ -11,55 +11,44 @@ namespace PerformanceTest
 
     public abstract class ExperimentManager
     {
-        /* 
-        --- JCT -- Returns (experiment ID, number of queued jobs) for each of the experiments.
-
-        SELECT TitleScreen.ID, COUNT(JobQueue.ID) as Queued 
-        FROM TitleScreen LEFT JOIN JobQueue 
-        ON TitleScreen.ID = JobQueue.ExperimentID 
-        GROUP BY TitleScreen.ID
-
-        --- DCT -- Returns (experiment ID, number of done jobs) for each of the experiments.
-
-        SELECT TitleScreen.ID, COUNT(Data.ID) as Done 
-        FROM TitleScreen LEFT JOIN Data 
-        ON TitleScreen.ID = Data.ExperimentID 
-        GROUP BY TitleScreen.ID
-
-        --- ProgressT -- Returns (experiment ID, number of done jobs, number of queued jobs, total [sum of done and queued]) for each of the experiments.
-        SELECT DCT.ID, Done, Queued, (Done+Queued) as Total 
-        FROM DCT, JCT
-        WHERE DCT.ID = JCT.ID
-
-
-        --- Returns experiment description including number of queued and done jobs.
-        SELECT TitleScreen.*, Done, Queued, Total         
-        FROM TitleScreen, ProgressT 
-        WHERE TitleScreen.ID = ProgressT.ID
-        */
         /// <summary>
-        ///  Returns experiments ordered by submission time.
+        /// Schedules execution of a new experiment from the given experiment definition.
         /// </summary>
-        public abstract Task<ExperimentStatus[]> GetExperiments(bool showProgress, string categoryFilter = null, string noteFilter = null, string creatorFilter = null);
-
-        public abstract Task<ExperimentDefinition> GetExperiment(int expId);
-
-
-
-        /// <summary>
-        /// Returns information about completed jobs of the given experiment.
-        /// </summary>
-        /// <returns></returns>
-        public abstract Task<BenchmarkResult[]> GetExperimentResults(int expId);
-
-        public abstract Task<Group[]> GetGroups();
-
-
-
-
+        /// <param name="definition">Describes the experiment to be performed.</param>
+        /// <returns>Identifier of the new experiment for further reference.</returns>
         public abstract Task<ExperimentID> StartExperiment(ExperimentDefinition definition);
 
-        public abstract Task<BenchmarkResult[]> AllResults(ExperimentID experimentId);
-        public abstract Task<BenchmarkResult>[] Results(ExperimentID experimentId);
+        /// <summary>
+        /// Returns a definition of an existing experiment.
+        /// </summary>
+        public abstract Task<ExperimentDefinition> GetDefinition(ExperimentID id);
+
+        /// <summary>
+        /// Returns current execution status of an existing experiment.
+        /// </summary>
+        public abstract Task<ExperimentStatus> GetStatus(ExperimentID id);
+
+        /// <summary>
+        /// Allows to get a result of each of the experiment's benchmarks.
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public abstract Task<BenchmarkResult>[] GetResults(ExperimentID id);
+
+
+
+        public abstract Task<IEnumerable<ExperimentID>> FindExperiments(ExperimentFilter? filter = null);
+
+        public struct ExperimentFilter
+        {
+            public string BencmarkContainerEquals { get; set; }
+
+            public string CategoryEquals { get; set; }
+
+            public string ExecutableEquals { get; set; }
+
+            public string ParametersEquals { get; set; }
+
+        }
     }
 }

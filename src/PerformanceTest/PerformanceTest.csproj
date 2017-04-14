@@ -35,10 +35,8 @@
     <Reference Include="Microsoft.CSharp" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Benchmarks.cs" />
     <Compile Include="Experiment.cs" />
     <Compile Include="ExperimentManager.cs" />
-    <Compile Include="ExperimentStorage.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
