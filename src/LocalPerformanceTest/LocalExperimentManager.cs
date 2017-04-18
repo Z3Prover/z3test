@@ -16,17 +16,17 @@ namespace PerformanceTest
 {
     public class LocalExperimentManager : ExperimentManager
     {
-        private readonly ConcurrentDictionary<ExperimentID, ExperimentInstance> experiments;
+        private readonly ConcurrentDictionary<ExperimentID, ExperimentInstance> runningExperiments;
         private readonly LocalExperimentRunner runner;
         private readonly FileStorage storage;
 
         private int lastId = 0;
 
-        public LocalExperimentManager(FileStorage storage) : this()
+        public LocalExperimentManager(FileStorage storage)
         {
             if (storage == null) throw new ArgumentNullException("storage");
             this.storage = storage;
-            experiments = new ConcurrentDictionary<ExperimentID, ExperimentInstance>();
+            runningExperiments = new ConcurrentDictionary<ExperimentID, ExperimentInstance>();
             runner = new LocalExperimentRunner();
             lastId = storage.MaxExperimentId;            
         }
@@ -37,24 +37,20 @@ namespace PerformanceTest
 
             var results = runner.Enqueue(id, definition);
             ExperimentInstance experiment = new ExperimentInstance(id, definition, results);
-            experiments[id] = experiment;
+            runningExperiments[id] = experiment;
 
             storage.AddExperiment(id, definition);
             Task.WhenAll(experiment.Results)
-                .ContinueWith(t => storage.AddResults(id, t.Result));
+                .ContinueWith(t =>
+                {
+                    storage.AddResults(id, t.Result);
+                    ExperimentInstance val;
+                    runningExperiments.TryRemove(id, out val);
+                });
 
             return Task.FromResult(id);
         }
 
-        public Task<ExperimentsTableRow[]> GetExperiments(string benchmarkContainer, string category, string executable, string parameters)
-        {
-            var experiments = storage.GetExperiments();
-            var result = experiments
-                .Where(e => e.BenchmarkContainer == benchmarkContainer && e.Category == category && e.Executable == executable && e.Parameters == parameters)
-                .ToArray();
-
-            return Task.FromResult(result);
-        }
 
         public override Task<ExperimentDefinition> GetDefinition(int id)
         {
@@ -73,13 +69,24 @@ namespace PerformanceTest
 
         public override Task<IEnumerable<int>> FindExperiments(ExperimentFilter? filter = default(ExperimentFilter?))
         {
-            throw new NotImplementedException();
+            IEnumerable<ExperimentsTableRow> experiments = storage.GetExperiments();
+
+            if (filter.HasValue) {
+                experiments = 
+                    experiments
+                    .Where(e => (filter.Value.BencmarkContainerEquals == null || e.BenchmarkContainer == filter.Value.BencmarkContainerEquals) &&
+                                (filter.Value.CategoryEquals == null || e.Category == filter.Value.CategoryEquals) &&
+                                (filter.Value.ExecutableEquals == null || e.Executable == filter.Value.ExecutableEquals) &&
+                                (filter.Value.ParametersEquals == null || e.Parameters == filter.Value.ParametersEquals));
+            }
+
+            return Task.FromResult(experiments.Select(e => e.ID));
         }
 
         private ExperimentInstance GetInstance(int id)
         {
             ExperimentInstance experiment;
-            if (experiments.TryGetValue(id, out experiment))
+            if (runningExperiments.TryGetValue(id, out experiment))
             {
                 return experiment;
             }

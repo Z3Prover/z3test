@@ -69,6 +69,14 @@ namespace PerformanceTest
             }
         }
 
+        public void Clear()
+        {
+            experimentsTable = Table.OfRows<ExperimentsTableRow>(new ExperimentsTableRow[0]);
+            dir.Delete(true);
+            dir.Create();
+            dirBenchmarks.Create();
+        }
+
         public ExperimentsTableRow[] GetExperiments()
         {
             return experimentsTable.Rows.ToArray();
@@ -96,7 +104,7 @@ namespace PerformanceTest
                 ).ToArray();
         }
 
-        public void Add(int id, ExperimentDefinition experiment, BenchmarkResult[] benchmarks)
+        public void AddExperiment(int id, ExperimentDefinition experiment)
         {
             experimentsTable = experimentsTable.AddRow(new ExperimentsTableRow
             {
@@ -114,6 +122,10 @@ namespace PerformanceTest
                 Note = experiment.Note,
             });
             Table.Save(experimentsTable, Path.Combine(dir.FullName, "experiments.csv"), new WriteSettings(Delimiter.Comma, true, true));
+        }
+
+        public void AddResults(int id, BenchmarkResult[] benchmarks)
+        {
             SaveBenchmarks(IdToTableName(id), benchmarks);
         }
 
