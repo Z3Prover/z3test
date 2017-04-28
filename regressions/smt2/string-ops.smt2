@@ -417,6 +417,8 @@
 (check-sat)
 (pop)
 
+(exit)
+
 (push)
 (set-info :status sat)
 (assert (= "ab" (str.replace a "yyy" "ab")))
@@ -424,7 +426,6 @@
 (pop)
 
 
-(exit)
 
 (push)
 (set-info :status sat)
