@@ -74,8 +74,3 @@ unsat
 sat
 unsat
 sat
-sat
-(model 
-  (define-fun a () String
-    "ab")
-)

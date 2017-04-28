@@ -423,14 +423,15 @@
 (check-sat)
 (pop)
 
+
+(exit)
+
 (push)
 (set-info :status sat)
 (assert (= "ab" (str.replace a "yyy" "abb")))
 (check-sat)
 (get-model)
 (pop)
-
-(exit)
 
 ; TBD: 
 
