@@ -1,0 +1,14 @@
+sat
+(model 
+  (define-fun c0 () Bool
+    true)
+  (define-fun c1 () String
+    "4")
+)
+sat
+(model 
+  (define-fun c0 () Bool
+    true)
+  (define-fun c1 () String
+    "00")
+)
