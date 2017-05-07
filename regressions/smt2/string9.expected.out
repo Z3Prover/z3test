@@ -1,0 +1,10 @@
+sat
+(model 
+  (define-fun c0 () String
+    "aaaUbarbarak")
+)
+sat
+(model 
+  (define-fun c0 () String
+    "!0!barbar!1!")
+)
