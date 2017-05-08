@@ -1,10 +1,4 @@
 sat
-(model 
-  (define-fun c0 () String
-    "aaaUbarbarak")
-)
+false
 sat
-(model 
-  (define-fun c0 () String
-    "!0!barbar!1!")
-)
+false
