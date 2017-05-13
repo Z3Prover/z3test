@@ -23,3 +23,9 @@ ClusterExperiment/Release/*
 ClusterExperiment/packages/*
 *.sdf
 ClusterExperiment/Debug/
+
+/packages
+TestResults
+.vs
+obj
+bin
