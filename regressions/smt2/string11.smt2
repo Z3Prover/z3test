@@ -11,6 +11,7 @@
 (check-sat)
 (get-model)
 (reset)
+(exit)
 (set-option :smt.string_solver z3str3)
 (set-option :model_validate true)
 (declare-fun c0 () Bool)
