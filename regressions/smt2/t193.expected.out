@@ -6,7 +6,7 @@
   (or z3name!0 (not (p x!1)))
   :precision precise :depth 1)
 )
------
+"-----"
 (goals
 (goal
   (or (not (q 10 z3name!2)) (p 0))

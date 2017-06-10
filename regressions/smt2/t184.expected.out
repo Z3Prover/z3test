@@ -5,4 +5,4 @@
               (not (f z2 z))
               (and (not (= (y!0 z x) x)) (f (y!0 z x) z)))))
 (check-sat)
-----
+"----"
