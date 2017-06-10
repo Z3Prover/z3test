@@ -17,7 +17,7 @@ vms = [
     ['OSX x64', 22, False, 'x64-osx'],
     ['Ubuntu x86', 1024, True, 'x86-ubuntu'],
     ['Ubuntu amd64', 1025, True, 'x64-ubuntu'],
-    ['FreeBSD 10 amd64', 1026, True, 'x64-freebsd'],
+    #['FreeBSD 10 amd64', 1026, True, 'x64-freebsd'],
     ['Debian 8 amd64', 1027, True, 'x64-debian'],
     #['OpenBSD 8.5 amd64', 1028, True, 'x64-openbsd']
     ]
@@ -288,6 +288,7 @@ def main():
     call_unlogged('git reset --hard origin/master')
     call_unlogged('git clean -f')
     call_unlogged('git pull -v -s recursive -Xtheirs')
+    call_unlogged('git reset --hard origin/master')
     os.chdir(start_dir)
 
     # clean up distros
