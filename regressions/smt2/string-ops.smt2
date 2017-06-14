@@ -171,21 +171,21 @@
 (pop)
 
 
-(push)
-(set-info :status sat)
-(assert (str.contains a b))
-(assert (not (str.contains b c)))
-(assert (not (str.contains a c)))
-(check-sat)
-(pop)
+;(push)
+;(set-info :status sat)
+;(assert (str.contains a b))
+;(assert (not (str.contains b c)))
+;(assert (not (str.contains a c)))
+;(check-sat)
+;(pop)
 
-(push)
-(set-info :status unsat)
-(assert (str.contains a b))
-(assert (str.contains b c))
-(assert (not (str.contains a c)))
-(check-sat)
-(pop)
+;(push)
+;(set-info :status unsat)
+;(assert (str.contains a b))
+;(assert (str.contains b c))
+;(assert (not (str.contains a c)))
+;(check-sat)
+;o(pop)
 
 
 
