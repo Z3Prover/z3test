@@ -77,14 +77,14 @@
 
 
 (push)
-(set-info :status sat)
+(set-info :status unsat)
 (assert (< i 0))
 (assert (= "b" (str.at a i)))
 (check-sat)
 (pop)
 
 (push)
-(set-info :status sat)
+(set-info :status unsat)
 (assert (>= i (str.len a)))
 (assert (= "b" (str.at a i)))
 (check-sat)
