@@ -5,7 +5,7 @@
   (! true :lblpos baa)
   :precision precise :depth 1)
 )
-"-----"
+-----
 (goals
 (goal
   (not (p 0))
@@ -13,4 +13,4 @@
   (! true :lblpos tst2)
   :precision precise :depth 1)
 )
-"-----"
+-----
