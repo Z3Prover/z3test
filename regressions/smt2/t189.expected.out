@@ -3,7 +3,7 @@
   (= (ite (> (ite (p 0) 20 30) a) 0 1) a)
   :precision precise :depth 1)
 )
-----
+"----"
 (goals
 (goal
   (= z3name!0 a)
@@ -13,4 +13,4 @@
   (or (> z3name!1 a) (= z3name!0 1))
   :precision precise :depth 1)
 )
-----
+"----"

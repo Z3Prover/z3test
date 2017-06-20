@@ -5,7 +5,7 @@
   (or z3name!0 (and (not (p 0)) (! true :lblpos tst)))
   :precision precise :depth 1)
 )
------
+"-----"
 (goals
 (goal
   (q 10 (and z3name!1 z3name!2))
@@ -15,7 +15,7 @@
   (or z3name!1 (not (p 0)))
   :precision precise :depth 1)
 )
------
+"-----"
 (goals
 (goal
   (q 10 z3name!3)
@@ -23,4 +23,4 @@
   (or z3name!3 (not (p 0)) (and (not (p 1)) (! true :lblpos tst)))
   :precision precise :depth 1)
 )
------
+"-----"

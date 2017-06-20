@@ -9,8 +9,8 @@ true
 true
 sat
 sat
-sat
-sat
+unsat
+unsat
 sat
 unsat
 unsat
@@ -19,9 +19,6 @@ unsat
 unknown
 unknown
 sat
-sat
-unknown
-unsat
 sat
 sat
 sat
@@ -73,9 +70,3 @@ sat
 unsat
 sat
 unsat
-sat
-sat
-(model 
-  (define-fun a () String
-    "ab")
-)
