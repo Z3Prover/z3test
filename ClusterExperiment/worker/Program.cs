@@ -672,7 +672,10 @@ namespace worker
                 Process p = new Process();
                 p.StartInfo.FileName = e.localExecutable;
                 p.StartInfo.WorkingDirectory = e.localDir;
-                p.StartInfo.Arguments = j.localFilename + " " + e.Parameters;
+                if (e.Parameters.Contains("%F%"))
+                    p.StartInfo.Arguments = e.Parameters.Replace("%F%", j.localFilename);
+                else
+                    p.StartInfo.Arguments = j.localFilename + " " + e.Parameters;
                 //p.StartInfo.Arguments = e.Parameters + " " + j.localFilename;
                 //p.StartInfo.Arguments = e.Parameters;
                 //p.StartInfo.Arguments = " " + j.filename;
