@@ -8,7 +8,7 @@ import config
 import filecmp
 import time
 
-MAKEJOBS=getenv("MAKEJOBS", "24")
+MAKEJOBS=os.getenv("MAKEJOBS", "24")
 
 def is_windows():
     return os.name == 'nt'
