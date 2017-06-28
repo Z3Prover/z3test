@@ -8,6 +8,8 @@ import config
 import filecmp
 import time
 
+MAKEJOBS=getenv("MAKEJOBS", "24")
+
 def is_windows():
     return os.name == 'nt'
 
@@ -115,7 +117,7 @@ def mk_make(branch, debug, dotnet, java, clang, static, VS64, extraflags):
     if debug:
         cmd.append('-d')
     if is_windows():
-        cmd.append('--parallel=24')
+        cmd.append('--parallel=' + MAKEJOBS)
     if VS64 and is_windows():
         cmd.append('-x')
     if dotnet:
