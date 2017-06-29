@@ -192,7 +192,6 @@ def testjavaex(branch="master", debug=True, clang=False):
     p    = os.path.join(z3dir, bdir)
     print(os.environ)
     with cd(p):
-        print(p)
         if is_windows():
             if subprocess.call(['cmd', '/c', config.JAVA, '-cp', 'com.microsoft.z3.jar;.', 'JavaExample']) != 0:
                 raise Exception("Failed to execute Java example at '%s'" % p)
