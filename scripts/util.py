@@ -188,6 +188,7 @@ def testjavaex(branch="master", debug=True, clang=False):
     z3dir = find_z3depot()
     bdir = get_builddir(branch, debug, clang)
     p    = os.path.join(z3dir, bdir)
+    print(os.environ)
     with cd(p):
         print(p)
         if is_windows():
