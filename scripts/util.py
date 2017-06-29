@@ -194,7 +194,7 @@ def testjavaex(branch="master", debug=True, clang=False):
     with cd(p):
         print(p)
         if is_windows():
-            if subprocess.call([config.JAVA, '-cp', 'com.microsoft.z3.jar;.', 'JavaExample']) != 0:
+            if subprocess.call(['cmd', '/c', config.JAVA, '-cp', 'com.microsoft.z3.jar;.', 'JavaExample']) != 0:
                 raise Exception("Failed to execute Java example at '%s'" % p)
         elif is_osx():
             if subprocess.call([config.JAVA, '-cp', 'com.microsoft.z3.jar:.', 'JavaExample']) != 0:
