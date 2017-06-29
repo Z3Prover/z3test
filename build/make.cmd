@@ -85,7 +85,9 @@ SET PYTHON=C:\Python36_x86\python.exe
 SET JDK_HOME="c:\Program Files (x86)\Java\jdk1.8.0_131"
 call %VCVARS% x86 >> %LOG%
 SET PREPATH=%PATH%
-SET PATH=%PREPATH%;C:\Python36_x86
+SET PATH=C:\Python36_x86;"c:\Program Files (x86)\Java\jdk1.8.0_131\bin";%PREPATH%;
+java -version
+javac -version
 %PYTHON% scripts\win32test.py >> %LOG% 2>&1
 SET PATH=%PREPATH%
 IF %ERRORLEVEL% NEQ 0 goto :ERR
@@ -96,7 +98,9 @@ SET PYTHON=C:\Python36_x64\python.exe
 SET JDK_HOME="c:\Program Files\Java\jdk1.8.0_131"
 call %VCVARS% x64 >> %LOG%
 SET PREPATH=%PATH%
-SET PATH=%PREPATH%;C:\Python36_x64
+SET PATH=C:\Python36_x64;"c:\Program Files\Java\jdk1.8.0_131\bin";%PREPATH%;
+java -version
+javac -version
 %PYTHON% scripts\win64test.py >> %LOG% 2>&1
 SET PATH=%PREPATH%
 IF %ERRORLEVEL% NEQ 0 goto :ERR
@@ -120,8 +124,10 @@ rmdir build-dist /S /Q
 SET PYTHON=C:\Python36_x86\python.exe
 SET JDK_HOME="c:\Program Files (x86)\Java\jdk1.8.0_131"
 SET PREPATH=%PATH%
-SET PATH=%PREPATH%;C:\Python36_x86
-%PYTHON% scripts\mk_win_dist.py -b build-dist\%CURRENT_Z3_HASH% --githash --dotnet-key=..\secret\z3.snk>> %LOG% 2>&1
+SET PATH=C:\Python36_x86;"c:\Program Files (x86)\Java\jdk1.8.0_131\bin";%PREPATH%;
+java -version
+javac -version
+%PYTHON% scripts\mk_win_dist.py -b build-dist\%CURRENT_Z3_HASH% --githash --dotnet-key=..\secret\z3.snk >> %LOG% 2>&1
 SET PATH=%PREPATH%
 echo DONE WITH WIN_DIST >> %LOG%
 IF %ERRORLEVEL% NEQ 0 goto :ERR
