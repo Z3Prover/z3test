@@ -3,3 +3,4 @@
 (assert (<= x 2))
 (maximize x)
 (check-sat)
+(get-objectives)
