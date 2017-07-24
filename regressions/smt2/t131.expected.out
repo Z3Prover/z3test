@@ -21,7 +21,7 @@ success
 success
 (error "line 26 column 28: logic does not support nonlinear arithmetic")
 (error "line 27 column 21: logic does not support nonlinear arithmetic")
-(error "line 29 column 21: unknown sort 'BitVec'")
+(error "line 29 column 28: unknown sort 'BitVec'")
 success
 success
 (error "line 34 column 30: Sort mismatch at argument #1 for function (declare-fun to_real (Int) Real) supplied sort is Real")
