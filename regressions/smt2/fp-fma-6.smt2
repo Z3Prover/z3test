@@ -35,7 +35,7 @@
 
 (assert (= x ((_ to_fp 11 53) roundNearestTiesToEven (- 1.596658482563257930308964205323718488216400146484375) (- 777))))
 (assert (= y ((_ to_fp 11 53) roundNearestTiesToEven (- 1.2611088110811881080053353798575699329376220703125) (- 798))))
-(assert (= z (_ +zero 11 53))) ;; FIXME: (assert (= z (_ -zero 11 53)))
+(assert (= z (fp.neg ((_ to_fp 11 53) roundNearestTiesToEven 0.0 0))))
 (assert (= r ((_ to_fp 11 53) roundNearestTiesToEven 0.0 0)))
 
 (assert (= q (fp.fma roundTowardNegative x y z)))
