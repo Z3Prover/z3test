@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Data;
 using System.Data.SqlClient;
+using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -43,7 +44,7 @@ namespace ClusterExperiment
             Loaded += new RoutedEventHandler(Duplicates_Loaded);
         }
 
-        
+
         void Duplicates_Loaded(object sender, RoutedEventArgs e)
         {
             Mouse.OverrideCursor = System.Windows.Input.Cursors.Wait;
@@ -120,6 +121,8 @@ namespace ClusterExperiment
 
         private void showNextDupe()
         {
+            Hide();
+
             if (filenameps.Count == 0)
             {
                 Close();
@@ -128,7 +131,7 @@ namespace ClusterExperiment
             {
                 Mouse.OverrideCursor = System.Windows.Input.Cursors.Wait;
 
-                bool not_done = true;                
+                bool not_done = true;
                 do
                 {
                     int next_fnp = filenameps.First();
@@ -139,6 +142,7 @@ namespace ClusterExperiment
                     DataSet ds = new DataSet();
                     da.Fill(ds, "Duplicates");
                     dataGrid.ItemsSource = ds.Tables[0].DefaultView;
+                    dataGrid.InvalidateVisual();
 
                     if (resolveTimeouts || resolveSameTime || resolveSlowest && dataGrid.Items.Count > 0)
                     {
@@ -146,6 +150,7 @@ namespace ClusterExperiment
                         bool all_timeouts = true;
                         bool all_ok = true;
                         bool all_times_same = true;
+                        bool all_memouts = true;
                         double runtime = 0.0;
                         double min_time = double.MaxValue;
                         DataRowView min_item = null;
@@ -158,6 +163,7 @@ namespace ClusterExperiment
                             double time = ((double)r[4]);
                             if (status != 5) { all_timeouts = false; }
                             if (status != 0) { all_ok = false; }
+                            if (status != 6) { all_memouts = false; }
 
                             if (time < min_time)
                             {
@@ -185,10 +191,15 @@ namespace ClusterExperiment
                             Pick((int)((DataRowView)dataGrid.Items[0])["ID"]);
                         else if (resolveSameTime && all_ok && all_times_same)
                             Pick((int)((DataRowView)dataGrid.Items[0])["ID"]);
-                        else if (resolveSlowest && all_ok)
+                        else if (resolveSlowest && (all_ok || all_memouts))
                             Pick((int)(max_item)["ID"]);
                         else
+                        {
                             not_done = true;
+                            Show();
+                            Mouse.OverrideCursor = null;
+                            return;
+                        }
                     }
                     else
                         not_done = false;
@@ -199,7 +210,7 @@ namespace ClusterExperiment
 
                 if (not_done == false && filenameps.Count() == 0)
                     Close();
-            }            
+            }
         }
 
         private void Pick(int id)

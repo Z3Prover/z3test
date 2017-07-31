@@ -3,3 +3,4 @@
 (assert (< (to_real k) 2))
 (maximize k)
 (check-sat)
+(get-objectives)

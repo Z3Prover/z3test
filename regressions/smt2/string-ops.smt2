@@ -77,14 +77,14 @@
 
 
 (push)
-(set-info :status sat)
+(set-info :status unsat)
 (assert (< i 0))
 (assert (= "b" (str.at a i)))
 (check-sat)
 (pop)
 
 (push)
-(set-info :status sat)
+(set-info :status unsat)
 (assert (>= i (str.len a)))
 (assert (= "b" (str.at a i)))
 (check-sat)
@@ -162,30 +162,30 @@
 (check-sat)
 (pop)
 
-(push)
-(set-info :status sat)
-(assert (str.contains a b))
-(assert (not (str.contains b c)))
-(assert (str.contains a c))
-(check-sat)
-(pop)
+;(push)
+;(set-info :status sat)
+;(assert (str.contains a b))
+;(assert (not (str.contains b c)))
+;(assert (str.contains a c))
+;(check-sat)
+;(pop)
 
 
-(push)
-(set-info :status sat)
-(assert (str.contains a b))
-(assert (not (str.contains b c)))
-(assert (not (str.contains a c)))
-(check-sat)
-(pop)
+;(push)
+;(set-info :status sat)
+;(assert (str.contains a b))
+;(assert (not (str.contains b c)))
+;(assert (not (str.contains a c)))
+;(check-sat)
+;(pop)
 
-(push)
-(set-info :status unsat)
-(assert (str.contains a b))
-(assert (str.contains b c))
-(assert (not (str.contains a c)))
-(check-sat)
-(pop)
+;(push)
+;(set-info :status unsat)
+;(assert (str.contains a b))
+;(assert (str.contains b c))
+;(assert (not (str.contains a c)))
+;(check-sat)
+;o(pop)
 
 
 
@@ -417,11 +417,15 @@
 (check-sat)
 (pop)
 
+(exit)
+
 (push)
 (set-info :status sat)
 (assert (= "ab" (str.replace a "yyy" "ab")))
 (check-sat)
 (pop)
+
+
 
 (push)
 (set-info :status sat)
@@ -429,8 +433,6 @@
 (check-sat)
 (get-model)
 (pop)
-
-(exit)
 
 ; TBD: 
 

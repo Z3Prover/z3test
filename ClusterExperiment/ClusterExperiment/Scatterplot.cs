@@ -61,6 +61,17 @@ namespace ClusterExperiment
             category = (categoryX == categoryY) ? categoryX : categoryX + " -vs- " + categoryY;
         }
 
+        private void addSpeedupLine(Chart chart, double f, Color c)
+        {
+            Series s = chart.Series.Add("x" + f.ToString());
+            s.ChartType = SeriesChartType.FastLine;
+            s.Color = c;
+            s.BorderDashStyle = ChartDashStyle.Dot;
+            s.Points.AddXY(axisMinimum, axisMinimum * f);
+            s.Points.AddXY(axisMaximum / f, axisMaximum);
+            s.Points.AddXY(axisMaximum, axisMaximum);
+        }
+
         private void setupChart()
         {
             chart.Legends.Clear();
@@ -110,8 +121,16 @@ namespace ClusterExperiment
             chart.ChartAreas[0].AxisY.Minimum = axisMinimum;
             chart.ChartAreas[0].AxisY.Maximum = axisMaximum;
             chart.ChartAreas[0].AxisY.IsLogarithmic = true;
-            chart.ChartAreas[0].AxisX.MajorGrid.LineDashStyle = ChartDashStyle.Dot;
-            chart.ChartAreas[0].AxisY.MajorGrid.LineDashStyle = ChartDashStyle.Dot;
+            chart.ChartAreas[0].AxisX.MajorGrid.LineDashStyle = ChartDashStyle.Dash;
+            chart.ChartAreas[0].AxisY.MajorGrid.LineDashStyle = ChartDashStyle.Dash;
+            chart.ChartAreas[0].AxisX.MinorGrid.Enabled = true;
+            chart.ChartAreas[0].AxisY.MinorGrid.Enabled = true;
+            chart.ChartAreas[0].AxisX.MinorGrid.LineDashStyle = ChartDashStyle.Dot;
+            chart.ChartAreas[0].AxisY.MinorGrid.LineDashStyle = ChartDashStyle.Dot;
+            chart.ChartAreas[0].AxisX.MinorGrid.LineColor = Color.LightGray;
+            chart.ChartAreas[0].AxisY.MinorGrid.LineColor = Color.LightGray;
+            chart.ChartAreas[0].AxisX.MinorGrid.Interval = 1;
+            chart.ChartAreas[0].AxisY.MinorGrid.Interval = 1;
 
             chart.Series.Clear();
 
@@ -142,6 +161,18 @@ namespace ClusterExperiment
 
             if (!fancy)
                 addSeries("default");
+
+            //foreach (double d in new double[] { 2.0, 4.0, 8.0 })
+            //{
+            //    addSpeedupLine(chart, d, Color.Yellow);
+            //    addSpeedupLine(chart, 1.0 / d, Color.Yellow);
+            //}
+
+            foreach (double d in new double[] { 5.0, 10.0 })
+            {
+                addSpeedupLine(chart, d, Color.LightBlue);
+                addSpeedupLine(chart, 1.0 / d, Color.LightBlue);
+            }
         }
 
         private void addSeries(string title)
@@ -236,9 +267,9 @@ namespace ClusterExperiment
                     int res1 = sat1 + unsat1;
                     int res2 = sat2 + unsat2;
 
-                    if ( (!ckSAT.Checked && (sat1 > 0 || sat2 > 0)) ||
+                    if ((!ckSAT.Checked && (sat1 > 0 || sat2 > 0)) ||
                          (!ckUNSAT.Checked && (unsat1 > 0 || unsat2 > 0)) ||
-                         (!ckUNKNOWN.Checked && ( (rc1==0 && res1==0) || (rc2==0 && res2 == 0))) ||
+                         (!ckUNKNOWN.Checked && ((rc1 == 0 && res1 == 0) || (rc2 == 0 && res2 == 0))) ||
                          (!ckBUG.Checked && (rc1 == 3 || rc2 == 3)) ||
                          (!ckERROR.Checked && (rc1 == 4 || rc2 == 4)) ||
                          (!ckTIME.Checked && (rc1 == 5 || rc2 == 5)) ||

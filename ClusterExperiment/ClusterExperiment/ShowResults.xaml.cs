@@ -302,7 +302,7 @@ namespace ClusterExperiment
         private void showCopyFilename(object sender, ExecutedRoutedEventArgs e)
         {
             Mouse.OverrideCursor = System.Windows.Input.Cursors.Wait;
-            Clipboard.SetText((string)((DataRowView)dataGrid.SelectedItem)["Filename"]);
+            Clipboard.SetDataObject((string)((DataRowView)dataGrid.SelectedItem)["Filename"]);
             Mouse.OverrideCursor = null;
         }
     }

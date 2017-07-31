@@ -5,3 +5,4 @@
 (assert (<= y 5))
 (maximize x)
 (check-sat)
+(get-objectives)

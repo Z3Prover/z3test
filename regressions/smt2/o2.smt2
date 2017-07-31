@@ -30,3 +30,4 @@
 (set-option :opt.optsmt_engine basic)
 (set-option :opt.priority box)
 (check-sat)
+(get-objectives)

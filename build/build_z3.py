@@ -17,7 +17,7 @@ vms = [
     ['OSX x64', 22, False, 'x64-osx'],
     ['Ubuntu x86', 1024, True, 'x86-ubuntu'],
     ['Ubuntu amd64', 1025, True, 'x64-ubuntu'],
-    ['FreeBSD 10 amd64', 1026, True, 'x64-freebsd'],
+    #['FreeBSD 10 amd64', 1026, True, 'x64-freebsd'],
     ['Debian 8 amd64', 1027, True, 'x64-debian'],
     #['OpenBSD 8.5 amd64', 1028, True, 'x64-openbsd']
     ]
@@ -67,12 +67,16 @@ def send_email(recipients, subject, body, files=[]):
     smtp.sendmail(smtp_from, recipients, mail.as_string())
     smtp.quit()  
 
-def startvm(name, log):
+def get_vm_state(name): 
     vmstate = 'unknown'
     info = subprocess.check_output(['VBoxManage', 'showvminfo', name, '--machinereadable'])
     for line in info.splitlines():
         if line.startswith('VMState='):
             vmstate = line[8:].strip('"')
+    return vmstate
+
+def startvm(name, log):
+    vmstate =  get_vm_state(name)
     log.write('VM state: %s\n' % vmstate)
     ec = 0
     if vmstate == 'running':
@@ -109,8 +113,13 @@ def stopvm(name, log):
             log.write('VM refuses to be stopped; may be left running.')
     else:
         # Some systems need to be poked a second time.
-        time.sleep(vm_wait_time)
+        time.sleep(vm_timeout)
         subprocess.call(['VBoxManage', 'controlvm', name, 'acpipowerbutton'], stdin=None, stdout=log, stderr=log)
+        time.sleep(vm_timeout)
+        if get_vm_state(name) != 'poweroff':
+            log.write('VM would not shut down voluntarily; killing it the hard way.')
+            ec = subprocess.call(['VBoxManage', 'controlvm', name, 'poweroff'], stdin=None, stdout=log, stderr=log)
+        
 
 class BuildFailureException(Exception):
     pass
@@ -279,6 +288,7 @@ def main():
     call_unlogged('git reset --hard origin/master')
     call_unlogged('git clean -f')
     call_unlogged('git pull -v -s recursive -Xtheirs')
+    call_unlogged('git reset --hard origin/master')
     os.chdir(start_dir)
 
     # clean up distros

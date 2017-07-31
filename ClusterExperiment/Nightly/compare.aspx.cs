@@ -63,6 +63,7 @@ namespace Nightly
 
                     lstTagX.Items.Add(new ListItem("Latest (" + latest + ")", latest));
                     lstTagX.Items.Add(new ListItem("Penultimate (" + penultimate + ")", penultimate));
+                    //lstTagX.Items.Add(new ListItem("Records (best ever)", "RECORDS"));
                     lstTagY.Items.Add(new ListItem("Latest (" + latest + ")", latest));
                     lstTagY.Items.Add(new ListItem("Penultimate (" + penultimate + ")", penultimate));
 
@@ -101,7 +102,7 @@ namespace Nightly
                             lstTagY.SelectedValue = py.ToString();
                         }
                         else
-                            lstTagY.SelectedValue = latest;                        
+                            lstTagY.SelectedValue = latest;
                     }
                     else
                         lstTagY.SelectedValue = latest;
@@ -631,7 +632,6 @@ namespace Nightly
             p.Controls.Add(t);
             return p;
         }
-
 
         private int CompareSubdirsByPostfixMean(string x, string y)
         {

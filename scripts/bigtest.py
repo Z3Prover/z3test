@@ -6,6 +6,7 @@ import util
 import config
 import datetime
 import sys
+import os
 
 def bigtest():
     print("BUILD DATE: %s" % datetime.date.today())

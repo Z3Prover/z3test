@@ -28,9 +28,10 @@ true
 true
 true
 true
+(let ((a!1 (re.++ (re.++ r (re.* r)) (re.* (re.++ r (re.* r))))))
+  (= (re.++ r (re.* r)) a!1))
 true
-true
-true
+(= (re.* r) (re.* (re.++ r (re.* r))))
 true
 true
 true
@@ -49,7 +50,7 @@ true
 true
 true
 true
-(= a (str.++ (seq.unit #x61) (str.++ (seq.unit #x62) (seq.unit #x63))))
+(= a "abc")
 (str.in.re a (re.union (str.to.re "ab") (str.to.re "abc")))
 sat
 sat
