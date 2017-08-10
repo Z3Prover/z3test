@@ -14,7 +14,7 @@
 	  (= X (fp.sub RTZ Y Z))
 	  (= X (fp.mul RTZ Y Z))
 	  (= X (fp.div RTZ Y Z))
-	  (= X (fp.fma RTZ Y Z W))
+	  ;; (= X (fp.fma RTZ Y Z W))
 	  (= X (fp.sqrt RTZ Y))
 	  (= X (fp.rem X Y))
 	  (= X (fp.roundToIntegral RTZ Y))
