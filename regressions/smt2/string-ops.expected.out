@@ -18,7 +18,7 @@ sat
 unsat
 unknown
 unknown
-sat
+unknown
 sat
 sat
 sat
@@ -32,7 +32,7 @@ true
 true
 true
 sat
-sat
+unknown
 unsat
 sat
 (model 
@@ -40,8 +40,8 @@ sat
     "abc")
 )
 unsat
-sat
-sat
+unknown
+unknown
 sat
 unsat
 unsat
