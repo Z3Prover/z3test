@@ -134,32 +134,35 @@
 (pop)
 
 
+(echo "removed")
 (push)
 (set-info :status sat)
 (assert (not (str.contains a b)))
 (assert (not (str.contains b c)))
 (assert (str.contains a c))
-(check-sat)
+;(check-sat)
 (pop)
 
 
 
+(echo "removed")
 (push)
 (set-info :status sat)
 (assert (not (str.contains a "a")))
 (assert (not (str.contains a "b")))
 (assert (str.contains a "c"))
-(check-sat)
+;(check-sat)
 (pop)
 
 
+(echo "removed")
 (push)
 (set-info :status sat)
 (assert (not (str.contains a "a")))
 (assert (not (str.contains a "b")))
 (assert (str.contains a "c"))
 (assert (>= (str.len a) 2))
-(check-sat)
+;(check-sat)
 (pop)
 
 ;(push)
