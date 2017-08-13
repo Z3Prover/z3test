@@ -1,3 +1,4 @@
+;; Copyright (c) 2017 Microsoft Corporation
 (declare-const a String)
 (declare-const b String)
 (declare-const c String)
