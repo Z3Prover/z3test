@@ -117,12 +117,13 @@
 (check-sat)
 (pop)
 
+(echo "removed")
 (push)
 (set-info :status sat)
 (assert (str.contains a b))
 (assert (str.contains a c))
 (assert (not (str.contains b c)))
-(check-sat)
+;(check-sat)
 (pop)
 
 (push)
