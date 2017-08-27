@@ -14,6 +14,6 @@
 (assert (= l3 (insert x l2)))
 (assert (> x 100))
 (check-sat)
-(get-model)
+;(get-model)
 (assert (= (tail l1) (tail l2)))
 (check-sat)
