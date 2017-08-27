@@ -382,7 +382,7 @@
 (assert (= c (str.++ a "b")))
 (assert (= (str.len a) 1))
 (check-sat)
-(get-model)
+;(get-model)
 (pop)
 
 (push)
