@@ -4,5 +4,5 @@
 (set-option :model_validate true)
 (set-info :status sat)
 (assert (= "ab" (str.replace a "yyy" "abb")))
-(check-sat)
-(get-model)
+;(check-sat)
+;(get-model)
