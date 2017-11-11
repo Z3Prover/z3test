@@ -405,7 +405,10 @@ def test_cs(z3libdir, csdir, ext="cs", VS64=False, timeout_duration=60.0):
                 print("Failed")
                 print(ex)
                 error = True
-            os.remove(config.CSTEMP)
+            try:
+                os.remove(config.CSTEMP)
+            except:
+                pass
     os.remove("Microsoft.Z3.dll")
     if error:
         raise Exception("Found errors testing C# at '%s' using '%s'" % (csdir, z3libdir))
