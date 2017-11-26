@@ -1,5 +1,5 @@
+;; Copyright (c) 2015 Microsoft Corporation
 
-; Copyright (c) 2015 Microsoft Corporation
 (set-info :status unsat)
 (set-info :source "Handcrafted by C.M. Wintersteiger")
 
@@ -9,7 +9,7 @@
 
 (assert (and
 			(fp.eq Y X)
-			(= R ((_ fp.to_sbv 8) RNE Y))			
+			(= R ((_ fp.to_sbv 8) RNE Y))
 			(not (= R #x01))
 		))
 

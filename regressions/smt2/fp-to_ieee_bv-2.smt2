@@ -15,6 +15,8 @@
 (check-sat)
 (get-model)
 (get-value (b))
+(eval (to_ieee_bv (_ NaN 8 24)))
+(eval (bvudiv b (_ bv0 32)))
 (simplify (to_ieee_bv (_ NaN 8 24)))
 (simplify (bvudiv b (_ bv0 32)))
 
