@@ -1,4 +1,4 @@
-sat
+(error "line 11 column 11: unbounded objectives on quantified constraints is not supported")
 (objectives
  (x oo)
 )
