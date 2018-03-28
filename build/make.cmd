@@ -11,7 +11,7 @@ SET Z3_BIN_REPO=git@github.com:Z3Prover/bin.git
 SET BRANCH=master
 SET LOCAL_DISTROS=dist
 
-SET VCVARS="C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\vcvarsall.bat"
+SET VCVARS="C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\vcvarsall.bat"
 SET DISTROS=C:\z3-build\bin\
 SET DISTRO_SUBDIR=nightly
 
