@@ -4,7 +4,7 @@
 (set-option :produce-models true)
 (set-option :smt.ematching false)
 (set-option :smt.mbqi true)
-(set-option :old_simplify.arith.expand-eqs true)
+;(set-option :old_simplify.arith.expand-eqs true)
 (set-option :smt.arith.propagate-eqs false)
 (set-option :smt.arith.propagation-mode 0)
 

@@ -3,16 +3,16 @@ SETLOCAL
 
 SET PATH=%PATH%;C:\Program Files (x86)\Git\bin
 
-SET LOG=D:\nightly\build\build.log
-SET TMPDIR=d:\nightly\build\z3
+SET LOG=C:\z3-build\build.log
+SET TMPDIR=C:\z3-build\z3
 SET Z3_REPO=https://github.com/Z3Prover/z3.git
 SET Z3TEST_REPO=https://github.com/Z3Prover/z3test.git
 SET Z3_BIN_REPO=git@github.com:Z3Prover/bin.git
 SET BRANCH=master
 SET LOCAL_DISTROS=dist
 
-SET VCVARS="D:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\vcvarsall.bat"
-SET DISTROS=D:\Nightly\build\bin\
+SET VCVARS="C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\vcvarsall.bat"
+SET DISTROS=C:\z3-build\bin\
 SET DISTRO_SUBDIR=nightly
 
 SET LAST_Z3_HASH=
@@ -81,20 +81,26 @@ IF "%LAST_Z3_HASH%" == "%CURRENT_Z3_HASH%" (
 set Z3DIR=%TMPDIR%
 
 pushd z3test
-SET PYTHON=C:\Python35_x32\python.exe
+SET PYTHON=C:\Python36_x86\python.exe
+SET JDK_HOME="c:\Program Files (x86)\Java\jdk1.8.0_131"
 call %VCVARS% x86 >> %LOG%
 SET PREPATH=%PATH%
-SET PATH=%PREPATH%;C:\Python35_x32
+SET PATH=C:\Python36_x86;"c:\Program Files (x86)\Java\jdk1.8.0_131\bin";%PREPATH%;
+java -version
+javac -version
 %PYTHON% scripts\win32test.py >> %LOG% 2>&1
 SET PATH=%PREPATH%
 IF %ERRORLEVEL% NEQ 0 goto :ERR
 
 echo DONE WITH W32TEST >> %LOG%
 
-SET PYTHON=C:\Python35_x64\python.exe
+SET PYTHON=C:\Python36_x64\python.exe
+SET JDK_HOME="c:\Program Files\Java\jdk1.8.0_131"
 call %VCVARS% x64 >> %LOG%
 SET PREPATH=%PATH%
-SET PATH=%PREPATH%;C:\Python35_x64
+SET PATH=C:\Python36_x64;"c:\Program Files\Java\jdk1.8.0_131\bin";%PREPATH%;
+java -version
+javac -version
 %PYTHON% scripts\win64test.py >> %LOG% 2>&1
 SET PATH=%PREPATH%
 IF %ERRORLEVEL% NEQ 0 goto :ERR
@@ -115,10 +121,13 @@ IF EXIST %LOCAL_DISTROS%. (
 
 rmdir build-dist /S /Q
 
-SET PYTHON=C:\Python35_x32\python.exe
+SET PYTHON=C:\Python36_x86\python.exe
+SET JDK_HOME="c:\Program Files (x86)\Java\jdk1.8.0_131"
 SET PREPATH=%PATH%
-SET PATH=%PREPATH%;C:\Python35_x32
-%PYTHON% scripts\mk_win_dist.py -b build-dist\%CURRENT_Z3_HASH% --githash --dotnet-key=..\secret\z3.snk>> %LOG% 2>&1
+SET PATH=C:\Python36_x86;"c:\Program Files (x86)\Java\jdk1.8.0_131\bin";%PREPATH%;
+java -version
+javac -version
+%PYTHON% scripts\mk_win_dist.py -b build-dist\%CURRENT_Z3_HASH% --githash --dotnet-key=..\secret\z3.snk >> %LOG% 2>&1
 SET PATH=%PREPATH%
 echo DONE WITH WIN_DIST >> %LOG%
 IF %ERRORLEVEL% NEQ 0 goto :ERR

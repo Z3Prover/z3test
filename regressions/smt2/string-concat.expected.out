@@ -97,14 +97,6 @@ sat
 unsat
 unsat
 sat
-(model 
-  (define-fun c () String
-    "ab")
-  (define-fun a () String
-    "a")
-  (define-fun b () String
-    "b")
-)
 sat
 unsat
 unsat

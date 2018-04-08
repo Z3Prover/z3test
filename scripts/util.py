@@ -8,6 +8,8 @@ import config
 import filecmp
 import time
 
+MAKEJOBS=os.getenv("MAKEJOBS", "24")
+
 def is_windows():
     return os.name == 'nt'
 
@@ -115,7 +117,7 @@ def mk_make(branch, debug, dotnet, java, clang, static, VS64, extraflags):
     if debug:
         cmd.append('-d')
     if is_windows():
-        cmd.append('--parallel=24')
+        cmd.append('--parallel=' + MAKEJOBS)
     if VS64 and is_windows():
         cmd.append('-x')
     if dotnet:
@@ -189,9 +191,8 @@ def testjavaex(branch="master", debug=True, clang=False):
     bdir = get_builddir(branch, debug, clang)
     p    = os.path.join(z3dir, bdir)
     with cd(p):
-        print(p)
         if is_windows():
-            if subprocess.call([config.JAVA, '-cp', 'com.microsoft.z3.jar;.', 'JavaExample']) != 0:
+            if subprocess.call(['cmd', '/c', config.JAVA, '-cp', 'com.microsoft.z3.jar;.', 'JavaExample']) != 0:
                 raise Exception("Failed to execute Java example at '%s'" % p)
         elif is_osx():
             if subprocess.call([config.JAVA, '-cp', 'com.microsoft.z3.jar:.', 'JavaExample']) != 0:
@@ -404,7 +405,10 @@ def test_cs(z3libdir, csdir, ext="cs", VS64=False, timeout_duration=60.0):
                 print("Failed")
                 print(ex)
                 error = True
-            os.remove(config.CSTEMP)
+            try:
+                os.remove(config.CSTEMP)
+            except:
+                pass
     os.remove("Microsoft.Z3.dll")
     if error:
         raise Exception("Found errors testing C# at '%s' using '%s'" % (csdir, z3libdir))

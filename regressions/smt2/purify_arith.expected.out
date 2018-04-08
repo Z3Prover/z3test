@@ -6,7 +6,7 @@
            (<= 0 x!4)
            (not (<= 3 x!4))
            (or (= a 0.0) (= (* a x!5) y))
-           (or (not (= a 0.0)) (= x!5 (/0 y)))
+           (or (not (= a 0.0)) (= x!5 (/ y 0.0)))
            (or (not (= x!4 0)) (= x!5 0.0)))))
   :precision precise :depth 4)
 )
@@ -26,6 +26,6 @@
 (goal
   (= k!0 0.0)
   (or (= b 0.0) (= (* k!0 b) a))
-  (or (not (= b 0.0)) (= k!0 (/0 a)))
+  (or (not (= b 0.0)) (= k!0 (/ a 0.0)))
   :precision precise :depth 4)
 )

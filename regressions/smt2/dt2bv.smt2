@@ -21,8 +21,8 @@
               (ite (and true (<= a!1 a!2)) a!1 a!2))))
   (= imbalance a!3))))
 
-(assert (is-P1 n0_p))
-(assert (is-P3 n0_p))
+(assert ((_ is P1) n0_p))
+(assert ((_ is P3) n0_p))
 
 (assert (forall ((x P) (y Int) (z Bool))
     (=> z (= x P0))))
