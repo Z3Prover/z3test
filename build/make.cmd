@@ -30,9 +30,12 @@ IF EXIST last_z3test_hash. (
 
 del /Q /F %LOG%
 
-echo Last hashes: >> %LOG%
-echo z3: %LAST_Z3_HASH% >> %LOG%
-echo z3test: %LAST_Z3TEST_HASH% >> %LOG%
+date /T >> %LOG% 2>&1
+time /T >> %LOG% 2>&1
+
+rem echo Last hashes: >> %LOG%
+rem echo z3: %LAST_Z3_HASH% >> %LOG%
+rem echo z3test: %LAST_Z3TEST_HASH% >> %LOG%
 
 IF NOT EXIST %TMPDIR%. (
   echo Getting a new copy. >> %LOG%
@@ -85,7 +88,8 @@ SET PYTHON=C:\Python36_x86\python.exe
 SET JDK_HOME="c:\Program Files (x86)\Java\jdk1.8.0_131"
 call %VCVARS% x86 >> %LOG%
 SET PREPATH=%PATH%
-SET PATH=C:\Python36_x86;"c:\Program Files (x86)\Java\jdk1.8.0_131\bin";%PREPATH%;
+SET PATH=C:\Python36_x86;%PATH%
+SET PATH=C:\Program Files (x86)\Java\jdk1.8.0_131\bin;%PATH%
 java -version
 javac -version
 %PYTHON% scripts\win32test.py >> %LOG% 2>&1
@@ -98,7 +102,8 @@ SET PYTHON=C:\Python36_x64\python.exe
 SET JDK_HOME="c:\Program Files\Java\jdk1.8.0_131"
 call %VCVARS% x64 >> %LOG%
 SET PREPATH=%PATH%
-SET PATH=C:\Python36_x64;"c:\Program Files\Java\jdk1.8.0_131\bin";%PREPATH%;
+SET PATH=C:\Python36_x64;%PATH%
+SET PATH=C:\Program Files\Java\jdk1.8.0_131\bin;%PATH%
 java -version
 javac -version
 %PYTHON% scripts\win64test.py >> %LOG% 2>&1
@@ -124,7 +129,8 @@ rmdir build-dist /S /Q
 SET PYTHON=C:\Python36_x86\python.exe
 SET JDK_HOME="c:\Program Files (x86)\Java\jdk1.8.0_131"
 SET PREPATH=%PATH%
-SET PATH=C:\Python36_x86;"c:\Program Files (x86)\Java\jdk1.8.0_131\bin";%PREPATH%;
+SET PATH=C:\Python36_x86;%PATH%
+SET PATH=C:\Program Files (x86)\Java\jdk1.8.0_131\bin;%PATH%
 java -version
 javac -version
 %PYTHON% scripts\mk_win_dist.py -b build-dist\%CURRENT_Z3_HASH% --githash --dotnet-key=..\secret\z3.snk >> %LOG% 2>&1
@@ -172,10 +178,14 @@ goto :END
 
 :ERR
 popd
+date /T >> %LOG% 2>&1
+time /T >> %LOG% 2>&1 
 exit /B 1
 
 :END
 popd
 echo %CURRENT_Z3_HASH% > last_z3_hash
 echo %CURRENT_Z3TEST_HASH% > last_z3test_hash
+date /T >> %LOG% 2>&1
+time /T >> %LOG% 2>&1 
 exit /B 0
