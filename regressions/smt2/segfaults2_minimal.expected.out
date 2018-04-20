@@ -1,6 +1,5 @@
-WARNING: (7,77): '=' cannot be used in patterns.
 (goals
 (goal
-  (forall ((s (Array Int Int))) (= s (ff s)))
+  (forall ((s (Array Int Int))) (! (= s (ff s)) :pattern ((= s (ff s)))))
   :precision precise :depth 1)
 )
