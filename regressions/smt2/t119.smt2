@@ -13,13 +13,13 @@
 (assert (>= c a))
 (assert (>= c b))
 
-(apply (and-then simplify solve-eqs) :print-model-converter true)
+(apply (and-then simplify solve-eqs) :print-model-converter false)
 
 (assert (= (+ c b) 0.0))
 
-(apply (and-then simplify solve-eqs) :print-model-converter true)
+(apply (and-then simplify solve-eqs) :print-model-converter false)
 
-(apply (and-then simplify (! solve-eqs :theory-solver false)) :print-model-converter true)
+(apply (and-then simplify (! solve-eqs :theory-solver false)) :print-model-converter false)
 
 (reset)
 
@@ -33,11 +33,11 @@
 (assert (>= c a))
 (assert (>= c b))
 
-(apply (and-then simplify solve-eqs) :print-model-converter true)
+(apply (and-then simplify solve-eqs) :print-model-converter false)
 
 (assert (= (+ c b a) 1))
 
-(apply (and-then simplify solve-eqs) :print-model-converter true)
+(apply (and-then simplify solve-eqs) :print-model-converter false)
 
 (reset)
 
@@ -49,10 +49,10 @@
 
 (assert (= (+ a (f a)) 20))
 
-(apply (and-then simplify solve-eqs) :print-model-converter true)
+(apply (and-then simplify solve-eqs) :print-model-converter false)
 
 (assert (= (+ a (f a) b) 20))
 (assert (>= b 10))
-(apply (and-then simplify solve-eqs) :print-model-converter true)
+(apply (and-then simplify solve-eqs) :print-model-converter false)
 
 

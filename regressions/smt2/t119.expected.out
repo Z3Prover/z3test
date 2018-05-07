@@ -4,17 +4,12 @@
   (>= c b)
   :precision precise :depth 2)
 )
-(extension-model-converter
-  (a (+ 5.0 (* (- (/ 3.0 2.0)) b) (* (- 1.0) c))))
 (goals
 (goal
   (<= b (- 10.0))
   (<= b 0.0)
   :precision precise :depth 2)
 )
-(extension-model-converter
-  (c (* (- 1.0) b))
-  (a (+ 5.0 (* (- (/ 1.0 2.0)) b))))
 (goals
 (goal
   (= (+ (* 2.0 a) (* 3.0 b) (* 2.0 c)) 10.0)
@@ -36,9 +31,6 @@
   (<= a (- 15))
   :precision precise :depth 2)
 )
-(extension-model-converter
-  (c (+ 1 (* (- 1) b) (* (- 1) a)))
-  (b 8))
 (goals
 (goal
   (= (+ a (f a)) 20)
@@ -50,5 +42,3 @@
   (>= (+ (* (- 1) a) (* (- 1) (f a))) (- 10))
   :precision precise :depth 2)
 )
-(extension-model-converter
-  (b (+ 20 (* (- 1) a) (* (- 1) (f a)))))
