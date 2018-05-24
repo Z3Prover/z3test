@@ -1,4 +1,4 @@
-; Levent Erkok, Copyright (c) 2015 Microsoft Corporation
+; Copyright (c) Levent Erkok
 ; https://github.com/Z3Prover/z3/issues/1645
 (declare-fun x () Int)
 (declare-fun y () Int)
