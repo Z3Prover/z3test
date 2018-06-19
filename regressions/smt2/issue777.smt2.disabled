@@ -1,6 +1,6 @@
 ; Copyright (c) 2016 Microsoft Corporation
 
-(set-option :fixedpoint.engine pdr)
+;(set-option :fp.engine spacer)
 (declare-rel nondet2 ((_ BitVec 2) Bool))
 (declare-var A (_ BitVec 2))
 (declare-var H (_ BitVec 2))
