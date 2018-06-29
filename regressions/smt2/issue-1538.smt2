@@ -1,3 +1,5 @@
+; Copyright (c) 2016 Microsoft Corporation
+; GitHub issue
 (declare-const src String)
 
 (define-fun digit           () (RegEx String) (re.range "5"  "9"))

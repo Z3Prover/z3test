@@ -1,3 +1,4 @@
+; Copyright (c) 2016 Microsoft Corporation
 (set-option :produce-models true)
 (set-logic ALL)
 (declare-fun s0 () String)

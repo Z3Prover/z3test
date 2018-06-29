@@ -1,4 +1,5 @@
 ;; Copyright (c) 2017 Microsoft Corporation
+;; GitHub issue
 
 (declare-const x String)
 (assert (str.prefixof "x" x))

@@ -1,3 +1,6 @@
+; Copyright (c) 2018 Microsoft Corporation
+; GitHub issue
+
 (assert (forall ((b Int))
              (forall ((n Int))
                    (forall ((s Int))
