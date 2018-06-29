@@ -1,4 +1,6 @@
-; Copyright (c) 2016 Microsoft Corporation
+; Copyright (c) 2018 Microsoft Corporation
+; GitHub Issue
+
 (set-logic QF_S)
 
 (declare-fun var () String)

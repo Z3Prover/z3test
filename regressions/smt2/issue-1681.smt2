@@ -1,4 +1,6 @@
-; Copyright (c) 2016 Microsoft Corporation
+; Copyright (c) 2018 Microsoft Corporation
+; GitHub issue
+
 (set-option :produce-models true)
 (declare-const a (Array Int Int))
 (declare-const b (Array Int Int))
