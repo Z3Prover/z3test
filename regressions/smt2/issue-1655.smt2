@@ -1,3 +1,6 @@
+; Copyright (c) 2018 Microsoft Corporation
+; GitHub issue
+
 (set-logic QF_BV)
 (set-option :produce-models true)
 (declare-fun x () (_ BitVec 8))
