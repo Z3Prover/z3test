@@ -57,3 +57,11 @@ sat
   :precision precise :depth 1)
 )
 sat
+(goals
+(goal
+  (= (ite (= 0.0 y) 0.0 x) (* y z z))
+  (= y (to_real 3))
+  (= z (to_real 5))
+  :precision precise :depth 1)
+)
+sat
