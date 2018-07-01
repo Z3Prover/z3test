@@ -3,12 +3,12 @@
 (set-logic QF_FP)
 (set-info :status unsat)
 
-(declare-const x (_ FloatingPoint 5 11))
-(declare-const y (_ FloatingPoint 5 11))
-(declare-const r1 (_ FloatingPoint 5 11))
-(declare-const r2 (_ FloatingPoint 5 11))
+(declare-const x (_ FloatingPoint 5 7))
+(declare-const y (_ FloatingPoint 5 7))
+(declare-const r1 (_ FloatingPoint 5 7))
+(declare-const r2 (_ FloatingPoint 5 7))
 
-(define-const nan (_ FloatingPoint 5 11) (_ NaN 5 11))
+(define-const nan (_ FloatingPoint 5 7) (_ NaN 5 7))
 
 (assert (not (= nan x)))
 (assert (not (= nan y)))
