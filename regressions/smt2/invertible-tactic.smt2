@@ -52,6 +52,16 @@
 (check-sat-using (then reduce-invertible smt))
 (reset)
 
+(declare-const x Real)
+(declare-const y Real)
+(declare-const z Real)
+(assert (= (/ y x) (* y z z)))
+(assert (= y 3))
+(assert (= z 5))
+(apply reduce-invertible)
+(check-sat-using (then reduce-invertible smt))
+(reset)
+
 (exit)
 
 (declare-const x Int)
@@ -110,13 +120,6 @@
 (check-sat-using (then reduce-invertible smt))
 (reset)
 
-(declare-const x Real)
-(declare-const y Real)
-(declare-const z Real)
-(assert (= (/ y x) (* y z z)))
-(apply reduce-invertible)
-(check-sat-using (then reduce-invertible smt))
-(reset)
 
 
 (declare-const x (_ BitVec 4))
