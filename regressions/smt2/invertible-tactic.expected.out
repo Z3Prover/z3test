@@ -1,12 +1,30 @@
 (goals
 (goal
   (= x (bvadd y z z))
+  (= z #x3)
+  (= y #x5)
   :precision precise :depth 1)
 )
+sat
 (goals
 (goal
   (forall ((b (_ BitVec 8))) (exists ((a Bool)) a))
   :precision precise :depth 1)
+)
+(goals
+(goal
+  (exists ((a Bool)) a)
+  :precision precise :depth 2)
+)
+(goals
+(goal
+  (exists ((b (_ BitVec 8))) (forall ((a Bool)) a))
+  :precision precise :depth 1)
+)
+(goals
+(goal
+  (forall ((a Bool)) a)
+  :precision precise :depth 2)
 )
 (goals
 (goal
@@ -21,11 +39,21 @@
                        (concat ((_ extract 3 1) x) #b0)
                        a!1))))
     (= a!2 (bvmul y z z))))
+  (= z #x3)
+  (= y #x5)
   :precision precise :depth 1)
 )
 (goals
 (goal
   (= x (bvmul y z z))
+  :precision precise :depth 1)
+)
+sat
+(goals
+(goal
+  (= y (to_real 3))
+  (= z (to_real 5))
+  (= (ite (= 0.0 y) 0.0 x) (* y z z))
   :precision precise :depth 1)
 )
 sat
