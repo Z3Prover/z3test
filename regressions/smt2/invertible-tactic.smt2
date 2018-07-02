@@ -42,6 +42,37 @@
 (check-sat-using (then reduce-invertible smt))
 (reset)
 
+(declare-const x (_ BitVec 8))
+(declare-const y (_ BitVec 8))
+(assert (= (bvshl x y) #x42))
+(apply reduce-invertible)
+(check-sat-using (then reduce-invertible smt))
+(get-model)
+(reset)
+
+(declare-const x (_ BitVec 8))
+(declare-const y (_ BitVec 8))
+(assert (= (bvshl x y) #x42))
+(assert (not (= x #x42)))
+(apply reduce-invertible)
+(reset)
+
+(declare-const x (_ BitVec 8))
+(declare-const y (_ BitVec 8))
+(assert (= (bvashr x y) #x42))
+(apply reduce-invertible)
+(reset)
+
+; FIXME: this one is wrong; should not rewrite
+(declare-const x (_ BitVec 8))
+(assert (forall ((y (_ BitVec 8))) (= (bvashr x y) #x42)))
+(apply reduce-invertible)
+(reset)
+
+(assert (forall ((x (_ BitVec 8)) (y (_ BitVec 8))) (= (bvashr x y) #x42)))
+(apply reduce-invertible)
+(reset)
+
 (declare-const x Real)
 (declare-const y Real)
 (declare-const z Real)
