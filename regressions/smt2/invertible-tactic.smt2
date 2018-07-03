@@ -63,13 +63,16 @@
 (apply reduce-invertible)
 (reset)
 
-; FIXME: this one is wrong; should not rewrite
 (declare-const x (_ BitVec 8))
 (assert (forall ((y (_ BitVec 8))) (= (bvashr x y) #x42)))
 (apply reduce-invertible)
 (reset)
 
 (assert (forall ((x (_ BitVec 8)) (y (_ BitVec 8))) (= (bvashr x y) #x42)))
+(apply reduce-invertible)
+(reset)
+
+(assert (forall ((x (_ BitVec 8)) (y (_ BitVec 8))) (exists ((z (_ BitVec 8))) (= (bvashr x y) z))))
 (apply reduce-invertible)
 (reset)
 

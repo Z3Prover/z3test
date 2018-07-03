@@ -74,12 +74,17 @@ sat
 )
 (goals
 (goal
-  (forall ((y (_ BitVec 8))) (= x #x42))
+  (forall ((y (_ BitVec 8))) (= (bvashr x y) #x42))
   :precision precise :depth 1)
 )
 (goals
 (goal
   (forall ((x (_ BitVec 8)) (y (_ BitVec 8))) (= x #x42))
+  :precision precise :depth 1)
+)
+(goals
+(goal
+  (forall ((x (_ BitVec 8)) (y (_ BitVec 8))) (exists ((z Bool)) z))
   :precision precise :depth 1)
 )
 (goals
