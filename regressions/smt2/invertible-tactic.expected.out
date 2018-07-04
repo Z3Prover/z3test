@@ -125,6 +125,16 @@ sat
 )
 (goals
 (goal
+  (= (bvand x #x03) #x33)
+  :precision precise :depth 1)
+)
+(goals
+(goal
+  (= x #x33)
+  :precision precise :depth 1)
+)
+(goals
+(goal
   (= x #x42)
   :precision precise :depth 1)
 )

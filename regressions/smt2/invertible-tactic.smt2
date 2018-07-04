@@ -101,6 +101,16 @@
 (reset)
 
 (declare-const x (_ BitVec 8))
+(assert (= (bvand x #x03) #x33))
+(apply reduce-invertible)
+(reset)
+
+(declare-const x (_ BitVec 8))
+(assert (= (bvand x #xff) #x33))
+(apply reduce-invertible)
+(reset)
+
+(declare-const x (_ BitVec 8))
 (declare-const y (_ BitVec 8))
 (declare-const z (_ BitVec 8))
 (assert (= (bvmul x y z) #x42))
