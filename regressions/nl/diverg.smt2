@@ -1,0 +1,7 @@
+(declare-const x Real)
+(declare-const y Real)
+(declare-const z Real)
+(assert (is_int x))
+(assert (is_int y))
+(assert (not (is_int (+ x y))))
+(check-sat)
