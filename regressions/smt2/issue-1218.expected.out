@@ -1,0 +1,9 @@
+sat
+(model 
+  (define-fun s2 () String
+    "")
+  (define-fun s3 () String
+    "")
+  (define-fun s1 () String
+    "")
+)

@@ -21,6 +21,6 @@
 (simplify (bvudiv b (_ bv0 32)))
 
 (check-sat-using (then fpa2bv smt))
-(get-model)
+;(get-model)
 
 (exit)

@@ -1,8 +1,8 @@
 sat
-((s "€"))
+((s "\x80"))
 sat
 sat
 sat
-((s "€"))
+((s "\x80"))
 sat
 sat

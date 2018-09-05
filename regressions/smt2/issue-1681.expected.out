@@ -1,0 +1,22 @@
+sat
+(model 
+  (define-fun c () (Array Int Int)
+    (lambda ((x!1 Int))
+  (let ((a!1 (ite (<= 1 x!1) (ite (<= 2 x!1) 2 1) 0)))
+  (let ((a!2 (ite (= a!1 (- 1)) 8 (ite (= a!1 0) 65 (ite (= a!1 1) 5 10)))))
+    (ite (= a!1 2) 7 a!2)))))
+  (define-fun b () (Array Int Int)
+    (_ as-array k!18))
+  (define-fun a () (Array Int Int)
+    (_ as-array k!18))
+  (define-fun lenc () Int
+    2)
+  (define-fun lena () Int
+    0)
+  (define-fun lenb () Int
+    2)
+  (define-fun k!18 ((x!0 Int)) Int
+    (let ((a!1 (ite (<= 1 x!0) (ite (<= 2 x!0) 2 1) 0)))
+    (let ((a!2 (ite (= a!1 (- 1)) 9 (ite (= a!1 0) 65 (ite (= a!1 1) 5 11)))))
+      (ite (= a!1 2) 7 a!2))))
+)
