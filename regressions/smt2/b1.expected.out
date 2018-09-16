@@ -1,0 +1,5 @@
+sat
+(model 
+  (define-fun s0 () Int
+    16)
+)
