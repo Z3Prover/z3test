@@ -1,4 +1,3 @@
-(set-option :produce-models true)
 (set-logic ALL)
 (define-fun s1 () Int 10)
 (define-fun s3 () Int 0)
@@ -44,4 +43,3 @@
 (define-fun s41 () Bool (and s35 s40))
 (assert s41)
 (check-sat)
-(get-model)
