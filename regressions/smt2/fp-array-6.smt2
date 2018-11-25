@@ -34,6 +34,6 @@
 
 (check-sat-using smt)
 (get-value (AP))
-(get-value (C))
+;(get-value (C))
 
 (exit)

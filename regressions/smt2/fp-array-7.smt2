@@ -34,6 +34,6 @@
 
 (check-sat)
 (get-value (AP))
-(get-value (C))
+;(get-value (C))
 
 (exit)

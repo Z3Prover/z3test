@@ -33,6 +33,6 @@
 (assert (= AP (select A (_ +oo 8 24))))
 
 (check-sat-using (then simplify fpa2bv smt))
-(get-value (AP))
+;(get-value (AP))
 (get-value (C))
 (exit)
