@@ -33,7 +33,7 @@
 (assert (= AP (select A (_ +oo 8 24))))
 
 (check-sat)
-(get-value (AP))
-;(get-value (C))
+;(get-value (AP))
+(get-value (C))
 
 (exit)
