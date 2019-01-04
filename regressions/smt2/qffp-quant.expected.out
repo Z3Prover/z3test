@@ -1,1 +1,5 @@
-(error "tactic failed: smt tactic failed to show goal to be sat/unsat (incomplete quantifiers)")
+(goals
+(goal
+  false
+  :precision precise :depth 7)
+)
