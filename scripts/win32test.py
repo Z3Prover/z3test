@@ -8,8 +8,8 @@ import datetime
 def win32test(b="master"):
     print("BUILD DATE: %s" % datetime.date.today())
     sys.stdout.flush()
-    # Build debug and release modes
-    for d in [True, False]:
+    # Build just debug mode
+    for d in [True]:
         util.buildz3(branch=b, everything=True, clean=True, debug=d, dotnet=True, java=True, static=False, jobs=1, clang=False, VS64=False)
         util.testz3py(branch=b, debug=d, clang=False)
         util.testjavaex(branch=b, debug=d, clang=False)
