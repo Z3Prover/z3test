@@ -26,13 +26,13 @@
 (error "tactic failed: operator not supported, apply simplifier before invoking this strategy")
 (goals
 (goal
-  (or (not p) q)
+  (or q (not p))
   :precision precise :depth 2)
 )
 (error "tactic failed: operator not supported, apply simplifier before invoking this strategy")
 (goals
 (goal
-  (or (not p) (not q))
   (or p q)
+  (or (not p) (not q))
   :precision precise :depth 2)
 )
