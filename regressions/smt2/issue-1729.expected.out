@@ -9,6 +9,10 @@
       (let ((a!5 (or (not (or (not y.1) (not x.1)))
                      (not (or (not x.1) (not a!4)))
                      (not (or (not y.1) (not a!4))))))
-        (not (or (= x.3 (not y.3)) a!1 (= x.1 (= y.1 a!4)) (= x.0 (= y.0 a!5)))))))))
+      (let ((a!6 (or (= (not x.3) y.3)
+                     a!1
+                     (= (not x.1) (= (not y.1) a!4))
+                     (= (not x.0) (= (not y.0) a!5)))))
+        (not a!6)))))))
   :precision precise :depth 1)
 )
