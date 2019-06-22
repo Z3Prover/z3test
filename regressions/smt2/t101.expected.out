@@ -1,1 +1,1 @@
-(= (= p3 (not p2)) (not p1))
+(= (not p1) (= (not p2) p3))
