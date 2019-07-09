@@ -1,5 +1,5 @@
-(error "line 8 column 12: invalid check-sat command, argument must be a Boolean literal")
-(error "line 9 column 17: invalid check-sat command, argument must be a Boolean literal")
 sat
-(error "line 13 column 18: invalid check-sat command, argument must be a Boolean literal")
+sat
+sat
+sat
 sat
