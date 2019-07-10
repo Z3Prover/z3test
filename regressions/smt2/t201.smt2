@@ -13,9 +13,9 @@
 ;; we integrate it in the main core.
 ;; So, this query must be marked back to unsat after we fix that.
 
-// current pre-processing multiplies with b
-// except for the case where b = 0.
-// Then pre-processing simplification takes are of this example
+;; current pre-processing multiplies with b
+;; except for the case where b = 0.
+;; Then pre-processing simplification takes are of this example
 
 (assert (not (= (/ a b) (/ a 0.))))
 (assert (<= b 0.))
