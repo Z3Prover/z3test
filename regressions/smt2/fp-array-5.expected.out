@@ -1,2 +1,2 @@
 sat
-((C (lambda ((x!1 (_ FloatingPoint 11 53))) (ite (= x!1 (_ -oo 11 53)) 5 4))))
+((C (store ((as const (Array (_ FloatingPoint 11 53) Int)) 4) (_ -oo 11 53) 5)))
