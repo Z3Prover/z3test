@@ -73,7 +73,7 @@ unsat
 sat
 (model 
   (define-fun a () String
-    "abab")
+    "ababab")
 )
 sat
 (model 
