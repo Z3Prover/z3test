@@ -5,7 +5,7 @@
 (set-option :model_validate true)
 
 (declare-const x (_ FloatingPoint 8 24))
-(declare-const y (_ FloatingPoint 8 24))
+;(declare-const y (_ FloatingPoint 8 24))
 (declare-const b (_ BitVec 32))
 
 (assert (= b (to_ieee_bv x)))
