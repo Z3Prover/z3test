@@ -57,16 +57,40 @@ sat
 (model 
   (define-fun a () String
     "ab")
+  (define-fun r2 () (RegEx String)
+    (str.to.re ""))
+  (define-fun b () String
+    "")
+  (define-fun r1 () (RegEx String)
+    (str.to.re ""))
+  (define-fun r () (RegEx String)
+    (str.to.re ""))
 )
 sat
 (model 
   (define-fun a () String
     "abab")
+  (define-fun r2 () (RegEx String)
+    (str.to.re ""))
+  (define-fun b () String
+    "")
+  (define-fun r1 () (RegEx String)
+    (str.to.re ""))
+  (define-fun r () (RegEx String)
+    (str.to.re ""))
 )
 sat
 (model 
   (define-fun a () String
     "ababab")
+  (define-fun r2 () (RegEx String)
+    (str.to.re ""))
+  (define-fun b () String
+    "")
+  (define-fun r1 () (RegEx String)
+    (str.to.re ""))
+  (define-fun r () (RegEx String)
+    (str.to.re ""))
 )
 unsat
 unsat
@@ -74,15 +98,39 @@ sat
 (model 
   (define-fun a () String
     "ababab")
+  (define-fun r2 () (RegEx String)
+    (str.to.re ""))
+  (define-fun b () String
+    "")
+  (define-fun r1 () (RegEx String)
+    (str.to.re ""))
+  (define-fun r () (RegEx String)
+    (str.to.re ""))
 )
 sat
 (model 
   (define-fun a () String
     "abab")
+  (define-fun r2 () (RegEx String)
+    (str.to.re ""))
+  (define-fun b () String
+    "")
+  (define-fun r1 () (RegEx String)
+    (str.to.re ""))
+  (define-fun r () (RegEx String)
+    (str.to.re ""))
 )
 sat
 (model 
   (define-fun a () String
     "ababab")
+  (define-fun r2 () (RegEx String)
+    (str.to.re ""))
+  (define-fun b () String
+    "")
+  (define-fun r1 () (RegEx String)
+    (str.to.re ""))
+  (define-fun r () (RegEx String)
+    (str.to.re ""))
 )
 unsat
