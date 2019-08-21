@@ -3,7 +3,7 @@
 
 (set-option :model.compact true)
 (declare-fun p (Int) Bool)
-(declare-fun f (Int Real) Bool)
+;(declare-fun f (Int Real) Bool)
 
 (assert (p (ite (p 1) 10 20)))
 (assert (p 1))
