@@ -97,7 +97,7 @@ unsat
 sat
 (model 
   (define-fun a () String
-    "ababab")
+    "abab")
   (define-fun r2 () (RegEx String)
     (str.to.re ""))
   (define-fun b () String
