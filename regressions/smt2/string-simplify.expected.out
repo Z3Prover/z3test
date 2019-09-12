@@ -43,7 +43,7 @@ a
 a
 (str.++ a "ab")
 (+ 1 (str.len a))
-(= "" b)
+(= b "")
 true
 (str.prefixof (str.++ a b) c)
 (str.prefixof c b)
@@ -51,7 +51,7 @@ false
 true
 (str.prefixof "b" c)
 (str.prefixof (str.++ "b" a) c)
-(= "" a)
+(= a "")
 true
 (str.suffixof (str.++ a b) c)
 (str.suffixof c b)

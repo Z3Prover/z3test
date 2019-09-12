@@ -1,10 +1,10 @@
 
-; Copyright (c) 2015 Microsoft Corporation
-(set-logic QF_FP)
+; Copyright (c) 2015 Microsoft Corporation 
+(set-logic QF_FP) 
 (set-info :status sat)
 
-(declare-fun j () (_ FloatingPoint 5 11))
-(declare-fun i () (_ FloatingPoint 5 11))
+(declare-fun j () (_ FloatingPoint 3 5))
+(declare-fun i () (_ FloatingPoint 3 5))
 
   (assert
     (not
@@ -15,7 +15,7 @@
               i
               j
             )
-            ((_ to_fp 5 11) roundNearestTiesToEven 0.0)
+            ((_ to_fp 3 5) roundNearestTiesToEven 0.0)
           )
         )
         (and
@@ -42,7 +42,7 @@
                 j
               )
             )
-            ((_ to_fp 5 11) roundNearestTiesToEven 0.0)
+            ((_ to_fp 3 5) roundNearestTiesToEven 0.0)
           )
           true
         )

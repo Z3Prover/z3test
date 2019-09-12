@@ -112,7 +112,7 @@
 (set-info :status sat)
 (assert (str.in.re a ((_ re.loop 2) (str.to.re "ab"))))
 (check-sat)
-(get-model)
+;(get-model)
 (pop)
 
 (push)

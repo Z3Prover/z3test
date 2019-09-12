@@ -3,10 +3,10 @@
 (set-info :status sat)
 (set-info :source "Handcrafted by C.M. Wintersteiger")
 
-(declare-fun X () Float16)
-(declare-fun Y () Float16)
-(declare-fun Z () Float16)
-(declare-fun W () Float16)
+(declare-fun X () (_ FloatingPoint 2 6))
+(declare-fun Y () (_ FloatingPoint 2 6))
+(declare-fun Z () (_ FloatingPoint 2 6))
+(declare-fun W () (_ FloatingPoint 2 6))
 
 (assert 
   (or

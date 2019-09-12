@@ -6,7 +6,7 @@
             (a!2 (not (or (not x.2) (or (not x.3) (not y.3)))))
             (a!3 (not (or (not y.2) (or (not x.3) (not y.3))))))
       (let ((a!4 (or (not (or (not x.2) (not y.2))) a!2 a!3)))
-      (let ((a!5 (or (not (or (not x.1) (not y.1)))
+      (let ((a!5 (or (not (or (not y.1) (not x.1)))
                      (not (or (not x.1) (not a!4)))
                      (not (or (not y.1) (not a!4))))))
       (let ((a!6 (or (= (not x.3) y.3)

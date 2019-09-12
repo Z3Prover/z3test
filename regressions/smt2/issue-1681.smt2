@@ -31,4 +31,3 @@
                 (= (select c x) (select a (- x lenb))))
                 :pattern ((select c x)))))
 (check-sat)
-(get-model)
