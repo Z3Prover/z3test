@@ -2,11 +2,27 @@ sat
 (model 
   (define-fun a () String
     "a")
+  (define-fun b () String
+    "")
+  (define-fun c () String
+    "")
+  (define-fun d () String
+    "")
+  (define-fun e () String
+    "")
 )
 sat
 (model 
   (define-fun a () String
     "ab")
+  (define-fun b () String
+    "")
+  (define-fun c () String
+    "")
+  (define-fun d () String
+    "")
+  (define-fun e () String
+    "")
 )
 sat
 sat
@@ -24,6 +40,12 @@ sat
     "cd")
   (define-fun a () String
     "ab")
+  (define-fun c () String
+    "")
+  (define-fun d () String
+    "")
+  (define-fun e () String
+    "")
 )
 sat
 (model 
@@ -31,6 +53,12 @@ sat
     "cd")
   (define-fun a () String
     "ab")
+  (define-fun c () String
+    "")
+  (define-fun d () String
+    "")
+  (define-fun e () String
+    "")
 )
 sat
 (model 
@@ -38,6 +66,12 @@ sat
     "ab")
   (define-fun a () String
     "cd")
+  (define-fun c () String
+    "")
+  (define-fun d () String
+    "")
+  (define-fun e () String
+    "")
 )
 sat
 (model 
@@ -47,12 +81,22 @@ sat
     "ab")
   (define-fun c () String
     "ef")
+  (define-fun d () String
+    "")
+  (define-fun e () String
+    "")
 )
 sat
 (model 
   (define-fun b () String
     "")
   (define-fun a () String
+    "")
+  (define-fun c () String
+    "")
+  (define-fun d () String
+    "")
+  (define-fun e () String
     "")
 )
 sat
@@ -66,6 +110,10 @@ sat
     "ab")
   (define-fun c () String
     "abc")
+  (define-fun d () String
+    "")
+  (define-fun e () String
+    "")
 )
 sat
 sat
@@ -107,6 +155,14 @@ sat
 (model 
   (define-fun a () String
     "bababab")
+  (define-fun b () String
+    "")
+  (define-fun c () String
+    "")
+  (define-fun d () String
+    "")
+  (define-fun e () String
+    "")
 )
 unsat
 sat
@@ -119,4 +175,8 @@ sat
     "b")
   (define-fun c () String
     "b")
+  (define-fun d () String
+    "")
+  (define-fun e () String
+    "")
 )
