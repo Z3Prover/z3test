@@ -1,5 +1,6 @@
 a
 (str.to.re "")
+((_ re.loop 2 2) a)
 ((_ re.loop 2 6) a)
 ((_ re.loop 9) a)
 ((_ re.loop 9) a)

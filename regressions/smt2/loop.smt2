@@ -2,6 +2,7 @@
 
 (simplify (re.loop a 1 1))
 (simplify (re.loop a 0 0))
+(simplify (re.loop a 3 2))
 (simplify (re.loop (re.loop a 1 2) 2 3))
 (simplify (re.loop (re.loop a 3 5) 3))
 (simplify (re.loop (re.loop a 3) 3 4))
