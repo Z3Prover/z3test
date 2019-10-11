@@ -8,7 +8,7 @@
            (ite (= x1 20)
                 (or (q (f x2)) (= (f (+ 1 x2)) (f x1)))
                 (or (q (f (f x2))) (q (f x1)))))
-      (>= (ite (= x1 2) 3 x1) x2))
+      (ite (= x1 2) (>= 3 x2) (>= x1 x2)))
   :precision precise :depth 2)
 )
 (goals
@@ -21,7 +21,7 @@
            (ite (= x1 20)
                 (or (q (f 3)) (= (f (+ 1 x2)) (f 20)))
                 (or (q (f (f x2))) (q (f x1)))))
-      (>= (ite (= x1 2) 3 x1) x2))
+      (ite (= x1 2) (>= 3 x2) (>= x1 x2)))
   :precision precise :depth 2)
 )
 (goals
@@ -34,6 +34,6 @@
            (ite (= x1 20)
                 (or (q (f 3)) (= (f 4) (f 20)))
                 (or (q (f x1)) (q (f (f 3))))))
-      (>= (ite (= x1 2) 3 x1) x2))
+      (ite (= x1 2) (>= 3 x2) (>= x1 x2)))
   :precision precise :depth 2)
 )
