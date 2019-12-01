@@ -88,9 +88,9 @@ sat
 )
 sat
 (model 
-  (define-fun b () String
-    "")
   (define-fun a () String
+    "")
+  (define-fun b () String
     "")
   (define-fun c () String
     "")
