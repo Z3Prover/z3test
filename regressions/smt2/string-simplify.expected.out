@@ -38,7 +38,7 @@ false
 2
 3
 (- 1)
-(str.++ a (str.++ b c))
+(str.++ a b c)
 a
 a
 (str.++ a "ab")
@@ -60,14 +60,14 @@ true
 (str.suffixof c "a")
 (str.suffixof c (str.++ a "a"))
 (str.contains a b)
-(str.contains a (str.++ a (str.++ b c)))
-(str.contains b (str.++ a (str.++ b c)))
-(str.contains (str.++ a b) (str.++ a (str.++ b c)))
+(str.contains a (str.++ a b c))
+(str.contains b (str.++ a b c))
+(str.contains (str.++ a b) (str.++ a b c))
 (str.contains (str.++ b c) (str.++ a (str.++ b c)))
-(str.contains (str.++ a c) (str.++ a (str.++ b c)))
+(str.contains (str.++ a c) (str.++ a b c))
 (str.contains a b)
 true
 true
 true
 true
-(str.contains (str.++ a (str.++ b c)) (str.++ a c))
+(str.contains (str.++ a b c) (str.++ a c))
