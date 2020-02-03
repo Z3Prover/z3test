@@ -15,9 +15,9 @@
 
 (assert (<= 3.0 q3))
 
-(assert (< q1 q2))
+(assert (<= q1 q2))
 
-(assert (< (* 100000000000000000000000000000 q2) q3 ))
+(assert (<= (* 100000000000000000000000000000 q2) q3 ))
 
 (minimize q1)
 (minimize q2)
