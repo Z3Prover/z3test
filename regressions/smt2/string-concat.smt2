@@ -470,5 +470,4 @@
  (assert (= c (str.++ a b)))
  (assert (not (= (str.++ a "a") (str.++ "a" a))))
  (check-sat)
- (get-model)
 (pop)

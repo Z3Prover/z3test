@@ -168,15 +168,3 @@ unsat
 sat
 sat
 sat
-(model 
-  (define-fun a () String
-    "b")
-  (define-fun b () String
-    "")
-  (define-fun c () String
-    "b")
-  (define-fun d () String
-    "")
-  (define-fun e () String
-    "")
-)
