@@ -1,9 +1,1 @@
 sat
-(model 
-  (define-fun s2 () String
-    "\x00\x00")
-  (define-fun s3 () String
-    "\x00")
-  (define-fun s1 () String
-    "\x00")
-)
