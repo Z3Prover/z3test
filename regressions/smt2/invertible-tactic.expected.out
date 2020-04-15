@@ -28,25 +28,15 @@ sat
 )
 (goals
 (goal
-  (let ((a!1 (ite (= ((_ extract 2 2) y) #b1)
-                  (concat ((_ extract 3 2) x) #b00)
-                  (ite (= ((_ extract 3 3) y) #b1)
-                       (concat ((_ extract 3 3) x) #b000)
-                       #x0))))
-  (let ((a!2 (ite (= ((_ extract 0 0) y) #b1)
-                  x
-                  (ite (= ((_ extract 1 1) y) #b1)
-                       (concat ((_ extract 3 1) x) #b0)
-                       a!1))))
-    (= a!2 (bvmul y z z))))
+  (= (bvmul x y) (bvmul y z z))
   (= z #x3)
   (= y #x5)
-  :precision precise :depth 2)
+  :precision precise :depth 1)
 )
 (goals
 (goal
   eq!0
-  :precision precise :depth 4)
+  :precision precise :depth 3)
 )
 sat
 (goals
@@ -156,15 +146,15 @@ sat
 (goal
   (= y (to_real 3))
   (= z (to_real 5))
-  (= (ite (= 0.0 y) 0.0 x) (* y z z))
-  :precision precise :depth 2)
+  (= (* x y) (* y z z))
+  :precision precise :depth 1)
 )
 sat
 (goals
 (goal
-  (= (ite (= 0.0 y) 0.0 x) (* y z z))
+  (= (/ y x) (* y z z))
   (= y (to_real 3))
   (= z (to_real 5))
-  :precision precise :depth 2)
+  :precision precise :depth 1)
 )
 sat
