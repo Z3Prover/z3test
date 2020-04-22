@@ -13,7 +13,6 @@
 (set-option :smt.arith.int_eq_branch true)
 (set-option :sat.bca false)
 (set-option :sat.asymm_branch.all true)
-(set-option :rewriter.bv_urem_simpl false)
 (set-option :nlsat.inline_vars true)
 (set-option :nlsat.randomize true)
 (set-option :rewriter.blast_eq_value true)

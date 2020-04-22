@@ -1,5 +1,4 @@
 (set-logic NRA)
-(set-option :nlsat.check_lemmas true)
 (set-option :nlsat.inline_vars true)
 (declare-const v2 Bool)
 (declare-const v4 Bool)

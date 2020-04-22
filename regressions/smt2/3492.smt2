@@ -29,7 +29,6 @@
 (set-option :sat.branching.heuristic chb)
 (set-option :rewriter.bvnot2arith  false)
 (set-option :rewriter.blast_distinct true)
-(set-option :rewriter.bv_urem_simpl false)
 (set-option :model.inline_def true)
 (set-option :solver.enforce_model_conversion false)
 (set-option :model.partial false)

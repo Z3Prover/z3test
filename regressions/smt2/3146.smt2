@@ -18,7 +18,6 @@
 (set-option :nlsat.log_lemmas false)
 (set-option :nlsat.reorder false)
 (set-option :nlsat.factor true)
-(set-option :nlsat.check_lemmas true)
 (set-option :nlsat.randomize false)
 (declare-const v0 Bool)
 (declare-const v1 Bool)

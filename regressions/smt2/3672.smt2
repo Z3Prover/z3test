@@ -1,7 +1,5 @@
 (set-logic QF_BV)
 (set-option :smt.clause_proof true)
-(set-option :nlsat.log_lemmas true)
-(set-option :nlsat.check_lemmas true)
 (set-option :nlsat.randomize false)
 (declare-const v0 Bool)
 (declare-const v1 Bool)

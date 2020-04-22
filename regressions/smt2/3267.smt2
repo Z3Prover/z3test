@@ -3,7 +3,6 @@
 (set-option :model true)
 (set-option :nlsat.inline_vars true)
 (set-option :nlsat.shuffle_vars true)
-(set-option :nlsat.check_lemmas true)
 (declare-const v0 Bool)
 (declare-const v1 Bool)
 (declare-const v2 Bool)

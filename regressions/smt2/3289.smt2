@@ -11,7 +11,6 @@
 (set-option :rewriter.arith_ineq_lhs false)
 (set-option :rewriter.cache_all true)
 (set-option :rewriter.bvnot2arith  false)
-(set-option :rewriter.bv_urem_simpl true)
 (set-option :solver.enforce_model_conversion true)
 (set-option :model.inline_def false)
 (set-option :nlsat.reorder false)

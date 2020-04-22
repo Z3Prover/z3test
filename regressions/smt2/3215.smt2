@@ -1,7 +1,6 @@
 (set-logic UFNRA)
 (set-option :model_validate true)
 (set-option :model true)
-(set-option :nlsat.check_lemmas true)
 (set-option :nlsat.inline_vars true)
 (declare-const v0 Bool)
 (declare-const v1 Bool)

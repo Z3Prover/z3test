@@ -13,7 +13,6 @@
 (set-option :rewriter.arith_ineq_lhs false)
 (set-option :rewriter.bv_le_extra false)
 (set-option :rewriter.bv_sort_ac false)
-(set-option :rewriter.bv_urem_simpl true)
 (set-option :rewriter.blast_eq_value true)
 (set-option :solver.enforce_model_conversion true)
 (set-option :model.inline_def false)
