@@ -1,3 +1,4 @@
+(set-option :model_validate true)
 (declare-fun a () String)
 (declare-fun b () Int)
 (assert (= b (+ (str.indexof a "x" 0) 1)))
