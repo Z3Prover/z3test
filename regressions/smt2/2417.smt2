@@ -1,4 +1,5 @@
 (set-option :produce-models true)
+(set-option :model_validate true)
 (set-logic ALL)
 (define-fun s2 () Int 2)
 (define-fun s4 () Int 0)
@@ -13,4 +14,3 @@
 (define-fun s10 () Bool (and s3 s9))
 (assert s10)
 (check-sat)
-;(get-model)

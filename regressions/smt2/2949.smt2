@@ -1,0 +1,6 @@
+(declare-fun b () (_ BitVec 1229))
+(declare-fun a () (_ BitVec 1229))
+(declare-fun c () Bool)
+(assert (let ((a!1 (= ((_ extract 1228 1228) a) ((_ extract 1228 1228) b))))
+  (and (= c (bvslt a b)) (= (bvslt a b) (= c a!1)))))
+(check-sat-using qfbv-sls)
