@@ -103,18 +103,6 @@ sat
 sat
 sat
 sat
-(model 
-  (define-fun b () String
-    "c")
-  (define-fun a () String
-    "ab")
-  (define-fun c () String
-    "abc")
-  (define-fun d () String
-    "")
-  (define-fun e () String
-    "")
-)
 sat
 sat
 sat

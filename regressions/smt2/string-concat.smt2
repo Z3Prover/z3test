@@ -150,7 +150,7 @@
 (assert (or (= a "ab") (= a "bc") (= a "de")))
 (assert (or (= c "aab") (= c "abc") (= c "ade")))
 (check-sat)
-(get-model)
+;(get-model)
 (pop)
 
 (push)
