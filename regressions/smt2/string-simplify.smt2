@@ -80,3 +80,8 @@
 (simplify (str.contains (str.++ a b c) (str.++ a b)))
 (simplify (str.contains (str.++ a b c) (str.++ b c)))
 (simplify (str.contains (str.++ a b c) (str.++ a c)))
+
+(simplify (str.replace (str.++ "A" a) "B" b))
+(simplify (str.replace (str.++ "AB" a) "B" b))
+(simplify (str.replace (str.++ "AB" a) "BA" b))
+(simplify (str.replace (str.++ "AB" a) (str.++ "B" a b) c))

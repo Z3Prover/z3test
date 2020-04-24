@@ -71,3 +71,7 @@ true
 true
 true
 (str.contains (str.++ a b c) (str.++ a c))
+(str.++ "A" (str.replace a "B" b))
+(str.++ "A" b a)
+(str.++ "A" (str.replace (str.++ "B" a) "BA" b))
+(ite (= "" b) (str.++ "A" c) (str.++ "AB" a))
