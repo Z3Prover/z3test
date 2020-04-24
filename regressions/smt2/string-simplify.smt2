@@ -38,6 +38,7 @@
 (simplify (str.indexof "aabbcc" "b" 2)) ; 0
 (simplify (str.indexof "aabbcc" "bc" 2)) ; 1
 (simplify (str.indexof "aabbcc" "d" 0)) ; (- 1)
+(simplify (seq.indexof (seq.++ (seq.unit 0) (seq.unit 1) (seq.unit 2)) (seq.unit 1) 1))
 
 (declare-const a String)
 (declare-const b String)
