@@ -1,4 +1,4 @@
-(set-option :parallel.enable true)
+;(set-option :parallel.enable true)
 (set-option :model_validate true)
 (declare-fun a () Float16)
 (declare-fun b () Float16)
