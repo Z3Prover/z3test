@@ -1,3 +1,4 @@
+(set-option :smt.arith.solver 6)
 (set-logic QF_NIA)
 (set-option :trace true)
 (set-option :smt.bv.enable_int2bv true)

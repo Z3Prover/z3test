@@ -1,3 +1,4 @@
+(set-option :smt.arith.solver 6)
 (declare-fun a () Int)
 (declare-fun b () Real)
 (declare-fun c () Real)

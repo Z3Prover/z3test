@@ -1,3 +1,4 @@
+(set-option :smt.arith.solver 6)
 (set-option :model false) 
 (set-option :proof true) 
 (set-option :rewriter.arith_ineq_lhs true) 

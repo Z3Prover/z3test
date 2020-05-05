@@ -1,3 +1,4 @@
+(set-option :smt.arith.solver 6)
 (set-option :smt.arith.reflect false)
 (set-option :rewriter.flat false) 
 (declare-fun a () Real) 

@@ -1,3 +1,4 @@
+(set-option :smt.arith.solver 6)
 (set-option :model_validate true)
 (declare-fun a () String)
 (declare-fun b () String)

@@ -1,3 +1,4 @@
+(set-option :smt.arith.solver 6)
 (set-option :trace true)
 (set-option :smt.arith.propagate_eqs false)
 (set-option :smt.arith.random_initial_value true)

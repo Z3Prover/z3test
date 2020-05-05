@@ -1,3 +1,4 @@
+(set-option :smt.arith.solver 6)
 (set-logic QF_UFNRA)
 (set-option :parallel.enable true)
 (set-option :rewriter.arith_ineq_lhs true)

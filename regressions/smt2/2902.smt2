@@ -1,3 +1,4 @@
+(set-option :smt.arith.solver 6)
 (declare-fun a () Real)
 (assert (< (/ 1 0 a) 1))
 (assert (forall ((b Real)) (= (/ (/ 0 (- b)) 0) 0)))
