@@ -1,0 +1,146 @@
+===== string in regex checks =====
+=== using empty string ===
+= atomic =
+true
+true
+true
+true
+true
+true
+true
+true
+true
+= standard constructors =
+true
+true
+true
+true
+true
+true
+true
+true
+true
+true
+true
+true
+true
+true
+true
+true
+true
+= additional constructors =
+true
+true
+true
+true
+true
+true
+true
+true
+true
+true
+true
+true
+true
+true
+= looping (* with counting) =
+true
+true
+true
+true
+true
+true
+true
+true
+true
+true
+true
+true
+true
+= variations (not currently supported) =
+(error "line 79 column 25: unknown constant re.emptystr")
+(error "line 81 column 59: unknown function/constant re.diff")
+(error "line 82 column 52: unknown function/constant re.diff")
+(error "line 83 column 41: unknown function/constant re.diff")
+(error "line 84 column 59: unknown function/constant re.diff")
+(error "line 85 column 70: unknown function/constant re.diff")
+= complex combinations =
+TODO
+=== using nonempty string ===
+= atomic =
+true
+true
+true
+true
+true
+true
+true
+true
+(str.in_re "a" (re.range "a" "b"))
+(str.in_re "b" (re.range "a" "b"))
+(str.in_re "c" (re.range "c" "c"))
+(not (str.in_re "c" (re.range "c" "b")))
+(not (str.in_re "c" (re.range "a" "b")))
+(not (str.in_re "aba" (re.range "a" "b")))
+true
+true
+true
+true
+true
+(not (str.in_re "aba" (re.of.pred p)))
+TODO: checks with nontrivial predicates
+= standard constructors =
+true
+true
+true
+(str.in_re "a" (re.union r (str.to_re "a")))
+true
+true
+true
+true
+(str.in_re "a" (re.++ (str.to_re "a") (re.union (str.to_re "") r)))
+true
+true
+true
+true
+true
+true
+true
+true
+true
+= additional constructors =
+true
+true
+true
+true
+true
+true
+true
+true
+true
+true
+(not (str.in_re "a" (re.inter (str.to_re "") r)))
+true
+true
+true
+true
+= looping (* with counting) =
+true
+true
+true
+true
+true
+true
+true
+true
+true
+true
+true
+true
+true
+= complex combinations =
+true
+true
+TODO
+=== using variable strings ===
+TODO
