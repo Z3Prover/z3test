@@ -139,7 +139,7 @@ sat
 )
 (goals
 (goal
-  (forall ((x (_ BitVec 8)) (y (_ BitVec 8))) (= x #x42))
+  (forall ((x (_ BitVec 8)) (y (_ BitVec 8))) (= (bvsdiv x y) #x42))
   :precision precise :depth 1)
 )
 (goals
