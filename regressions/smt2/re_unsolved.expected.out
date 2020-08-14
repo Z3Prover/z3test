@@ -1,0 +1,9 @@
+==== symbolic cases: string or regex variable ====
+== symbolic 1 (string var, unsat) ==
+unsat
+== symbolic 2 (regex var, sat, simple substitution) ==
+sat
+== symbolic 3 (regex var, sat, simple substitution) ==
+sat
+== symbolic 4 (regex var, unsat, simple substitution) ==
+unsat

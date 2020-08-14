@@ -1,0 +1,7 @@
+(declare-const x String)
+(declare-const c1 (_ BitVec 8))
+
+(echo "== symbolic string in regexp cases ==")
+
+(simplify (str.in_re x (re.* (str.to_re x))))
+(simplify (not (str.in_re x (re.comp (str.to_re x)))))

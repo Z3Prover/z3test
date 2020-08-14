@@ -1,0 +1,39 @@
+(echo "==== symbolic cases: string or regex variable ====")
+
+(echo "== symbolic 1 (string var, unsat) ==")
+
+(push)
+(declare-const x String)
+(assert (not (str.in_re x (re.* (str.to_re x)))))
+(check-sat)
+(pop)
+
+(echo "== symbolic 2 (regex var, sat, simple substitution) ==")
+
+(push)
+(declare-const x String)
+(declare-const R (RegEx String))
+(assert (= R (str.to_re "")))
+(assert (str.in_re x R))
+(check-sat)
+(pop)
+
+(echo "== symbolic 3 (regex var, sat, simple substitution) ==")
+
+(push)
+(declare-const x String)
+(declare-const R (RegEx String))
+(assert (= R (re.++ (str.to_re "a") (re.* (str.to_re "b")))))
+(assert (str.in_re x R))
+(check-sat)
+(pop)
+
+(echo "== symbolic 4 (regex var, unsat, simple substitution) ==")
+
+(push)
+(declare-const x String)
+(declare-const R (RegEx String))
+(assert (= R (re.comp (re.* (re.comp (str.to_re "aa"))))))
+(assert (str.in_re x R))
+(check-sat)
+(pop)
