@@ -1,0 +1,5 @@
+(<= (+ (* a a) (* b b b)) (- 1))
+false
+(and (= a 0) (= b 0))
+false
+(and (= a 0) (= b 0))
