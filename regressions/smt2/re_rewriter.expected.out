@@ -1,6 +1,6 @@
-===== string in regex checks =====
-=== using empty string ===
-= atomic =
+====== string in regex checks ======
+==== atomic cases ====
+== none, all ==
 true
 true
 true
@@ -9,14 +9,15 @@ true
 true
 true
 true
+== from string  ==
 true
-= standard constructors =
 true
 true
 true
 true
 true
 true
+== character ranges ==
 true
 true
 true
@@ -28,8 +29,8 @@ true
 true
 true
 true
-= additional constructors =
 true
+== ranges and strings using character literal ==
 true
 true
 true
@@ -38,12 +39,12 @@ true
 true
 true
 true
+== character predicates ==
 true
 true
 true
 true
 true
-= looping (* with counting) =
 true
 true
 true
@@ -51,23 +52,15 @@ true
 true
 true
 true
+==== standard constructors ====
+== option ==
 true
 true
 true
 true
 true
 true
-= variations (not currently supported) =
-(error "line 79 column 25: unknown constant re.emptystr")
-(error "line 81 column 59: unknown function/constant re.diff")
-(error "line 82 column 52: unknown function/constant re.diff")
-(error "line 83 column 41: unknown function/constant re.diff")
-(error "line 84 column 59: unknown function/constant re.diff")
-(error "line 85 column 70: unknown function/constant re.diff")
-= complex combinations =
-TODO
-=== using nonempty string ===
-= atomic =
+== union ==
 true
 true
 true
@@ -77,6 +70,7 @@ true
 true
 true
 true
+== concat ==
 true
 true
 true
@@ -88,27 +82,26 @@ true
 true
 true
 true
-TODO: checks with nontrivial predicates
-= standard constructors =
 true
+== star ==
 true
 true
-(str.in_re "a" (re.union r (str.to_re "a")))
 true
 true
 true
 true
-(str.in_re "a" (re.++ (str.to_re "a") (re.union (str.to_re "") r)))
 true
 true
+== plus ==
 true
 true
 true
 true
 true
+==== additional boolean constructors ====
+== complement ==
 true
 true
-= additional constructors =
 true
 true
 true
@@ -119,12 +112,11 @@ true
 true
 true
 true
-(not (str.in_re "a" (re.inter (str.to_re "") r)))
 true
 true
 true
+== intersection ==
 true
-= looping (* with counting) =
 true
 true
 true
@@ -138,9 +130,109 @@ true
 true
 true
 true
-= complex combinations =
+== difference ==
 true
 true
-TODO
-=== using variable strings ===
-TODO
+true
+true
+true
+true
+true
+true
+true
+true
+true
+==== counting loops ====
+== between m and n times ==
+true
+true
+true
+true
+true
+true
+true
+true
+true
+true
+true
+true
+== at least m times ==
+true
+true
+true
+true
+true
+true
+true
+true
+true
+true
+== exactly m times ==
+true
+true
+true
+true
+true
+true
+true
+true
+==== other extensions ====
+== if-then-else ==
+true
+true
+true
+true
+true
+true
+true
+true
+true
+== reverse ==
+true
+true
+true
+true
+true
+true
+true
+true
+== derivative ==
+true
+true
+true
+true
+true
+true
+true
+true
+true
+==== complex combinations ====
+true
+true
+true
+true
+==== symbolic test cases ====
+== symbolic string ==
+true
+true
+true
+== if-then-else with unknown condition ==
+true
+true
+true
+true
+== left/right derivatives with symbolic string ==
+true
+true
+true
+true
+true
+true
+true
+true
+==== Complex complement examples ====
+true
+true
+true
+==== evil regex matching example ====
+true

@@ -1,0 +1,65 @@
+====== regex solving checks ======
+==== simple cases ====
+== 1 (trivial sat, no unfolding needed) ==
+sat
+== 2 (sat with many right-derivatives) ==
+sat
+== 3 (sat with counting) ==
+sat
+== 4 (sat, example adapted from 4478) ==
+sat
+==== intersection examples ====
+== 1 (unsat intersection) ==
+unsat
+== 2 (unsat intersection) ==
+unsat
+== 3 (unsat intersection, with equality) ==
+unsat
+== 4 (unsat intersection) ==
+unsat
+== 5 (unsat example from Zelkova FMCAD18 paper) ==
+unsat
+==== complement examples ====
+== nonemptiness (trivial sat) ==
+sat
+== inclusion (sat) ==
+sat
+== inclusion (unsat) ==
+unsat
+== inclusion (sat) ==
+sat
+== nested complements (unsat) ==
+unsat
+==== examples hard for deterministic blowup ====
+== 1 (unsat) ==
+unsat
+== 2 (sat) ==
+sat
+== 3 (unsat) ==
+unsat
+==== cases with string expression in RE ====
+== 1 (unsat) ==
+unsat
+== 2 (unsat) ==
+unsat
+==== symbolic cases: string or regex variable ====
+== symbolic 1 (string var, sat) ==
+sat
+== symbolic 2 (regex var, sat) ==
+sat
+== symbolic 3 (regex var, unsat, simple substitution) ==
+unsat
+==== password constraint examples ====
+== 1 (sat) ==
+sat
+== 2 (sat) ==
+sat
+== 3 (unsat) ==
+unsat
+== 4 (unsat) ==
+unsat
+==== date constraint examples ====
+== minimal jan/feb/jul (sat) ==
+sat
+== minimal jan/feb/jul (unsat) ==
+unsat
