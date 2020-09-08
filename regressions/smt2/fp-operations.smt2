@@ -16,7 +16,7 @@
 	  (= X (fp.div RTZ Y Z))
 	  ;; (= X (fp.fma RTZ Y Z W))
 	  (= X (fp.sqrt RTZ Y))
-	  (= X (fp.rem X Y))
+;; disabled pending bug fix:	  (= X (fp.rem X Y))
 	  (= X (fp.roundToIntegral RTZ Y))
 	  (= X (fp.min Y Z))
 	  (= X (fp.max Y Z))

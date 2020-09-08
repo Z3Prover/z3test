@@ -12,9 +12,5 @@
 (assert (not (= x y)))
 
 (check-sat)
-(get-value (x))
-(get-value (y))
 (check-sat-using smt)
-(get-value (x))
-(get-value (y))
 (exit)
