@@ -45,8 +45,7 @@ sat
   :precision precise :depth 3)
 )
 sat
-(model 
-  (define-fun x () (_ BitVec 8)
+(   (define-fun x () (_ BitVec 8)
     #x42)
   (define-fun y () (_ BitVec 8)
     #x00)
@@ -83,8 +82,7 @@ sat
   :precision precise :depth 3)
 )
 sat
-(model 
-  (define-fun x () (_ BitVec 8)
+(   (define-fun x () (_ BitVec 8)
     #x00)
   (define-fun y () (_ BitVec 8)
     #x01)
@@ -95,8 +93,7 @@ sat
   :precision precise :depth 3)
 )
 sat
-(model 
-  (define-fun x () (_ BitVec 8)
+(   (define-fun x () (_ BitVec 8)
     #x33)
   (define-fun y () (_ BitVec 8)
     #xff)
@@ -107,8 +104,7 @@ sat
   :precision precise :depth 1)
 )
 sat
-(model 
-  (define-fun y () (_ BitVec 8)
+(   (define-fun y () (_ BitVec 8)
     #x00)
   (define-fun x () (_ BitVec 8)
     #x33)
@@ -129,8 +125,7 @@ sat
   :precision precise :depth 3)
 )
 sat
-(model 
-  (define-fun x () (_ BitVec 8)
+(   (define-fun x () (_ BitVec 8)
     #x42)
   (define-fun z () (_ BitVec 8)
     #x01)

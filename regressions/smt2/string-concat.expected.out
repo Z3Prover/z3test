@@ -1,6 +1,5 @@
 sat
-(model 
-  (define-fun a () String
+(   (define-fun a () String
     "a")
   (define-fun b () String
     "")
@@ -12,8 +11,7 @@ sat
     "")
 )
 sat
-(model 
-  (define-fun a () String
+(   (define-fun a () String
     "ab")
   (define-fun b () String
     "")
@@ -35,8 +33,7 @@ unsat
 sat
 unsat
 sat
-(model 
-  (define-fun b () String
+(   (define-fun b () String
     "cd")
   (define-fun a () String
     "ab")
@@ -48,8 +45,7 @@ sat
     "")
 )
 sat
-(model 
-  (define-fun b () String
+(   (define-fun b () String
     "cd")
   (define-fun a () String
     "ab")
@@ -61,8 +57,7 @@ sat
     "")
 )
 sat
-(model 
-  (define-fun b () String
+(   (define-fun b () String
     "ab")
   (define-fun a () String
     "cd")
@@ -74,8 +69,7 @@ sat
     "")
 )
 sat
-(model 
-  (define-fun b () String
+(   (define-fun b () String
     "cd")
   (define-fun a () String
     "ab")
@@ -87,8 +81,7 @@ sat
     "")
 )
 sat
-(model 
-  (define-fun b () String
+(   (define-fun b () String
     "")
   (define-fun a () String
     "")
@@ -140,8 +133,7 @@ sat
 sat
 sat
 sat
-(model 
-  (define-fun a () String
+(   (define-fun a () String
     "bababab")
   (define-fun b () String
     "")

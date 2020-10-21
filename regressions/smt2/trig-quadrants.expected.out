@@ -1,27 +1,23 @@
 sat
-(model 
-  (define-fun theta () Real
+(   (define-fun theta () Real
     (acos 0.7071067811?))
   (define-fun sqrt2over2 () Real
     0.7071067811?)
 )
 sat
-(model 
-  (define-fun theta () Real
+(   (define-fun theta () Real
     (acos (- 0.7071067811?)))
   (define-fun sqrt2over2 () Real
     0.7071067811?)
 )
 sat
-(model 
-  (define-fun theta () Real
+(   (define-fun theta () Real
     (+ (acos 0.7071067811?) pi))
   (define-fun sqrt2over2 () Real
     0.7071067811?)
 )
 sat
-(model 
-  (define-fun theta () Real
+(   (define-fun theta () Real
     (+ (acos (- 0.7071067811?)) pi))
   (define-fun sqrt2over2 () Real
     0.7071067811?)
