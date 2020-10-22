@@ -1,4 +1,5 @@
 sat
-(   (define-fun p ((x!0 Int)) Bool
+(
+  (define-fun p ((x!0 Int)) Bool
     true)
 )

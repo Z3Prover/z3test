@@ -1,4 +1,5 @@
 sat
-(   (define-fun x () Int
+(
+  (define-fun x () Int
     0)
 )

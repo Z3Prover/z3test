@@ -1,5 +1,6 @@
 sat
-(   (define-fun a () String
+(
+  (define-fun a () String
     "a")
   (define-fun b () String
     "")
@@ -11,7 +12,8 @@ sat
     "")
 )
 sat
-(   (define-fun a () String
+(
+  (define-fun a () String
     "ab")
   (define-fun b () String
     "")
@@ -33,7 +35,8 @@ unsat
 sat
 unsat
 sat
-(   (define-fun b () String
+(
+  (define-fun b () String
     "cd")
   (define-fun a () String
     "ab")
@@ -45,7 +48,8 @@ sat
     "")
 )
 sat
-(   (define-fun b () String
+(
+  (define-fun b () String
     "cd")
   (define-fun a () String
     "ab")
@@ -57,7 +61,8 @@ sat
     "")
 )
 sat
-(   (define-fun b () String
+(
+  (define-fun b () String
     "ab")
   (define-fun a () String
     "cd")
@@ -69,7 +74,8 @@ sat
     "")
 )
 sat
-(   (define-fun b () String
+(
+  (define-fun b () String
     "cd")
   (define-fun a () String
     "ab")
@@ -81,7 +87,8 @@ sat
     "")
 )
 sat
-(   (define-fun b () String
+(
+  (define-fun b () String
     "")
   (define-fun a () String
     "")
@@ -133,7 +140,8 @@ sat
 sat
 sat
 sat
-(   (define-fun a () String
+(
+  (define-fun a () String
     "bababab")
   (define-fun b () String
     "")

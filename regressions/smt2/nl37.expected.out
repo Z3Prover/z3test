@@ -5,6 +5,7 @@ unsat
 unsat
 unsat
 sat
-(   (define-fun x () Real
+(
+  (define-fun x () Real
     (- 1.4142135623?))
 )
