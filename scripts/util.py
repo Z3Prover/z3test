@@ -237,7 +237,7 @@ def timeout(func, args=(), kwargs={}, timeout_duration=1.0, default=None):
     it.join(timeout_duration)
     if it.exception is not None:
         raise it.exception
-    if it.isAlive():
+    if it.is_alive():
         return default
     else:
         return it.result
