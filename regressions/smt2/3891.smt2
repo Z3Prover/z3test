@@ -16,6 +16,7 @@
 (assert (> (+ (* 30 a) (* 17 a) (* (- 48) a)) 9))
 (check-sat)
 (check-sat)
+(exit)
 (assert (not (= (* 4 c) 8)))
 (assert (or (> 0 c) (not (< (* 38 c) 5))))
 (assert (or (>= (- 33) 2)
