@@ -27,7 +27,6 @@
 (set-option :sat.scc.tr true)
 (set-option :sat.threads 3)
 (set-option :sat.branching.heuristic chb)
-(set-option :rewriter.bvnot2arith  false)
 (set-option :rewriter.blast_distinct true)
 (set-option :model.inline_def true)
 (set-option :solver.enforce_model_conversion false)
