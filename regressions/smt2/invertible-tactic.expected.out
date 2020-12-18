@@ -84,10 +84,10 @@ sat
 )
 sat
 (
-  (define-fun x () (_ BitVec 8)
-    #x00)
   (define-fun y () (_ BitVec 8)
     #x01)
+  (define-fun x () (_ BitVec 8)
+    #x00)
 )
 (goals
 (goal
