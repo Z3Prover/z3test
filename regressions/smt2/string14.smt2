@@ -3,7 +3,7 @@
 
 (set-option :smt.string_solver seq) 
 (declare-fun s() String)
-(assert (= "\x80" s))
+(assert (= "\u{80}" s))
 (check-sat)
 (get-value (s))
 (assert (= (str.len s) 1))
