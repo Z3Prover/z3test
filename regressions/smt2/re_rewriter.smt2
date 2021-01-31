@@ -4,9 +4,9 @@
 (declare-const s (RegEx String))
 (declare-const b1 Bool)
 ; Characters (bitvectors of size 8)
-(declare-const c1 (_ BitVec 8))
+(declare-const c1 Unicode)
 ; Predicates on characters
-(declare-const p (Array (_ BitVec 8) Bool))
+(declare-const p (Array Unicode Bool))
 
 (echo "====== string in regex checks ======")
 
@@ -46,7 +46,7 @@
 (simplify (not (str.in_re "aba" (re.range "a" "b"))))
 
 (echo "== ranges and strings using character literal ==")
-(simplify (str.in_re (seq.unit #x61) (str.to_re (seq.unit #x61))))
+(simplify (str.in_re (_ char #x61) (str.to_re (_ char #x61))))
 (simplify (str.in_re (_ char #x6) (re.range (_ char #x6) (_ char #x8))))
 (simplify (str.in_re (_ char #x7) (re.range (_ char #x6) (_ char #x8))))
 (simplify (str.in_re (_ char #x8) (re.range (_ char #x6) (_ char #x8))))
@@ -58,16 +58,16 @@
 (echo "== character predicates ==")
 (simplify (not (str.in_re "" (re.of.pred p))))
 (simplify (not (str.in_re "aba" (re.of.pred p))))
-(simplify (str.in_re (_ char #x24) (re.of.pred (store p #x24 true))))
-(simplify (not (str.in_re (_ char #x24) (re.of.pred (store p #x24 false)))))
-(simplify (str.in_re (_ char #x24) (re.of.pred (store (store p #x23 false) #x24 true))))
-(simplify (str.in_re (_ char #x24) (re.of.pred (store (store p #x24 true) #x24 true))))
-(simplify (str.in_re (_ char #x24) (re.of.pred (store (store p #x24 false) #x24 true))))
-(simplify (not (str.in_re (_ char #x24) (re.of.pred (store (store p #x24 true) #x24 false)))))
-(simplify (str.in_re "a" (re.of.pred ((as const (Array (_ BitVec 8) Bool)) true))))
-(simplify (not (str.in_re "a" (re.of.pred ((as const (Array (_ BitVec 8) Bool)) false)))))
-(simplify (not (str.in_re (_ char #x24) (re.of.pred (store ((as const (Array (_ BitVec 8) Bool)) false) #x23 true)))))
-(simplify (str.in_re (_ char #x24) (re.of.pred (store ((as const (Array (_ BitVec 8) Bool)) false) #x24 true))))
+(simplify (str.in_re (_ char #x24) (re.of.pred (store p (_ Char #x24) true))))
+(simplify (not (str.in_re (_ char #x24) (re.of.pred (store p (_ Char #x24) false)))))
+(simplify (str.in_re (_ char #x24) (re.of.pred (store (store p (_ Char #x23) false) (_ Char #x24) true))))
+(simplify (str.in_re (_ char #x24) (re.of.pred (store (store p (_ Char #x24) true) (_ Char #x24) true))))
+(simplify (str.in_re (_ char #x24) (re.of.pred (store (store p (_ Char #x24) false) (_ Char #x24) true))))
+(simplify (not (str.in_re (_ char #x24) (re.of.pred (store (store p (_ Char #x24) true) (_ Char #x24) false)))))
+(simplify (str.in_re "a" (re.of.pred ((as const (Array Unicode Bool)) true))))
+(simplify (not (str.in_re "a" (re.of.pred ((as const (Array Unicode Bool)) false)))))
+(simplify (not (str.in_re (_ char #x24) (re.of.pred (store ((as const (Array Unicode Bool)) false) (_ Char #x23) true)))))
+(simplify (str.in_re (_ char #x24) (re.of.pred (store ((as const (Array Unicode Bool)) false) (_ Char #x24) true))))
 
 (echo "==== standard constructors ====")
 
