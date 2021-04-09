@@ -13,7 +13,7 @@
 
 (assert (and 
 (= xx yy) 
-(= ((as DDy (DD Int)) dd) yy)
+(= ((as DDy Int) dd) yy)
 (= (DDx dd) xx) 
 ))
 (assert (not (= xx yy)))
