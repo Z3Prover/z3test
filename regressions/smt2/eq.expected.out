@@ -1,5 +1,4 @@
 (error "line 7 column 14: unknown constant f ((Array Int Int)) 
 declared: (declare-fun f (Int) Int) ")
 (error "line 8 column 13: no arguments supplied to arithmetical operator")
-(error "line 9 column 14: unknown constant a ( Int) 
-declared: (declare-fun a () Int) ")
+(error "line 9 column 11: unknown constant =")
