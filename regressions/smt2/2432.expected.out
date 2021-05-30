@@ -1,4 +1,4 @@
 sat
-((s0 (lambda ((x!1 Int)) (= x!1 2))))
-((s1 ((as const (Array Int Bool)) false)))
-((s2 ((as const (Array Int Bool)) true)))
+((s0 ((as const (Array Int Bool)) true)))
+((s1 (store ((as const (Array Int Bool)) true) 4 false)))
+((s2 ((as const (Array Int Bool)) false)))
