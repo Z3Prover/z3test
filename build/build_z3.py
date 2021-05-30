@@ -276,7 +276,7 @@ def runbuild(vm, vm_port, need_start, file_pattern): # 0 = ok, 1 = infrastructur
 
         os.chdir(start_dir)
         send_email(devs, 'Build failed at ' + vm, 'The build failed; please check the attached logfile for errors.', [logname])
-        print 'Failure email sent.'
+        print('Failure email sent.')
         err_code = 2
 
     return err_code
@@ -306,7 +306,7 @@ def main():
     # start to build new distros
     for [vm, port, need_start, file_pattern] in vms:        
         os.chdir(start_dir)
-        print 'Building Z3 on ' + vm 
+        print('Building Z3 on ' + vm) 
         q = runbuild(vm, port, need_start, file_pattern)
         if (q == 1):
             send_email(admins, 'Build infrastructure failure', 'The infrastructure failed while building at ' + vm, [vm.replace(' ', '_') + '.log'])

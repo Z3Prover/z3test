@@ -35,7 +35,7 @@ sat
 sat
 unsat
 sat
-(model 
+(
   (define-fun a () String
     "abc")
   (define-fun i () Int
@@ -60,7 +60,7 @@ sat
 unsat
 sat
 sat
-(model 
+(
   (define-fun b () String
     "de")
   (define-fun a () String
@@ -77,7 +77,7 @@ sat
 unsat
 unsat
 sat
-(model 
+(
   (define-fun b () String
     "de")
   (define-fun a () String

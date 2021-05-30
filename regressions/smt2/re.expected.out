@@ -54,7 +54,7 @@ true
 (str.in_re a (re.union (str.to_re "ab") (str.to_re "abc")))
 sat
 sat
-(model 
+(
   (define-fun a () String
     "ab")
   (define-fun r2 () (RegEx String)
@@ -67,7 +67,7 @@ sat
     (str.to_re ""))
 )
 sat
-(model 
+(
   (define-fun a () String
     "abab")
   (define-fun r2 () (RegEx String)
@@ -80,7 +80,7 @@ sat
     (str.to_re ""))
 )
 sat
-(model 
+(
   (define-fun a () String
     "ababab")
   (define-fun r2 () (RegEx String)
@@ -96,7 +96,7 @@ unsat
 unsat
 sat
 sat
-(model 
+(
   (define-fun a () String
     "abab")
   (define-fun r2 () (RegEx String)
@@ -109,7 +109,7 @@ sat
     (str.to_re ""))
 )
 sat
-(model 
+(
   (define-fun a () String
     "ababab")
   (define-fun r2 () (RegEx String)

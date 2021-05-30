@@ -1,0 +1,228 @@
+====== Example derivative normal forms ======
+==== ranges ====
+== empty range ==
+re.none
+== single character range ==
+(let ((a!1 (ite (and (= ((_ extract 7 7) c1) #b0)
+                     (bvule ((_ extract 6 0) c1) #b1100000))
+                re.none
+                (str.to_re ""))))
+  (ite (and (= ((_ extract 7 7) c1) #b0) (bvule ((_ extract 6 0) c1) #b1100001))
+       a!1
+       re.none))
+== multiple character range ==
+(let ((a!1 (ite (and (= ((_ extract 7 7) c1) #b0)
+                     (bvule ((_ extract 6 0) c1) #b1100000))
+                re.none
+                (str.to_re ""))))
+  (ite (and (= ((_ extract 7 7) c1) #b0) (bvule ((_ extract 6 0) c1) #b1100010))
+       a!1
+       re.none))
+== range star ==
+(let ((a!1 (ite (and (= ((_ extract 7 7) c1) #b0)
+                     (bvule ((_ extract 6 0) c1) #b1100000))
+                re.none
+                (re.* (re.range "a" "b")))))
+  (ite (and (= ((_ extract 7 7) c1) #b0) (bvule ((_ extract 6 0) c1) #b1100010))
+       a!1
+       re.none))
+== union of nested ranges ==
+(let ((a!1 (ite (and (= ((_ extract 7 7) c1) #b0)
+                     (bvule ((_ extract 6 0) c1) #b1100000))
+                re.none
+                (str.to_re ""))))
+(let ((a!2 (ite (and (= ((_ extract 7 7) c1) #b0)
+                     (bvule ((_ extract 6 0) c1) #b1100010))
+                a!1
+                (str.to_re ""))))
+(let ((a!3 (ite (and (= ((_ extract 7 7) c1) #b0)
+                     (bvule ((_ extract 6 0) c1) #b1100101))
+                a!2
+                (str.to_re ""))))
+  (ite (and (= ((_ extract 7 7) c1) #b0) (bvule ((_ extract 6 0) c1) #b1100111))
+       a!3
+       re.none))))
+== union of disjoint ranges ==
+(let ((a!1 (ite (and (= ((_ extract 7 7) c1) #b0)
+                     (bvule ((_ extract 6 0) c1) #b1100000))
+                re.none
+                (str.to_re ""))))
+(let ((a!2 (ite (and (= ((_ extract 7 7) c1) #b0)
+                     (bvule ((_ extract 6 0) c1) #b1100011))
+                a!1
+                re.none)))
+(let ((a!3 (ite (and (= ((_ extract 7 7) c1) #b0)
+                     (bvule ((_ extract 6 0) c1) #b1100100))
+                a!2
+                (str.to_re ""))))
+  (ite (and (= ((_ extract 7 7) c1) #b0) (bvule ((_ extract 6 0) c1) #b1100111))
+       a!3
+       re.none))))
+== union of intersecting ranges ==
+(let ((a!1 (ite (and (= ((_ extract 7 7) c1) #b0)
+                     (bvule ((_ extract 6 0) c1) #b1100000))
+                re.none
+                (str.to_re ""))))
+(let ((a!2 (ite (and (= ((_ extract 7 7) c1) #b0)
+                     (bvule ((_ extract 6 0) c1) #b1100010))
+                a!1
+                (str.to_re ""))))
+(let ((a!3 (ite (and (= ((_ extract 7 7) c1) #b0)
+                     (bvule ((_ extract 6 0) c1) #b1100101))
+                a!2
+                (str.to_re ""))))
+  (ite (and (= ((_ extract 7 7) c1) #b0) (bvule ((_ extract 6 0) c1) #b1100111))
+       a!3
+       re.none))))
+== intersection of nested ranges ==
+(let ((a!1 (ite (and (= ((_ extract 7 7) c1) #b0)
+                     (bvule ((_ extract 6 0) c1) #b1100010))
+                re.none
+                (str.to_re ""))))
+(let ((a!2 (ite (and (= ((_ extract 7 7) c1) #b0)
+                     (bvule ((_ extract 6 0) c1) #b1100101))
+                a!1
+                re.none)))
+  (ite (and (= ((_ extract 7 7) c1) #b0) (bvule ((_ extract 6 0) c1) #b1100111))
+       a!2
+       re.none)))
+== intersection of disjoint ranges ==
+re.none
+== intersection of intersecting ranges ==
+(let ((a!1 (ite (and (= ((_ extract 7 7) c1) #b0)
+                     (bvule ((_ extract 6 0) c1) #b1100010))
+                re.none
+                (str.to_re ""))))
+(let ((a!2 (ite (and (= ((_ extract 7 7) c1) #b0)
+                     (bvule ((_ extract 6 0) c1) #b1100101))
+                a!1
+                re.none)))
+  (ite (and (= ((_ extract 7 7) c1) #b0) (bvule ((_ extract 6 0) c1) #b1100111))
+       a!2
+       re.none)))
+==== characters/strings ====
+== single string ==
+(let ((a!1 (ite (and (= ((_ extract 7 7) c1) #b0)
+                     (bvule ((_ extract 6 0) c1) #b1100010))
+                re.none
+                (str.to_re "at"))))
+  (ite (and (= ((_ extract 7 7) c1) #b0) (bvule ((_ extract 6 0) c1) #b1100011))
+       a!1
+       re.none))
+== union of characters ==
+(let ((a!1 (ite (and (= ((_ extract 7 7) c1) #b0)
+                     (bvule ((_ extract 6 0) c1) #b1100000))
+                re.none
+                (str.to_re ""))))
+(let ((a!2 (ite (and (= ((_ extract 7 7) c1) #b0)
+                     (bvule ((_ extract 6 0) c1) #b1100001))
+                a!1
+                (str.to_re ""))))
+(let ((a!3 (ite (and (= ((_ extract 7 7) c1) #b0)
+                     (bvule ((_ extract 6 0) c1) #b1100010))
+                a!2
+                (str.to_re ""))))
+  (ite (and (= ((_ extract 7 7) c1) #b0) (bvule ((_ extract 6 0) c1) #b1100011))
+       a!3
+       re.none))))
+== union of strings starting with the same character ==
+(let ((a!1 (ite (and (= ((_ extract 7 7) c1) #b0)
+                     (bvule ((_ extract 6 0) c1) #b1100000))
+                re.none
+                (re.union (str.to_re "t") (str.to_re "re") (str.to_re "m")))))
+  (ite (and (= ((_ extract 7 7) c1) #b0) (bvule ((_ extract 6 0) c1) #b1100001))
+       a!1
+       re.none))
+== union of strings starting with the different characters ==
+(let ((a!1 (ite (and (= ((_ extract 7 7) c1) #b0)
+                     (bvule ((_ extract 6 0) c1) #b1100000))
+                re.none
+                (str.to_re ""))))
+(let ((a!2 (ite (and (= ((_ extract 7 7) c1) #b0)
+                     (bvule ((_ extract 6 0) c1) #b1100001))
+                a!1
+                re.none)))
+(let ((a!3 (ite (and (= ((_ extract 7 7) c1) #b0)
+                     (bvule ((_ extract 6 0) c1) #b1101000))
+                a!2
+                (str.to_re "f"))))
+(let ((a!4 (ite (and (= ((_ extract 7 7) c1) #b0)
+                     (bvule ((_ extract 6 0) c1) #b1101001))
+                a!3
+                re.none)))
+(let ((a!5 (ite (and (= ((_ extract 7 7) c1) #b0)
+                     (bvule ((_ extract 6 0) c1) #b1110011))
+                a!4
+                (str.to_re "o"))))
+  (ite (and (= ((_ extract 7 7) c1) #b0) (bvule ((_ extract 6 0) c1) #b1110100))
+       a!5
+       re.none))))))
+== large union of various strings ==
+(let ((a!1 (ite (and (= ((_ extract 7 7) c1) #b0)
+                     (bvule ((_ extract 6 0) c1) #b1100000))
+                re.none
+                (re.union (str.to_re "go") (str.to_re "nd")))))
+(let ((a!2 (ite (and (= ((_ extract 7 7) c1) #b0)
+                     (bvule ((_ extract 6 0) c1) #b1100001))
+                a!1
+                re.none)))
+(let ((a!3 (ite (and (= ((_ extract 7 7) c1) #b0)
+                     (bvule ((_ extract 6 0) c1) #b1100101))
+                a!2
+                (str.to_re "our"))))
+(let ((a!4 (ite (and (= ((_ extract 7 7) c1) #b0)
+                     (bvule ((_ extract 6 0) c1) #b1100110))
+                a!3
+                re.none)))
+(let ((a!5 (ite (and (= ((_ extract 7 7) c1) #b0)
+                     (bvule ((_ extract 6 0) c1) #b1110010))
+                a!4
+                (re.union (str.to_re "core") (str.to_re "even")))))
+(let ((a!6 (ite (and (= ((_ extract 7 7) c1) #b0)
+                     (bvule ((_ extract 6 0) c1) #b1110011))
+                a!5
+                re.none)))
+(let ((a!7 (ite (and (= ((_ extract 7 7) c1) #b0)
+                     (bvule ((_ extract 6 0) c1) #b1111000))
+                a!6
+                (str.to_re "ears"))))
+  (ite (and (= ((_ extract 7 7) c1) #b0) (bvule ((_ extract 6 0) c1) #b1111001))
+       a!7
+       re.none))))))))
+==== complex examples ====
+== 1 ==
+(let ((a!1 (ite (and (= ((_ extract 7 7) c1) #b0)
+                     (bvule ((_ extract 6 0) c1) #b1100001))
+                re.none
+                (re.inter (re.* (re.range "a" "b")) (re.* (re.range "b" "c"))))))
+(let ((a!2 (ite (and (= ((_ extract 7 7) c1) #b0)
+                     (bvule ((_ extract 6 0) c1) #b1100010))
+                a!1
+                (re.inter (re.* (re.range "c" "d")) (re.* (re.range "b" "c"))))))
+(let ((a!3 (ite (and (= ((_ extract 7 7) c1) #b0)
+                     (bvule ((_ extract 6 0) c1) #b1100011))
+                a!2
+                re.none)))
+  (ite (and (= ((_ extract 7 7) c1) #b0) (bvule ((_ extract 6 0) c1) #b1100100))
+       a!3
+       re.none))))
+== 2 ==
+(let ((a!1 (ite (and (= ((_ extract 7 6) c1) #b00)
+                     (bvule ((_ extract 5 0) c1) #b110000))
+                re.none
+                (re.inter (re.* (re.range "1" "1"))
+                          (re.++ re.all (re.range "0" "0"))))))
+  (ite (and (= ((_ extract 7 6) c1) #b00) (bvule ((_ extract 5 0) c1) #b110001))
+       a!1
+       re.none))
+==== nullable infinite loop checks ====
+== loop 1 (original) ==
+(let ((a!1 (not (str.in_re "" (re.derivative c1 (str.to_re x)))))
+      (a!2 (str.in_re ""
+                      (re.derivative c1
+                                     (re.derivative (seq.nth_i x 0)
+                                                    (str.to_re x))))))
+  (and a!1 (not a!2)))
+== loop 2 (minimized) ==
+(let ((a!1 (str.in_re "" (re.derivative c1 (re.derivative c1 (str.to_re x))))))
+  (and a!1 (str.in_re "" (re.derivative c1 (str.to_re x)))))

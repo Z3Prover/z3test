@@ -34,5 +34,5 @@
 
 (check-sat-using (then simplify fpa2bv smt))
 ;(get-value (AP))
-(get-value (C))
+;(get-value (C))
 (exit)

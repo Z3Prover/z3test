@@ -1,0 +1,7 @@
+sat
+
+sat
+
+(=> fix-color1 (= color1 MetallicBlack))
+(=> fix-color1 (= color2 MetallicBlack))
+(=> fix-color1 (= color3 MetallicBlack))

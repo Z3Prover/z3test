@@ -1,5 +1,5 @@
 sat
-(model 
+(
   (define-fun q ((x!0 Int)) Int
     0)
 )

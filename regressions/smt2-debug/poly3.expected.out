@@ -8,17 +8,22 @@
 (+ x (- 1)))
 (factors
 1
-(+ (* (- 1) (^ y 3)) x)
-(+ (^ z 3) x 2))
+(+ (* (to_real (- 1)) (^ y 3)) (to_real x))
+(+ (^ z 3) (to_real x) (to_real 2)))
 (factors
 1
-(+ (^ y 3) x (* (^ z 3) x))
-(+ (^ y 3) x 2))
+(+ (^ y 3) (to_real x) (* (^ z 3) (to_real x)))
+(+ (^ y 3) (to_real x) (to_real 2)))
 (factors
 -3
-(+ (^ y 3) x (* (^ z 3) x))
-(+ (^ y 3) x 2))
+(+ (^ y 3) (to_real x) (* (^ z 3) (to_real x)))
+(+ (^ y 3) (to_real x) (to_real 2)))
 (factors
 1
-(+ (* 5 x z) (* (- 1) (^ y 3)) (* (- 5) x) 2)
-(+ (* 3 x (^ z 3)) (* (- 1) (^ y 3)) (* 3 x)))
+(+ (to_real (* 5 x z))
+   (* (to_real (- 1)) (^ y 3))
+   (to_real (* (- 5) x))
+   (to_real 2))
+(+ (* (to_real 3) (to_real x) (^ z 3))
+   (* (to_real (- 1)) (^ y 3))
+   (to_real (* 3 x))))

@@ -1,5 +1,5 @@
 sat
-(model 
+(
   (define-fun v () Bool
     true)
 )

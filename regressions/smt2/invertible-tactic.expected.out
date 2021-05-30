@@ -41,15 +41,15 @@ sat
 sat
 (goals
 (goal
-  eq!0
-  :precision precise :depth 3)
+  (= (bvshl x y) #x42)
+  :precision precise :depth 1)
 )
 sat
-(model 
-  (define-fun x () (_ BitVec 8)
-    #x42)
+(
   (define-fun y () (_ BitVec 8)
     #x00)
+  (define-fun x () (_ BitVec 8)
+    #x42)
 )
 (goals
 (goal
@@ -59,8 +59,8 @@ sat
 )
 (goals
 (goal
-  eq!0
-  :precision precise :depth 3)
+  (= (bvashr x y) #x42)
+  :precision precise :depth 1)
 )
 (goals
 (goal
@@ -69,7 +69,7 @@ sat
 )
 (goals
 (goal
-  (forall ((x (_ BitVec 8)) (y (_ BitVec 8))) (= x #x42))
+  (forall ((x (_ BitVec 8)) (y (_ BitVec 8))) (= (bvashr x y) #x42))
   :precision precise :depth 1)
 )
 (goals
@@ -83,11 +83,11 @@ sat
   :precision precise :depth 3)
 )
 sat
-(model 
-  (define-fun x () (_ BitVec 8)
-    #x00)
+(
   (define-fun y () (_ BitVec 8)
     #x01)
+  (define-fun x () (_ BitVec 8)
+    #x00)
 )
 (goals
 (goal
@@ -95,7 +95,7 @@ sat
   :precision precise :depth 3)
 )
 sat
-(model 
+(
   (define-fun x () (_ BitVec 8)
     #x33)
   (define-fun y () (_ BitVec 8)
@@ -107,7 +107,7 @@ sat
   :precision precise :depth 1)
 )
 sat
-(model 
+(
   (define-fun y () (_ BitVec 8)
     #x00)
   (define-fun x () (_ BitVec 8)
@@ -129,7 +129,7 @@ sat
   :precision precise :depth 3)
 )
 sat
-(model 
+(
   (define-fun x () (_ BitVec 8)
     #x42)
   (define-fun z () (_ BitVec 8)

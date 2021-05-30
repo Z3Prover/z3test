@@ -1,8 +1,8 @@
 sat
-((s "\x80"))
+((s "\u{80}"))
 sat
 sat
 sat
-((s "\x80"))
+((s "\u{80}"))
 sat
 sat
