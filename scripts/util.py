@@ -8,8 +8,6 @@ import config
 import filecmp
 import time
 
-import pdb
-
 MAKEJOBS=os.getenv("MAKEJOBS", "24")
 
 def is_windows():
@@ -429,7 +427,7 @@ def compile_cpp(args, timeout):
 
 def test_cpp(z3installdir, cppdir, ext="cpp", timeout_duration=60.0):
     error = False
-    libdir = z3installdir + "/lib"
+    libdir = z3installdir + os.path.sep + "lib"
     with setenv('LD_LIBRARY_PATH', libdir):
         for file in filter(lambda f: f.endswith(ext), os.listdir(cppdir)):
             file = os.path.join(cppdir, file)
