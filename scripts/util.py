@@ -8,6 +8,8 @@ import config
 import filecmp
 import time
 
+import pdb
+
 MAKEJOBS=os.getenv("MAKEJOBS", "24")
 
 def is_windows():
@@ -412,6 +414,45 @@ def test_cs(z3libdir, csdir, ext="cs", VS64=False, timeout_duration=60.0):
     os.remove("Microsoft.Z3.dll")
     if error:
         raise Exception("Found errors testing C# at '%s' using '%s'" % (csdir, z3libdir))
+
+def exec_cpp(args, timeout):
+    argsfilenameidx = 0
+    if subprocess_killer(args, timeout=timeout) != 0:
+        raise Exception("Execution of '%s' failed" % args[argsfilenameidx])
+    return True
+
+def compile_cpp(args, timeout):
+    argsfilenameidx = -1
+    if subprocess_killer(args, timeout=timeout) != 0:
+        raise Exception("Compilation of '%s' failed" % args[argsfilenameidx])
+    return True
+
+def test_cpp(z3installdir, cppdir, ext="cpp", timeout_duration=60.0):
+    error = False
+    libdir = z3installdir + "/lib"
+    with setenv('LD_LIBRARY_PATH', libdir):
+        for file in filter(lambda f: f.endswith(ext), os.listdir(cppdir)):
+            file = os.path.join(cppdir, file)
+            fileexe = os.path.splitext(file)[0]
+            print("Testing %s" % file)
+            try:
+                # Compile.
+                if timeout(compile_cpp,
+                           args=[[config.CPP_COMPILER, "-L", libdir, "-o", fileexe, "-lz3", file], 
+                               timeout_duration], timeout_duration=timeout_duration, default=False) == False:
+                    raise Exception("Timeout compiling '%s' at '%s' using '%s'" % (file, cppdir, z3installdir))
+                # Run.
+                if timeout(exec_cpp,
+                           args=[[fileexe], 
+                               timeout_duration], timeout_duration=timeout_duration, default=False) == False:
+                    raise Exception("Timeout executing '%s' at '%s' using '%s'" % (file, cppdir, z3installdir))
+                os.remove(fileexe)
+            except Exception as ex:
+                print("Failed")
+                print(ex)
+                error = True
+    if error:
+        raise Exception("Found errors testing C++ at '%s' using '%s'" % (cppdir, z3installdir))
 
     
 def test_cs_using_latest(csdir, branch="master", debug=True, clang=False, ext="cs", VS64=False, timeout_duration=60.0):
