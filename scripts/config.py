@@ -24,3 +24,6 @@ BUILDDIR="build"
 CSC="csc.exe"
 CSDRIVER="driver.cs"
 CSTEMP="cstest.exe"
+
+# C++
+CPP_COMPILER="clang++"
