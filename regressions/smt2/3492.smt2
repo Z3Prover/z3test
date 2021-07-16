@@ -29,7 +29,6 @@
 (set-option :sat.branching.heuristic chb)
 (set-option :rewriter.blast_distinct true)
 (set-option :model.inline_def true)
-(set-option :solver.enforce_model_conversion false)
 (set-option :model.partial false)
 (set-option :nlsat.minimize_conflicts false)
 (set-option :smt.arith.solver 6)
