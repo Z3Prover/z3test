@@ -12,7 +12,6 @@
 (set-option :smt.theory_aware_branching true)
 (set-option :model.inline_def false)
 (set-option :model.partial false)
-(set-option :solver.enforce_model_conversion false)
 (set-option :nlsat.minimize_conflicts false)
 ;(set-option :nlsat.inline_vars true)
 (set-option :nlsat.log_lemmas false)
