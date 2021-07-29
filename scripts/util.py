@@ -428,6 +428,7 @@ def compile_cpp(args, timeout):
 def test_cpp(z3installdir, cppdir, ext="cpp", timeout_duration=60.0):
     error = False
     libdir = z3installdir + os.path.sep + "lib"
+    includedir= z3installdir + os.path.sep + "include"
     with setenv('LD_LIBRARY_PATH', libdir):
         for file in filter(lambda f: f.endswith(ext), os.listdir(cppdir)):
             file = os.path.join(cppdir, file)
@@ -436,7 +437,7 @@ def test_cpp(z3installdir, cppdir, ext="cpp", timeout_duration=60.0):
             try:
                 # Compile.
                 if timeout(compile_cpp,
-                           args=[[config.CPP_COMPILER, "-L", libdir, "-o", fileexe, "-lz3", file], 
+                           args=[[config.CPP_COMPILER, "-L", libdir, "-I", includedir, "-o", fileexe, "-lz3", file],
                                timeout_duration], timeout_duration=timeout_duration, default=False) == False:
                     raise Exception("Timeout compiling '%s' at '%s' using '%s'" % (file, cppdir, z3installdir))
                 # Run.
