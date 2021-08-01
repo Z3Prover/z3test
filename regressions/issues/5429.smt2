@@ -13,11 +13,11 @@
 (declare-fun S$empty () S$t$type)
 (declare-fun l3 () Bool)
 (declare-fun l9 () Bool)
-(declare-fun true () Bool)
-(assert (or (forall ((y process$type)) true) (forall ((x process$type)) (let (($x17 true)))) false (forall ((s S$t$type)) true) (forall ((x process$type) (s S$t$type)) (= (S$cardinality s) (ite (= (S$mem x s) Truth) (S$cardinality s) (S$cardinality s)))) (exists ((p process$type)) (not (= Truth (S$mem p (select handles (select ref p))))))))
+(declare-fun True () Bool)
+(assert (or (forall ((y process$type)) True) (forall ((x process$type)) (let (($x17 True)))) false (forall ((s S$t$type)) True) (forall ((x process$type) (s S$t$type)) (= (S$cardinality s) (ite (= (S$mem x s) Truth) (S$cardinality s) (S$cardinality s)))) (exists ((p process$type)) (not (= Truth (S$mem p (select handles (select ref p))))))))
 (assert (= l9 (forall ((e process$type)) (not (= Truth (S$mem e S$empty))))))
 (assert (= l3 (forall ((p process$type)) (= (S$mem p (select handles (select ref p))) Truth))))
-(assert (not true))
+(assert (not True))
 (check-sat)
 (reset)
 
@@ -85,7 +85,7 @@
 (declare-fun a () Bool)
 (assert (= 1 (+ 0 (ite (not (not (= (+ 0 (ite a 1 0)) 0))) 0 1))))
 (check-sat)
-
+(reset)
 
 (declare-datatypes ((msg_cmd$type 0)) (((empty) (reqe) (invack) (gnte))))
 (declare-datatypes ((msg$type 0)) (((c_msg$type (m_cmd msg_cmd$type)))))
@@ -96,7 +96,7 @@
 (declare-fun chan3 () (Array node$type msg$type))
 (assert (not (distinct true (forall ((n node$type)) (let (($x19 (= empty (m_cmd (select chan3 n))))))) (and false (and (not (= Truth (ite true (ite (exists ((n node$type)) (= (m_cmd (select chan3$1 n)) empty)) Truth Falsity) (ite (forall ((n node$type)) (and (not (= Truth (select shrset$1 n))) (not (= (m_cmd (select chan3$1 n)) empty)))) Truth Falsity)))))))))
 (check-sat)
-
+(reset)
 
 (assert (forall ((a Real)) (exists ((b Real)) (> b (* b a)))))
 (check-sat)
@@ -105,7 +105,7 @@
 
 (assert (let (($x17 (not (fp.eq (fp (_ bv0 1) (_ bv1 11) (_ bv0 52)) (fp (_ bv0 1) (_ bv0 11) (_ bv0 52)))))) $x17))
 (check-sat)
-
+(reset)
 
 (declare-fun val () (_ BitVec 1))
 (declare-fun B () (Array (_ BitVec 1) (_ BitVec 1)))
@@ -113,7 +113,7 @@
 (declare-fun sel () Bool)
 (assert (and sel (not (= A B)) (or (bvugt (_ bv1 1) val) (= A (store B (_ bv1 1) (_ bv0 1))))))
 (check-sat)
-
+(reset)
 
 (declare-fun a () Float64)
 (assert (= (not (fp.leq a a)) (not (fp.leq a a))))
@@ -124,6 +124,7 @@
 (declare-fun a () (_ BitVec 64))
 (assert (not (fp.geq ((_ to_fp 11 53) a) ((_ to_fp 11 53) (_ bv0 64)))))
 (check-sat)
+(reset)
 
 
 (declare-const v (_ BitVec 1))
@@ -136,8 +137,7 @@
 (assert (= (store (store a ((_ zero_extend 31) i) ((_ zero_extend 7) u)) ((_ zero_extend 31) j) (_ bv0 8))
            (store a ((_ zero_extend 31) i) ((_ zero_extend 7) v))))
 (check-sat)
-(get-model)
-
+(reset)
 
 (declare-sort S$t$type)
 (declare-sort resource$type)
@@ -147,6 +147,7 @@
 (declare-fun S$mem (process$type S$t$type) BOOL)
 (assert (exists ((create$r resource$type)) (exists ((handles (Array resource$type S$t$type))) (exists ((ref (Array process$type resource$type))) (or (= create$r null) (exists ((p process$type) (r resource$type)) (or (= r (ref p)) (= Truth (S$mem p (handles r))))))))))
 (check-sat-using ctx-solver-simplify)
+(reset)
 
 (assert (forall ((x Int)) (distinct (mod 0 x) x)))
 (check-sat)
