@@ -99,9 +99,9 @@
 (reset)
 
 (assert (forall ((a Real)) (exists ((b Real)) (> b (* b a)))))
+(echo "expecting unsat")
 (check-sat)
 (reset)
-
 
 (assert (let (($x17 (not (fp.eq (fp (_ bv0 1) (_ bv1 11) (_ bv0 52)) (fp (_ bv0 1) (_ bv0 11) (_ bv0 52)))))) $x17))
 (check-sat)
