@@ -1,19 +1,23 @@
+(set-option :model_validate true)
+
+
 (declare-const a String)
-(assert (str.in_re a (re.* (str.to_re (str.from_int (str.len a))))))
+(check-sat)
+(assert (str.in_re a (re.++ (str.to_re "BBBA") re.allchar (ite (str.in_re a (re.++ (re.* re.allchar) (str.to_re "A") (str.to_re "B"))) (str.to_re "B") (str.to_re "A")) (str.to_re "AA"))))
+(check-sat)
+(get-model)
+(reset)
+
+(declare-fun a () Int)
+(assert (= (str.replace_all "-1" "" "") (str.from_int a)))
 (check-sat)
 (reset)
 
-(declare-fun s () String)
-(declare-fun i () Int)
-(assert (str.contains s "aaaaaaa"))
-(assert (= (str.len s) i))
-(assert (= (not (= (str.indexof s "aaaaaaa" (- (+ i i) 30)) (- 1))) (str.contains s "bbbbbbbbbbaaaaaaab") (> i 0)))
-(check-sat)
-(reset)
 
 (simplify (str.replace_all "B" "A" ""))
 
 ; TODO str.replace_all is not simplified.
+(set-info :status sat)
 (declare-fun s () String)
 (assert
  (not
@@ -25,6 +29,18 @@
 (check-sat (= s ""))
 (reset)
 
+
+(set-info :status unknown)
+(declare-fun s () String)
+(assert
+ (not
+  (str.in_re (str.++ s "BA")
+   (re.*
+    (re.union (str.to_re "AB")
+     (re.++ (re.union (str.to_re "A") (str.to_re "B"))
+      (re.union (str.to_re "B") (str.to_re (str.replace_all "B" "A" "")))))))))
+(check-sat (= s ""))
+(exit)
 
 (declare-fun a () String)
 (check-sat
@@ -42,28 +58,15 @@
 (check-sat)
 (reset)
 
+
+(set-info :status sat)
 (declare-fun s () String)
-(assert
- (not
-  (str.in_re (str.++ s "BA")
-   (re.*
-    (re.union (str.to_re "AB")
-     (re.++ (re.union (str.to_re "A") (str.to_re "B"))
-      (re.union (str.to_re "B") (str.to_re (str.replace_all "B" "A" "")))))))))
-(check-sat (= s ""))
-(exit)
-
-(declare-const a String)
+(declare-fun i () Int)
+(assert (str.contains s "aaaaaaa"))
+(assert (= (str.len s) i))
+(assert (= (not (= (str.indexof s "aaaaaaa" (- (+ i i) 30)) (- 1))) (str.contains s "bbbbbbbbbbaaaaaaab") (> i 0)))
 (check-sat)
-(assert (str.in_re a (re.++ (str.to_re "BBBA") re.allchar (ite (str.in_re a (re.++ (re.* re.allchar) (str.to_re "A") (str.to_re "B"))) (str.to_re "B") (str.to_re "A")) (str.to_re "AA"))))
-(check-sat)
-(get-model)
-(exit)
-
-(declare-fun a () Int)
-(assert (= (str.replace_all "-1" "" "") (str.from_int a)))
-(check-sat)
-(exit)
+(reset)
 
 (set-option :rewriter.pull_cheap_ite true)
 (set-option :smt.arith.bprop_on_pivoted_rows false)
@@ -273,5 +276,10 @@
 (assert
  (xor (str.in_re b (re.* (re.union (str.to_re "a") re.none)))
   (str.in_re b (re.range "a" "u"))))
+(check-sat)
+(reset)
+
+(declare-const a String)
+(assert (str.in_re a (re.* (str.to_re (str.from_int (str.len a))))))
 (check-sat)
 (reset)
