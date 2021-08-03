@@ -2,6 +2,38 @@
 (set-option :tactic.default_tactic smt)
 (set-option :model_validate true)
 
+
+(set-info :status sat)
+(declare-fun r (Int Int) Bool)
+(assert
+ (forall ((z Int) (u Int) )(! (let (($x16 (r u z)))
+ (let (($x14 (< (* 3 u) 11)))
+ (let (($x11 (>= u 0)))
+ (let (($x10 (< z 3)))
+ (let (($x8 (> z 0)))
+ (let (($x15 (and $x8 $x10 $x11 $x14)))
+ (xor $x15 $x16))))))) :qid k!4))
+ )
+(check-sat)
+(reset)
+
+(set-info :status unknown)
+(declare-fun v2 () Bool)
+(declare-fun v6 () Bool)
+(declare-fun arr () (Array Bool Bool))
+(assert (select arr (and (and (= arr (store arr v2 v6)) (= (store arr v2 v6) arr)) (not (and (= arr (store arr v2 v6)) (= (store arr v2 v6) arr))))))
+(apply sat-preprocess)
+(reset)
+
+(declare-const x Bool)
+(declare-fun n () Real)
+(assert (and (forall ((j Real)) (and x (> 1.0 (+ j (* j (- n))))))))
+;(check-sat)
+(reset)
+
+
+(exit)
+
 (set-info :status unsat)
 (assert (forall ((s (_ BitVec 3))) (= s (bvor s (bvand (bvnot s) (_ bv1 3))))))
 (check-sat)
@@ -33,14 +65,6 @@
 (check-sat)
 (reset)
 
-
-
-(set-info :status unsat)
-(declare-const x Int)
-(define-funs-rec ((a () Int) (b ((c Int)) Bool)) (0 (ite false true (b x))))
-(assert (not (b 0)))
-(check-sat)
-(reset)
 
 (set-info :status unknown)
 (declare-fun a () Real)
@@ -123,3 +147,4 @@
 (check-sat)
 (set-info :status unknown)
 (reset)
+
