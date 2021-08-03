@@ -1,6 +1,15 @@
 (set-option :model_validate true)
 
+(set-info :status sat)
+;(define-const a String "")
+(declare-fun a () String)
+(assert (str.in_re a (re.* (str.to_re "z"))))
+(assert (str.in_re a (re.* (re.range "a" "u"))))
+(assert (not (str.in_re (str.++ a "za") (re.* (re.union (str.to_re "a") (re.++ (re.union (str.to_re "z") (str.to_re "b")) (re.union (str.to_re (str.replace_re_all "z" (str.to_re "") "")) (str.to_re "b")) (re.* (str.to_re "z"))))))))
+(check-sat)
+(reset)
 
+(set-info :status sat)
 (declare-const a String)
 (check-sat)
 (assert (str.in_re a (re.++ (str.to_re "BBBA") re.allchar (ite (str.in_re a (re.++ (re.* re.allchar) (str.to_re "A") (str.to_re "B"))) (str.to_re "B") (str.to_re "A")) (str.to_re "AA"))))
@@ -8,6 +17,7 @@
 (get-model)
 (reset)
 
+(set-info :status sat)
 (declare-fun a () Int)
 (assert (= (str.replace_all "-1" "" "") (str.from_int a)))
 (check-sat)
@@ -27,21 +37,85 @@
      (re.++ (re.union (str.to_re "A") (str.to_re "B"))
       (re.union (str.to_re "B") (str.to_re (str.replace_all "B" "A" "")))))))))
 (check-sat (= s ""))
+(set-info :status unknown)
 (reset)
 
 
-(set-info :status unknown)
+(set-option :rewriter.cache_all true)
+(set-option :model_validate true)
+(declare-fun a () String)
+(declare-fun b () String)
+(assert (str.in_re (str.++ a "z" b) (re.++ (re.* (re.+ (re.union
+  (str.to_re "z")))) (re.++ (ite (str.in_re b (re.++ (re.* (re.union
+  (re.union (str.to_re "aaa") (re.* (str.to_re ""))))) (re.++
+  (str.to_re "b")))) (str.to_re "z") (re.+ (str.to_re "b"))) (re.* (str.to_re "a"))))))
+(check-sat)
+(get-model)
+(set-option :rewriter.cache_all false)
+(reset)
+
+
+(declare-fun a () String)
+(assert
+ (str.in_re a
+  (re.+
+   (re.++ (str.to_re "AA")
+    (ite (str.in_re a (re.++ (str.to_re a) (re.union (str.to_re "A") (str.to_re "B"))))
+     (re.union (str.to_re "A") (str.to_re ""))
+     (re.union (str.to_re "A") (str.to_re "B")))))))
+(check-sat)
+(get-model)
+(reset)
+
+(set-info :status sat)
 (declare-fun s () String)
 (assert
- (not
-  (str.in_re (str.++ s "BA")
-   (re.*
-    (re.union (str.to_re "AB")
-     (re.++ (re.union (str.to_re "A") (str.to_re "B"))
-      (re.union (str.to_re "B") (str.to_re (str.replace_all "B" "A" "")))))))))
-(check-sat (= s ""))
-(exit)
+ (str.in_re s
+  (re.++
+   (re.union
+    (re.inter (re.opt (str.to_re "a")) (str.to_re ""))
+    (str.to_re "b"))
+   (re.diff (str.to_re "b") (str.to_re ""))
+   (str.to_re "AA")
+   (ite
+    (str.in_re s
+     (re.++ (str.to_re (str.replace s "" ""))
+      (re.diff (re.opt (str.to_re "b")) (str.to_re ""))))
+    (re.union (str.to_re "a") (str.to_re ""))
+    (re.++ (str.to_re "aa")
+     (re.* (re.union (str.to_re (str.++ "b" s)) (str.to_re s))))))))
+(check-sat)
 
+(set-info :status sat)
+(declare-fun a () String)
+(declare-fun b () String)
+(assert (str.in_re (str.++ a "z" b) (re.++ (re.* (re.union (str.to_re "z") (str.to_re "a"))) (str.to_re "b"))))
+(assert (str.in_re (str.++ a "z" b) (re.++ (re.* (re.union (str.to_re
+   "z") (re.++ (re.union (str.to_re "b") (str.to_re "a")) (re.union
+   (str.to_re "z") (str.to_re "b"))))) (ite (str.in_re b (re.*
+   (str.to_re "z"))) (re.* (re.union (str.to_re "z"))) (re.union
+   (str.to_re "z") (re.++ (re.union (str.to_re "b") (str.to_re "a"))
+   (re.union (str.to_re "z") (str.to_re "b"))))))))
+(check-sat)
+(get-model)
+
+
+(set-option :rewriter.pull_cheap_ite true)
+(set-option :smt.arith.bprop_on_pivoted_rows false)
+(set-option :rewriter.flat false)
+(set-info :status sat)
+(declare-fun a () String)
+(assert (str.contains (str.substr a (+ (str.indexof a "C" 0) 1) (- (str.len a) (+ (str.indexof a "C" 0) 1))) "C"))
+(assert (= (ite (= (str.at a (- (str.len a) 1)) "A") 1 0) (+ (str.indexof a "C" 0) 1)))
+(assert (not (str.contains (str.substr a (div 1 (ite (= (str.at a 0) "A") 1 0)) (- (+ (str.indexof a "C" 0) 1) (- (str.len a) 1 (ite (= (str.at a 0) "AA") 1 0) (ite (= (str.at a 0) "A") 1 0)))) "B")))
+(assert (>= (str.indexof a "C" 0) (ite (= (str.at a 0) "B") 1 0)))
+(check-sat)
+(set-option :rewriter.pull_cheap_ite false)
+(set-option :smt.arith.bprop_on_pivoted_rows true)
+(set-option :rewriter.flat true)
+(reset)
+
+(set-info :status sat)
 (declare-fun a () String)
 (check-sat
  (not
@@ -55,6 +129,7 @@
        (str.to_re a))))
     (str.to_re "b")))))
 (assert (<= (str.len a) 0))
+(set-info :status sat)
 (check-sat)
 (reset)
 
@@ -68,15 +143,8 @@
 (check-sat)
 (reset)
 
-(set-option :rewriter.pull_cheap_ite true)
-(set-option :smt.arith.bprop_on_pivoted_rows false)
-(set-option :rewriter.flat false)
-(declare-fun a () String)
-(assert (str.contains (str.substr a (+ (str.indexof a "C" 0) 1) (- (str.len a) (+ (str.indexof a "C" 0) 1))) "C"))
-(assert (= (ite (= (str.at a (- (str.len a) 1)) "A") 1 0) (+ (str.indexof a "C" 0) 1)))
-(assert (not (str.contains (str.substr a (div 1 (ite (= (str.at a 0) "A") 1 0)) (- (+ (str.indexof a "C" 0) 1) (- (str.len a) 1 (ite (= (str.at a 0) "AA") 1 0) (ite (= (str.at a 0) "A") 1 0)))) "B")))
-(assert (>= (str.indexof a "C" 0) (ite (= (str.at a 0) "B") 1 0)))
-(check-sat)
+; ----
+
 (exit)
 
 (set-option :model_validate true)
@@ -111,30 +179,6 @@
      (re.* (re.union (str.to_re (str.++ "b" s)) (str.to_re s))))))))
 (check-sat)
 (exit)
-
-(declare-fun a () String)
-(assert
- (str.in_re a
-  (re.+
-   (re.++ (str.to_re "AA")
-    (ite (str.in_re a (re.++ (str.to_re a) (re.union (str.to_re "A") (str.to_re "B"))))
-     (re.union (str.to_re "A") (str.to_re ""))
-     (re.union (str.to_re "A") (str.to_re "B")))))))
-(check-sat)
-(get-model)
-(exit)
-
-(set-option :rewriter.cache_all true)
-(set-option :model_validate true)
-(declare-fun a () String)
-(declare-fun b () String)
-(assert (str.in_re (str.++ a "z" b) (re.++ (re.* (re.+ (re.union
-  (str.to_re "z")))) (re.++ (ite (str.in_re b (re.++ (re.* (re.union
-  (re.union (str.to_re "aaa") (re.* (str.to_re ""))))) (re.++
-  (str.to_re "b")))) (str.to_re "z") (re.+ (str.to_re "b"))) (re.* (str.to_re "a"))))))
-(check-sat)
-(get-model)
-(reset)
 
 (set-option :rewriter.cache_all false)
 (declare-fun a () String)
