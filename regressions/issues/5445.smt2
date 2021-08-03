@@ -22,7 +22,7 @@
 (declare-fun v6 () Bool)
 (declare-fun arr () (Array Bool Bool))
 (assert (select arr (and (and (= arr (store arr v2 v6)) (= (store arr v2 v6) arr)) (not (and (= arr (store arr v2 v6)) (= (store arr v2 v6) arr))))))
-(apply sat-preprocess)
+;(apply sat-preprocess)
 (reset)
 
 (declare-const x Bool)
@@ -32,7 +32,6 @@
 (reset)
 
 
-(exit)
 
 (set-info :status unsat)
 (assert (forall ((s (_ BitVec 3))) (= s (bvor s (bvand (bvnot s) (_ bv1 3))))))
