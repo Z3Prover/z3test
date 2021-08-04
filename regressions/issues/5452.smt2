@@ -1,11 +1,14 @@
-(assert (exists ((x Bool)) x))
-(check-sat-using (then nnf pb-preprocess))
-(reset)
-
+(set-option :model_validate true)
 (declare-fun x () Bool)
 (declare-fun y () Bool)
 (assert (and y (= x y)))
 (assert (= x x))
+(check-sat-using (then nnf pb-preprocess))
+(check-sat)
+(reset)
+
+
+(assert (exists ((x Bool)) x))
 (check-sat-using (then nnf pb-preprocess))
 (reset)
 
