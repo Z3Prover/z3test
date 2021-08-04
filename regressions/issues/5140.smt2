@@ -1,11 +1,15 @@
 (set-option :model_validate true)
 
 (set-info :status sat)
+; Use these definitions and problem is sat
 ;(define-const a String "")
-(declare-fun a () String)
+;(define-const b String "z")
+(declare-const a String)
+(declare-const b String)
+;original b := (str.replace_re_all "z" (str.to_re "") "")
 (assert (str.in_re a (re.* (str.to_re "z"))))
-(assert (str.in_re a (re.* (re.range "a" "u"))))
-(assert (not (str.in_re (str.++ a "za") (re.* (re.union (str.to_re "a") (re.++ (re.union (str.to_re "z") (str.to_re "b")) (re.union (str.to_re (str.replace_re_all "z" (str.to_re "") "")) (str.to_re "b")) (re.* (str.to_re "z"))))))))
+(assert (str.in_re a (re.* (re.range "a" "b"))))
+(assert (not (str.in_re (str.++ a "za") (re.* (re.union (str.to_re "a") (re.++ (re.union (str.to_re "z") (str.to_re "b")) (re.union (str.to_re b) (str.to_re "b")) (re.* (str.to_re "z"))))))))
 (check-sat)
 (reset)
 
