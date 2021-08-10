@@ -2,10 +2,6 @@
 (set-option :tactic.default_tactic smt)
 (set-option :model_validate true)
 
-(declare-fun a () Int)
-(assert (<= (- a a) 0 (div a 0)))
-(check-sat)
-(reset)
 
 (declare-fun a () Real)
 (declare-fun b () Real)
@@ -23,6 +19,11 @@
        (forall ((e Real)) (< 0.0 (/ 2.0 e b))))
       (forall ((e Real)) (= a 0.0))))))))
 (assert (forall ((f Real)) (> 0.0 (* a c))))
+(check-sat)
+(reset)
+
+(declare-fun a () Int)
+(assert (<= (- a a) 0 (div a 0)))
 (check-sat)
 (reset)
 

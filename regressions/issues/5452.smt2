@@ -4,6 +4,7 @@
 (assert (and y (= x y)))
 (assert (= x x))
 (check-sat-using (then nnf pb-preprocess))
+(exit)
 (check-sat)
 (reset)
 
