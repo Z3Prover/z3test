@@ -4,7 +4,6 @@
 
 
 (declare-fun RM2 () RoundingMode)
-(echo "rounding")
 (set-info :status sat)
 (assert (= RM2 RM2))
 (check-sat)
