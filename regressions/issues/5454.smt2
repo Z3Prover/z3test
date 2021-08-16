@@ -3,6 +3,15 @@
 (set-option :model_validate true)
 
 
+(declare-fun RM2 () RoundingMode)
+(echo "rounding")
+(set-info :status sat)
+(assert (= RM2 RM2))
+(check-sat)
+(reset)
+
+
+(set-info :status sat)
 (declare-fun a () Real)
 (declare-fun b () Real)
 (declare-fun c () Real)
@@ -22,6 +31,7 @@
 (check-sat)
 (reset)
 
+(set-info :status sat)
 (declare-fun a () Int)
 (assert (<= (- a a) 0 (div a 0)))
 (check-sat)
@@ -30,25 +40,20 @@
 
 
 
-(declare-fun symmetric ((Array Int (Array Int Real)) Int) Bool)
-(assert (forall ((?n Int) (?a (Array Int (Array Int Real)))) 
-   (= (symmetric ?a ?n) (forall ((?i Int) (?j Int)) (or (< 1 ?j) (not (= ?i ?n)) (= (select (?a ?i) ?j) (select (?a ?j) ?i)))))))
-(check-sat)
-(reset)
-(exit)
-
-(declare-fun RM2 () RoundingMode)
-(assert (= RM2 RM2))
-(check-sat)
-(reset)
-
-
+(set-info :status sat)
 (set-option :sat.branching.heuristic chb)
 (declare-fun A () (Array (_ FloatingPoint 2 3) (_ FloatingPoint 2 2)))
 (declare-fun A2 () (Array (_ FloatingPoint 2 3) (_ FloatingPoint 2 2)))
 (assert (and (not (= A A2)) (= (select A (_ +oo 2 3)) (select A (_ -oo 2 3)))))
 (check-sat)
 (reset)
+
+(exit)
+
+(declare-fun symmetric ((Array Int (Array Int Real)) Int) Bool)
+(assert (forall ((?n Int) (?a (Array Int (Array Int Real)))) 
+   (= (symmetric ?a ?n) (forall ((?i Int) (?j Int)) (or (< 1 ?j) (not (= ?i ?n)) (= (select (?a ?i) ?j) (select (?a ?j) ?i)))))))
+(check-sat)
 
 (exit)
 (declare-fun y () Int)
