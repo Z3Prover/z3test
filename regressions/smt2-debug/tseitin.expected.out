@@ -32,7 +32,10 @@
 (error "tactic failed: operator not supported, apply simplifier before invoking this strategy")
 (goals
 (goal
-  (or (not p) (not q))
-  (or p q)
+  (or p (not q) (not k!0))
+  (or q (not p) (not k!0))
+  (or k!0 (not p) (not q))
+  (or k!0 p q)
+  (not k!0)
   :precision precise :depth 2)
 )
