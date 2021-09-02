@@ -21,10 +21,6 @@ int main()
         vars.push_back(new_expr);
     }
 
-    /* Template initialisation for output var 1 */
-    ;
-    ;
-
     z3::expr x_1 = vars.at(1);
     z3::expr x_2 = vars.at(2);
     z3::expr x_67 = vars.at(67);
@@ -70,7 +66,7 @@ int main()
     solver.add(z3::operator==(r_1, 0));
     z3::check_result result_1 = solver.check();
     assert(ctx.check_error() == Z3_OK);
-	z3::expr zero_val = ctx.int_val(0);
+    z3::expr zero_val = ctx.int_val(0);
     solver.pop();
     solver.push();
     solver.add(z3::operator==(r_1, 0));
