@@ -1,4 +1,3 @@
-(set-option :smt.arith.reflect false)
 (set-option :rewriter.flat false)
 (set-option :proof true)
 (declare-fun a () Real)
