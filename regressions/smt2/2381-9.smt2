@@ -1,0 +1,5 @@
+(declare-fun a () Float16)
+(declare-fun b () Float16)
+(declare-fun c () Float16)
+(assert (= c (fp.rem a b) (fp.rem (fp #b1 #b00000 #b1110111111) (fp #b0 #b00000 #b0000001110))))
+(check-sat-using smt)
