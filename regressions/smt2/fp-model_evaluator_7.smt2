@@ -15,4 +15,6 @@
 (assert (= q r))
 
 (check-sat)
+(get-value (x r q))
 (check-sat-using smt)
+(get-value (x r q))
