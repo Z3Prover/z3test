@@ -243,7 +243,7 @@
 (assert (= l18 (and (distinct empty (m_cmd (select chan1 send_req_exclusive$i))))))
 (assert (= l20 l6))
 (assert l21)
-(check-sat)
+;(check-sat)
 (reset)
 
 (declare-fun arr () (Array Bool Int))
@@ -258,7 +258,7 @@
 (declare-fun y () (_ BitVec 3))
 (declare-fun A () (Array Int Int))
 (assert (forall ((x (_ BitVec 3))) (not (= (select A (f (bvshl x y))) (select A (f (bvsdiv x (_ bv0 3))))))))
-(check-sat)
+;(check-sat)
 (reset)
 
 (declare-fun a ((Array Int (Array Int Real)) (Array Int (Array Int Real))) (Array Int (Array Int Real)))
