@@ -27,7 +27,7 @@
        (forall ((e Real)) (< 0.0 (/ 2.0 e b))))
       (forall ((e Real)) (= a 0.0))))))))
 (assert (forall ((f Real)) (> 0.0 (* a c))))
-(check-sat)
+;(check-sat)
 (reset)
 
 (set-info :status sat)
