@@ -4,9 +4,10 @@ import os
 import sys
 import subprocess
 import shutil
-import config 
+import config
 import filecmp
 import time
+from multiprocessing import Pool
 
 MAKEJOBS=os.getenv("MAKEJOBS", "24")
 
@@ -65,7 +66,7 @@ def mk_dir(d):
 
 def is_z3depot(path):
     """
-    Return true if the Z3 main repository is located in the given path. 
+    Return true if the Z3 main repository is located in the given path.
     The function checks the existence of several files.
     """
     for f in ["README.md", "LICENSE.txt", ".git", "RELEASE_NOTES", os.path.join("src", "ast", "ast.cpp")]:
@@ -135,7 +136,7 @@ def mk_make(branch, debug, dotnet, java, clang, static, VS64, extraflags):
     else:
         if subprocess.call(cmd) != 0:
             raise Exception("Failed to execute mk_make\n%s" % cmd)
-    
+
 def make(branch, debug, everything, clang, jobs):
     bdir = get_builddir(branch, debug, clang)
     with cd(bdir):
@@ -149,7 +150,7 @@ def make(branch, debug, everything, clang, jobs):
             cmd.append('examples')
         if subprocess.call(cmd) != 0:
             raise Exception("Failed to make Z3\n%s\n" % cmd)
-        
+
 def print_dirlisting(bdir):
     print('Content of %s:' % bdir)
     for dirname, dirnames, filenames in os.walk(bdir):
@@ -158,7 +159,7 @@ def print_dirlisting(bdir):
 
         for filename in filenames:
             print(os.path.join(dirname, filename))
-        
+
 def buildz3(branch="master", everything=False, clean=False, debug=True, dotnet=False, java=False, clang=False, static=False, VS64=False, jobs=16, extraflags=[]):
     z3dir = find_z3depot()
     with cd(z3dir):
@@ -196,7 +197,7 @@ def testjavaex(branch="master", debug=True, clang=False):
                 raise Exception("Failed to execute Java example at '%s'" % p)
         elif is_osx():
             if subprocess.call([config.JAVA, '-cp', 'com.microsoft.z3.jar:.', 'JavaExample']) != 0:
-                raise Exception("Failed to execute Java example at '%s'" % p)            
+                raise Exception("Failed to execute Java example at '%s'" % p)
         elif is_linux() or is_freebsd():
             with setenv('LD_LIBRARY_PATH', '.'):
                 if subprocess.call([config.JAVA, '-cp', 'com.microsoft.z3.jar:.', 'JavaExample']) != 0:
@@ -244,7 +245,7 @@ def timeout(func, args=(), kwargs={}, timeout_duration=1.0, default=None):
 
 def subprocess_killer(args, stdin=None, stdout=None, stderr=None, shell=False, env=None, timeout=1.0):
     try:
-        if shell: 
+        if shell:
             args = ''.join(a + ' ' for a in args)
             if not is_windows():
                 for k, v in env.items():
@@ -289,22 +290,42 @@ def test_benchmark(z3exe, benchmark, timeout, expected=None):
         raise Exception("Z3 (%s) produced unexpected output for %s" % (z3exe, benchmark))
     return True
 
-def test_benchmarks(z3exe, benchdir, ext="smt2", timeout_duration=60.0):
+def run_one(z3exe, benchdir, benchmark, timeout_duration):
+  try:
+      bench = os.path.join(benchdir, benchmark)
+      print("Testing %s" % bench)
+      if timeout(test_benchmark,
+                  args=(z3exe, bench, timeout_duration),
+                  timeout_duration=timeout_duration,
+                  default=False) == False:
+          raise Exception("Timeout executing benchmark %s using %s" % (bench, z3exe))
+  except Exception as ex:
+      print("Failed")
+      print(ex)
+      return True
+  return False
+
+def test_benchmarks(argv):
+    z3exe = argv[1]
+    benchdir = argv[2]
+    ext = argv[3] if len(argv) > 3 else "smt2"
+    num_threads = int(argv[4]) if len(argv) > 4 else 0
+    timeout_duration = float(argv[5]) if len(argv) > 5  else 60.0
+
     print("Testing benchmarks at %s using %s" % (benchdir, z3exe))
     error = False
-    for benchmark in filter(lambda f: f.endswith(ext), os.listdir(benchdir)):
-        try:
-            bench = os.path.join(benchdir, benchmark)
-            print("Testing %s" % bench)
-            if timeout(test_benchmark, 
-                       args=(z3exe, bench, timeout_duration), 
-                       timeout_duration=timeout_duration,
-                       default=False) == False:
-                raise Exception("Timeout executing benchmark %s using %s" % (bench, z3exe))
-        except Exception as ex:
-            print("Failed")
-            print(ex)
-            error = True
+    benchmarks = filter(lambda f: f.endswith(ext), os.listdir(benchdir))
+
+    if num_threads == 0:
+      for benchmark in benchmarks:
+        if (run_one(z3exe, benchdir, benchmark, timeout_duration)):
+          error = True
+    else:
+      pool = Pool(num_threads)
+      rs = pool.starmap(run_one, [(z3exe, benchdir, f, timeout_duration) for f in benchmarks])
+      for r in rs:
+        error |= r
+
     if error:
         raise Exception("Found errors testing benchmarks at %s using %s" % (benchdir, z3exe))
 
@@ -324,19 +345,19 @@ def test_pyscripts(z3libdir, scriptdir, ext="py", timeout_duration=60.0):
     pydir = os.path.join(z3libdir, "python")
 
     myenv = {}
-    
-    if is_linux() or is_freebsd(): 
+
+    if is_linux() or is_freebsd():
         myenv['LD_LIBRARY_PATH'] = z3libdir
-    elif is_osx(): 
+    elif is_osx():
         myenv['DYLD_LIBRARY_PATH'] = z3libdir
-    else: 
+    else:
         myenv['SYSTEMROOT'] = os.getenv('SYSTEMROOT', '')
 
     myenv['PATH'] = os.getenv("PATH", "") + os.pathsep + z3libdir
     myenv['PYTHONPATH'] = pydir
-    
+
     print("Testing python scripts at %s using %s" % (scriptdir, z3libdir))
-    error = False 
+    error = False
     for script in filter(lambda f: f.endswith(ext), os.listdir(scriptdir)):
         script_file = os.path.join(scriptdir, script)
         print("Testing %s" % script_file)
@@ -345,14 +366,14 @@ def test_pyscripts(z3libdir, scriptdir, ext="py", timeout_duration=60.0):
                        args=[script_file, timeout_duration, myenv],
                        timeout_duration=timeout_duration,
                        default=False) == False:
-                raise Exception("Timeout executing script '%s' at '%s' using '%s'" % (script, scriptdir, z3libdir)) 
+                raise Exception("Timeout executing script '%s' at '%s' using '%s'" % (script, scriptdir, z3libdir))
         except Exception as ex:
             print("Failed")
             print(ex)
             error = True
     if error:
         raise Exception("Found errors testing scripts at '%s' using '%s'" % (scriptdir, z3libdir))
-    
+
 def test_pyscripts_using_latest(scriptdir, branch="master", debug=True, clang=False, ext="py", timeout_duration=60.0):
     z3dir = find_z3depot()
     bdir  = get_builddir(branch, debug, clang)
@@ -385,10 +406,10 @@ def test_cs(z3libdir, csdir, ext="cs", VS64=False, timeout_duration=60.0):
                 # Compile.
                 if timeout(exec_cs_compile,
                            args=[[config.CSC, "/nologo",
-                                  "/reference:%s\Microsoft.Z3.dll" % z3libdir, 
-                                  "/out:%s" % (config.CSTEMP), 
-                                  platform_arg, 
-                                  "%s\%s" % (csdir, config.CSDRIVER), 
+                                  "/reference:%s\Microsoft.Z3.dll" % z3libdir,
+                                  "/out:%s" % (config.CSTEMP),
+                                  platform_arg,
+                                  "%s\%s" % (csdir, config.CSDRIVER),
                                   file],
                                  timeout_duration,
                                  os.environ],
@@ -400,7 +421,7 @@ def test_cs(z3libdir, csdir, ext="cs", VS64=False, timeout_duration=60.0):
                            args=[timeout_duration, os.environ],
                            timeout_duration=timeout_duration,
                            default=False) == False:
-                    raise Exception("Timeout executing '%s' at '%s' using '%s'" % (file, csdir, z3libdir)) 
+                    raise Exception("Timeout executing '%s' at '%s' using '%s'" % (file, csdir, z3libdir))
             except Exception as ex:
                 print("Failed")
                 print(ex)
@@ -442,7 +463,7 @@ def test_cpp(z3installdir, cppdir, ext="cpp", timeout_duration=60.0):
                     raise Exception("Timeout compiling '%s' at '%s' using '%s'" % (file, cppdir, z3installdir))
                 # Run.
                 if timeout(exec_cpp,
-                           args=[[fileexe], 
+                           args=[[fileexe],
                                timeout_duration], timeout_duration=timeout_duration, default=False) == False:
                     raise Exception("Timeout executing '%s' at '%s' using '%s'" % (file, cppdir, z3installdir))
                 os.remove(fileexe)
@@ -453,16 +474,16 @@ def test_cpp(z3installdir, cppdir, ext="cpp", timeout_duration=60.0):
     if error:
         raise Exception("Found errors testing C++ at '%s' using '%s'" % (cppdir, z3installdir))
 
-    
+
 def test_cs_using_latest(csdir, branch="master", debug=True, clang=False, ext="cs", VS64=False, timeout_duration=60.0):
     z3dir = find_z3depot()
     bdir  = get_builddir(branch, debug, clang)
     test_cs(os.path.join(z3dir, bdir), csdir, ext, VS64, timeout_duration)
 
 # buildz3(java=True, everything=True)
-# testjavaex()                
+# testjavaex()
 # testz3ex('cpp_example', "master", True, True)
-# testz3ex('c_example')    
+# testz3ex('c_example')
 # test_benchmarks('/home/leo/projects/z3/build/debug/z3', 'regressions/smt2')
 # test_benchmark('/home/leo/projects/z3/build/debug/z3', 'regressions/smt2/bad_patterns.smt2')
 # test_benchmarks_using_latest('regressions/smt2')
