@@ -62,7 +62,7 @@
 (declare-fun shrset$1 () (Array node$type BOOL))
 (declare-fun chan3 () (Array node$type msg$type))
 (assert (not (distinct true (forall ((n node$type)) (let (($x19 (= empty (m_cmd (select chan3 n))))))) (and false (and (not (= Truth (ite true (ite (exists ((n node$type)) (= (m_cmd (select chan3$1 n)) empty)) Truth Falsity) (ite (forall ((n node$type)) (and (not (= Truth (select shrset$1 n))) (not (= (m_cmd (select chan3$1 n)) empty)))) Truth Falsity)))))))))
-(check-sat)
+;(check-sat)
 (reset)
 
 (set-info :status unsat)
