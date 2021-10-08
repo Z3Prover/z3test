@@ -3,6 +3,20 @@
 (set-option :model_validate true)
 
 
+(declare-datatypes ((msg_cmd$type 0)) (((empty) (reqs) (inv) (invack) (gnts) (gnte))))
+(declare-sort data$type)
+(declare-datatypes ((msg$type 0)) (((c_msg$type (m_cmd msg_cmd$type) (m_data data$type)))))
+(declare-datatypes ((BOOL 0)) (((Truth) (Falsity))))
+(declare-sort node$type)
+(declare-fun chan2$1 () (Array node$type msg$type))
+(declare-fun invset () (Array node$type BOOL))
+(declare-fun invset$1 () (Array node$type BOOL))
+(declare-fun exgntd () BOOL)
+(assert (forall ((curcmd msg_cmd$type)) (exists ((send_inv$i node$type)) (exists ((shrset (Array node$type BOOL))) (exists ((chan2 (Array node$type msg$type))) (not (=> (and (= Truth (select invset send_inv$i)) (= empty (m_cmd (chan2 send_inv$i)))) (not (= (and (= curcmd reqs) (= exgntd Truth)) (=> (and (= invset$1 (store invset send_inv$i Falsity)) (= chan2$1 (store chan2 send_inv$i (c_msg$type inv (m_data (chan2 send_inv$i)))))) (forall ((n node$type)) (or (not (= Truth (shrset n))) (= inv (m_cmd (select chan2$1 n)))))))))))))))
+(check-sat)
+(reset)
+
+
 (set-info :status unsat)
 (set-logic QF_AX)
 (declare-sort Index 0)
@@ -19,23 +33,10 @@
 (check-sat)
 (reset)
 
-(exit)
+;(exit)
 
 (declare-fun t () (_ BitVec 4))
 (assert (forall ((s (_ BitVec 4))) (not (= (bvshl s t) (ite (= (_ bv0 1) ((_ extract 0 0) s)) (_ bv0 4) (bvnot s))))))
-(check-sat)
-(reset)
-
-(declare-datatypes ((msg_cmd$type 0)) (((empty) (reqs) (inv) (invack) (gnts) (gnte))))
-(declare-sort data$type)
-(declare-datatypes ((msg$type 0)) (((c_msg$type (m_cmd msg_cmd$type) (m_data data$type)))))
-(declare-datatypes ((BOOL 0)) (((Truth) (Falsity))))
-(declare-sort node$type)
-(declare-fun chan2$1 () (Array node$type msg$type))
-(declare-fun invset () (Array node$type BOOL))
-(declare-fun invset$1 () (Array node$type BOOL))
-(declare-fun exgntd () BOOL)
-(assert (forall ((curcmd msg_cmd$type)) (exists ((send_inv$i node$type)) (exists ((shrset (Array node$type BOOL))) (exists ((chan2 (Array node$type msg$type))) (not (=> (and (= Truth (select invset send_inv$i)) (= empty (m_cmd (chan2 send_inv$i)))) (not (= (and (= curcmd reqs) (= exgntd Truth)) (=> (and (= invset$1 (store invset send_inv$i Falsity)) (= chan2$1 (store chan2 send_inv$i (c_msg$type inv (m_data (chan2 send_inv$i)))))) (forall ((n node$type)) (or (not (= Truth (shrset n))) (= inv (m_cmd (select chan2$1 n)))))))))))))))
 (check-sat)
 (reset)
 
@@ -98,6 +99,6 @@
 (declare-fun t_2 () (Array Int Int))
 (declare-fun t_1 () Int)
 (assert (and (and (and (forall ((?V_26 Int)) (=> (and (<= (+ t_1 1) ?V_26) (<= ?V_26 u)) (forall ((?V_27 Int)) (=> (and (<= (+ t_1 1) ?V_27) (<= ?V_27 ?V_26)) (<= (select t_3 ?V_27) (select t_3 ?V_26)))))) (and (= V_13 V_21) (and (forall ((?V_25 Int)) (=> (and (<= 0 ?V_25) (<= ?V_25 (- (+ t_1 1) 1))) (= (select t_3 ?V_25) (select t_2 ?V_25)))) (forall ((?V_24 Int)) (=> (and (<= (+ u 1) ?V_24) (<= ?V_24 (- V_21 1))) (= (select t_3 ?V_24) (select t_2 ?V_24))))))) (and (and (forall ((?V_22 Int)) (=> (and (<= l ?V_22) (<= ?V_22 t_1)) (forall ((?V_23 Int)) (=> (and (<= l ?V_23) (<= ?V_23 ?V_22)) (<= (select t_2 ?V_23) (select t_2 ?V_22)))))) (and (= V_21 V_18) (and (forall ((?V_20 Int)) (=> (and (<= 0 ?V_20) (<= ?V_20 (- l 1))) (= (select t_2 ?V_20) (select arr ?V_20)))) (forall ((?V_19 Int)) (=> (and (<= (+ t_1 1) ?V_19) (<= ?V_19 (- V_18 1))) (= (select t_2 ?V_19) (select arr ?V_19))))))) (and (and (<= l t_1) (< t_1 u)) (and (< l u) (and (and (<= 0 l) (< u V_18)) (>= V_18 0)))))) (or (or (> 0 l) (or (> l t_1) (or (>= t_1 u) (or (>= u V_13) (or (exists ((?V_16 Int)) (and (and (<= l ?V_16) (<= ?V_16 t_1)) (exists ((?V_17 Int)) (and (and (<= l ?V_17) (<= ?V_17 ?V_16)) (> (select t_3 ?V_17) (select t_3 ?V_16)))))) (exists ((?V_14 Int)) (and (and (<= (+ t_1 1) ?V_14) (<= ?V_14 u)) (exists ((?V_15 Int)) (and (and (<= (+ t_1 1) ?V_15) (<= ?V_15 ?V_14)) (> (select t_3 ?V_15) (select t_3 ?V_14))))))))))) (< V_13 0))))
-(check-sat)
+;(check-sat)
 (reset)
 
