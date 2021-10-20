@@ -1,9 +1,9 @@
 sat
 (
-  (define-fun b_0 () String
-    "cd")
   (define-fun c_0 () String
     "ef")
+  (define-fun b_0 () String
+    "cd")
   (define-fun a_0 () String
     "ab")
   (define-fun _o0 () (_ BitVec 64)
