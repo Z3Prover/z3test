@@ -1,0 +1,6 @@
+(assert (let ((a!1 (re.++ (str.to_re "a")
+                  (re.* (re.++ (str.to_re "b") (str.to_re "a")))))
+      (a!2 (re.++ (re.* (re.++ (str.to_re "a") (str.to_re "b")))
+                  (str.to_re "a"))))
+  (distinct (re.++ a!1 a!1) (re.++ a!2 a!2))))
+(check-sat)
