@@ -1,8 +1,56 @@
 (set-option :model_validate true)
 
-(declare-fun str6 () String)
-(assert (str.in_re str6 (re.++ re.all (str.to_re "qk") (str.to_re "C"))))
+(declare-fun a () String)
+(declare-fun b () Int)
+(assert (str.contains a "AAAAAAAAABBBBBBBC"))
+(assert (= (str.len a) (- b (abs (str.len a)))))
+(assert (not (= (str.indexof a "BBBBBBB" (- b 30)) (- 1))))
+(check-sat)
 (exit)
+
+;(set-info :status sat)
+(set-option :rewriter.eq2ineq true)
+(declare-fun a () String)
+(declare-fun x () Int)
+(assert (str.contains a "Hello and goodbye!"))
+(assert (= (str.len a) x))
+(assert (not (= (str.indexof a "goodbye" (- (+ x x) 30)) (- 1))))
+(check-sat)
+(exit)
+(reset)
+
+
+
+(set-info :status unsat)
+(declare-fun a () String)
+(declare-fun b () String)
+(assert (str.in_re a (re.* (str.to_re "A"))))
+(assert (str.in_re (str.++ a "B") (re.* (str.to_re (str.substr b 0 (str.len a))))))
+(check-sat)
+(get-model)
+(reset)
+
+(set-info :status unsat)
+(declare-fun a () String)
+(assert (str.in_re (str.++ a "AA") (re.++ (re.* (str.to_re "B")) (str.to_re (str.substr (str.++ "B" a) (str.len a) (str.len a))))))
+(check-sat)
+(reset)
+
+(set-info :status sat)
+(declare-fun a () String)
+(declare-fun b () Int)
+(assert (str.contains a "AAAAAAAAABBBBBBBC"))
+(assert (= (str.len a) (- b (abs (str.len a)))))
+(assert (not (= (str.indexof a "BBBBBBB" (- b 30)) (- 1))))
+(check-sat)
+(reset)
+(set-info :status unknown)
+
+
+(declare-fun a () String)
+(assert (str.in_re a (re.++ (re.opt (str.to_re "A")) (str.to_re "A") (str.to_re "A") (str.to_re "A"))))
+(check-sat)
+(reset)
 
 (declare-fun a () String)
 (declare-fun b () String)
@@ -10,14 +58,33 @@
 (assert (not (str.in_re (str.++ a "BA" b) (re.++ (re.* (str.to_re "A")) (str.to_re "B") (str.to_re "A") (str.to_re "A")))))
 (check-sat)
 (get-model)
-(exit)
+(reset)
+
+(set-info :status sat)
+(declare-fun a () String)
+(assert (str.in_re a (re.++ (re.opt (str.to_re "A")) (str.to_re "A") (str.to_re "A") (str.to_re "A"))))
+(check-sat)
+(reset)
+
+(set-info :status unknown)
+(declare-fun str6 () String)
+(assert (str.in_re str6 (re.++ re.all (str.to_re "qk") (str.to_re "C"))))
+(reset)
+
+(declare-fun a () String)
+(declare-fun b () String)
+(assert (= b "A"))
+(assert (not (str.in_re (str.++ a "BA" b) (re.++ (re.* (str.to_re "A")) (str.to_re "B") (str.to_re "A") (str.to_re "A")))))
+(check-sat)
+(get-model)
+(reset)
 
 (declare-fun a () Int)
 (declare-fun b () String)
 (assert (str.in_re (str.++ b "A") (re.* (str.to_re (str.substr b 1 a)))))
 (check-sat)
 (get-model)
-(exit)
+(reset)
 
 
 (declare-fun a () String)
@@ -25,7 +92,7 @@
 (declare-fun c () Int)
 (assert (str.in_re (str.++ a "A") (re.* (str.to_re (str.substr "B" b c)))))
 (check-sat)
-(exit)
+(reset)
 
 (declare-fun a () String)
 (assert (str.in_re a (re.++ (re.opt (str.to_re "A")) (str.to_re "A") (str.to_re "A") (str.to_re "A"))))
