@@ -1,8 +1,8 @@
-(ite b #x50 #x10)
-(ite b #x60 #x20)
-(ite b #x04 #x02)
-(ite b #x1e #x3c)
-false
+(bvadd #x10 (ite b #x40 #x00))
+(bvadd #x20 (ite b #x40 #x00))
+(concat #b0 (ite b #b0000100 #b0000010))
+(bvudiv_i #xf0 (ite b #x08 #x04))
+(= 5 (ite b 2 3))
 false
 b
 (bvadd #x10 (ite b x #x00))
