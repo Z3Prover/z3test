@@ -310,7 +310,7 @@ def test_benchmarks(argv):
     benchdir = argv[2]
     ext = argv[3] if len(argv) > 3 else "smt2"
     num_threads = int(argv[4]) if len(argv) > 4 else 0
-    timeout_duration = float(argv[5]) if len(argv) > 5  else 60.0
+    timeout_duration = float(argv[5]) if len(argv) > 5 else 60.0
 
     print("Testing benchmarks at %s using %s" % (benchdir, z3exe))
     error = False
@@ -360,11 +360,16 @@ def test_pyscripts(z3libdir, scriptdir, ext="py", timeout_duration=60.0):
     error = False
     for script in filter(lambda f: f.endswith(ext), os.listdir(scriptdir)):
         script_file = os.path.join(scriptdir, script)
+        if script.endswith('spacer_model_validation.py'):
+            bench_num = len(os.listdir(scriptdir + '/../smt2-chc')) // 2
+            current_timeout_duration = timeout_duration * bench_num
+        else:
+            current_timeout_duration = timeout_duration
         print("Testing %s" % script_file)
         try:
             if timeout(exec_pyscript,
-                       args=[script_file, timeout_duration, myenv],
-                       timeout_duration=timeout_duration,
+                       args=[script_file, current_timeout_duration, myenv],
+                       timeout_duration=current_timeout_duration,
                        default=False) == False:
                 raise Exception("Timeout executing script '%s' at '%s' using '%s'" % (script, scriptdir, z3libdir))
         except Exception as ex:
