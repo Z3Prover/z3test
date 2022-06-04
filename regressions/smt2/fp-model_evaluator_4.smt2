@@ -16,4 +16,7 @@
 
 (check-sat)
 (check-sat-using smt)
-(get-model)
+(get-value (q))
+(get-value (x))
+(get-value (r))
+
