@@ -2,8 +2,7 @@ sat
 sat
 "1"
 unsat
-(let ((a!1 (= "" (ite (= "" a) (str.++ a (str.++ a "ab")) (str.++ a "ab")))))
-  (ite a!1 "" "1"))
+"1"
 unsat
 sat
 sat
