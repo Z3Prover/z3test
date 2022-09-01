@@ -30,4 +30,3 @@
 (assert (forall ((v Int)) (or x1 (> v 0))))
 (assert (distinct v "l" "" (str.substr a 0 (div 1 (* x x x)))))
 (check-sat)
-(reset)
