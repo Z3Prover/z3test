@@ -1,0 +1,8 @@
+sat
+sat
+(as seq.empty Seq)
+(seq.++ (seq.map f il_1) (seq.map f il_2))
+(seq.unit (select f 4))
+sat
+sat
+true
