@@ -6,3 +6,5 @@ sat
 (select f 3 i)
 (seq.fold_leftli g (+ 2 (seq.len il_1)) (seq.fold_leftli g 2 false il_1) il_2)
 (select g 3 true i)
+2
+true
