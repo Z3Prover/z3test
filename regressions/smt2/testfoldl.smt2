@@ -31,4 +31,15 @@
 (check-sat)
 (pop)
 
+(push)
+(declare-const f (Array Int Int Int))
+(declare-const g (Array Int Bool Int Bool))
+(declare-const il_1 (Seq Int))
+(declare-const il_2 (Seq Int))
+(declare-const i Int)
+(simplify (seq.foldl f 2 (seq.++ il_1 il_2)))
+(simplify (seq.foldl f 3 (seq.unit i)))
+(simplify (seq.foldli g 2 false (seq.++ il_1 il_2)))
+(simplify (seq.foldli g 3 true (seq.unit i)))
+(pop)
 
