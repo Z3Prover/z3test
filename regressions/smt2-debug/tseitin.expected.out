@@ -1,10 +1,8 @@
 (error "tactic failed: operator not supported, apply simplifier before invoking this strategy")
 (goals
 (goal
-  (or p q)
-  q
   (or p r)
-  (or q r)
+  q
   :precision precise :depth 2)
 )
 (goals
