@@ -1,3 +1,2 @@
 sat
-(error "line 12 column 10: an invalid model was generated")
-unknown
+sat
