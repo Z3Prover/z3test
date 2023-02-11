@@ -2,7 +2,7 @@
 (bvadd #x20 (ite b #x40 #x00))
 (concat #b0 (ite b #b0000100 #b0000010))
 (bvudiv_i #xf0 (ite b #x08 #x04))
-(= 5 (ite b 2 3))
+false
 false
 b
 (bvadd #x10 (ite b x #x00))

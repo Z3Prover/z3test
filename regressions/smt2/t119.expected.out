@@ -6,8 +6,8 @@
 )
 (goals
 (goal
-  (<= b (- 10.0))
-  (<= b 0.0)
+  (>= c 10.0)
+  (>= c 0.0)
   :precision precise :depth 2)
 )
 (goals

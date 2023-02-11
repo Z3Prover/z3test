@@ -8,6 +8,6 @@
 )
 (goals
 (goal
-  (exists ((e2 (_ BitVec 6)) (e3 (_ BitVec 6))) (= e2 e3))
+  (exists ((e2 (_ BitVec 6)) (e3 (_ BitVec 6))) (= e3 e2))
   :precision precise :depth 2)
 )

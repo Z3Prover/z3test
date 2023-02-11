@@ -1,4 +1,4 @@
 sat
-((s0 ((as const (Array Int Bool)) true)))
-((s1 (store ((as const (Array Int Bool)) true) 4 false)))
-((s2 ((as const (Array Int Bool)) false)))
+false
+false
+false
