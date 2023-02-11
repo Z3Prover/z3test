@@ -4,7 +4,7 @@ sat
 sat
 (seq.fold_left f (seq.fold_left f 2 il_1) il_2)
 (select f 3 i)
-(seq.fold_leftli g (+ 2 (seq.len il_1)) (seq.fold_leftli g 2 false il_1) il_2)
+(seq.fold_lefti g (+ 2 (seq.len il_1)) (seq.fold_lefti g 2 false il_1) il_2)
 (select g 3 true i)
 2
 true
