@@ -265,20 +265,22 @@
  :named a9 
  ) 
  )
-(assert 
- (! 
-  (forall ((hs Rel1)(hs_ Rel1)) (= (setFreeList hs hs_) (and 
-    (subset_1 (join_1x2 (join_1x2 hs_ freeList) (reflTransClos (join_1x3 hs_ left))) (diff_1 Node (join_1x2 hs marked)))
-    (forall ((n Atom)) (=> (in_1 n Node) (ite (not (in_1 n (join_1x2 hs marked))) (and 
-    (not (some_1 (join_1x2 (a2r_1 n) (join_1x3 hs_ right))))
-    (subset_1 (join_1x2 (a2r_1 n) (join_1x3 hs_ left)) (join_1x2 (join_1x2 hs_ freeList) (reflTransClos (join_1x3 hs_ left))))
-    (in_1 n (join_1x2 (join_1x2 hs_ freeList) (reflTransClos (join_1x3 hs_ left))))
-  ) (and (= (join_1x2 (a2r_1 n) (join_1x3 hs_ left)) (join_1x2 (a2r_1 n) (join_1x3 hs left))) (= (join_1x2 (a2r_1 n) (join_1x3 hs_ right)) (join_1x2 (a2r_1 n) (join_1x3 hs right)))))))
-    (= (join_1x2 hs_ marked) (join_1x2 hs marked))
-  ))) 
- :named a10 
- ) 
- )
+ 
+;(assert 
+; (! 
+;  (forall ((hs Rel1)(hs_ Rel1)) (= (setFreeList hs hs_) (and 
+;    (subset_1 (join_1x2 (join_1x2 hs_ freeList) (reflTransClos (join_1x3 hs_ left))) (diff_1 Node (join_1x2 hs marked)))
+;    (forall ((n Atom)) (=> (in_1 n Node) (ite (not (in_1 n (join_1x2 hs marked))) (and 
+;    (not (some_1 (join_1x2 (a2r_1 n) (join_1x3 hs_ right))))
+;    (subset_1 (join_1x2 (a2r_1 n) (join_1x3 hs_ left)) (join_1x2 (join_1x2 hs_ freeList) (reflTransClos (join_1x3 hs_ left))))
+;    (in_1 n (join_1x2 (join_1x2 hs_ freeList) (reflTransClos (join_1x3 hs_ left))))
+;  ) (and (= (join_1x2 (a2r_1 n) (join_1x3 hs_ left)) (join_1x2 (a2r_1 n) (join_1x3 hs left))) (= (join_1x2 (a2r_1 n) (join_1x3 hs_ rig;ht)) (join_1x2 (a2r_1 n) (join_1x3 hs right)))))))
+;    (= (join_1x2 hs_ marked) (join_1x2 hs marked))
+;  ))) 
+; :named a10 
+; ) 
+; )
+ 
 (assert 
  (! 
   (forall ((hs Rel1)(root Rel1)(hs_ Rel1)) (= (GC hs root hs_) (exists ((hs1 Atom)(hs2 Atom)) (and 
