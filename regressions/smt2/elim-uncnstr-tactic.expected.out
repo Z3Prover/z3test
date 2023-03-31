@@ -13,7 +13,6 @@ sat
 )
 (goals
 (goal
-  (forall ((b (_ BitVec 8))) (exists ((a (_ BitVec 8))) (= a b)))
   :precision precise :depth 1)
 )
 (goals
