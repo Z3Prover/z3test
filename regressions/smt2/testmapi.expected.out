@@ -1,6 +1,6 @@
 sat
 sat
-(as seq.empty Seq)
+(as seq.empty (Seq Bool))
 (seq.++ (seq.mapi f 2 il_1) (seq.mapi f (+ 2 (seq.len il_1)) il_2))
 (seq.unit (select f 3 4))
 sat

@@ -3,4 +3,4 @@ sat
   (define-fun q ((x!0 Int)) Int
     0)
 )
-((q ((as const Array) 0)))
+((q ((as const (Array Int Int)) 0)))
