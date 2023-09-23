@@ -10,4 +10,7 @@
 (assert (= _o0 #x0000000000000002))
 (minimize _o0)
 (check-sat)
-(get-model)
+(eval a_0)
+(eval b_0)
+(eval c_0)
+(eval _o0)
