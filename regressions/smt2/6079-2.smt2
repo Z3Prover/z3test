@@ -1,0 +1,6 @@
+(declare-const x Bool)
+(define-sort FPN () Float64)
+(declare-fun e () FPN)
+(declare-fun ex () FPN)
+(assert (and (= e (fp.fma roundTowardPositive e ex ex)) (= e (fp (_ bv1 1) #b11111111110 #b1111111111111111111111111111111111111111111111111111)) x))
+(check-sat)

@@ -1,5 +1,5 @@
 sat
 sat
-((a roundNearestTiesToAway))
-((b (fp #b0 #b01111111111 #x999999999999a)))
-((c (fp #b0 #b01111111111 #x999999999999a)))
+((a roundTowardZero))
+((b (fp #b0 #b01111111111 #x9999999999999)))
+((c (fp #b0 #b01111111111 #x9999999999999)))
