@@ -3,7 +3,7 @@
 (set-info :status sat)
 (set-info :source "Handcrafted by C.M. Wintersteiger")
 
-; satisfiable for all c1, c2, c3 according to FP theory description 
+; satisfiable for all c1, c2, c3 according to FP theory description
 ; (see note about conversions to other sorts)
 
 (declare-fun c1 () (_ BitVec 1))
