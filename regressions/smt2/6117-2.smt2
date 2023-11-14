@@ -1,0 +1,12 @@
+(set-option :model_validate true)
+(set-info :status sat)
+
+(declare-fun a () Float64)
+(declare-fun b () Float64)
+(declare-fun c () Float64)
+(declare-fun d () Float64)
+(assert (= b (fp #b1 #b11110111010 #b1100001111010011101101001000011101111100101011101000)))
+(assert (= c (fp #b1 #b11100001101 #b0101011101011010100111111000100100100111110110100000)))
+(assert (= d (fp #b1 #b11111111110 #b1111111111111111111111111111111111111111111111111111)))
+(assert (= (fp.fma RTZ a b c) d))
+(check-sat)
