@@ -10,6 +10,7 @@ import time
 from concurrent.futures import ThreadPoolExecutor, as_completed
 import traceback
 import threading
+from multiprocessing import cpu_count
 # Create a lock object
 print_lock = threading.Lock()
 
@@ -310,7 +311,7 @@ def test_benchmarks(argv):
     z3exe = argv[1]
     benchdir = argv[2]
     ext = argv[3] if len(argv) > 3 else "smt2"
-    num_threads = int(argv[4]) if len(argv) > 4 else 0
+    num_threads = int(argv[4]) if len(argv) > 4 else cpu_count()
     timeout_duration = float(argv[5]) if len(argv) > 5 else 60.0
 
     print("Testing benchmarks at %s using %s" % (benchdir, z3exe))
