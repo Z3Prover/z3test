@@ -7,7 +7,11 @@ import shutil
 import config
 import filecmp
 import time
-from multiprocessing import Pool
+from concurrent.futures import ThreadPoolExecutor, as_completed
+import traceback
+import threading
+# Create a lock object
+print_lock = threading.Lock()
 
 MAKEJOBS=os.getenv("MAKEJOBS", "24")
 
@@ -244,24 +248,20 @@ def timeout(func, args=(), kwargs={}, timeout_duration=1.0, default=None):
         return it.result
 
 def subprocess_killer(args, stdin=None, stdout=None, stderr=None, shell=False, env=None, timeout=1.0):
-    try:
-        if shell:
-            args = ''.join(a + ' ' for a in args)
-            if not is_windows():
-                for k, v in env.items():
-                    args = k + '=' + v + ' ' + args
-        p = subprocess.Popen(args, stdin=stdin, stdout=stdout, stderr=stderr, shell=shell, env=env)
-        start = time.time()
-        time.sleep(0.02)
-        while (p.poll() == None):
-            time.sleep(0.1)
-            if (time.time() - start) > timeout:
-                p.kill()
-        return p.returncode
-    except Exception as ex:
-        print('Exception: %s' % ex)
-        return 0
-
+    if shell:
+        args = ''.join(a + ' ' for a in args)
+        if not is_windows():
+            for k, v in env.items():
+                args = k + '=' + v + ' ' + args
+    p = subprocess.Popen(args, stdin=stdin, stdout=stdout, stderr=stderr, shell=shell, env=env)
+    start = time.time()
+    time.sleep(0.02)
+    while (p.poll() == None):
+        time.sleep(0.1)
+        if (time.time() - start) > timeout:
+            p.kill()
+    return p.returncode
+    
 def test_benchmark(z3exe, benchmark, timeout, expected=None):
     if not os.path.exists(benchmark):
         raise Exception("Benchmark '%s' does not exist" % benchmark)
@@ -281,27 +281,28 @@ def test_benchmark(z3exe, benchmark, timeout, expected=None):
     if errcode != 0 and errcode != 1 and errcode != 105:
         raise Exception("Z3 (%s) returned unexpected error code %s for %s" % (z3exe, errcode, benchmark))
     if not filecmp.cmp(expected, produced):
-        print("EXPECTED")
-        print(open(expected, 'r').read())
-        print("======================")
-        print("PRODUCED")
-        print(open(produced, 'r').read())
-        print("======================")
-        raise Exception("Z3 (%s) produced unexpected output for %s" % (z3exe, benchmark))
+        #read to string exp
+        exp = open(expected, 'r').read() 
+        prod = open(produced, 'r').read()
+        raise Exception(f"Z3  {z3exe}) produced unexpected output for {benchmark}:\nEXPECTED\n{exp}PRODUCED\n{prod}"                        )
     return True
 
 def run_one(z3exe, benchdir, benchmark, timeout_duration):
   try:
       bench = os.path.join(benchdir, benchmark)
+      print_lock.acquire()
       print("Testing %s" % bench)
+      print_lock.release()
       if timeout(test_benchmark,
                   args=(z3exe, bench, timeout_duration),
                   timeout_duration=timeout_duration,
                   default=False) == False:
           raise Exception("Timeout executing benchmark %s using %s" % (bench, z3exe))
   except Exception as ex:
+      print_lock.acquire()    
       print("Failed")
       print(ex)
+      print_lock.release()
       return True
   return False
 
@@ -314,18 +315,24 @@ def test_benchmarks(argv):
 
     print("Testing benchmarks at %s using %s" % (benchdir, z3exe))
     error = False
+    
     benchmarks = filter(lambda f: f.endswith(ext), os.listdir(benchdir))
-
+    
     if num_threads == 0:
       for benchmark in benchmarks:
         if (run_one(z3exe, benchdir, benchmark, timeout_duration)):
           error = True
     else:
-      pool = Pool(num_threads)
-      rs = pool.starmap(run_one, [(z3exe, benchdir, f, timeout_duration) for f in benchmarks])
-      for r in rs:
-        error |= r
-
+        with ThreadPoolExecutor(max_workers=num_threads) as executor:
+            future_to_file = {executor.submit(run_one, z3exe, benchdir, benchmark, timeout_duration): benchmark for benchmark in benchmarks}
+            for future in as_completed(future_to_file):
+                file = future_to_file[future]
+                try:
+                    result = future.result()
+                    error |= result
+                except Exception as exc:
+                    print(f"File {file} generated an exception: {str(exc)}")
+                    traceback.print_exc()
     if error:
         raise Exception("Found errors testing benchmarks at %s using %s" % (benchdir, z3exe))
 
@@ -411,10 +418,10 @@ def test_cs(z3libdir, csdir, ext="cs", VS64=False, timeout_duration=60.0):
                 # Compile.
                 if timeout(exec_cs_compile,
                            args=[[config.CSC, "/nologo",
-                                  "/reference:%s\Microsoft.Z3.dll" % z3libdir,
+                                  "/reference:%s\\Microsoft.Z3.dll" % z3libdir,
                                   "/out:%s" % (config.CSTEMP),
                                   platform_arg,
-                                  "%s\%s" % (csdir, config.CSDRIVER),
+                                  "%s\\%s" % (csdir, config.CSDRIVER),
                                   file],
                                  timeout_duration,
                                  os.environ],
