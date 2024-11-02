@@ -8,11 +8,15 @@ skoX
 (+ (* 29.0 (^ skoX 2.0)) (- 90000000.0)))
 (goals
 (goal
-  (not (>= (* skoX (+ (* 29.0 (^ skoX 2.0)) (- 90000000.0))) 0.0))
+  (= (>= skoX 0.0) (<= (* skoX skoX) (/ 90000000.0 29.0)))
+  (not (= skoX 0.0))
+  (not (= (* skoX skoX) (/ 90000000.0 29.0)))
   :precision precise :depth 2)
 )
 (goals
 (goal
-  (not (<= (* skoX (+ (* 29.0 (^ skoX 2.0)) (- 90000000.0))) 0.0))
+  (= (>= skoX 0.0) (>= (* skoX skoX) (/ 90000000.0 29.0)))
+  (not (= skoX 0.0))
+  (not (= (* skoX skoX) (/ 90000000.0 29.0)))
   :precision precise :depth 2)
 )
