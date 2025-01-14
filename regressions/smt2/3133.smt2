@@ -3,7 +3,6 @@
 (set-option :model true)
 (set-option :unsat_core false)
 (set-option :smt.theory_aware_branching true)
-(set-option :sat.binspr true)
 (set-option :smt.theory_case_split false)
 (set-option :sat.anf true)
 (set-option :sat.bca false)
