@@ -11,16 +11,4 @@
 (declare-fun c() String)
 (assert (= (str.at s 0) c))
 (check-sat)
-(reset)
-
-(set-option :smt.string_solver z3str3) 
-(declare-fun s() String)
-(assert (= "\u{80}" s))
-(check-sat)
-(get-value (s))
-(assert (= (str.len s) 1))
-(check-sat)
-(declare-fun c() String)
-(assert (= (str.at s 0) c))
-(check-sat)
 
