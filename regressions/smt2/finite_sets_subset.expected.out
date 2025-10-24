@@ -1,0 +1,9 @@
+sat
+sat
+unsat
+(goals
+(goal
+  false
+  :precision precise :depth 1)
+)
+unsat

@@ -1,0 +1,16 @@
+(goals
+(goal
+  true
+  :precision precise :depth 1)
+)
+unsat
+(goals
+(goal
+  false
+  :precision precise :depth 1)
+)
+(goals
+(goal
+  true
+  :precision precise :depth 1)
+)
