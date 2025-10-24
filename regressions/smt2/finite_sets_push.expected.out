@@ -1,0 +1,19 @@
+sat
+(model 
+  (define-fun u () (FiniteSet Int)
+    (as set.empty (FiniteSet Int)))
+  (define-fun v () (FiniteSet Int)
+    (as set.empty (FiniteSet Int)))
+  (define-fun x () Int
+    0)
+  (define-fun t () (FiniteSet Int)
+    (set.singleton 0))
+  (define-fun s () (FiniteSet Int)
+    (set.singleton 0))
+)
+(:max-memory 0.00
+ :memory 0.00
+ :num-allocs 0
+ :rlimit-count 0
+ :time 0.00
+ :total-time 0.00)

@@ -1,0 +1,13 @@
+sat
+(model 
+  (define-fun u () (FiniteSet Int)
+    (as set.empty (FiniteSet Int)))
+  (define-fun v () (FiniteSet Int)
+    (as set.empty (FiniteSet Int)))
+  (define-fun x () Int
+    0)
+  (define-fun t () (FiniteSet Int)
+    (set.singleton 0))
+  (define-fun s () (FiniteSet Int)
+    (set.singleton 0))
+)

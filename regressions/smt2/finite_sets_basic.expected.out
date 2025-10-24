@@ -1,0 +1,11 @@
+(goals
+(goal
+  (not (= s t))
+  (= s t)
+  :precision precise :depth 1)
+)
+(goals
+(goal
+  false
+  :precision precise :depth 1)
+)
