@@ -1,7 +1,8 @@
-; Copyright (c) 2015 Microsoft Corporation
-; Comprehensive tests for finite set operations
+; Copyright (c) 2025 Microsoft Corporation
+; Tests for finite set operations
 
-; Test 1: Basic union operation - union idempotence
+(echo "Test 1: Basic union operation - union idempotence")
+(set-info :status unsat)
 (declare-const s (FiniteSet Int))
 (declare-const t (FiniteSet Int))
 (declare-const x Int)
@@ -11,24 +12,26 @@
 
 (reset)
 
-; Test 2: Empty set cannot equal singleton
+(echo "Test 2: Empty set cannot equal singleton")
+(set-info :status unsat)
 (declare-const x Int)
 (assert (= (as set.empty (FiniteSet Int)) (set.singleton x)))
 (check-sat)
 
 (reset)
 
-; Test 3: Unconstrained variable elimination with union
+(echo "Test 3: Unconstrained variable elimination with union")
+(set-info :status sat)
 (declare-const s (FiniteSet Int))
 (declare-const t (FiniteSet Int))
 (declare-const u (FiniteSet Int))
-(declare-const x Int)
 (assert (= (set.union s t) u))
 (check-sat)
 
 (reset)
 
-; Test 4: Unsatisfiability - element in subset but not in union
+(echo "Test 4: Unsatisfiability - element in subset but not in union")
+(set-info :status unsat)
 (declare-const s (FiniteSet Int))
 (declare-const t (FiniteSet Int))
 (declare-const u (FiniteSet Int))
@@ -40,7 +43,8 @@
 
 (reset)
 
-; Test 5: Satisfiability with variadic union
+(echo "Test 5: Satisfiability with variadic union")
+(set-info :status sat)
 (declare-const s (FiniteSet Int))
 (declare-const t (FiniteSet Int))
 (declare-const u (FiniteSet Int))
@@ -52,7 +56,8 @@
 
 (reset)
 
-; Test 6: Push/pop operations
+(echo "Test 6: Push/pop operations")
+(set-info :status sat)
 (declare-const s (FiniteSet Int))
 (declare-const t (FiniteSet Int))
 (declare-const u (FiniteSet Int))
@@ -66,14 +71,16 @@
 
 (reset)
 
-; Test 7: Intersection with empty set
+(echo "Test 7: Intersection with empty set")
+(set-info :status unsat)
 (declare-const s (FiniteSet Int))
 (assert (not (= (set.intersect s (as set.empty (FiniteSet Int))) (as set.empty (FiniteSet Int)))))
 (check-sat)
 
 (reset)
 
-; Test 8: Intersection membership
+(echo "Test 8: Intersection membership")
+(set-info :status unsat)
 (declare-const s (FiniteSet Int))
 (declare-const t (FiniteSet Int))
 (declare-const x Int)
@@ -83,37 +90,43 @@
 
 (reset)
 
-; Test 9: Intersection idempotence: A ∩ A = A
+(echo "Test 9: Intersection idempotence: A ∩ A = A")
+(set-info :status unsat)
 (declare-const s (FiniteSet Int))
 (assert (not (= (set.intersect s s) s)))
 (check-sat)
 
 (reset)
 
-; Test 10: Intersection with singleton - different elements
+(echo "Test 10: Intersection with singleton - different elements")
+(set-info :status unsat)
 (declare-const x Int)
 (declare-const y Int)
 (assert (not (= (set.intersect (set.singleton x) (set.singleton y)) (as set.empty (FiniteSet Int)))))
 (assert (not (= x y)))
 (check-sat)
 
+
 (reset)
 
-; Test 11: Difference with empty set: A \ ∅ = A
+(echo "Test 11: Difference with empty set: A \ ∅ = A")
+(set-info :status unsat)
 (declare-const s (FiniteSet Int))
 (assert (not (= (set.difference s (as set.empty (FiniteSet Int))) s)))
 (check-sat)
 
 (reset)
 
-; Test 12: Difference with self: A \ A = ∅
+(echo "Test 12: Difference with self: A \ A = ∅")
+(set-info :status unsat)
 (declare-const s (FiniteSet Int))
 (assert (not (= (set.difference s s) (as set.empty (FiniteSet Int)))))
 (check-sat)
 
 (reset)
 
-; Test 13: Difference membership
+(echo "Test 13: Difference membership")
+(set-info :status unsat)
 (declare-const s (FiniteSet Int))
 (declare-const t (FiniteSet Int))
 (declare-const x Int)
@@ -123,7 +136,8 @@
 
 (reset)
 
-; Test 14: Difference with singleton
+(echo "Test 14: Difference with singleton")
+(set-info :status sat)
 (declare-const x Int)
 (declare-const y Int)
 (assert (set.in x (set.difference (set.singleton x) (set.singleton y))))
@@ -132,21 +146,24 @@
 
 (reset)
 
-; Test 15: Subset reflexivity: A ⊆ A
+(set-info :status sat)
+(echo "Test 15: Subset reflexivity: A ⊆ A")
 (declare-const s (FiniteSet Int))
 (assert (set.subset s s))
 (check-sat)
 
 (reset)
 
-; Test 16: Empty set is subset of all sets: ∅ ⊆ A
+(echo "Test 16: Empty set is subset of all sets: ∅ ⊆ A")
+(set-info :status sat)
 (declare-const s (FiniteSet Int))
 (assert (set.subset (as set.empty (FiniteSet Int)) s))
 (check-sat)
 
 (reset)
 
-; Test 17: Subset transitivity
+(echo "Test 17: Subset transitivity")
+(set-info :status unsat)
 (declare-const s (FiniteSet Int))
 (declare-const t (FiniteSet Int))
 (declare-const u (FiniteSet Int))
@@ -154,10 +171,9 @@
 (assert (set.subset t u))
 (assert (not (set.subset s u)))
 (check-sat)
-
 (reset)
 
-; Test 18: Subset and union: A ⊆ (A ∪ B)
+(echo "Test 18: Subset and union: A ⊆ (A ∪ B)")
 (declare-const s (FiniteSet Int))
 (declare-const t (FiniteSet Int))
 (assert (not (set.subset s (set.union s t))))
@@ -165,7 +181,7 @@
 
 (reset)
 
-; Test 19: Subset with membership
+(echo "Test 19: Subset with membership")
 (declare-const s (FiniteSet Int))
 (declare-const t (FiniteSet Int))
 (declare-const x Int)
@@ -176,7 +192,7 @@
 
 (reset)
 
-; Test 20: Distributivity of union over intersection: A ∪ (B ∩ C) = (A ∪ B) ∩ (A ∪ C)
+(echo "Test 20: Distributivity of union over intersection: A ∪ (B ∩ C) = (A ∪ B) ∩ (A ∪ C)")
 (declare-const a (FiniteSet Int))
 (declare-const b (FiniteSet Int))
 (declare-const c (FiniteSet Int))
@@ -186,7 +202,7 @@
 
 (reset)
 
-; Test 21: Distributivity of intersection over union: A ∩ (B ∪ C) = (A ∩ B) ∪ (A ∩ C)
+(echo "Test 21: Distributivity of intersection over union: A ∩ (B ∪ C) = (A ∩ B) ∪ (A ∩ C)")
 (declare-const a (FiniteSet Int))
 (declare-const b (FiniteSet Int))
 (declare-const c (FiniteSet Int))
@@ -196,7 +212,7 @@
 
 (reset)
 
-; Test 22: Absorption law: A ∪ (A ∩ B) = A
+(echo "Test 22: Absorption law: A ∪ (A ∩ B) = A")
 (declare-const a (FiniteSet Int))
 (declare-const b (FiniteSet Int))
 (assert (not (= (set.union a (set.intersect a b)) a)))
@@ -204,7 +220,7 @@
 
 (reset)
 
-; Test 23: Absorption law: A ∩ (A ∪ B) = A
+(echo "Test 23: Absorption law: A ∩ (A ∪ B) = A")
 (declare-const a (FiniteSet Int))
 (declare-const b (FiniteSet Int))
 (assert (not (= (set.intersect a (set.union a b)) a)))
@@ -212,7 +228,7 @@
 
 (reset)
 
-; Test 24: Difference with intersection: A \ (B ∩ C) ⊇ (A \ B) ∪ (A \ C)
+(echo "Test 24: Difference with intersection: A \ (B ∩ C) ⊇ (A \ B) ∪ (A \ C)")
 (declare-const a (FiniteSet Int))
 (declare-const b (FiniteSet Int))
 (declare-const c (FiniteSet Int))
@@ -222,7 +238,8 @@
 
 (reset)
 
-; Test 25: Range membership
+(echo "Test 25: Range membership")
+(set-info :status sat)
 (declare-const x Int)
 (declare-const y Int)
 (assert (= x 5))
@@ -232,7 +249,8 @@
 
 (reset)
 
-; Test 26: Range bounds - element less than lower bound
+(echo "Test 26: Range bounds - element less than lower bound")
+(set-info :status unsat)
 (declare-const x Int)
 (declare-const y Int)
 (assert (= x 5))
@@ -242,7 +260,8 @@
 
 (reset)
 
-; Test 27: Range bounds - element equal to upper bound (exclusive)
+(echo "Test 27: Range bounds - element equal to upper bound")
+(set-info :status sat)
 (declare-const x Int)
 (declare-const y Int)
 (assert (= x 5))
@@ -252,7 +271,8 @@
 
 (reset)
 
-; Test 28: Range with arithmetic constraints
+(echo "Test 28: Range with arithmetic constraints")
+(set-info :status sat)
 (declare-const x Int)
 (declare-const y Int)
 (declare-const z Int)
@@ -263,25 +283,28 @@
 
 (reset)
 
-; Test 29: Empty range
+(echo "Test 29: Empty range")
+(set-info :status unsat)
 (declare-const x Int)
-(assert (not (= (set.range x x) (as set.empty (FiniteSet Int)))))
+(assert (not (= (set.range (+ x 1) x) (as set.empty (FiniteSet Int)))))
 (check-sat)
 
 (reset)
 
-; Test 30: Range union
+(echo "Test 30: Range union")
+(set-info :status unsat)
 (declare-const a Int)
 (declare-const b Int)
 (declare-const c Int)
 (assert (< a b))
 (assert (< b c))
-(assert (set.subset (set.union (set.range a b) (set.range b c)) (set.range a c)))
+(assert (not (= (set.union (set.range a b) (set.range b c)) (set.range a c))))
 (check-sat)
 
 (reset)
 
-; Test 31: Range intersection
+(echo "Test 31: Range intersection")
+(set-info :status sat)
 (declare-const a Int)
 (declare-const b Int)
 (declare-const c Int)
