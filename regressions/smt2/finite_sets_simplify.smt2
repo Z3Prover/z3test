@@ -125,7 +125,7 @@
 ; s
 
 (simplify (set.intersect (set.union s t) (set.union t s)))
-; union of s and t
+; (set.union s t)
 
 (simplify (set.size (set.union (set.singleton 1) (set.singleton 2))))
 ; 2
