@@ -6,15 +6,15 @@
 
 (declare-fun b!101 () Bool)
 
-(declare-fun e!66 () (Set (_ BitVec 32)))
+(declare-fun e!66 () (FiniteSet (_ BitVec 32)))
 
-(declare-fun error_value!9 () (Set (_ BitVec 32)))
+(declare-fun error_value!9 () (FiniteSet (_ BitVec 32)))
 
 (assert (=> b!101 (= e!66 error_value!9)))
 
 (declare-fun b!102 () Bool)
 
-(declare-fun e!65 () (Set (_ BitVec 32)))
+(declare-fun e!65 () (FiniteSet (_ BitVec 32)))
 
 (assert (=> b!102 (= e!65 e!66)))
 
@@ -32,15 +32,15 @@
 
 (declare-fun b!103 () Bool)
 
-(declare-fun empty!2 () (Set (_ BitVec 32)))
+(declare-fun empty!2 () (FiniteSet (_ BitVec 32)))
 
 (assert (=> b!103 (= e!65 empty!2)))
 
-(declare-fun lt!39 () (Set (_ BitVec 32)))
+(declare-fun lt!39 () (FiniteSet (_ BitVec 32)))
 
 (declare-fun size!0 (IntList!3) Int)
 
-(assert (=> start!21 (> (card lt!39) (size!0 list!1))))
+(assert (=> start!21 (> (set.size lt!39) (size!0 list!1))))
 
 (assert (=> start!21 (= lt!39 e!65)))
 
@@ -50,9 +50,9 @@
 
 (assert (=> start!21 (or b!103 b!102)))
 
-(declare-fun listContent!0 (IntList!3) (Set (_ BitVec 32)))
+(declare-fun listContent!0 (IntList!3) (FiniteSet (_ BitVec 32)))
 
-(assert (=> b!104 (= e!66 (union (singleton (head!5 list!1)) (listContent!0 (tail!9 list!1))))))
+(assert (=> b!104 (= e!66 (set.union (set.singleton (head!5 list!1)) (listContent!0 (tail!9 list!1))))))
 
 (push 1)
 
@@ -72,13 +72,13 @@
 
 (declare-fun d!13 () Bool)
 
-(assert (=> d!13 (= empty!2 (as emptyset (Set (_ BitVec 32))))))
+(assert (=> d!13 (= empty!2 (as emptyset (FiniteSet (_ BitVec 32))))))
 
 (assert (=> b!103 d!13))
 
 (declare-fun b!113 () Bool)
 
-(declare-fun e!72 () (Set (_ BitVec 32)))
+(declare-fun e!72 () (FiniteSet (_ BitVec 32)))
 
 (assert (=> b!113 (= e!72 empty!2)))
 
@@ -94,17 +94,17 @@
 
 (assert (=> d!15 (or b!113 b!115)))
 
-(declare-fun lt!42 () (Set (_ BitVec 32)))
+(declare-fun lt!42 () (FiniteSet (_ BitVec 32)))
 
-(assert (=> d!15 (<= (card lt!42) (size!0 (tail!9 list!1)))))
+(assert (=> d!15 (<= (set.size lt!42) (size!0 (tail!9 list!1)))))
 
 (assert (=> d!15 (= lt!42 (listContent!0 (tail!9 list!1)))))
 
 (declare-fun b!114 () Bool)
 
-(declare-fun e!71 () (Set (_ BitVec 32)))
+(declare-fun e!71 () (FiniteSet (_ BitVec 32)))
 
-(declare-fun error_value!10 () (Set (_ BitVec 32)))
+(declare-fun error_value!10 () (FiniteSet (_ BitVec 32)))
 
 (assert (=> b!114 (= e!71 error_value!10)))
 
@@ -118,7 +118,7 @@
 
 (assert (=> b!115 (or b!116 b!114)))
 
-(assert (=> b!116 (= e!71 (union (singleton (head!5 (tail!9 list!1))) (listContent!0 (tail!9 (tail!9 list!1)))))))
+(assert (=> b!116 (= e!71 (set.union (set.singleton (head!5 (tail!9 list!1))) (listContent!0 (tail!9 (tail!9 list!1)))))))
 
 (assert (=> b!104 d!15))
 
@@ -236,7 +236,7 @@
 
 (declare-fun b!133 () Bool)
 
-(declare-fun e!82 () (Set (_ BitVec 32)))
+(declare-fun e!82 () (FiniteSet (_ BitVec 32)))
 
 (assert (=> b!133 (= e!82 empty!2)))
 
@@ -252,17 +252,17 @@
 
 (assert (=> d!21 (or b!133 b!135)))
 
-(declare-fun lt!47 () (Set (_ BitVec 32)))
+(declare-fun lt!47 () (FiniteSet (_ BitVec 32)))
 
-(assert (=> d!21 (<= (card lt!47) (size!0 (tail!9 (tail!9 list!1))))))
+(assert (=> d!21 (<= (set.size lt!47) (size!0 (tail!9 (tail!9 list!1))))))
 
 (assert (=> d!21 (= lt!47 (listContent!0 (tail!9 (tail!9 list!1))))))
 
 (declare-fun b!134 () Bool)
 
-(declare-fun e!81 () (Set (_ BitVec 32)))
+(declare-fun e!81 () (FiniteSet (_ BitVec 32)))
 
-(declare-fun error_value!13 () (Set (_ BitVec 32)))
+(declare-fun error_value!13 () (FiniteSet (_ BitVec 32)))
 
 (assert (=> b!134 (= e!81 error_value!13)))
 
@@ -276,7 +276,7 @@
 
 (assert (=> b!135 (or b!136 b!134)))
 
-(assert (=> b!136 (= e!81 (union (singleton (head!5 (tail!9 (tail!9 list!1)))) (listContent!0 (tail!9 (tail!9 (tail!9 list!1))))))))
+(assert (=> b!136 (= e!81 (set.union (set.singleton (head!5 (tail!9 (tail!9 list!1)))) (listContent!0 (tail!9 (tail!9 (tail!9 list!1))))))))
 
 (assert (=> b!116 d!21))
 

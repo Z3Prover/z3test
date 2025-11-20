@@ -8,15 +8,15 @@
 
 (declare-fun lt!82 () IntList!7)
 
-(declare-fun s!1 () (Set (_ BitVec 32)))
+(declare-fun s!1 () (FiniteSet (_ BitVec 32)))
 
-(declare-fun listContent!0 (IntList!7) (Set (_ BitVec 32)))
+(declare-fun listContent!0 (IntList!7) (FiniteSet (_ BitVec 32)))
 
 (declare-fun size!0 (IntList!7) Int)
 
-(assert (=> start!57 (or (not (= (listContent!0 lt!82) s!1)) (not (= (size!0 lt!82) (card s!1))))))
+(assert (=> start!57 (or (not (= (listContent!0 lt!82) s!1)) (not (= (size!0 lt!82) (set.size s!1))))))
 
-(declare-fun listFromSet0!0 ((Set (_ BitVec 32)) IntList!7) IntList!7)
+(declare-fun listFromSet0!0 ((FiniteSet (_ BitVec 32)) IntList!7) IntList!7)
 
 (assert (=> start!57 (= lt!82 (listFromSet0!0 s!1 Nil!8))))
 
@@ -38,9 +38,9 @@
 
 (declare-fun b!273 () Bool)
 
-(declare-fun e!151 () (Set (_ BitVec 32)))
+(declare-fun e!151 () (FiniteSet (_ BitVec 32)))
 
-(declare-fun e!152 () (Set (_ BitVec 32)))
+(declare-fun e!152 () (FiniteSet (_ BitVec 32)))
 
 (assert (=> b!273 (= e!151 e!152)))
 
@@ -54,15 +54,15 @@
 
 (assert (=> b!273 (or b!274 b!275)))
 
-(assert (=> b!274 (= e!152 (union (singleton (head!9 lt!82)) (listContent!0 (tail!13 lt!82))))))
+(assert (=> b!274 (= e!152 (set.union (set.singleton (head!9 lt!82)) (listContent!0 (tail!13 lt!82))))))
 
-(declare-fun error_value!28 () (Set (_ BitVec 32)))
+(declare-fun error_value!28 () (FiniteSet (_ BitVec 32)))
 
 (assert (=> b!275 (= e!152 error_value!28)))
 
 (declare-fun b!276 () Bool)
 
-(declare-fun empty!6 () (Set (_ BitVec 32)))
+(declare-fun empty!6 () (FiniteSet (_ BitVec 32)))
 
 (assert (=> b!276 (= e!151 empty!6)))
 
@@ -76,9 +76,9 @@
 
 (assert (=> d!47 (or b!276 b!273)))
 
-(declare-fun lt!85 () (Set (_ BitVec 32)))
+(declare-fun lt!85 () (FiniteSet (_ BitVec 32)))
 
-(assert (=> d!47 (<= (card lt!85) (size!0 lt!82))))
+(assert (=> d!47 (<= (set.size lt!85) (size!0 lt!82))))
 
 (assert (=> d!47 (= lt!85 (listContent!0 lt!82))))
 
@@ -136,9 +136,9 @@
 
 (declare-fun lt!94 () (_ BitVec 32))
 
-(assert (=> b!294 (= e!161 (listFromSet0!0 (setminus s!1 (singleton lt!94)) (Cons!8 lt!94 Nil!8)))))
+(assert (=> b!294 (= e!161 (listFromSet0!0 (setminus s!1 (set.singleton lt!94)) (Cons!8 lt!94 Nil!8)))))
 
-(declare-fun pickOne!0 ((Set (_ BitVec 32))) (_ BitVec 32))
+(declare-fun pickOne!0 ((FiniteSet (_ BitVec 32))) (_ BitVec 32))
 
 (assert (=> b!294 (= lt!94 (pickOne!0 s!1))))
 
@@ -156,7 +156,7 @@
 
 (declare-fun lt!93 () IntList!7)
 
-(assert (=> (and d!51 (= (intersection (listContent!0 Nil!8) s!1) empty!6)) (and (= (listContent!0 lt!93) (union (listContent!0 Nil!8) s!1)) (= (size!0 lt!93) (+ (size!0 Nil!8) (card s!1))))))
+(assert (=> (and d!51 (= (intersection (listContent!0 Nil!8) s!1) empty!6)) (and (= (listContent!0 lt!93) (set.union (listContent!0 Nil!8) s!1)) (= (size!0 lt!93) (+ (size!0 Nil!8) (set.size s!1))))))
 
 (assert (=> d!51 (= lt!93 (listFromSet0!0 s!1 Nil!8))))
 

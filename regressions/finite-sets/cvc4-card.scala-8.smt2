@@ -6,21 +6,21 @@
 
 (declare-fun b!145 () Bool)
 
-(declare-fun e!88 () (Set (_ BitVec 32)))
+(declare-fun e!88 () (FiniteSet (_ BitVec 32)))
 
-(declare-fun empty!3 () (Set (_ BitVec 32)))
+(declare-fun empty!3 () (FiniteSet (_ BitVec 32)))
 
 (assert (=> b!145 (= e!88 empty!3)))
 
 (declare-fun b!146 () Bool)
 
-(declare-fun e!87 () (Set (_ BitVec 32)))
+(declare-fun e!87 () (FiniteSet (_ BitVec 32)))
 
-(declare-fun error_value!14 () (Set (_ BitVec 32)))
+(declare-fun error_value!14 () (FiniteSet (_ BitVec 32)))
 
 (assert (=> b!146 (= e!87 error_value!14)))
 
-(declare-fun lt!50 () (Set (_ BitVec 32)))
+(declare-fun lt!50 () (FiniteSet (_ BitVec 32)))
 
 (declare-datatypes () ( (IntTree!5 (Leaf!5) (Node!5 (left!9 IntTree!5) (value!5 (_ BitVec 32)) (right!9 IntTree!5))) ))
 
@@ -28,7 +28,7 @@
 
 (declare-fun size!1 (IntTree!5) Int)
 
-(assert (=> start!31 (> (card lt!50) (size!1 tree!2))))
+(assert (=> start!31 (> (set.size lt!50) (size!1 tree!2))))
 
 (assert (=> start!31 (= lt!50 e!88)))
 
@@ -42,9 +42,9 @@
 
 (declare-fun b!147 () Bool)
 
-(declare-fun treeContent!0 (IntTree!5) (Set (_ BitVec 32)))
+(declare-fun treeContent!0 (IntTree!5) (FiniteSet (_ BitVec 32)))
 
-(assert (=> b!147 (= e!87 (union (union (treeContent!0 (left!9 tree!2)) (singleton (value!5 tree!2))) (treeContent!0 (right!9 tree!2))))))
+(assert (=> b!147 (= e!87 (set.union (set.union (treeContent!0 (left!9 tree!2)) (set.singleton (value!5 tree!2))) (treeContent!0 (right!9 tree!2))))))
 
 (assert (=> b!148 (= e!88 e!87)))
 
@@ -72,7 +72,7 @@
 
 (declare-fun d!23 () Bool)
 
-(assert (=> d!23 (= empty!3 (as emptyset (Set (_ BitVec 32))))))
+(assert (=> d!23 (= empty!3 (as emptyset (FiniteSet (_ BitVec 32))))))
 
 (assert (=> b!145 d!23))
 
@@ -124,9 +124,9 @@
 
 (declare-fun b!169 () Bool)
 
-(declare-fun e!100 () (Set (_ BitVec 32)))
+(declare-fun e!100 () (FiniteSet (_ BitVec 32)))
 
-(declare-fun e!99 () (Set (_ BitVec 32)))
+(declare-fun e!99 () (FiniteSet (_ BitVec 32)))
 
 (assert (=> b!169 (= e!100 e!99)))
 
@@ -152,15 +152,15 @@
 
 (assert (=> d!27 (or b!172 b!169)))
 
-(declare-fun lt!56 () (Set (_ BitVec 32)))
+(declare-fun lt!56 () (FiniteSet (_ BitVec 32)))
 
-(assert (=> d!27 (<= (card lt!56) (size!1 (left!9 tree!2)))))
+(assert (=> d!27 (<= (set.size lt!56) (size!1 (left!9 tree!2)))))
 
 (assert (=> d!27 (= lt!56 (treeContent!0 (left!9 tree!2)))))
 
-(assert (=> b!170 (= e!99 (union (union (treeContent!0 (left!9 (left!9 tree!2))) (singleton (value!5 (left!9 tree!2)))) (treeContent!0 (right!9 (left!9 tree!2)))))))
+(assert (=> b!170 (= e!99 (set.union (set.union (treeContent!0 (left!9 (left!9 tree!2))) (set.singleton (value!5 (left!9 tree!2)))) (treeContent!0 (right!9 (left!9 tree!2)))))))
 
-(declare-fun error_value!16 () (Set (_ BitVec 32)))
+(declare-fun error_value!16 () (FiniteSet (_ BitVec 32)))
 
 (assert (=> b!171 (= e!99 error_value!16)))
 
@@ -170,9 +170,9 @@
 
 (declare-fun b!173 () Bool)
 
-(declare-fun e!102 () (Set (_ BitVec 32)))
+(declare-fun e!102 () (FiniteSet (_ BitVec 32)))
 
-(declare-fun e!101 () (Set (_ BitVec 32)))
+(declare-fun e!101 () (FiniteSet (_ BitVec 32)))
 
 (assert (=> b!173 (= e!102 e!101)))
 
@@ -198,15 +198,15 @@
 
 (assert (=> d!29 (or b!176 b!173)))
 
-(declare-fun lt!57 () (Set (_ BitVec 32)))
+(declare-fun lt!57 () (FiniteSet (_ BitVec 32)))
 
-(assert (=> d!29 (<= (card lt!57) (size!1 (right!9 tree!2)))))
+(assert (=> d!29 (<= (set.size lt!57) (size!1 (right!9 tree!2)))))
 
 (assert (=> d!29 (= lt!57 (treeContent!0 (right!9 tree!2)))))
 
-(assert (=> b!174 (= e!101 (union (union (treeContent!0 (left!9 (right!9 tree!2))) (singleton (value!5 (right!9 tree!2)))) (treeContent!0 (right!9 (right!9 tree!2)))))))
+(assert (=> b!174 (= e!101 (set.union (set.union (treeContent!0 (left!9 (right!9 tree!2))) (set.singleton (value!5 (right!9 tree!2)))) (treeContent!0 (right!9 (right!9 tree!2)))))))
 
-(declare-fun error_value!17 () (Set (_ BitVec 32)))
+(declare-fun error_value!17 () (FiniteSet (_ BitVec 32)))
 
 (assert (=> b!175 (= e!101 error_value!17)))
 
