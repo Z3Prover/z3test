@@ -136,7 +136,7 @@
 
 (declare-fun lt!94 () (_ BitVec 32))
 
-(assert (=> b!294 (= e!161 (listFromSet0!0 (setminus s!1 (set.singleton lt!94)) (Cons!8 lt!94 Nil!8)))))
+(assert (=> b!294 (= e!161 (listFromSet0!0 (set.difference s!1 (set.singleton lt!94)) (Cons!8 lt!94 Nil!8)))))
 
 (declare-fun pickOne!0 ((FiniteSet (_ BitVec 32))) (_ BitVec 32))
 
@@ -144,7 +144,7 @@
 
 (declare-fun d!51 () Bool)
 
-(assert (=> (and d!51 (= (intersection (listContent!0 Nil!8) s!1) empty!6)) (= (listFromSet0!0 s!1 Nil!8) e!161)))
+(assert (=> (and d!51 (= (set.intersect (listContent!0 Nil!8) s!1) empty!6)) (= (listFromSet0!0 s!1 Nil!8) e!161)))
 
 (declare-fun b!293 () Bool)
 
@@ -156,7 +156,7 @@
 
 (declare-fun lt!93 () IntList!7)
 
-(assert (=> (and d!51 (= (intersection (listContent!0 Nil!8) s!1) empty!6)) (and (= (listContent!0 lt!93) (set.union (listContent!0 Nil!8) s!1)) (= (size!0 lt!93) (+ (size!0 Nil!8) (set.size s!1))))))
+(assert (=> (and d!51 (= (set.intersect (listContent!0 Nil!8) s!1) empty!6)) (and (= (listContent!0 lt!93) (set.union (listContent!0 Nil!8) s!1)) (= (size!0 lt!93) (+ (size!0 Nil!8) (set.size s!1))))))
 
 (assert (=> d!51 (= lt!93 (listFromSet0!0 s!1 Nil!8))))
 

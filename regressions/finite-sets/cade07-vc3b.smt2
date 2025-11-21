@@ -8,8 +8,8 @@
 
 (assert
 (and (subset listContent!16 alloc!17)
-     (member a!18 alloc!17)
-     (member b!19 alloc!17)
+     (set.in a!18 alloc!17)
+     (set.in b!19 alloc!17)
      (distinct (set.size (set.union listContent!16 (set.singleton x!20)))
                (+ (set.size listContent!16) 1)))
 )

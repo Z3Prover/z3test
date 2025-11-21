@@ -8,9 +8,9 @@
 
 (assert
 (and (subset content!16 alloc!17)
-     (not (member x1!18 alloc!17))
-     (not (member x2!19 (set.union alloc!17 (set.singleton x1!18))))
-     (not (member x3!20
+     (not (set.in x1!18 alloc!17))
+     (not (set.in x2!19 (set.union alloc!17 (set.singleton x1!18))))
+     (not (set.in x3!20
                        (set.union alloc!17
                               (set.union (set.singleton x1!18) (set.singleton x2!19)))))
      (distinct (set.size (set.union content!16

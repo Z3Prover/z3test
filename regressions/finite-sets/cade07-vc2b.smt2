@@ -8,10 +8,10 @@
 (declare-fun objct!21 () (FiniteSet Int))
 
 (assert
-(and (member listRoot!16 list!17)
+(and (set.in listRoot!16 list!17)
      (subset listContent!18 objectAlloc!19)
-     (member x!20 objct!21)
-     (member x!20 objectAlloc!19)
+     (set.in x!20 objct!21)
+     (set.in x!20 objectAlloc!19)
      (distinct (set.size (set.union listContent!18 (set.singleton x!20)))
                (+ (set.size listContent!18) 1)))
 )

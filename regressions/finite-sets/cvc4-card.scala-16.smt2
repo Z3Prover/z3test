@@ -18,7 +18,7 @@
 
 (declare-fun listFromSet0!0 ((FiniteSet (_ BitVec 32)) IntList!9) IntList!9)
 
-(assert (=> b!312 (= e!170 (listFromSet0!0 (setminus s!2 (set.singleton lt!102)) (Cons!10 lt!102 acc!0)))))
+(assert (=> b!312 (= e!170 (listFromSet0!0 (set.difference s!2 (set.singleton lt!102)) (Cons!10 lt!102 acc!0)))))
 
 (declare-fun pickOne!0 ((FiniteSet (_ BitVec 32))) (_ BitVec 32))
 
@@ -32,7 +32,7 @@
 
 (declare-fun size!0 (IntList!9) Int)
 
-(assert (=> start!71 (and (= (intersection (listContent!0 acc!0) s!2) empty!8) (or (not (= (listContent!0 lt!103) (set.union (listContent!0 acc!0) s!2))) (not (= (size!0 lt!103) (+ (size!0 acc!0) (set.size s!2))))))))
+(assert (=> start!71 (and (= (set.intersect (listContent!0 acc!0) s!2) empty!8) (or (not (= (listContent!0 lt!103) (set.union (listContent!0 acc!0) s!2))) (not (= (size!0 lt!103) (+ (size!0 acc!0) (set.size s!2))))))))
 
 (assert (=> start!71 (= lt!103 e!170)))
 
@@ -110,7 +110,7 @@
 
 (declare-fun d!59 () Bool)
 
-(assert (=> d!59 (= empty!8 (as emptyset (FiniteSet (_ BitVec 32))))))
+(assert (=> d!59 (= empty!8 (as set.empty (FiniteSet (_ BitVec 32))))))
 
 (assert (=> start!71 d!59))
 
@@ -258,17 +258,17 @@
 
 (declare-fun lt!117 () (_ BitVec 32))
 
-(assert (=> b!349 (= e!189 (listFromSet0!0 (setminus (setminus s!2 (set.singleton lt!102)) (set.singleton lt!117)) (Cons!10 lt!117 (Cons!10 lt!102 acc!0))))))
+(assert (=> b!349 (= e!189 (listFromSet0!0 (set.difference (set.difference s!2 (set.singleton lt!102)) (set.singleton lt!117)) (Cons!10 lt!117 (Cons!10 lt!102 acc!0))))))
 
-(assert (=> b!349 (= lt!117 (pickOne!0 (setminus s!2 (set.singleton lt!102))))))
+(assert (=> b!349 (= lt!117 (pickOne!0 (set.difference s!2 (set.singleton lt!102))))))
 
 (declare-fun d!67 () Bool)
 
-(assert (=> (and d!67 (= (intersection (listContent!0 (Cons!10 lt!102 acc!0)) (setminus s!2 (set.singleton lt!102))) empty!8)) (= (listFromSet0!0 (setminus s!2 (set.singleton lt!102)) (Cons!10 lt!102 acc!0)) e!189)))
+(assert (=> (and d!67 (= (set.intersect (listContent!0 (Cons!10 lt!102 acc!0)) (set.difference s!2 (set.singleton lt!102))) empty!8)) (= (listFromSet0!0 (set.difference s!2 (set.singleton lt!102)) (Cons!10 lt!102 acc!0)) e!189)))
 
 (declare-fun b!350 () Bool)
 
-(assert (=> d!67 (= b!350 (= (setminus s!2 (set.singleton lt!102)) empty!8))))
+(assert (=> d!67 (= b!350 (= (set.difference s!2 (set.singleton lt!102)) empty!8))))
 
 (assert (=> d!67 (or (not b!350) (not b!349))))
 
@@ -276,9 +276,9 @@
 
 (declare-fun lt!116 () IntList!9)
 
-(assert (=> (and d!67 (= (intersection (listContent!0 (Cons!10 lt!102 acc!0)) (setminus s!2 (set.singleton lt!102))) empty!8)) (and (= (listContent!0 lt!116) (set.union (listContent!0 (Cons!10 lt!102 acc!0)) (setminus s!2 (set.singleton lt!102)))) (= (size!0 lt!116) (+ (size!0 (Cons!10 lt!102 acc!0)) (set.size (setminus s!2 (set.singleton lt!102))))))))
+(assert (=> (and d!67 (= (set.intersect (listContent!0 (Cons!10 lt!102 acc!0)) (set.difference s!2 (set.singleton lt!102))) empty!8)) (and (= (listContent!0 lt!116) (set.union (listContent!0 (Cons!10 lt!102 acc!0)) (set.difference s!2 (set.singleton lt!102)))) (= (size!0 lt!116) (+ (size!0 (Cons!10 lt!102 acc!0)) (set.size (set.difference s!2 (set.singleton lt!102))))))))
 
-(assert (=> d!67 (= lt!116 (listFromSet0!0 (setminus s!2 (set.singleton lt!102)) (Cons!10 lt!102 acc!0)))))
+(assert (=> d!67 (= lt!116 (listFromSet0!0 (set.difference s!2 (set.singleton lt!102)) (Cons!10 lt!102 acc!0)))))
 
 (assert (=> b!350 (= e!189 (Cons!10 lt!102 acc!0))))
 
@@ -290,7 +290,7 @@
 
 (assert (=> d!69 (= (pickOne!0 s!2) x$3!10)))
 
-(assert (=> d!69 (member x$3!10 s!2)))
+(assert (=> d!69 (set.in x$3!10 s!2)))
 
 (assert (=> b!312 d!69))
 
@@ -694,17 +694,17 @@
 
 (declare-fun b!383 () Bool)
 
-(assert (=> b!383 (= e!206 (listFromSet0!0 (setminus (setminus (setminus s!2 (set.singleton lt!102)) (set.singleton lt!117)) (set.singleton lt!127)) (Cons!10 lt!127 (Cons!10 lt!117 (Cons!10 lt!102 acc!0)))))))
+(assert (=> b!383 (= e!206 (listFromSet0!0 (set.difference (set.difference (set.difference s!2 (set.singleton lt!102)) (set.singleton lt!117)) (set.singleton lt!127)) (Cons!10 lt!127 (Cons!10 lt!117 (Cons!10 lt!102 acc!0)))))))
 
-(assert (=> b!383 (= lt!127 (pickOne!0 (setminus (setminus s!2 (set.singleton lt!102)) (set.singleton lt!117))))))
+(assert (=> b!383 (= lt!127 (pickOne!0 (set.difference (set.difference s!2 (set.singleton lt!102)) (set.singleton lt!117))))))
 
 (declare-fun d!87 () Bool)
 
-(assert (=> (and d!87 (= (intersection (listContent!0 (Cons!10 lt!117 (Cons!10 lt!102 acc!0))) (setminus (setminus s!2 (set.singleton lt!102)) (set.singleton lt!117))) empty!8)) (= (listFromSet0!0 (setminus (setminus s!2 (set.singleton lt!102)) (set.singleton lt!117)) (Cons!10 lt!117 (Cons!10 lt!102 acc!0))) e!206)))
+(assert (=> (and d!87 (= (set.intersect (listContent!0 (Cons!10 lt!117 (Cons!10 lt!102 acc!0))) (set.difference (set.difference s!2 (set.singleton lt!102)) (set.singleton lt!117))) empty!8)) (= (listFromSet0!0 (set.difference (set.difference s!2 (set.singleton lt!102)) (set.singleton lt!117)) (Cons!10 lt!117 (Cons!10 lt!102 acc!0))) e!206)))
 
 (declare-fun b!384 () Bool)
 
-(assert (=> d!87 (= b!384 (= (setminus (setminus s!2 (set.singleton lt!102)) (set.singleton lt!117)) empty!8))))
+(assert (=> d!87 (= b!384 (= (set.difference (set.difference s!2 (set.singleton lt!102)) (set.singleton lt!117)) empty!8))))
 
 (assert (=> d!87 (or (not b!384) (not b!383))))
 
@@ -712,9 +712,9 @@
 
 (declare-fun lt!126 () IntList!9)
 
-(assert (=> (and d!87 (= (intersection (listContent!0 (Cons!10 lt!117 (Cons!10 lt!102 acc!0))) (setminus (setminus s!2 (set.singleton lt!102)) (set.singleton lt!117))) empty!8)) (and (= (listContent!0 lt!126) (set.union (listContent!0 (Cons!10 lt!117 (Cons!10 lt!102 acc!0))) (setminus (setminus s!2 (set.singleton lt!102)) (set.singleton lt!117)))) (= (size!0 lt!126) (+ (size!0 (Cons!10 lt!117 (Cons!10 lt!102 acc!0))) (set.size (setminus (setminus s!2 (set.singleton lt!102)) (set.singleton lt!117))))))))
+(assert (=> (and d!87 (= (set.intersect (listContent!0 (Cons!10 lt!117 (Cons!10 lt!102 acc!0))) (set.difference (set.difference s!2 (set.singleton lt!102)) (set.singleton lt!117))) empty!8)) (and (= (listContent!0 lt!126) (set.union (listContent!0 (Cons!10 lt!117 (Cons!10 lt!102 acc!0))) (set.difference (set.difference s!2 (set.singleton lt!102)) (set.singleton lt!117)))) (= (size!0 lt!126) (+ (size!0 (Cons!10 lt!117 (Cons!10 lt!102 acc!0))) (set.size (set.difference (set.difference s!2 (set.singleton lt!102)) (set.singleton lt!117))))))))
 
-(assert (=> d!87 (= lt!126 (listFromSet0!0 (setminus (setminus s!2 (set.singleton lt!102)) (set.singleton lt!117)) (Cons!10 lt!117 (Cons!10 lt!102 acc!0))))))
+(assert (=> d!87 (= lt!126 (listFromSet0!0 (set.difference (set.difference s!2 (set.singleton lt!102)) (set.singleton lt!117)) (Cons!10 lt!117 (Cons!10 lt!102 acc!0))))))
 
 (assert (=> b!384 (= e!206 (Cons!10 lt!117 (Cons!10 lt!102 acc!0)))))
 
@@ -724,9 +724,9 @@
 
 (declare-fun x$3!11 () (_ BitVec 32))
 
-(assert (=> d!89 (= (pickOne!0 (setminus s!2 (set.singleton lt!102))) x$3!11)))
+(assert (=> d!89 (= (pickOne!0 (set.difference s!2 (set.singleton lt!102))) x$3!11)))
 
-(assert (=> d!89 (member x$3!11 (setminus s!2 (set.singleton lt!102)))))
+(assert (=> d!89 (set.in x$3!11 (set.difference s!2 (set.singleton lt!102)))))
 
 (assert (=> b!349 d!89))
 

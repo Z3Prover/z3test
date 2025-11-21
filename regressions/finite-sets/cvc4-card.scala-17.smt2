@@ -18,7 +18,7 @@
 
 (declare-fun pickOne!0 ((FiniteSet (_ BitVec 32))) (_ BitVec 32))
 
-(assert (=> start!83 (and (and (and (= (intersection (listContent!0 acc!0) s!2) empty!9) (not (= s!2 empty!9))) (= e!5 (pickOne!0 s!2))) (not (= (intersection (listContent!0 (Cons!11 e!5 acc!0)) (setminus s!2 (set.singleton e!5))) empty!9)))))
+(assert (=> start!83 (and (and (and (= (set.intersect (listContent!0 acc!0) s!2) empty!9) (not (= s!2 empty!9))) (= e!5 (pickOne!0 s!2))) (not (= (set.intersect (listContent!0 (Cons!11 e!5 acc!0)) (set.difference s!2 (set.singleton e!5))) empty!9)))))
 
 (push 1)
 
@@ -86,7 +86,7 @@
 
 (declare-fun d!93 () Bool)
 
-(assert (=> d!93 (= empty!9 (as emptyset (FiniteSet (_ BitVec 32))))))
+(assert (=> d!93 (= empty!9 (as set.empty (FiniteSet (_ BitVec 32))))))
 
 (assert (=> start!83 d!93))
 
@@ -96,7 +96,7 @@
 
 (assert (=> d!95 (= (pickOne!0 s!2) x$3!14)))
 
-(assert (=> d!95 (member x$3!14 s!2)))
+(assert (=> d!95 (set.in x$3!14 s!2)))
 
 (assert (=> start!83 d!95))
 

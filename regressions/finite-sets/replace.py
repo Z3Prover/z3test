@@ -21,9 +21,9 @@ def compile_patterns():
 
     # Avoid replacing when already prefixed by 'set.' using negative lookbehind
     # Note: Python's regex engine supports variable-length lookbehind if fixed length; here it's fixed 'set.'.
-    p_singleton = (re.compile(r"(?<!set\.)\bsingleton\b"), "set.singleton")
-    p_union     = (re.compile(r"(?<!set\.)\bunion\b"), "set.union")
-    p_card      = (re.compile(r"(?<!set\.)\bcard\b"), "set.size")
+    p_singleton = (re.compile(r"(?<!set\.)\bintersection\b"), "set.intersect")
+    p_union     = (re.compile(r"(?<!set\.)\bsetminus\b"), "set.difference")
+    p_card      = (re.compile(r"(?<!set\.)\bemptyset\b"), "set.empty")
 
     return [p_set, p_singleton, p_union, p_card]
 

@@ -12,7 +12,7 @@
 
 (declare-fun empty!7 () (FiniteSet (_ BitVec 32)))
 
-(assert (=> start!65 (not (= (intersection (listContent!0 Nil!9) s!1) empty!7))))
+(assert (=> start!65 (not (= (set.intersect (listContent!0 Nil!9) s!1) empty!7))))
 
 (push 1)
 
@@ -80,7 +80,7 @@
 
 (declare-fun d!55 () Bool)
 
-(assert (=> d!55 (= empty!7 (as emptyset (FiniteSet (_ BitVec 32))))))
+(assert (=> d!55 (= empty!7 (as set.empty (FiniteSet (_ BitVec 32))))))
 
 (assert (=> start!65 d!55))
 

@@ -72,7 +72,7 @@
 
 (declare-fun d!13 () Bool)
 
-(assert (=> d!13 (= empty!2 (as emptyset (FiniteSet (_ BitVec 32))))))
+(assert (=> d!13 (= empty!2 (as set.empty (FiniteSet (_ BitVec 32))))))
 
 (assert (=> b!103 d!13))
 
