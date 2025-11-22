@@ -7,7 +7,7 @@
 (declare-fun x!20 () Int)
 
 (assert
-(and (subset listContent!16 alloc!17)
+(and (set.subset listContent!16 alloc!17)
      (set.in a!18 alloc!17)
      (set.in b!19 alloc!17)
      (distinct (set.size (set.union listContent!16 (set.singleton x!20)))

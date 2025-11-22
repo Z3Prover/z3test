@@ -7,10 +7,10 @@
 (declare-fun alloc2!21 () (FiniteSet Int))
 (declare-fun x3!22 () Int)
 (assert
-(and (subset content!16 alloc0!17)
-     (subset (set.union alloc0!17 (set.singleton x1!18)) alloc1!19)
+(and (set.subset content!16 alloc0!17)
+     (set.subset (set.union alloc0!17 (set.singleton x1!18)) alloc1!19)
      (not (set.in x2!20 alloc1!19))
-     (subset (set.union alloc1!19 (set.singleton x2!20)) alloc2!21)
+     (set.subset (set.union alloc1!19 (set.singleton x2!20)) alloc2!21)
      (not (set.in x3!22 alloc2!21))
      (distinct (set.size (set.union content!16
                                    (set.union (set.union (set.singleton x1!18)

@@ -5,7 +5,7 @@
 (declare-fun x2!19 () Int)
 (declare-fun x3!20 () Int)
 (assert
-(and (subset content!16 alloc!17)
+(and (set.subset content!16 alloc!17)
      (not (set.in x1!18 alloc!17))
      (not (set.in x2!19 alloc!17))
      (not (set.in x3!20
