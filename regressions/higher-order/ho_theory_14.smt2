@@ -1,6 +1,6 @@
 ; HO + Reals: approximation via HO function
 (set-logic HO_ALL)
-(declare-fun approx () (-> (-> Real Real) Real Real Real))
+(declare-fun approx () (-> (-> Real Real) Real Real))
 ; approx f a = f(a) is trivial approximation
 (assert (forall ((f (-> Real Real)) (a Real))
   (= (approx f a) (f a))))
