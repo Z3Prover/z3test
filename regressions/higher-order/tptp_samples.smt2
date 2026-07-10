@@ -1,3 +1,33 @@
+; NUM638_1.smt2
+
+
+; Auto-generated from TPTP input: C:\TPTP-v9.2.1\Problems\NUM\NUM638^1.p
+(set-logic ALL)
+(declare-sort nat 0)
+(declare-fun n_1 () nat)
+(declare-fun x () nat)
+(declare-fun suc () (Array nat nat))
+(declare-fun some () (Array (Array nat Bool) Bool))
+(assert (not (= x n_1)))
+(assert (forall ((Xx nat) (Xy nat))
+          (! (=> (= (select suc Xx) (select suc Xy)) (= Xx Xy)) :weight 0)))
+(assert (forall ((Xx nat))
+          (! (let ((a!1 (select some (lambda ((Xu nat)) (= Xx (select suc Xu))))))
+               (=> (not (= Xx n_1)) a!1))
+             :weight 0)))
+(assert (let ((a!1 (forall ((Xx_0 nat) (Xy nat))
+                     (! (=> (= x (select suc Xx_0))
+                            (=> (= x (select suc Xy)) (= Xx_0 Xy)))
+                        :weight 0)))
+              (a!2 (select some (lambda ((Xu nat)) (= x (select suc Xu))))))
+          (not (not (=> a!1 (not a!2))))))
+(check-sat)
+; (get-info :reason-unknown)
+
+
+(reset)
+;(exit)
+
 ; SEU934_5.smt2
 ; Auto-generated from TPTP input: C:\TPTP-v9.2.1\Problems\SEU\SEU934^5.p
 (set-logic ALL)
@@ -24,37 +54,10 @@
 (assert (not (= X Y)))
 (check-sat)
 (get-model)
-(exit)
+;(exit)
 (reset)
 
 
-; NUM638_1.smt2
-
-
-; Auto-generated from TPTP input: C:\TPTP-v9.2.1\Problems\NUM\NUM638^1.p
-(set-logic ALL)
-(declare-sort nat 0)
-(declare-fun n_1 () nat)
-(declare-fun x () nat)
-(declare-fun suc () (Array nat nat))
-(declare-fun some () (Array (Array nat Bool) Bool))
-(assert (not (= x n_1)))
-(assert (forall ((Xx nat) (Xy nat))
-          (! (=> (= (select suc Xx) (select suc Xy)) (= Xx Xy)) :weight 0)))
-(assert (forall ((Xx nat))
-          (! (let ((a!1 (select some (lambda ((Xu nat)) (= Xx (select suc Xu))))))
-               (=> (not (= Xx n_1)) a!1))
-             :weight 0)))
-(assert (let ((a!1 (forall ((Xx_0 nat) (Xy nat))
-                     (! (=> (= x (select suc Xx_0))
-                            (=> (= x (select suc Xy)) (= Xx_0 Xy)))
-                        :weight 0)))
-              (a!2 (select some (lambda ((Xu nat)) (= x (select suc Xu))))))
-          (not (not (=> a!1 (not a!2))))))
-(check-sat)
-
-
-(reset)
 
 
 
@@ -134,6 +137,7 @@
                     (=> a!1 (= G H)))
                   :weight 0))))
 (check-sat)
+(get-info :all-statistics)
 
 ; SEU925_5.smt2
 
