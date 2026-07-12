@@ -1,5 +1,5 @@
 (goals
 (goal
   false
-  :precision precise :depth 7)
+  :precision precise :depth 8)
 )
