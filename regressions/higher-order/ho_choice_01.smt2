@@ -1,5 +1,6 @@
 ; Choice term: basic witness
 ; Hilbert choice: (choice ((x T)) phi) denotes some x satisfying phi
+(set-option :smt.ho_matching true)
 (set-logic HO_ALL)
 (declare-sort U 0)
 (declare-fun P () (-> U Bool))

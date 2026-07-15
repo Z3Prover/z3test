@@ -1,0 +1,36 @@
+(reset)
+(declare-sort A)
+(assert (forall ((K (Array A A A))) (exists ((x A) (y A)) (not (= (select K x y) x)))))
+(check-sat)
+
+;(exit)
+(reset)
+(declare-sort A)
+(assert (forall ((K (Array A A A))) (exists ((x A) (y A)) (not (= (select K x y) y)))))
+(check-sat)
+
+
+;(exit)
+(reset)
+(declare-sort A)
+(declare-sort B)
+(assert (forall ((K (Array A B A))) (exists ((x A) (y B)) (not (= (select K x y) x)))))
+(check-sat)
+
+;(exit)
+(reset)
+(declare-sort A)
+(declare-sort B)
+(assert (forall ((K (Array A B B))) (exists ((x A) (y B)) (not (= (select K x y) y)))))
+(check-sat)
+
+;(exit)
+(reset)
+(declare-sort A)
+(assert (forall ((K (-> A (-> A A)))) (exists ((x A) (y A)) (not (= ((K x) y) x)))))
+(check-sat)
+
+(reset)
+(declare-sort A)
+(assert (forall ((K (-> A (-> A A)))) (exists ((x A) (y A)) (not (= ((K x) y) y)))))
+(check-sat)

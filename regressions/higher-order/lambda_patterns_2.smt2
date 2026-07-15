@@ -10,6 +10,8 @@
 (set-option :pi.decompose_patterns false)
 (set-option :smt.arith.solver 6)
 (set-option :smt.random-seed 0)
+(set-option :smt.ho_matching true)
+
 (declare-sort Term)
 (declare-datatypes () ((Universe 
 (Univ (ulevel Int)))))
