@@ -36,10 +36,10 @@ sat
 unsat
 sat
 (
-  (define-fun a () String
-    "ab")
   (define-fun b () String
     "cd")
+  (define-fun a () String
+    "ab")
   (define-fun c () String
     "")
   (define-fun d () String
@@ -49,10 +49,10 @@ sat
 )
 sat
 (
-  (define-fun a () String
-    "ab")
   (define-fun b () String
     "cd")
+  (define-fun a () String
+    "ab")
   (define-fun c () String
     "")
   (define-fun d () String
@@ -62,10 +62,10 @@ sat
 )
 sat
 (
-  (define-fun a () String
-    "cd")
   (define-fun b () String
     "ab")
+  (define-fun a () String
+    "cd")
   (define-fun c () String
     "")
   (define-fun d () String

@@ -61,10 +61,10 @@ unsat
 sat
 sat
 (
-  (define-fun a () String
-    "abc")
   (define-fun b () String
     "de")
+  (define-fun a () String
+    "abc")
   (define-fun i () Int
     0)
   (define-fun c () String
