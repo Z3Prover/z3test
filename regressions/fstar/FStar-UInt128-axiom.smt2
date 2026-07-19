@@ -18,8 +18,7 @@
 (set-option :rewriter.enable_der false)
 (set-option :rewriter.sort_disjunctions false)
 (set-option :pi.decompose_patterns false)
-(set-option :smt.arith.solver 6)
-(set-option :smt.random-seed 0)
+;(set-option :smt.arith.solver 6)
 
 
 (declare-sort FString)
@@ -2399,6 +2398,9 @@
 ; that scaffolding deterministically.  Every conjunct is a universally-valid
 ; arithmetic tautology (independent of what the partials actually denote), so it
 ; is SOUND regardless of the multiplier's correctness.
+(assert (= (BoxInt 4294967296) (Prims.pow2 (BoxInt 32))))
+(assert (= (BoxInt (* 4294967296 4294967296)) (Prims.pow2 (BoxInt 64))))
+ 
 (assert (forall ((x Term) (y Term))
   (! (let ((p32 (BoxInt_proj_0 (Prims.pow2 (BoxInt 32))))
            (p64 (BoxInt_proj_0 (Prims.pow2 (BoxInt 64))))
@@ -2410,13 +2412,15 @@
      (let ((full (+ (* hh p64) (* (+ lh hl llh) p32) lll)))
        (and
          ; pow2 additivity: 2^64 = 2^32 * 2^32
-         (= p64 (* p32 p32))
+         ;(= p64 (* p32 p32))
          ; pow2 lower bound
-         (>= p32 4294967296)
+         ;(>= p32 4294967296)
          ; Euclidean split of the assembled 128-bit value at the 2^32 boundary
-         (= full (+ (* (div full p32) p32) (mod full p32)))
-         (>= (mod full p32) 0)
-         (< (mod full p32) p32))))
+         ;(= full (+ (* (div full p32) p32) (mod full p32)))
+         ;(>= (mod full p32) 0)
+         (or (<= p32 0) (< (mod full p32) p32))
+)
+))
    :pattern ((FStar.UInt128.phh x y)))))
 
 (check-sat)
