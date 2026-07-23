@@ -1,0 +1,13 @@
+sat
+(
+  (define-fun elements () (Seq Int)
+    (seq.unit 6))
+  (define-fun all () (Seq Int)
+    (seq.++ (seq.unit 6) (seq.unit 0)))
+  (define-fun initial () Int
+    0)
+  (define-fun final () Int
+    6)
+  (define-fun seq.nth_u ((x!0 (Seq Int)) (x!1 Int)) Int
+    3)
+)

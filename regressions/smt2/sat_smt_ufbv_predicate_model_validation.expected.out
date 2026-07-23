@@ -1,0 +1,10 @@
+sat
+(
+  (define-fun x () (_ BitVec 4)
+    #xe)
+  (define-fun y () (_ BitVec 4)
+    #x0)
+  (define-fun p ((x!0 (_ BitVec 4))) Bool
+    (ite (= x!0 #xe) true
+      false))
+)
