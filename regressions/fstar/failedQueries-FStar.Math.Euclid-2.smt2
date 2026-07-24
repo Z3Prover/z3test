@@ -13,7 +13,6 @@
 (set-option :rewriter.sort_disjunctions false)
 (set-option :pi.decompose_patterns false)
 (set-option :smt.arith.solver 6)
-(set-option :smt.random-seed 0)
 
 
 (declare-sort FString)
