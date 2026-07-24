@@ -1,5 +1,6 @@
 ; Regression for Z3 issue #10175.
 (set-logic QF_FP)
+(set-option :model_validate true)
 ; pre-wrap control: exact quotient is 2.0.
 (push)
 (declare-fun d_2_4 () (_ FloatingPoint 2 4))
@@ -113,6 +114,16 @@
 (declare-fun d_rtz () (_ FloatingPoint 2 6))
 (assert (fp.eq d_rtz (fp #b0 #b00 #b00010)))
 (assert (fp.eq (fp.div RTZ (fp #b1 #b10 #b10100) d_rtz) (_ -oo 2 6)))
+(check-sat)
+(pop)
+; Original issue path through real-to-FP conversion and model validation.
+(push)
+(define-fun a () (_ FloatingPoint 2 6) (_ -oo 2 6))
+(declare-fun b () (_ FloatingPoint 2 6))
+(define-fun c () (_ FloatingPoint 2 6) ((_ to_fp 2 6) RTZ -3.25))
+(assert (and
+  (fp.eq b ((_ to_fp 2 6) RTZ 0.0625))
+  (fp.eq a (fp.div RTZ c b))))
 (check-sat)
 (pop)
 (push)
