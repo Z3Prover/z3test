@@ -12,7 +12,7 @@
 (set-option :rewriter.enable_der false)
 (set-option :rewriter.sort_disjunctions false)
 (set-option :pi.decompose_patterns false)
-(set-option :smt.arith.solver 6)
+;(set-option :smt.arith.solver 6)
 
 
 (declare-sort FString)
