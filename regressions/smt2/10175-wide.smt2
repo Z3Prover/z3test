@@ -8,6 +8,24 @@
   (fp #b0 #b10 #b0000000))))
 (check-sat)
 (pop)
+; Two-bit workspace growth: max finite / min subnormal.
+(push)
+(declare-fun d_2_16_upper () (_ FloatingPoint 2 16))
+(assert (fp.eq d_2_16_upper (fp #b0 #b00 #b000000000000001)))
+(assert (not (fp.eq
+  (fp.div RTZ (fp #b0 #b10 #b111111111111111) d_2_16_upper)
+  (fp #b0 #b10 #b111111111111111))))
+(check-sat)
+(pop)
+; Two-bit workspace growth: min subnormal / max finite.
+(push)
+(declare-fun d_2_16_lower () (_ FloatingPoint 2 16))
+(assert (fp.eq d_2_16_lower (fp #b0 #b10 #b111111111111111)))
+(assert (not (fp.eq
+  (fp.div RTP (fp #b0 #b00 #b000000000000001) d_2_16_lower)
+  (fp #b0 #b00 #b000000000000001))))
+(check-sat)
+(pop)
 ; Exponent above the rounder's signed workspace: max finite / min subnormal.
 (push)
 (declare-fun d_2_8_upper () (_ FloatingPoint 2 8))

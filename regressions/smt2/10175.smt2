@@ -73,13 +73,31 @@
   (fp #b0 #b100 #b00000000))))
 (check-sat)
 (pop)
-; wider format: exact quotient is 2.0.
+; largest wide-LZ format covered by the ebits+2 exponent workspace: exact quotient is 2.0.
 (push)
 (declare-fun d_3_11 () (_ FloatingPoint 3 11))
 (assert (fp.eq d_3_11 (fp #b0 #b000 #b0000000100)))
 (assert (not (fp.eq
   (fp.div RTZ (fp #b0 #b000 #b0000001000) d_3_11)
   (fp #b0 #b100 #b0000000000))))
+(check-sat)
+(pop)
+; First FP(3,*) exponent outside the ebits+2 workspace: max finite / min subnormal.
+(push)
+(declare-fun d_3_12_upper () (_ FloatingPoint 3 12))
+(assert (fp.eq d_3_12_upper (fp #b0 #b000 #b00000000001)))
+(assert (not (fp.eq
+  (fp.div RTZ (fp #b0 #b110 #b11111111111) d_3_12_upper)
+  (fp #b0 #b110 #b11111111111))))
+(check-sat)
+(pop)
+; Opposite FP(3,12) endpoint: min subnormal / max finite.
+(push)
+(declare-fun d_3_12_lower () (_ FloatingPoint 3 12))
+(assert (fp.eq d_3_12_lower (fp #b0 #b110 #b11111111111)))
+(assert (not (fp.eq
+  (fp.div RTP (fp #b0 #b000 #b00000000001) d_3_12_lower)
+  (fp #b0 #b000 #b00000000001))))
 (check-sat)
 (pop)
 ; pre-wrap control: exact quotient is 2.0.
@@ -100,13 +118,31 @@
   (fp #b0 #b1000 #b0000000000000000))))
 (check-sat)
 (pop)
-; wider format: exact quotient is 2.0.
+; largest wide-LZ format covered by the ebits+2 exponent workspace: exact quotient is 2.0.
 (push)
 (declare-fun d_4_19 () (_ FloatingPoint 4 19))
 (assert (fp.eq d_4_19 (fp #b0 #b0000 #b000000000000000100)))
 (assert (not (fp.eq
   (fp.div RTZ (fp #b0 #b0000 #b000000000000001000) d_4_19)
   (fp #b0 #b1000 #b000000000000000000))))
+(check-sat)
+(pop)
+; First FP(4,*) exponent outside the ebits+2 workspace: max finite / min subnormal.
+(push)
+(declare-fun d_4_20_upper () (_ FloatingPoint 4 20))
+(assert (fp.eq d_4_20_upper (fp #b0 #b0000 #b0000000000000000001)))
+(assert (not (fp.eq
+  (fp.div RTZ (fp #b0 #b1110 #b1111111111111111111) d_4_20_upper)
+  (fp #b0 #b1110 #b1111111111111111111))))
+(check-sat)
+(pop)
+; Opposite FP(4,20) endpoint: min subnormal / max finite.
+(push)
+(declare-fun d_4_20_lower () (_ FloatingPoint 4 20))
+(assert (fp.eq d_4_20_lower (fp #b0 #b1110 #b1111111111111111111)))
+(assert (not (fp.eq
+  (fp.div RTP (fp #b0 #b0000 #b0000000000000000001) d_4_20_lower)
+  (fp #b0 #b0000 #b0000000000000000001))))
 (check-sat)
 (pop)
 ; Reported negative-overflow case: -3.25 / 1/16 = -52 in FP(2,6).
