@@ -1,0 +1,9 @@
+; Regression for issue #10175 / PR #10216 (fp.div normalization fix).
+; Float32 backward-compatibility: 2^8 = 256 > 24 = sbits, old code path.
+; 6.0 / 2.0 = 3.0 exactly.
+(set-logic QF_FP)
+(set-info :status sat)
+(assert (fp.eq ((_ to_fp 8 24) RNE 3.0)
+               (fp.div RNE ((_ to_fp 8 24) RNE 6.0)
+                           ((_ to_fp 8 24) RNE 2.0))))
+(check-sat)

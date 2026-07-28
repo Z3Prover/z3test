@@ -1,0 +1,8 @@
+; Regression for issue #10175 / PR #10216 (fp.div normalization fix).
+; FP(2,5): another format with 2^ebits < sbits (2^2 = 4 < 5).
+; 1.0 / 1.0 = 1.0.
+(set-logic QF_FP)
+(set-info :status sat)
+(define-fun one () (_ FloatingPoint 2 5) ((_ to_fp 2 5) RNE 1.0))
+(assert (fp.eq one (fp.div RNE one one)))
+(check-sat)

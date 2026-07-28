@@ -1,0 +1,10 @@
+; Regression for issue #10175 / PR #10216 (fp.div normalization fix).
+; FP(2,6): division whose dividend is a denormal value.
+; 0.0625 is denormal in FP(2,6) (below the minimum normal 1.0).
+; 0.0625 / 0.0625 = 1.0 exactly.
+(set-logic QF_FP)
+(set-info :status sat)
+(define-fun d () (_ FloatingPoint 2 6) ((_ to_fp 2 6) RTZ 0.0625))
+(define-fun one () (_ FloatingPoint 2 6) ((_ to_fp 2 6) RNE 1.0))
+(assert (fp.eq one (fp.div RNE d d)))
+(check-sat)

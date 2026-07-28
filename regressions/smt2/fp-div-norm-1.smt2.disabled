@@ -1,0 +1,11 @@
+; Regression for issue #10175 / PR #10216 (fp.div normalization fix).
+; FP(2,6): ebits=2, sbits=6, so 2^ebits = 4 < 6 = sbits -> wide leading-zero path.
+; (-3.25) / 0.0625 = -52 overflows FP(2,6) (max magnitude 3.9375).
+; With RTZ, overflow clips to the most-negative-normal (-3.9375), NOT -oo.
+; Therefore (fp.eq -oo (fp.div RTZ c b)) must be UNSAT.
+(set-logic QF_FP)
+(set-info :status unsat)
+(define-fun c () (_ FloatingPoint 2 6) ((_ to_fp 2 6) RTZ (- 3.25)))
+(define-fun b () (_ FloatingPoint 2 6) ((_ to_fp 2 6) RTZ 0.0625))
+(assert (fp.eq (_ -oo 2 6) (fp.div RTZ c b)))
+(check-sat)

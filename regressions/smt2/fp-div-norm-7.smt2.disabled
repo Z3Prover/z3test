@@ -1,0 +1,10 @@
+; Regression for issue #10175 / PR #10216 (fp.div normalization fix).
+; FP(2,5): overflow with RNE rounds to +oo.
+; Max normal in FP(2,5): (2 - 2^-4) * 2^1 = 3.875.
+; 3.875 / 0.125 = 31.0 overflows; RNE -> +oo.
+(set-logic QF_FP)
+(set-info :status sat)
+(define-fun n () (_ FloatingPoint 2 5) ((_ to_fp 2 5) RNE 3.875))
+(define-fun d () (_ FloatingPoint 2 5) ((_ to_fp 2 5) RNE 0.125))
+(assert (fp.eq (_ +oo 2 5) (fp.div RNE n d)))
+(check-sat)
