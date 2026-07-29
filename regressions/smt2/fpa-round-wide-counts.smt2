@@ -9,7 +9,7 @@
 ; Multiplication.
 (push 1)
 (assert (and
-  (= x13-3 one-13-3)
+  (fp.eq x13-3 one-13-3)
   (not (= (fp.mul RNE x13-3 x13-3) one-13-3))))
 (check-sat)
 (pop 1)
@@ -17,7 +17,7 @@
 ; Square root.
 (push 1)
 (assert (and
-  (= x13-3 one-13-3)
+  (fp.eq x13-3 one-13-3)
   (not (= (fp.sqrt RNE x13-3) one-13-3))))
 (check-sat)
 (pop 1)
@@ -26,7 +26,7 @@
 (declare-fun x14-3 () (_ FloatingPoint 14 3))
 (push 1)
 (assert (and
-  (= x14-3 (fp #b0 #b01111111111111 #b00))
+  (fp.eq x14-3 (fp #b0 #b01111111111111 #b00))
   (not (= ((_ to_fp 13 3) RNE x14-3) one-13-3))))
 (check-sat)
 (pop 1)
@@ -34,7 +34,7 @@
 ; Conversion from a symbolic Real keeps the non-numeral path reachable.
 (push 1)
 (declare-fun real-one () Real)
-(assert (= real-one 1.0))
+(assert (and (<= real-one 1.0) (>= real-one 1.0)))
 (assert (not (= ((_ to_fp 13 3) RNE real-one) one-13-3)))
 (check-sat)
 (pop 1)
@@ -43,14 +43,16 @@
 (declare-fun sbv-one () (_ BitVec 15))
 (push 1)
 (assert (and
-  (= sbv-one (_ bv1 15))
+  (bvsle sbv-one (_ bv1 15))
+  (bvsge sbv-one (_ bv1 15))
   (not (= ((_ to_fp 13 3) RNE sbv-one) one-13-3))))
 (check-sat)
 (pop 1)
 (declare-fun ubv-one () (_ BitVec 15))
 (push 1)
 (assert (and
-  (= ubv-one (_ bv1 15))
+  (bvule ubv-one (_ bv1 15))
+  (bvuge ubv-one (_ bv1 15))
   (not (= ((_ to_fp_unsigned 13 3) RNE ubv-one) one-13-3))))
 (check-sat)
 (pop 1)
@@ -59,7 +61,7 @@
 (declare-fun x12-3 () (_ FloatingPoint 12 3))
 (push 1)
 (assert (and
-  (= x12-3 (fp #b0 #b011111111111 #b00))
+  (fp.eq x12-3 (fp #b0 #b011111111111 #b00))
   (not (=
     (fp.mul RNE x12-3 x12-3)
     (fp #b0 #b011111111111 #b00)))))
