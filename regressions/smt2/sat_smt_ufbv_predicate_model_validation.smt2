@@ -10,4 +10,4 @@
 (assert (bvuge x (_ bv1 4)))
 (assert (bvult y (_ bv1 4)))
 (check-sat)
-(get-model)
+;(get-model)
