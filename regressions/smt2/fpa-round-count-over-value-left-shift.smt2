@@ -1,4 +1,4 @@
-; FP(16,3) gives round an 18-bit sigma and a 14-bit value; half*half shifts left.
+; FP(16,3): round's sigma is 18 bits and its sig_ext shift operand is 14 bits; half*half shifts left.
 (set-logic QF_FP)
 (set-info :status unsat)
 (define-fun half () (_ FloatingPoint 16 3) (fp #b0 #b0111111111111110 #b00))
