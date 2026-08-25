@@ -6,4 +6,4 @@
 (define-fun two () (_ FloatingPoint 2 6) ((_ to_fp 2 6) RNE 2.0))
 (define-fun one () (_ FloatingPoint 2 6) ((_ to_fp 2 6) RNE 1.0))
 (assert (fp.eq two (fp.div RNE two one)))
-(check-sat)
+(check-sat-using qffp)
