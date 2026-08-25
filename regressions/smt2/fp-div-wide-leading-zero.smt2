@@ -1,4 +1,4 @@
-; FP(2,8) requires a 3-bit leading-zero count; min-subnormal/self is one.
+; The FP(2,8) minimum subnormal needs a 3-bit leading-zero count; divided by itself, it is one.
 (set-logic QF_FP)
 (set-info :status unsat)
 (declare-fun x () (_ FloatingPoint 2 8))

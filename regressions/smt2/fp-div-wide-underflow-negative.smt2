@@ -1,4 +1,5 @@
-; FP(2,8) deep negative underflow retains the exact directed-rounding result.
+; Deep negative underflow in FP(2,8) rounds to -0 except under RTN.
+; RTN returns the negative minimum subnormal.
 (set-logic QF_FP)
 (set-info :status unsat)
 (define-sort FP28 () (_ FloatingPoint 2 8))

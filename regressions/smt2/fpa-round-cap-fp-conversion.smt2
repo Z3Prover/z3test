@@ -1,4 +1,4 @@
-; FP(2,16) cap 18 cannot fit in sigma's four bits; exact 2^-6 shifts by five.
+; Converting 2^-6 to FP(2,16) needs a right shift of 5; the 4-bit shift count must not wrap.
 (set-logic QF_FP)
 (set-info :status unsat)
 (declare-fun x () (_ FloatingPoint 8 24))
