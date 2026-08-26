@@ -1,0 +1,4 @@
+sat
+(objectives
+ ((* 3.0 x) (root-obj (+ (^ x 2) (- 18)) 2))
+)

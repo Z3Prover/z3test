@@ -1,0 +1,7 @@
+; maximize x s.t. x^2 <= 2: the optimum sqrt(2) is irrational and is reported exactly as a root-obj (nlsat cells)
+(declare-const x Real)
+(assert (<= (* x x) 2.0))
+(maximize x)
+(check-sat)
+(get-objectives)
+(get-value (x))
