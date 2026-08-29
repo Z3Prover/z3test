@@ -1,0 +1,10 @@
+sat
+(objectives
+ ((+ x y) (root-obj (+ (^ x 2) (- 2)) 1))
+)
+(
+  (define-fun x () Real
+    (root-obj (+ (* 2 (^ x 2)) (- 1)) 1))
+  (define-fun y () Real
+    (root-obj (+ (* 2 (^ x 2)) (- 1)) 1))
+)

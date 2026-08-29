@@ -1,0 +1,5 @@
+sat
+(objectives
+ (x (root-obj (+ (^ x 3) (* (- 3) x) 1) 1))
+ (y (root-obj (+ (^ x 3) (* (- 3) x) 1) 1))
+)

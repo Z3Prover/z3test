@@ -1,0 +1,11 @@
+; lex: maximize x (= sqrt(2)), then maximize y under x*y <= 1 (= 1/sqrt(2)); the first optimum is committed exactly
+(declare-const x Real)
+(declare-const y Real)
+(assert (<= (* x x) 2.0))
+(assert (<= (* x y) 1.0))
+(assert (>= y 0.0))
+(maximize x)
+(maximize y)
+(check-sat)
+(get-objectives)
+(get-value (x y))

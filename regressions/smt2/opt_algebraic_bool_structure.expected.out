@@ -1,0 +1,6 @@
+sat
+(objectives
+ (x (root-obj (+ (^ x 3) (- 5)) 1))
+)
+((x (root-obj (+ (^ x 3) (- 5)) 1))
+ (b false))

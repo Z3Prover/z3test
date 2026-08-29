@@ -1,0 +1,6 @@
+; maximize 3x s.t. x^2 <= 2: optimum 3*sqrt(2) = sqrt(18)
+(declare-const x Real)
+(assert (<= (* x x) 2.0))
+(maximize (* 3.0 x))
+(check-sat)
+(get-objectives)
