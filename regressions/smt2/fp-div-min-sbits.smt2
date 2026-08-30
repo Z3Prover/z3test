@@ -1,4 +1,5 @@
-; FP(2,2) division must not construct an empty quotient-bit extract.
+; FP(2,2) division would require quotient extract [7:8].
+; Its high index is below its low index, so that range must not be constructed.
 (set-logic QF_FP)
 (set-info :status unsat)
 (declare-fun x () (_ FloatingPoint 2 2))

@@ -1,4 +1,5 @@
-; FP(16,3) multiplication reaches the left-shift branch with an 18-bit count and a 14-bit value.
+; FP(16,3) multiplication reaches round's left-shift branch with an 18-bit sigma
+; and a 14-bit sig_ext shift operand.
 (set-logic QF_FP)
 (set-info :status unsat)
 (define-fun half () (_ FloatingPoint 16 3) (fp #b0 #b0111111111111110 #b00))

@@ -1,4 +1,5 @@
-; Converting signed 15-bit BV 1 to FP(13,3) uses a 15-bit shift count on a 14-bit value.
+; Converting signed 15-bit BV 1 to FP(13,3) gives round a 15-bit sigma
+; and a 14-bit sig_ext shift operand.
 (set-logic QF_FPBV)
 (set-info :status unsat)
 (define-fun one () (_ FloatingPoint 13 3) (fp #b0 #b0111111111111 #b00))

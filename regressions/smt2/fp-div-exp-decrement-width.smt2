@@ -1,4 +1,4 @@
-; FP(6,3) has an 8-bit division exponent and a 7-bit normalization distance.
+; FP(6,3) uses an 8-bit division exponent and a 7-bit quotient-normalization decrement.
 (set-logic QF_FP)
 (set-info :status unsat)
 (declare-fun x () (_ FloatingPoint 6 3))

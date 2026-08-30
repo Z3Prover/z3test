@@ -1,5 +1,5 @@
 ; Squaring the FP(16,3) minimum subnormal reaches the right-shift branch.
-; Its shift count is 18 bits and the shifted value is 14 bits.
+; round receives an 18-bit sigma and a 14-bit sig_ext shift operand.
 (set-logic QF_FP)
 (set-info :status unsat)
 (define-fun min-sub () (_ FloatingPoint 16 3) (fp #b0 #b0000000000000000 #b01))
