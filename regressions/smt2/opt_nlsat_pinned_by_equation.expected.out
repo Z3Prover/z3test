@@ -1,0 +1,4 @@
+sat
+(objectives
+ (y (root-obj (+ (* 2 (^ x 2)) (- 1)) 2))
+)
