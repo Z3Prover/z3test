@@ -1,0 +1,39 @@
+; The best Boolean branch has an open limit sqrt(3).
+(set-option :opt.optsmt_bisect_rounds 8)
+(set-option :opt.optsmt_nlsat_supremum_rlimit 1000000)
+(declare-const x Real)
+(declare-const p Bool)
+(assert (or (and p (< (* x x) 2.0))
+            (and (not p) (< (* x x) 3.0))))
+(maximize x)
+(check-sat)
+(get-objectives)
+
+(reset)
+; Preprocessing may express x*y=1 as division. The limit query must use
+; the purified polynomial goal: sup(x)=1/sqrt(2), not attained.
+(set-option :opt.optsmt_bisect_rounds 8)
+(set-option :opt.optsmt_nlsat_supremum_rlimit 1000000)
+(declare-const x Real)
+(declare-const y Real)
+(assert (= (* x y) 1.0))
+(assert (> y 0.0))
+(assert (> (* y y) 2.0))
+(maximize x)
+(check-sat)
+(get-objectives)
+
+(reset)
+; The certificate includes the current assumptions. Switching them must
+; replace the old open result with the attained value 2.
+(set-option :opt.optsmt_bisect_rounds 8)
+(set-option :opt.optsmt_nlsat_supremum_rlimit 1000000)
+(declare-const x Real)
+(declare-const p Bool)
+(assert (=> p (< (* x x) 2.0)))
+(assert (=> (not p) (<= (* x x) 4.0)))
+(maximize x)
+(check-sat-assuming (p))
+(get-objectives)
+(check-sat-assuming ((not p)))
+(get-objectives)
