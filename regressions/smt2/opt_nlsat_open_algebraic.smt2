@@ -16,7 +16,7 @@
 (get-objectives)
 
 (reset)
-; Scaling and shifting preserve the exact finite part of the open bound.
+; For x*x<2, 2*x+3 approaches 3+2*sqrt(2) from below.
 (declare-const x Real)
 (assert (< (* x x) 2.0))
 (maximize (+ (* 2.0 x) 3.0))

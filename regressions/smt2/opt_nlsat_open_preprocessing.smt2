@@ -24,8 +24,8 @@
 (get-objectives)
 
 (reset)
-; The certificate includes the current assumptions. Switching them must
-; replace the old open result with the attained value 2.
+; Switching from p to not p must replace the open sqrt(2)-epsilon bound
+; with the attained maximum 2, rather than reuse the previous certificate.
 (set-option :opt.optsmt_bisect_rounds 8)
 (set-option :opt.optsmt_nlsat_supremum_rlimit 1000000)
 (declare-const x Real)
