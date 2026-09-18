@@ -1,5 +1,5 @@
-; maximize x s.t. x^2 < 2: the supremum sqrt(2) is not attained; nlsat proves it
-; as an upper bound (prove_supremum) and the result is a tight interval below sqrt(2)
+; The supremum sqrt(2) is not attained. Prove both the strict upper bound
+; and that feasible values approach it, then report sqrt(2) - epsilon.
 (declare-const x Real)
 (assert (< (* x x) 2.0))
 (maximize x)

@@ -1,0 +1,12 @@
+sat
+(objectives
+ (x (+ 2.0 (* (- 1.0) epsilon)))
+)
+sat
+(objectives
+ (x (+ (- 2.0) epsilon))
+)
+sat
+(objectives
+ ((+ (* x x) (* y y)) (+ (/ 1.0 2.0) epsilon))
+)
