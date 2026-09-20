@@ -1,0 +1,7 @@
+(set-logic QF_NTA)
+(set-info :source |printed by MathSAT|)
+(declare-fun exp (Real) Real)
+(assert (let ((.def_14 (exp (to_real 1))))
+(let ((.def_18 (<= (/ 256 81) .def_14)))
+.def_18)))
+(check-sat)
