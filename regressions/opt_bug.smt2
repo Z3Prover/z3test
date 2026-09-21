@@ -15,3 +15,4 @@
 (assert (>= (+ |ku'4'| |ku'2'| |ku'3'|) 1))
 (minimize (+ |ku'0'| |ku'1'| |ku'2'| |ku'3'| |ku'4'|))
 (check-sat)
+(get-objectives)
