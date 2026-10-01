@@ -1,0 +1,22 @@
+Proof regression canaries
+=========================
+
+Small benchmark lists for scripts/proofs/proof_matrix.py, one per logic. Each
+line names one single-query SMT-LIB file; an optional cell=status annotation
+marks a known failure that must keep reproducing until it is fixed, and that
+does not fail the run while it does.
+
+Entries are resolved relative to this directory first, then against
+--benchmark-root. Corpus paths are relative to the z3test repository root.
+From that root, with a separately built Z3 executable:
+
+    python3 scripts/proofs/proof_matrix.py --z3 /path/to/z3 --timeout 30 \
+        --benchmark-root . --out canary.jsonl regressions/proofs/canaries/*.txt
+
+Files in this directory (*.smt2) are minimized regressions from earlier runs
+and are always available; the lists reference them by name. The z3test corpus
+has few unsat single-query instances per logic; extend the lists with files
+from the SMT-LIB release archives under the same root for nightly runs.
+
+See scripts/proofs/README.md for the checking configurations, result classes,
+and runner tests. Z3's CI runs these lists in its releaseClang configuration.
