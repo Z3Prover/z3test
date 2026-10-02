@@ -9,17 +9,20 @@ checking method:
 | --- | --- |
 | `smt-clause-log` | `sat.smt=true` with `solver.proof.log`; replayed through the built-in checker (`proof_cmds` / `euf_proof_checker`) |
 | `smt-clause-log-nopp` | The same with `solve-eqs`, `propagate-values`, and `elim-unconstrained` disabled, because the clause log does not cover contradictions found by preprocessing |
-| `legacy-proof-object` | `sat.smt=false` with `produce-proofs`; the proof object is inventoried by rule and theory-lemma kind |
+| `legacy-proof-object` | `sat.smt=false` with `produce-proofs`; inventoried by default, or produced and Lean-checked through the matching Python bindings with `--lean` |
 | `legacy-clause-proof` | `sat.smt=false` with `smt.clause_proof`; the proof trail is inventoried (no checker yet) |
 | `arith-validate` | `smt.arith.validate` self-validation inside `theory_lra` |
 
-Every (benchmark, cell) record carries one failure class: `verified`,
+Every (benchmark, cell) record carries one status: `verified`, `lean-verified`,
+`diagnostic`, `unsupported`,
 `unverified-fallback`, `checker-rejected`, `no-proof`, `not-applicable`,
 `disagree`, `crash`, `timeout`, or `no-checker`. A self-checker fallback to the
 SMT solver is counted as `unverified-fallback`, never as `verified`. Clause-log
 records also carry the hint names, the checker's per-hint hit and miss counts,
-and the number of fallbacks. `arith-validate` is a solver self-validation
-diagnostic, not independent certification, even when its status is `verified`.
+and the number of fallbacks. `arith-validate` now reports `diagnostic`, not
+`verified`, when self-validation succeeds on an unsat run. `verified` describes
+native checker acceptance, not a Lean proof or certification of preprocessing
+outside the clause log. Only `lean-verified` denotes Lean certification.
 Missing SMT logic declarations are labeled `logic_unknown`, separately from a
 solver result of `unknown`.
 
@@ -48,23 +51,89 @@ The exit status is 1 for `checker-rejected`, `disagree`, or `crash`, except for
 annotated known failures. A known failure that reproduces is reported but does
 not fail the run; one that stops reproducing is reported as a stale annotation
 so it can be removed. Only these three failure classes may be annotated.
+Requested Lean certification is stricter and cannot be waived by annotations.
 
 `regressions/proofs/canaries/` contains the per-logic lists and minimized
 regressions, including `array_axiom_log.smt2` from Z3Prover/z3#10922 and
 `real_numeral_farkas.smt2` from Z3Prover/z3#10954. The lists use existing
 `regressions/smt2/` inputs without copying them.
 
+## Lean certification
+
+`--lean` is an option of this Python runner, not the Z3 executable. It requires
+the `legacy-proof-object` cell, a Z3 checkout containing the native exporter
+and reconstructor (introduced in Z3Prover/z3#11017), and a matching CMake build
+with Python bindings and a shared library. The first implementation supports
+POSIX hosts with `z3`, `libz3.so` or `libz3.dylib`, and `python/z3/` together
+under the build directory. It rejects missing or mismatched dependencies
+rather than using a system-installed Python package.
+
+```sh
+python3 scripts/proofs/proof_matrix.py \
+    --z3 /path/to/z3/build/z3 --z3-source /path/to/z3 \
+    --lean --cells legacy-proof-object \
+    --lean-artifacts /path/to/artifacts --out results.jsonl \
+    /path/to/z3/lean/examples/*.smt2
+```
+
+`--z3-source` locates the tools and pinned Lean workspace without copying files
+between repositories. Preflight checks the executable/library version and
+builds the Lean workspace. Missing tools, bindings, or Lean are configuration
+errors. `proof_lean.py` is the binding-dependent subprocess adapter, not a
+replacement exporter or Lean implementation.
+
+For each cell, one isolated Python process uses that build's native library,
+enables proofs before creating the context, sets `sat.smt=false`, solves once,
+and serializes that solver's proof. A second isolated process reads the saved
+certificate and original input and invokes the Lean reconstructor; it never
+runs solver search. The proof-free reference run remains separate.
+
+The Lean cell validates the **original** input, without stripping its commands
+or replacing undecodable text. It currently supports the exporter's
+single-query propositional snapshots. Unsupported commands, options, theories,
+or proof shapes are explicit failures, not silently changed problems.
+
+Each cell gets a fresh directory below `--lean-artifacts`, retaining
+`input.smt2`, the unverified `certificate.json` when available, and
+`checked.lean` only after successful checking. JSON records include source
+and certificate hashes, the checked Lean file's hash, certificate byte size,
+DAG rule counts, native statistics, and producer paths/version/parameters.
+The `time` field measures the actual producer subprocess, `solve_time` the
+native check, and `check_time` reconstruction and Lean checking. No timing or
+rule inventory is borrowed from a second executable proof run. The native
+JSON remains explicitly unverified; the checked Lean artifact is separate.
+
+With `--lean`, every selected legacy cell must be `lean-verified` for exit
+status zero. Sat/unknown, unsupported inputs, missing evidence, timeouts, and
+rejections therefore fail the requested certification, even if a benchmark
+annotation would normally waive that failure. Other cells retain their usual
+classification and known-failure policy. A run collecting no benchmarks also
+fails. The checking budget is 600 seconds per cell; `--timeout` bounds
+production. On timeout the subprocess group, including Lean, is terminated.
+
+Lean proves that the encoded original assertions imply False. Parsing and
+SMT-to-Lean statement translation remain trusted frontend components; this
+does not certify SAT or provide a formally verified SMT-LIB parser.
+
 ## Runner tests and CI
 
 ```sh
 Z3_EXE=/absolute/path/to/z3 python3 -m unittest discover \
-    -s scripts/proofs -p test_proof_matrix.py -v
+    -s scripts/proofs -p 'test_proof*.py' -v
 ```
 
 Classification, list-parsing, and repository-path tests need no Z3 bindings or
 binary. End-to-end tests use `Z3_EXE` or `z3` on `PATH` and are skipped if neither
-is available. The optional Lean integration is skipped without its consumer;
-the Lean exporter and reconstructor are not part of this repository.
+is available. Real Lean handoff tests additionally require `Z3_SOURCE`:
+
+```sh
+Z3_EXE=/path/to/z3/build/z3 Z3_SOURCE=/path/to/z3 \
+    python3 -m unittest discover -s scripts/proofs -p 'test_proof*.py' -v
+```
+
+Without those explicit variables the real Lean tests are skipped, but gate
+classification tests still run. Once requested, a broken installation fails
+instead of skipping. The exporter and reconstructor remain in the Z3 checkout.
 
 The workflow lives in `Z3Prover/z3`, not here. It clones z3test and runs these
 tests against the binary it just built in the Linux CMake test configurations.
