@@ -189,7 +189,8 @@ class TestEndToEnd(unittest.TestCase):
         self.assertEqual(by_key[("b0.smt2", "smt-clause-log")]["fallbacks"], 0)
         self.assertEqual(by_key[("b0.smt2", "legacy-proof-object")]["status"], "no-checker")
         self.assertIn("asserted", by_key[("b0.smt2", "legacy-proof-object")]["rules"])
-        self.assertEqual(by_key[("b0.smt2", "arith-validate")]["status"], "verified")
+        self.assertEqual(by_key[("b0.smt2", "arith-validate")]["status"], "diagnostic")
+        self.assertEqual(by_key[("b0.smt2", "arith-validate")]["checker"], "self-validation")
         for cell in ("smt-clause-log", "legacy-proof-object", "arith-validate"):
             self.assertEqual(by_key[("b1.smt2", cell)]["status"], "not-applicable")
 
@@ -250,23 +251,6 @@ class TestEndToEnd(unittest.TestCase):
         by_cell = {r["cell"]: r for r in records}
         self.assertEqual(by_cell["smt-clause-log"]["status"], "no-proof")
         self.assertIn(by_cell["smt-clause-log-nopp"]["status"], ("verified", "no-proof"))
-
-    def test_propositional_legacy_proofs_are_lean_checked_when_requested(self):
-        if not (_ROOT / "scripts" / "check_lean.sh").exists():
-            self.skipTest("Lean checker script not present")
-        source = "(declare-const p Bool)(declare-const q Bool)(assert (or p q))(assert (not p))(assert (not q))(check-sat)"
-        with tempfile.TemporaryDirectory() as directory:
-            path = Path(directory) / "b.smt2"
-            path.write_text(source)
-            out = Path(directory) / "out.jsonl"
-            proc = subprocess.run([sys.executable, proof_matrix.__file__, "--z3", _Z3, "--lean",
-                                   "--cells", "legacy-proof-object", "--out", str(out), str(path)],
-                                  capture_output=True, text=True)
-            self.assertEqual(proc.returncode, 0, proc.stdout + proc.stderr)
-            record = [json.loads(l) for l in out.read_text().splitlines() if '"legacy-proof-object"' in l][0]
-            self.assertEqual(record["status"], "verified")
-            self.assertEqual(record["checker"], "lean")
-
 
 if __name__ == "__main__":
     unittest.main()

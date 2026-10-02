@@ -7,6 +7,9 @@ runs the checking method attached to that cell. One JSON record per
 (benchmark, cell) is written, carrying a failure class:
 
   verified             the checker accepted every step without solver fallback
+  lean-verified        Lean checked the recorded native certificate
+  diagnostic           solver self-validation, not independent certification
+  unsupported          outside the requested Lean fragment or input semantics
   unverified-fallback  the self checker had to call an SMT solver for some steps
   checker-rejected     a checker rejected a step
   no-proof             the run reported unsat but produced no checkable proof
@@ -41,6 +44,8 @@ import sys
 import tempfile
 import time
 from pathlib import Path
+
+from proof_lean import LeanChecker, read_source
 
 _LOGIC = re.compile(r"\(set-logic\s+([A-Z_]+)\s*\)")
 _RESULT = re.compile(r"^(sat|unsat|unknown)\s*$", re.MULTILINE)
@@ -174,37 +179,9 @@ def cell_smt_clause_log(z3, source, timeout, record, preprocessing=True):
             os.unlink(log)
 
 
-def _lean_check(source, proof_text):
-    """Return a status from the Lean reconstruction, or None when the fragment is unsupported."""
-    try:
-        sys.path.insert(0, str(Path(__file__).resolve().parent))
-        import proof_certificate
-        import proof_to_lean
-    except ImportError:
-        return None
-    try:
-        certificate = proof_certificate.export_certificate("(set-option :produce-proofs true)\n" + source)
-    except Exception:
-        return None
-    try:
-        text = proof_to_lean.reconstruct(certificate["source_smt2"], certificate)
-    except proof_to_lean.ReconstructionError as error:
-        return ("checker-rejected", "lean reconstruction: %s" % error)
-    with tempfile.NamedTemporaryFile("w", suffix=".lean", delete=False) as f:
-        f.write(text)
-        path = f.name
-    try:
-        proc = subprocess.run([str(proof_to_lean._CHECK_LEAN), path], capture_output=True, text=True, timeout=600)
-    except subprocess.TimeoutExpired:
-        return ("timeout", "lean check timed out")
-    finally:
-        os.unlink(path)
-    if proc.returncode != 0:
-        return ("checker-rejected", (proc.stderr + proc.stdout)[-500:])
-    return ("verified", None)
-
-
 def cell_legacy_proof_object(z3, source, timeout, record, lean):
+    if lean:
+        return lean.run(source, timeout, record)
     text = "(set-option :produce-proofs true)\n(set-option :sat.smt false)\n" + source
     text = re.sub(r"\(check-sat\)", "(check-sat)(get-proof)", text, count=1)
     run = run_z3(z3, text, timeout)
@@ -217,14 +194,6 @@ def cell_legacy_proof_object(z3, source, timeout, record, lean):
             " ".join(filter(None, m)) for m in _TH_LEMMA.findall(proof)).items()))
         if not rules:
             return "no-proof"
-        if lean:
-            outcome = _lean_check(source, proof)
-            if outcome is not None:
-                status, error = outcome
-                record["checker"] = "lean"
-                if error:
-                    record["error"] = error
-                return status
         return "no-checker"
     return finish(record, run, checks)
 
@@ -245,11 +214,12 @@ def cell_legacy_clause_proof(z3, source, timeout, record):
 def cell_arith_validate(z3, source, timeout, record):
     text = "(set-option :smt.arith.validate true)\n(set-option :sat.smt false)\n" + source
     run = run_z3(z3, text, timeout)
-    return finish(record, run, lambda record: "verified")
+    record["checker"] = "self-validation"
+    return finish(record, run, lambda record: "diagnostic")
 
 
 def run_benchmark(z3, path, cells, timeout, lean):
-    original = Path(path).read_text(errors="replace")
+    original = read_source(path) if lean else Path(path).read_text(errors="replace")
     logic = (_LOGIC.search(original) or [None, "logic_unknown"])[1]
     source = strip_commands(original)
     reference = run_z3(z3, source, timeout)
@@ -264,7 +234,7 @@ def run_benchmark(z3, path, cells, timeout, lean):
         elif cell == "smt-clause-log-nopp":
             yield cell_smt_clause_log(z3, source, timeout, record, preprocessing=False)
         elif cell == "legacy-proof-object":
-            yield cell_legacy_proof_object(z3, source, timeout, record, lean)
+            yield cell_legacy_proof_object(z3, original if lean else source, timeout, record, lean)
         elif cell == "legacy-clause-proof":
             yield cell_legacy_clause_proof(z3, source, timeout, record)
         elif cell == "arith-validate":
@@ -341,7 +311,10 @@ def annotate_known(record, known):
 
 
 def failures(records):
-    return [r for r in records if r["status"] in KNOWN_FAILURE_STATUSES and not r.get("known_failure")]
+    return [r for r in records if
+            (r.get("checker") == "lean" and r["status"] != "lean-verified")
+            or (r.get("checker") != "lean" and r["status"] in KNOWN_FAILURE_STATUSES
+                and not r.get("known_failure"))]
 
 
 def main():
@@ -351,8 +324,11 @@ def main():
     parser.add_argument("--cells", default=",".join(CELLS), help="comma-separated cells (default: all): " +
                         "; ".join("%s = %s" % item for item in CELLS.items()))
     parser.add_argument("--timeout", type=float, default=60.0, help="seconds per solver invocation")
-    parser.add_argument("--lean", action="store_true", help="Lean-check propositional legacy proof objects "
-                        "(requires proof_certificate.py and proof_to_lean.py next to this script)")
+    parser.add_argument("--lean", action="store_true",
+                        help="require a Lean-checked native certificate for each legacy-proof-object cell")
+    parser.add_argument("--z3-source", type=Path, help="Z3 checkout containing the Lean tools (required with --lean)")
+    parser.add_argument("--lean-artifacts", type=Path,
+                        help="directory retaining input, native JSON, and checked Lean files (required with --lean)")
     parser.add_argument("--out", help="JSON lines output file (default: stdout only for the summary)")
     parser.add_argument("--limit", type=int, help="stop after this many benchmarks")
     parser.add_argument("--benchmark-root", help="directory against which relative entries of .txt lists are "
@@ -362,9 +338,16 @@ def main():
     unknown = [c for c in cells if c not in CELLS]
     if unknown:
         parser.error("unknown cells: %s" % ", ".join(unknown))
-    here = Path(__file__).resolve().parent
-    if args.lean and not all((here / name).exists() for name in ("proof_certificate.py", "proof_to_lean.py")):
-        parser.error("--lean requires the Lean consumer (proof_certificate.py, proof_to_lean.py) next to this script")
+    lean = None
+    if args.lean:
+        if "legacy-proof-object" not in cells:
+            parser.error("--lean requires the legacy-proof-object cell")
+        if args.z3_source is None or args.lean_artifacts is None:
+            parser.error("--lean requires --z3-source and --lean-artifacts")
+        try:
+            lean = LeanChecker(args.z3_source, args.z3, args.lean_artifacts)
+        except ValueError as error:
+            parser.error(str(error))
     records = []
     out = open(args.out, "a") if args.out else None
     for index, (path, known) in enumerate(collect_benchmarks(args.benchmarks, args.benchmark_root)):
@@ -373,7 +356,7 @@ def main():
         if not path.exists():
             print("missing benchmark: %s" % path, file=sys.stderr)
             return 2
-        for record in run_benchmark(args.z3, path, cells, args.timeout, args.lean):
+        for record in run_benchmark(args.z3, path, cells, args.timeout, lean):
             annotate_known(record, known)
             records.append(record)
             if out:
@@ -385,11 +368,15 @@ def main():
                     note = "known-failure " + note
                 elif record.get("stale_expectation"):
                     note = "stale-expectation(%s) " % record["stale_expectation"] + note
+                if record.get("checker") == "lean" and record.get("error"):
+                    note += record["error"]
                 print("%-22s %-13s %-20s %-8s %6.2fs %s" % (
                     Path(record["benchmark"]).name[:22], record["logic"], record["cell"], record["status"],
                     record.get("time") or 0, note), flush=True)
     if out:
         out.close()
+    if args.lean and not any(r.get("checker") == "lean" for r in records):
+        parser.error("--lean did not receive any benchmarks")
     print()
     print(summarize(records))
     known = [r for r in records if r.get("known_failure")]
