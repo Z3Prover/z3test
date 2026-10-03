@@ -1,0 +1,22 @@
+Boolean inputs for the Lean certification cell of scripts/proofs/proof_matrix.py.
+
+Each file is a small propositional unsat query whose native Z3 proof the
+reconstructor in Z3Prover/z3 (examples/python/proof_to_lean.py) must turn into
+a Lean term that the pinned Lean toolchain accepts. The z3 CI job releaseClang
+runs the matrix with --lean over this directory and fails unless every file is
+reported as lean-verified.
+
+  unit_resolution.smt2     contradiction closed by preprocessing alone
+  boolean_rewrite.smt2     implication rewriting and mp
+  boolean_structural.smt2  trans, monotonicity, not-or-elim
+  boolean_branching.smt2   scoped learning (hypothesis and lemma)
+  boolean_def_axiom.smt2   gate clauses (def-axiom)
+  boolean_solve_eqs.smt2   solve-eqs elimination followed by search
+
+Run from a z3 checkout with a POSIX CMake build in build/:
+
+  python3 ../z3test/scripts/proofs/proof_matrix.py \
+    --z3 "$PWD/build/z3" --z3-source "$PWD" \
+    --lean --cells legacy-proof-object --timeout 30 \
+    --lean-artifacts /tmp/lean-proof-artifacts --out /tmp/lean-proof-matrix.jsonl \
+    ../z3test/regressions/proofs/lean/*.smt2
