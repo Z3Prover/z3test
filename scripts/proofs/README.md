@@ -73,7 +73,7 @@ python3 scripts/proofs/proof_matrix.py \
     --z3 /path/to/z3/build/z3 --z3-source /path/to/z3 \
     --lean --cells legacy-proof-object \
     --lean-artifacts /path/to/artifacts --out results.jsonl \
-    /path/to/z3/lean/examples/*.smt2
+    ../z3test/regressions/proofs/lean/*.smt2
 ```
 
 `--z3-source` locates the tools and pinned Lean workspace without copying files
