@@ -10,7 +10,7 @@ import subprocess
 import sys
 import time
 
-ROOT = Path(__file__).resolve().parents[2]
+ROOT = Path(os.environ.get('Z3_SOURCE_DIR', Path.cwd())).resolve()
 TESTS = Path(__file__).resolve().parent
 CORE = [
     'test_ff_combination.py', 'test_ff_large_combination.py',
@@ -20,12 +20,12 @@ CORE = [
     'test_ff_general_algebra.py', 'test_ff_matrix.py', 'test_ff_basis_storage.py',
     'test_ff_reduction.py', 'test_ff_sparse_reducers.py', 'test_ff_round6.py',
     'test_ff_round7.py', 'test_ff_round8_roots.py', 'test_ff_preprocess.py',
-    'test_zk.py',
+    'test_zk.py', 'test_ff_review.py',
 ]
 PROOFS = ['test_ff_certificates.py', 'test_ff_proof_pipeline.py', 'test_ff_boolean_proof.py']
 CLI = {'test_qfff.py', 'test_ff_backend_recovery.py', 'test_ff_integration.py'}
 EXTERNAL = {'test_ff_proof_pipeline.py', 'test_ff_boolean_proof.py'}
-NATIVE = ['finite_field', 'ast', 'smt_context', 'smt2print_parse', 'api', 'arith_rewriter']
+NATIVE = ['finite_field', 'ff_solver', 'ast', 'smt_context', 'smt2print_parse', 'api', 'arith_rewriter']
 
 
 def positive(value):
@@ -63,8 +63,10 @@ def execute(name, command, env, output, timeout):
 
 
 def main():
+    global ROOT
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--build', type=Path, required=True)
+    parser.add_argument('--source', type=Path, default=ROOT, help='Z3 source checkout; defaults to Z3_SOURCE_DIR or cwd')
     parser.add_argument('--suite', choices=['core', 'proofs', 'all'], default='core')
     parser.add_argument('--out', type=Path, required=True, help='new log directory')
     parser.add_argument('--jobs', type=positive, default=2)
@@ -72,6 +74,7 @@ def main():
     parser.add_argument('--carcara', type=Path)
     parser.add_argument('--ffpacheck', type=Path)
     args = parser.parse_args()
+    ROOT = args.source.resolve()
     if os.name != 'posix':
         parser.error('this runner currently supports Linux and macOS')
     if sys.flags.optimize:
@@ -100,7 +103,7 @@ def main():
                             '--ffpacheck', str(args.ffpacheck.resolve())]
             jobs.append((name.removesuffix('.py'), command))
     env = dict(os.environ, PYTHONPATH=str(build / 'python'),
-               Z3_LIBRARY_PATH=str(build), PYTHONNOUSERSITE='1')
+               Z3_LIBRARY_PATH=str(build), PYTHONNOUSERSITE='1', Z3_SOURCE_DIR=str(ROOT))
     env.pop('PYTHONOPTIMIZE', None)
     output.mkdir(parents=True, exist_ok=False)
     # Fail early if Python or its shared library came from an installed Z3.
