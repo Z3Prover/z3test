@@ -7,4 +7,4 @@
 (define-fun n () (_ FloatingPoint 2 5) ((_ to_fp 2 5) RNE 3.875))
 (define-fun d () (_ FloatingPoint 2 5) ((_ to_fp 2 5) RNE 0.125))
 (assert (fp.eq (_ +oo 2 5) (fp.div RNE n d)))
-(check-sat)
+(check-sat-using qffp)

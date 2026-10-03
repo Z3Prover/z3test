@@ -7,4 +7,4 @@
 (define-fun b () (_ FloatingPoint 2 6) ((_ to_fp 2 6) RTZ 0.0625))
 (define-fun expected () (_ FloatingPoint 2 6) ((_ to_fp 2 6) RTZ (- 3.9375)))
 (assert (fp.eq expected (fp.div RTZ c b)))
-(check-sat)
+(check-sat-using qffp)
