@@ -24,7 +24,7 @@ cmake --build build --target z3 test-z3 test-ff-api libz3 build_z3_python_bindin
 python3 "$FF_TESTS"/run_tests.py --build build --suite core --out /tmp/ff-core
 ```
 
-The core selection runs **20 Python suites**, seven native groups (`finite_field`, `ff_solver`,
+The core selection runs **20 Python suites**, six base native groups (`finite_field`,
 `ast`, `smt_context`, `smt2print_parse`, `api`, `arith_rewriter`), and the public
 C++ API smoke test. The smoke target keeps assertions enabled in Release builds.
 Coverage includes exhaustive small-field oracles, SAT models and UNSAT cores,
@@ -82,3 +82,9 @@ vectors for BN254 and BLS12-381 from the Poseidon implementation in
 Its header records the source revision and file hashes. `zk_circuits.py` and
 `test_zk.py` use this data to test circuit semantics; it is not a solver runtime
 dependency. `POSEIDON-LICENSE-MIT` retains the upstream license for this fixture.
+
+The external runner also selects native `ff_solver` and `ff_domain` groups when
+those test sources exist in the supplied Z3 checkout. Each native test must emit
+its named completion record; an unknown test name returning zero cannot pass.
+The review regressions include field-valued ITEs, selected-branch equalities,
+SAT model validation, assumptions, push/pop and reset from upstream Z3 #11056.

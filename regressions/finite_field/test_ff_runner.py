@@ -8,7 +8,7 @@ import sys
 import tempfile
 import unittest
 
-from run_tests import execute
+from run_tests import execute, native_groups
 
 RUNNER = Path(__file__).with_name('run_tests.py')
 
@@ -24,6 +24,28 @@ class RunnerTests(unittest.TestCase):
             self.assertEqual(result['status'], 'failed')
             self.assertEqual(result['returncode'], 7)
             self.assertIn('intentional failure', (out / 'failure.log').read_text())
+
+    def test_native_group_requires_named_completion(self):
+        with tempfile.TemporaryDirectory() as temp:
+            out = Path(temp)
+            for output, expected in [('PASS', 'failed'),
+                                     ('(test other :time 0.01)', 'failed'),
+                                     ('(test ff_domain :time 0.01)', 'passed')]:
+                result = execute('native-ff_domain', [sys.executable, '-c',
+                                 'print(' + repr(output) + ')'], dict(os.environ), out, 10)
+                self.assertEqual(result['status'], expected)
+
+    def test_native_groups_match_source(self):
+        with tempfile.TemporaryDirectory() as temp:
+            source = Path(temp)
+            self.assertNotIn('ff_solver', native_groups(source))
+            self.assertNotIn('ff_domain', native_groups(source))
+            tests = source / 'src' / 'test'
+            tests.mkdir(parents=True)
+            for name in ('ff_solver', 'ff_domain'):
+                (tests / (name + '.cpp')).touch()
+            self.assertIn('ff_solver', native_groups(source))
+            self.assertIn('ff_domain', native_groups(source))
 
     def test_timeout_is_failure(self):
         with tempfile.TemporaryDirectory() as temp:

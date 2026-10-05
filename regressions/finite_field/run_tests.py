@@ -25,7 +25,14 @@ CORE = [
 PROOFS = ['test_ff_certificates.py', 'test_ff_proof_pipeline.py', 'test_ff_boolean_proof.py']
 CLI = {'test_qfff.py', 'test_ff_backend_recovery.py', 'test_ff_integration.py'}
 EXTERNAL = {'test_ff_proof_pipeline.py', 'test_ff_boolean_proof.py'}
-NATIVE = ['finite_field', 'ff_solver', 'ast', 'smt_context', 'smt2print_parse', 'api', 'arith_rewriter']
+NATIVE = ['finite_field', 'ast', 'smt_context', 'smt2print_parse', 'api', 'arith_rewriter']
+
+
+def native_groups(source):
+    # Match the supplied source checkout, including separately reviewed FF work.
+    # execute() requires an actual named completion record from the built binary.
+    return NATIVE + [n for n in ('ff_solver', 'ff_domain')
+                     if (source / 'src' / 'test' / (n + '.cpp')).is_file()]
 
 
 def positive(value):
@@ -56,6 +63,10 @@ def execute(name, command, env, output, timeout):
                 status = 'timeout'
         except OSError as error:
             log.write(str(error) + '\n')
+    if status == 'passed' and name.startswith('native-'):
+        marker = '(test ' + name.removeprefix('native-') + ' '
+        if marker not in (output / (name + '.log')).read_text():
+            status = 'failed'
     result = dict(name=name, status=status, returncode=code,
                   seconds=time.monotonic() - started, command=command)
     print(f'{status.upper():7} {name} ({result["seconds"]:.2f}s)', flush=True)
@@ -83,7 +94,7 @@ def main():
     z3 = str(build / 'z3')
     jobs = []
     if args.suite in ('core', 'all'):
-        jobs.extend(('native-' + n, [str(build / 'test-z3'), n]) for n in NATIVE)
+        jobs.extend(('native-' + n, [str(build / 'test-z3'), n]) for n in native_groups(ROOT))
         jobs.append(('cpp-api', [str(build / 'test-ff-api')]))
         for name in CORE:
             command = [sys.executable, str(TESTS / name)]
