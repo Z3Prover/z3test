@@ -24,7 +24,7 @@ def examples():
         one, minus = FiniteFieldVal(1, F), FiniteFieldVal(p-1, F)
         cases = [
             [x*x == 1, f(x) != f(one), f(x) != f(minus)],
-            [y == x*x, x*x*x*x == 1, f(y) != f(one), f(y) != f(minus)],
+            [x*x*x*x == 1, x*x != 1, x*x != minus],
             [x*y == 0, x != 0, y != 0],
             [x*x == y*y, x != y, x != -y],
             [(x+1)*(x+1) == y*y, x+1 != y, x+1 != -y],
@@ -35,6 +35,10 @@ def examples():
             # F_2 rewriting can settle some equalities before the theory runs.
             if p > 2:
                 assert s.statistics().get_key_value('ff root clauses') > 0, (cs, s.statistics())
+        # With binary products, generic substitution can replace the x*x
+        # subterm in the quartic by y, leaving (y*x)*x. That expression is no
+        # longer syntactically a square; the algebra path must still solve it.
+        solve([y == x*x, x*x*x*x == 1, f(y) != f(one), f(y) != f(minus)], unsat)
         # Square recognition must not cancel an unknown factor, discard the
         # negative root, or confuse integer nonsquares with field nonresidues.
         solve([x*y == 0, x == 0, y == 1], sat)

@@ -1,5 +1,6 @@
 """End-to-end artifact-format tests; requires real Carcara and FFPacheck binaries."""
 import argparse
+import os
 import json
 from pathlib import Path
 import shutil
@@ -7,7 +8,7 @@ import subprocess
 import sys
 import tempfile
 
-ROOT = Path(__file__).resolve().parents[2]
+ROOT = Path(os.environ.get('Z3_SOURCE_DIR', Path.cwd())).resolve()
 sys.path.insert(0, str(ROOT / 'scripts'))
 import ff_proof_pipeline as pp
 

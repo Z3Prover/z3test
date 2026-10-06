@@ -1,5 +1,6 @@
 """Original-input Boolean/ITE proofs, deep DAGs, and independent corruptions."""
 import argparse
+import os
 import copy
 import itertools
 import json
@@ -8,7 +9,7 @@ import random
 import sys
 import tempfile
 
-ROOT = Path(__file__).resolve().parents[2]
+ROOT = Path(os.environ.get('Z3_SOURCE_DIR', Path.cwd())).resolve()
 sys.path.insert(0, str(ROOT / 'scripts'))
 import ff_boolean_proof as bp
 import ff_proof_pipeline as pp

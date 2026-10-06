@@ -1,23 +1,30 @@
 # Finite-field regression tests
 
-The solver tree keeps regression tests and their small, licensed fixtures.
+This z3test directory keeps regression tests and their small, licensed fixtures.
+It is checked out separately from the Z3 source tree.
 Corpus acquisition, benchmark campaigns, paper sources, figures and experiment
 reports are preserved separately. Existing evidence remains available in the
 [immutable published snapshot](https://github.com/RSoulatIOHK/z3/tree/0a5210c9009ba5595521c39cefa7ef0a7b1d46aa/tests/finite_field).
 
 ## Run the acceptance checks
 
-Python 3.12+, Linux or macOS, and a CMake build are required. The runner uses
+Python 3.12+, Linux or macOS, and a CMake build are required. Pass
+`--source /path/to/z3` to the runner or set `Z3_SOURCE_DIR`; proof tests import
+producer/checker Python modules from that source checkout, not from z3test. The runner uses
 that build's Python package and verifies shared-library identity before running
 any suite; an installed Z3 cannot accidentally satisfy these tests.
 
 ```sh
-cmake -S . -B build -DCMAKE_BUILD_TYPE=Release -DZ3_BUILD_PYTHON_BINDINGS=ON
+export Z3_SOURCE_DIR=/path/to/z3
+export FF_TESTS=/path/to/z3test/regressions/finite_field
+cd "$Z3_SOURCE_DIR"
+cmake -S . -B build -DCMAKE_BUILD_TYPE=Release -DZ3_BUILD_PYTHON_BINDINGS=ON \
+  -DZ3_FF_TEST_DIR="$FF_TESTS"
 cmake --build build --target z3 test-z3 test-ff-api libz3 build_z3_python_bindings --parallel 2
-python3 tests/finite_field/run_tests.py --build build --suite core --out /tmp/ff-core
+python3 "$FF_TESTS"/run_tests.py --build build --suite core --out /tmp/ff-core
 ```
 
-The core selection runs **19 Python suites**, six native groups (`finite_field`,
+The core selection runs **20 Python suites**, six base native groups (`finite_field`,
 `ast`, `smt_context`, `smt2print_parse`, `api`, `arith_rewriter`), and the public
 C++ API smoke test. The smoke target keeps assertions enabled in Release builds.
 Coverage includes exhaustive small-field oracles, SAT models and UNSAT cores,
@@ -27,8 +34,8 @@ contexts, scopes, cancellation, fallback recovery, F4 and scalar backends.
 Certificate validation is a separate explicit selection:
 
 ```sh
-python3 tests/finite_field/proof_checkers/build.py --out /tmp/ff-checkers
-python3 tests/finite_field/run_tests.py --build build --suite proofs \
+python3 "$FF_TESTS"/proof_checkers/build.py --out /tmp/ff-checkers
+python3 "$FF_TESTS"/run_tests.py --build build --suite proofs \
   --carcara /tmp/ff-checkers/carcara --ffpacheck /tmp/ff-checkers/ffpacheck \
   --out /tmp/ff-proofs
 ```
@@ -63,3 +70,21 @@ external proof tests additionally require the checkers documented in
 checkers intentionally do not share the C++ arithmetic/translation implementation.
 `benchmark_qfff.py` remains a small generated benchmark harness; measured public
 corpus comparisons and their provenance belong to the research archive.
+
+The upstream-review regressions additionally check that field-valued function
+applications retain congruence and pointwise models, and that `ff2bv` preserves
+field-valued ITEs. Native tests exercise nested zero-test products (including
+multiplicities and premise dependencies) and transitive wire-substitution cores.
+
+The `poseidon_t3.json` fixture contains width-three Poseidon parameters and test
+vectors for BN254 and BLS12-381 from the Poseidon implementation in
+[HorizenLabs/poseidon2](https://github.com/HorizenLabs/poseidon2/tree/055bde3f4782731ba5f5ce5888a440a94327eaf3/plain_implementations/src/poseidon).
+Its header records the source revision and file hashes. `zk_circuits.py` and
+`test_zk.py` use this data to test circuit semantics; it is not a solver runtime
+dependency. `POSEIDON-LICENSE-MIT` retains the upstream license for this fixture.
+
+The external runner also selects native `ff_solver` and `ff_domain` groups when
+those test sources exist in the supplied Z3 checkout. Each native test must emit
+its named completion record; an unknown test name returning zero cannot pass.
+The review regressions include field-valued ITEs, selected-branch equalities,
+SAT model validation, assumptions, push/pop and reset from upstream Z3 #11056.
