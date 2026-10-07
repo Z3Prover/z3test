@@ -8,7 +8,7 @@ checking method:
 | Cell | Configuration and checking method |
 | --- | --- |
 | `smt-clause-log` | `sat.smt=true` with `solver.proof.log`; replayed through the built-in checker (`proof_cmds` / `euf_proof_checker`) |
-| `smt-clause-log-nopp` | The same with `solve-eqs`, `propagate-values`, and `elim-unconstrained` disabled, because the clause log does not cover contradictions found by preprocessing |
+| `smt-clause-log-nopp` | The same with `solve-eqs`, `propagate-values`, `elim-unconstrained`, and `bound-simplifier` disabled; with `--lean`, reconstruct and Lean-check the saved log for Boolean/QF_LRA inputs |
 | `legacy-proof-object` | `sat.smt=false` with `produce-proofs`; inventoried by default, or produced and Lean-checked through the matching Python bindings with `--lean` |
 | `legacy-clause-proof` | `sat.smt=false` with `smt.clause_proof`; the proof trail is inventoried (no checker yet) |
 | `arith-validate` | `smt.arith.validate` self-validation inside `theory_lra` |
@@ -17,9 +17,9 @@ Every (benchmark, cell) record carries one status: `verified`, `lean-verified`,
 `diagnostic`, `unsupported`,
 `unverified-fallback`, `checker-rejected`, `no-proof`, `not-applicable`,
 `disagree`, `crash`, `timeout`, or `no-checker`. A self-checker fallback to the
-SMT solver is counted as `unverified-fallback`, never as `verified`. Clause-log
-records also carry the hint names, the checker's per-hint hit and miss counts,
-and the number of fallbacks. `arith-validate` now reports `diagnostic`, not
+SMT solver is counted as `unverified-fallback`, never as `verified`. Native
+clause-log records also carry the hint names, the checker's per-hint hit and
+miss counts, and the number of fallbacks. `arith-validate` reports `diagnostic`, not
 `verified`, when self-validation succeeds on an unsat run. `verified` describes
 native checker acceptance, not a Lean proof or certification of preprocessing
 outside the clause log. Only `lean-verified` denotes Lean certification.
@@ -61,10 +61,11 @@ regressions, including `array_axiom_log.smt2` from Z3Prover/z3#10922 and
 ## Lean certification
 
 `--lean` is an option of this Python runner, not the Z3 executable. It requires
-the `legacy-proof-object` cell, a Z3 checkout containing the native exporter
-and reconstructor (introduced in Z3Prover/z3#11017), and a matching CMake build
-with Python bindings and a shared library. The first implementation supports
-POSIX hosts with `z3`, `libz3.so` or `libz3.dylib`, and `python/z3/` together
+the `legacy-proof-object` or `smt-clause-log-nopp` cell, a Z3 checkout containing
+the native exporter and reconstructor (introduced in Z3Prover/z3#11017), and a matching CMake build
+with Python bindings and a shared library. The clause-log cell additionally
+requires `examples/python/proof_clause_log.py` and the QF_LRA Lean reconstructor.
+The implementation supports POSIX hosts with `z3`, `libz3.so` or `libz3.dylib`, and `python/z3/` together
 under the build directory. It rejects missing or mismatched dependencies
 rather than using a system-installed Python package.
 
@@ -73,7 +74,14 @@ python3 scripts/proofs/proof_matrix.py \
     --z3 /path/to/z3/build/z3 --z3-source /path/to/z3 \
     --lean --cells legacy-proof-object \
     --lean-artifacts /path/to/artifacts --out results.jsonl \
-    ../z3test/regressions/proofs/lean/*.smt2
+    regressions/proofs/lean/boolean_*.smt2 \
+    regressions/proofs/lean/unit_resolution.smt2
+
+python3 scripts/proofs/proof_matrix.py \
+    --z3 /path/to/z3/build/z3 --z3-source /path/to/z3 \
+    --lean --cells smt-clause-log-nopp \
+    --lean-artifacts /path/to/artifacts --out results.jsonl \
+    regressions/proofs/lean/lra_*.smt2
 ```
 
 `--z3-source` locates the tools and pinned Lean workspace without copying files
@@ -82,29 +90,37 @@ builds the Lean workspace. Missing tools, bindings, or Lean are configuration
 errors. `proof_lean.py` is the binding-dependent subprocess adapter, not a
 replacement exporter or Lean implementation.
 
-For each cell, one isolated Python process uses that build's native library,
+For the legacy cell, one isolated Python process uses that build's native library,
 enables proofs before creating the context, sets `sat.smt=false`, solves once,
-and serializes that solver's proof. A second isolated process reads the saved
-certificate and original input and invokes the Lean reconstructor; it never
+and serializes that solver's proof. For the clause-log cell, the producer runs
+the executable once with `sat.smt=true` and the four preprocessing passes
+disabled, retains its `clause.log`, and rebuilds that exact log into the native
+certificate format using the source checkout's replayer. `bound_simplifier`
+must be disabled too because it runs solve-eqs internally. A second isolated
+process reads the saved certificate and original input and invokes the Lean reconstructor; it never
 runs solver search. The proof-free reference run remains separate.
 
 The Lean cell validates the **original** input, without stripping its commands
 or replacing undecodable text. It currently supports the exporter's
-single-query propositional snapshots. Unsupported commands, options, theories,
+single-query propositional snapshots, plus linear real arithmetic in the
+clause-log cell. Unsupported commands, options, theories,
 or proof shapes are explicit failures, not silently changed problems.
 
 Each cell gets a fresh directory below `--lean-artifacts`, retaining
 `input.smt2`, the unverified `certificate.json` when available, and
-`checked.lean` only after successful checking. JSON records include source
+`checked.lean` only after successful checking. The clause-log cell also retains
+the actual `solver.smt2` invocation and `clause.log`. JSON records include source
 and certificate hashes, the checked Lean file's hash, certificate byte size,
-DAG rule counts, native statistics, and producer paths/version/parameters.
+DAG rule counts, native statistics for the legacy cell, and producer
+paths/version/parameters. The clause-log cell records the log path, hash, and
+inference count and identifies its producer interface as `smt2` rather than `z3py`.
 The `time` field measures the actual producer subprocess, `solve_time` the
 native check, and `check_time` reconstruction and Lean checking. No timing or
 rule inventory is borrowed from a second executable proof run. The native
 JSON remains explicitly unverified; the checked Lean artifact is separate.
 
-With `--lean`, every selected legacy cell must be `lean-verified` for exit
-status zero. Sat/unknown, unsupported inputs, missing evidence, timeouts, and
+With `--lean`, every selected `legacy-proof-object` or `smt-clause-log-nopp`
+cell must be `lean-verified` for exit status zero. Sat/unknown, unsupported inputs, missing evidence, timeouts, and
 rejections therefore fail the requested certification, even if a benchmark
 annotation would normally waive that failure. Other cells retain their usual
 classification and known-failure policy. A run collecting no benchmarks also
@@ -114,6 +130,9 @@ production. On timeout the subprocess group, including Lean, is terminated.
 Lean proves that the encoded original assertions imply False. Parsing and
 SMT-to-Lean statement translation remain trusted frontend components; this
 does not certify SAT or provide a formally verified SMT-LIB parser.
+The arithmetic reconstructor encodes Real as Rat, justified only for linear
+constraints with rational coefficients. Arithmetic proofs may depend on Lean's
+three standard axioms through its Rat library.
 
 ## Runner tests and CI
 
@@ -132,8 +151,13 @@ Z3_EXE=/path/to/z3/build/z3 Z3_SOURCE=/path/to/z3 \
 ```
 
 Without those explicit variables the real Lean tests are skipped, but gate
-classification tests still run. Once requested, a broken installation fails
-instead of skipping. The exporter and reconstructor remain in the Z3 checkout.
+classification tests still run. QF_LRA integration tests are also skipped for
+older Z3 checkouts that do not contain `proof_clause_log.py`, so the existing
+Boolean CI can use this runner before the arithmetic exporter lands. Once the
+exporter is present, a broken installation fails instead of skipping.
+Explicitly requesting the clause-log Lean cell always requires its exporter;
+the CLI never silently falls back. The exporter and reconstructor remain in
+the Z3 checkout.
 
 The workflow lives in `Z3Prover/z3`, not here. It clones z3test and runs these
 tests against the binary it just built in the Linux CMake test configurations.

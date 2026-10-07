@@ -63,12 +63,13 @@ KNOWN_FAILURE_STATUSES = ("checker-rejected", "disagree", "crash")
 
 CELLS = {
     "smt-clause-log": "sat.smt=true, solver.proof.log; checked by replaying the log through the built-in checker",
-    "smt-clause-log-nopp": "as smt-clause-log with solve-eqs, propagate-values, and elim-unconstrained disabled, "
-                           "so contradictions found by preprocessing (which the log does not cover) reach the core",
+    "smt-clause-log-nopp": "as smt-clause-log with solve-eqs, propagate-values, elim-unconstrained, and "
+                           "bound-simplifier disabled; Lean-checked for Boolean/QF_LRA input with --lean",
     "legacy-proof-object": "sat.smt=false, produce-proofs; proof object inventoried, Lean-checked when propositional",
     "legacy-clause-proof": "sat.smt=false, smt.clause_proof; proof trail inventoried (no checker yet)",
     "arith-validate": "smt.arith.validate self-validation oracle inside theory_lra",
 }
+LEAN_CORES = {"legacy-proof-object": "legacy", "smt-clause-log-nopp": "clause-log"}
 
 
 def strip_commands(source):
@@ -136,7 +137,7 @@ def finish(record, run, checks):
 
 
 _NO_PREPROCESSING = ("(set-option :smt.solve_eqs false)\n(set-option :smt.propagate_values false)\n"
-                     "(set-option :smt.elim_unconstrained false)\n")
+                     "(set-option :smt.elim_unconstrained false)\n(set-option :smt.bound_simplifier false)\n")
 
 
 def cell_smt_clause_log(z3, source, timeout, record, preprocessing=True):
@@ -229,12 +230,14 @@ def run_benchmark(z3, path, cells, timeout, lean):
            "status": "timeout" if reference["timeout"] else "crash" if crashed(reference) else "reference"}
     for cell in cells:
         record = base_record(path, logic, cell, expected)
-        if cell == "smt-clause-log":
+        if lean and cell in lean:
+            yield lean[cell].run(original, timeout, record)
+        elif cell == "smt-clause-log":
             yield cell_smt_clause_log(z3, source, timeout, record)
         elif cell == "smt-clause-log-nopp":
             yield cell_smt_clause_log(z3, source, timeout, record, preprocessing=False)
         elif cell == "legacy-proof-object":
-            yield cell_legacy_proof_object(z3, original if lean else source, timeout, record, lean)
+            yield cell_legacy_proof_object(z3, source, timeout, record, None)
         elif cell == "legacy-clause-proof":
             yield cell_legacy_clause_proof(z3, source, timeout, record)
         elif cell == "arith-validate":
@@ -325,7 +328,7 @@ def main():
                         "; ".join("%s = %s" % item for item in CELLS.items()))
     parser.add_argument("--timeout", type=float, default=60.0, help="seconds per solver invocation")
     parser.add_argument("--lean", action="store_true",
-                        help="require a Lean-checked native certificate for each legacy-proof-object cell")
+                        help="require Lean certification for legacy-proof-object and smt-clause-log-nopp cells")
     parser.add_argument("--z3-source", type=Path, help="Z3 checkout containing the Lean tools (required with --lean)")
     parser.add_argument("--lean-artifacts", type=Path,
                         help="directory retaining input, native JSON, and checked Lean files (required with --lean)")
@@ -340,12 +343,13 @@ def main():
         parser.error("unknown cells: %s" % ", ".join(unknown))
     lean = None
     if args.lean:
-        if "legacy-proof-object" not in cells:
-            parser.error("--lean requires the legacy-proof-object cell")
+        if not any(cell in LEAN_CORES for cell in cells):
+            parser.error("--lean requires a legacy-proof-object or smt-clause-log-nopp cell")
         if args.z3_source is None or args.lean_artifacts is None:
             parser.error("--lean requires --z3-source and --lean-artifacts")
         try:
-            lean = LeanChecker(args.z3_source, args.z3, args.lean_artifacts)
+            lean = {cell: LeanChecker(args.z3_source, args.z3, args.lean_artifacts, core=core)
+                    for cell, core in LEAN_CORES.items() if cell in cells}
         except ValueError as error:
             parser.error(str(error))
     records = []

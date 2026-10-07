@@ -1,10 +1,12 @@
-Boolean inputs for the Lean certification cell of scripts/proofs/proof_matrix.py.
+Boolean and QF_LRA inputs for the Lean certification cells of scripts/proofs/proof_matrix.py.
 
-Each file is a small propositional unsat query whose native Z3 proof the
+Each file is a small unsat query whose native Z3 proof the
 reconstructor in Z3Prover/z3 (examples/python/proof_to_lean.py) must turn into
 a Lean term that the pinned Lean toolchain accepts. The z3 CI job releaseClang
-runs the matrix with --lean over this directory and fails unless every file is
-reported as lean-verified.
+runs the matrix with --lean over the matching inputs and fails unless every
+file is reported as lean-verified.
+
+The legacy-proof-object cell handles the Boolean inputs:
 
   unit_resolution.smt2     contradiction closed by preprocessing alone
   boolean_rewrite.smt2     implication rewriting and mp
@@ -13,10 +15,33 @@ reported as lean-verified.
   boolean_def_axiom.smt2   gate clauses (def-axiom)
   boolean_solve_eqs.smt2   solve-eqs elimination followed by search
 
+The smt-clause-log-nopp cell handles the QF_LRA inputs:
+
+  lra_farkas.smt2            nontrivial Farkas coefficients
+  lra_equality.smt2          equality and strict inequalities
+  lra_fractions.smt2         exact rational constants
+  lra_boolean_structure.smt2 mixed Boolean and arithmetic structure
+  lra_split_assertion.smt2   preprocessing splits an xor and an equivalence
+  lra_implied_equality.smt2  implied-eq hints ending in a disequality
+  lra_distinct.smt2          alldiff clauses bound to the original assertion
+  lra_unary_minus.smt2       negative variable coefficients in scaling helpers
+
 Run from a z3 checkout with a POSIX CMake build in build/:
 
   python3 ../z3test/scripts/proofs/proof_matrix.py \
     --z3 "$PWD/build/z3" --z3-source "$PWD" \
     --lean --cells legacy-proof-object --timeout 30 \
     --lean-artifacts /tmp/lean-proof-artifacts --out /tmp/lean-proof-matrix.jsonl \
-    ../z3test/regressions/proofs/lean/*.smt2
+    ../z3test/regressions/proofs/lean/boolean_*.smt2 \
+    ../z3test/regressions/proofs/lean/unit_resolution.smt2
+
+  python3 ../z3test/scripts/proofs/proof_matrix.py \
+    --z3 "$PWD/build/z3" --z3-source "$PWD" \
+    --lean --cells smt-clause-log-nopp --timeout 30 \
+    --lean-artifacts /tmp/lean-proof-artifacts --out /tmp/lean-proof-matrix.jsonl \
+    ../z3test/regressions/proofs/lean/lra_*.smt2
+
+The QF_LRA cell requires the clause-log exporter and arithmetic Lean
+reconstructor from the Z3 checkout, including implied-eq, alldiff, and unary
+negation support. It preserves the original assertion boundary and checks the
+recorded certificate rather than exporting a second proof.
