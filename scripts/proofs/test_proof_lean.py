@@ -14,6 +14,7 @@ import proof_matrix
 
 _SOURCE = os.environ.get("Z3_SOURCE")
 _Z3 = os.environ.get("Z3_EXE")
+_CLAUSE_LOG = _SOURCE and (Path(_SOURCE) / "examples" / "python" / "proof_clause_log.py").is_file()
 _INPUT = "(declare-const p Bool)\r\n(assert p)\r\n(assert (not p))\r\n(check-sat)\r\n"
 
 
@@ -59,8 +60,27 @@ class TestLeanGate(unittest.TestCase):
                 stream.write(source)
             fake = {"stdout": "unsat\n", "stderr": "", "code": 0, "timeout": False, "time": 0}
             with patch.object(proof_matrix, "run_z3", return_value=fake):
-                list(proof_matrix.run_benchmark("unused", path, ["legacy-proof-object"], 30, Checker()))
-        self.assertEqual(seen, [source])
+                cells = ["legacy-proof-object", "smt-clause-log-nopp"]
+                checkers = {cell: Checker() for cell in cells}
+                records = list(proof_matrix.run_benchmark("unused", path, cells, 30, checkers))
+        self.assertEqual(seen, [source, source])
+        self.assertEqual([record["status"] for record in records[1:]], ["unsupported", "unsupported"])
+
+    def test_clause_log_cell_selects_the_clause_log_producer(self):
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / "input.smt2"
+            path.write_text(_INPUT)
+            class Checker:
+                def run(self, source, timeout, record):
+                    return dict(record, checker="lean", status="lean-verified")
+            fake = {"stdout": "unsat\n", "stderr": "", "code": 0, "timeout": False, "time": 0}
+            with patch.object(sys, "argv", [
+                proof_matrix.__file__, "--lean", "--cells", "smt-clause-log-nopp",
+                "--z3-source", directory, "--lean-artifacts", directory, str(path),
+            ]), patch.object(proof_matrix, "LeanChecker", return_value=Checker()) as factory, \
+                    patch.object(proof_matrix, "run_z3", return_value=fake):
+                self.assertEqual(proof_matrix.main(), 0)
+            self.assertEqual(factory.call_args.kwargs, {"core": "clause-log"})
 
 
 @unittest.skipUnless(_SOURCE and _Z3, "set Z3_SOURCE and Z3_EXE for real Lean replay")
@@ -181,8 +201,18 @@ class TestLeanIntegration(unittest.TestCase):
             self.assertNotIn("lean_proof", record)
 
     def test_cli_requires_real_certification_and_retains_artifacts(self):
-        for source, exit_code in ((_INPUT, 0), ("(assert true)(check-sat)", 1)):
-            with self.subTest(exit_code=exit_code), tempfile.TemporaryDirectory() as temporary:
+        cases = [
+            ("legacy-proof-object", _INPUT, 0),
+            ("legacy-proof-object", "(assert true)(check-sat)", 1),
+        ]
+        if _CLAUSE_LOG:
+            cases += [
+                ("smt-clause-log-nopp",
+                 "(declare-const x Real)(assert (> x 1.0))(assert (< x 0.0))(check-sat)", 0),
+                ("smt-clause-log-nopp", "(assert true)(check-sat)", 1),
+            ]
+        for cell, source, exit_code in cases:
+            with self.subTest(cell=cell, exit_code=exit_code), tempfile.TemporaryDirectory() as temporary:
                 root = Path(temporary)
                 path = root / "input.smt2"
                 path.write_text(source)
@@ -190,7 +220,7 @@ class TestLeanIntegration(unittest.TestCase):
                 proc = subprocess.run(
                     [sys.executable, proof_matrix.__file__, "--z3", _Z3, "--z3-source", _SOURCE,
                      "--lean", "--lean-artifacts", str(root / "artifacts"),
-                     "--cells", "legacy-proof-object", "--out", str(out), str(path)],
+                     "--cells", cell, "--out", str(out), str(path)],
                     capture_output=True, text=True, timeout=120)
                 self.assertEqual(proc.returncode, exit_code, proc.stdout + proc.stderr)
                 record = json.loads(out.read_text().splitlines()[1])
@@ -198,6 +228,111 @@ class TestLeanIntegration(unittest.TestCase):
                 if exit_code == 0:
                     self.assertEqual(record["status"], "lean-verified")
                     self.assertTrue(Path(record["lean_proof"]).is_file())
+
+
+@unittest.skipUnless(_SOURCE and _Z3, "set Z3_SOURCE and Z3_EXE for real Lean replay")
+@unittest.skipUnless(_CLAUSE_LOG, "the Z3 checkout needs the clause-log exporter for QF_LRA replay")
+class TestClauseLogLeanIntegration(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        cls.temporary = tempfile.TemporaryDirectory()
+        cls.addClassCleanup(cls.temporary.cleanup)
+        cls.checker = proof_lean.LeanChecker(_SOURCE, _Z3, cls.temporary.name, core="clause-log")
+
+    def run_cell(self, source, expected="unsat"):
+        return self.checker.run(source, 30,
+                                proof_matrix.base_record("input.smt2", "QF_LRA",
+                                                         "smt-clause-log-nopp", expected))
+
+    def test_qf_lra_corpus_is_lean_certified(self):
+        corpus = Path(__file__).resolve().parents[2] / "regressions" / "proofs" / "lean"
+        inputs = sorted(corpus.glob("lra_*.smt2"))
+        self.assertEqual(len(inputs), 8)
+        for path in inputs:
+            with self.subTest(input=path.name):
+                source = proof_lean.read_source(path)
+                record = self.run_cell(source)
+                self.assertEqual(record["status"], "lean-verified", record)
+                directory = Path(record["artifacts"])
+                self.assertEqual((directory / "input.smt2").read_bytes(), source.encode())
+                certificate = json.loads(Path(record["certificate"]).read_text())
+                self.assertEqual(certificate["source_smt2"], source)
+                self.assertEqual(certificate["fragment"], "qf_lra")
+                self.assertEqual(certificate["rule_counts"], record["rules"])
+                self.assertEqual(proof_lean.digest(Path(record["certificate"]).read_bytes()),
+                                 record["certificate_sha256"])
+                self.assertEqual(proof_lean.digest(Path(record["clause_log"]).read_bytes()),
+                                 record["clause_log_sha256"])
+                self.assertEqual(record["producer"]["interface"], "smt2")
+                self.assertTrue(record["producer"]["parameters"]["sat.smt"])
+                self.assertFalse(record["producer"]["parameters"]["smt.bound_simplifier"])
+
+    def test_clause_log_is_produced_once_and_checker_does_not_reexport(self):
+        z3, exporter, consumer, _ = proof_lean._load(Path(_SOURCE).resolve(), Path(_Z3).resolve(), "clause-log")
+        source = ("(declare-const x Real)(assert (> x 1.0))(assert (< x 0.0))(check-sat)")
+        with tempfile.TemporaryDirectory() as temporary:
+            directory = Path(temporary)
+            with patch.object(proof_lean.subprocess, "run", wraps=subprocess.run) as run:
+                produced = proof_lean.produce_clause_log(z3, exporter, source, directory, 30, _Z3)
+            self.assertEqual(produced["status"], "produced")
+            self.assertEqual(run.call_count, 1)
+            with patch.object(z3.Solver, "check", side_effect=AssertionError("checker solver call")), \
+                    patch.object(exporter, "export_clause_log_certificate", side_effect=AssertionError("re-export")):
+                checked = proof_lean.check(consumer, source, directory)
+            self.assertEqual(checked["status"], "lean-verified")
+
+    def test_unsupported_sat_and_disagreement_are_not_certified(self):
+        for source, expected, status in [
+            ("(declare-const x Int)(assert (> x 0))(assert (< x 0))", "unsat", "unsupported"),
+            ("(declare-const x Real)(assert (= (* x x) 2.0))", "sat", "unsupported"),
+            ("(declare-const x Real)(assert (> x 0.0))", "sat", "not-applicable"),
+            ("(declare-const x Real)(assert (> x 0.0))", "unsat", "disagree"),
+            (_INPUT + "(check-sat)", "unsat", "unsupported"),
+        ]:
+            with self.subTest(source=source):
+                record = self.run_cell(source, expected)
+                self.assertEqual(record["status"], status, record)
+                self.assertEqual(proof_matrix.failures([record]), [record])
+                self.assertNotIn("lean_proof", record)
+
+    def test_changed_input_and_tampered_certificates_are_rejected(self):
+        source = "(declare-const x Real)(assert (> x 1.0))(assert (< x 0.0))"
+        for target in ("input", "certificate"):
+            with self.subTest(target=target), tempfile.TemporaryDirectory() as temporary:
+                directory = Path(temporary)
+                (directory / "input.smt2").write_text(source)
+                produced = proof_lean._reply(self.checker._call("produce", directory, 30))
+                self.assertEqual(produced["status"], "produced")
+                if target == "input":
+                    (directory / "input.smt2").write_text("(assert true)")
+                else:
+                    path = directory / "certificate.json"
+                    certificate = json.loads(path.read_text())
+                    certificate["proof"] = certificate["assertions"][0]
+                    path.write_text(json.dumps(certificate))
+                checked = proof_lean._reply(self.checker._call("check", directory))
+                self.assertEqual(checked["status"], "checker-rejected")
+                self.assertFalse((directory / "checked.lean").exists())
+
+    def test_solver_errors_timeouts_and_missing_logs_are_not_certified(self):
+        z3, exporter, _, _ = proof_lean._load(Path(_SOURCE).resolve(), Path(_Z3).resolve(), "clause-log")
+        for result, status in [
+            (subprocess.TimeoutExpired("z3", 30), "timeout"),
+            (subprocess.CompletedProcess([], 1, "", "solver failed"), "crash"),
+            (subprocess.CompletedProcess([], 0, '(error "bad option")\nunsat\n', ""), "crash"),
+            (subprocess.CompletedProcess([], 0, "unsat\n", ""), "no-proof"),
+            (subprocess.CompletedProcess([], 0, "unknown\n", ""), "not-applicable"),
+        ]:
+            with self.subTest(status=status), tempfile.TemporaryDirectory() as temporary:
+                if isinstance(result, Exception):
+                    mock = patch.object(proof_lean.subprocess, "run", side_effect=result)
+                else:
+                    mock = patch.object(proof_lean.subprocess, "run", return_value=result)
+                with mock:
+                    report = proof_lean.produce_clause_log(
+                        z3, exporter, "(assert false)", Path(temporary), 30, _Z3)
+                self.assertEqual(report["status"], status, report)
+                self.assertFalse((Path(temporary) / "certificate.json").exists())
 
 
 if __name__ == "__main__":

@@ -80,6 +80,16 @@ class TestClassification(unittest.TestCase):
                   "(set-option :smt.arith.validate true)(assert p)(check-sat)(get-proof)(get-model)(exit)")
         self.assertEqual(proof_matrix.strip_commands(source), "(assert p)(check-sat)")
 
+    def test_no_preprocessing_disables_bound_simplifier(self):
+        with patch.object(proof_matrix, "run_z3", return_value=fake_run("sat\n")) as run:
+            proof_matrix.cell_smt_clause_log(
+                "z3", "(check-sat)", 30,
+                proof_matrix.base_record("b.smt2", "QF_LRA", "smt-clause-log-nopp", "sat"),
+                preprocessing=False)
+        text = run.call_args.args[1]
+        for option in ("solve_eqs", "propagate_values", "elim_unconstrained", "bound_simplifier"):
+            self.assertIn("(set-option :smt.%s false)" % option, text)
+
     def test_summary_lists_every_status_column(self):
         records = [
             {"logic": "QF_LIA", "cell": "smt-clause-log", "status": "verified"},

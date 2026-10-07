@@ -53,7 +53,7 @@ def _run(command, timeout):
 
 
 class LeanChecker:
-    def __init__(self, source, executable, artifacts):
+    def __init__(self, source, executable, artifacts, core="legacy"):
         if os.name != "posix":
             raise ValueError("--lean currently requires a POSIX host and a CMake build")
         self.source = Path(source).resolve()
@@ -63,7 +63,7 @@ class LeanChecker:
         self.executable = Path(resolved).resolve()
         self.artifacts = Path(artifacts).resolve()
         self.command = [sys.executable, "-I", "-S", str(Path(__file__).resolve()),
-                        str(self.source), str(self.executable)]
+                        str(self.source), str(self.executable), "--core", core]
         try:
             self.producer = _reply(self._call("probe"))
             proc = _run([str(self.source / "scripts" / "check_lean.sh")], 600)
@@ -135,7 +135,7 @@ class LeanChecker:
         return record
 
 
-def _load(source, executable):
+def _load(source, executable, core="legacy"):
     """Select only the source tools and the executable's sibling CMake bindings."""
     build = executable.parent
     bindings = build / "python"
@@ -145,6 +145,8 @@ def _load(source, executable):
                 source / "lean" / "lean-toolchain"]
     examples = source / "examples" / "python"
     required += [examples / (name + ".py") for name in ("proof_certificate", "proof_to_lean")]
+    if core == "clause-log":
+        required.append(examples / "proof_clause_log.py")
     for path in required:
         if not path.is_file():
             raise ValueError("required Lean/CMake build file not found: %s" % path)
@@ -155,9 +157,12 @@ def _load(source, executable):
     z3 = importlib.import_module("z3")
     exporter = importlib.import_module("proof_certificate")
     consumer = importlib.import_module("proof_to_lean")
-    for module, path in ((z3, bindings / "z3" / "__init__.py"),
-                         (exporter, examples / "proof_certificate.py"),
-                         (consumer, examples / "proof_to_lean.py")):
+    modules = [(z3, bindings / "z3" / "__init__.py"),
+               (exporter, examples / "proof_certificate.py"),
+               (consumer, examples / "proof_to_lean.py")]
+    if core == "clause-log":
+        modules.append((importlib.import_module("proof_clause_log"), examples / "proof_clause_log.py"))
+    for module, path in modules:
         if Path(module.__file__).resolve() != path.resolve():
             raise ValueError("loaded unexpected module: %s" % module.__file__)
     proc = subprocess.run([str(executable), "--version"], capture_output=True, text=True,
@@ -171,6 +176,11 @@ def _load(source, executable):
                 "bindings": str(bindings), "library": str(library.resolve()),
                 "z3_version": z3.get_full_version(),
                 "parameters": {"sat.smt": False, "produce-proofs": True}}
+    if core == "clause-log":
+        identity.update(interface="smt2", parameters={
+            "sat.smt": True, "solver.proof.log": "clause.log", "smt.solve_eqs": False,
+            "smt.propagate_values": False, "smt.elim_unconstrained": False, "smt.bound_simplifier": False,
+        })
     return z3, exporter, consumer, identity
 
 
@@ -200,10 +210,53 @@ def produce(z3, exporter, source, directory, timeout):
         certificate = exporter._certificate_from_proof(source, assertions, solver.proof())
     except exporter.ProofExportError as error:
         return dict(report, status="unsupported", error=str(error))
+    return _save_certificate(certificate, directory, report)
+
+
+def _save_certificate(certificate, directory, report):
     with (directory / "certificate.json").open("x", encoding="utf-8") as stream:
         json.dump(certificate, stream, indent=2, sort_keys=True)
         stream.write("\n")
     return dict(report, status="produced", rules=certificate["rule_counts"])
+
+
+def produce_clause_log(z3, exporter, source, directory, timeout, executable):
+    """Reconstruct the retained log from a single executable run."""
+    context = z3.Context()
+    try:
+        assertions, fragment = exporter.parse_assertions(source, context)
+        assertion_text = exporter._assertion_commands(source)
+    except exporter.ProofExportError as error:
+        return {"result": None, "status": "unsupported", "error": str(error)}
+    options = '(set-option :sat.smt true)\n(set-option :solver.proof.log "clause.log")\n'
+    (directory / "solver.smt2").write_text(
+        options + exporter._NO_PREPROCESSING + assertion_text + "\n(check-sat)\n", encoding="utf-8")
+    start = time.perf_counter()
+    try:
+        proc = subprocess.run([str(executable), "solver.smt2"], cwd=directory,
+                              capture_output=True, text=True, timeout=timeout)
+    except subprocess.TimeoutExpired:
+        return {"result": None, "status": "timeout", "solve_time": time.perf_counter() - start,
+                "error": "clause-log solver timed out"}
+    results = re.findall(r"^(sat|unsat|unknown)\s*$", proc.stdout, re.MULTILINE)
+    report = {"result": results[0] if len(results) == 1 else None,
+              "solve_time": time.perf_counter() - start, "fragment": fragment}
+    if proc.returncode or "(error" in proc.stdout or len(results) != 1:
+        return dict(report, status="crash", error=(proc.stderr + proc.stdout)[-2000:])
+    if report["result"] != "unsat":
+        return dict(report, status="not-applicable")
+    log = directory / "clause.log"
+    if not log.is_file():
+        return dict(report, status="no-proof", error="the solver did not write a clause log")
+    data = log.read_bytes()
+    report.update(clause_log=str(log), clause_log_sha256=digest(data),
+                  log_inferences=data.count(b"(infer"))
+    replay = importlib.import_module("proof_clause_log")
+    try:
+        certificate = replay.build_certificate(source, fragment, assertions, data.decode("utf-8"), context)
+    except exporter.ProofExportError as error:
+        return dict(report, status="unsupported", error=str(error))
+    return _save_certificate(certificate, directory, report)
 
 
 def check(consumer, source, directory):
@@ -227,9 +280,10 @@ def main():
     parser.add_argument("action", choices=("probe", "produce", "check"))
     parser.add_argument("directory", type=Path, nargs="?")
     parser.add_argument("--timeout", type=float, default=600)
+    parser.add_argument("--core", choices=("legacy", "clause-log"), default="legacy")
     args = parser.parse_args()
     try:
-        z3, exporter, consumer, identity = _load(args.source, args.executable)
+        z3, exporter, consumer, identity = _load(args.source, args.executable, args.core)
         if args.action == "probe":
             report = identity
         else:
@@ -237,7 +291,10 @@ def main():
                 raise ValueError("an artifact directory is required")
             source = read_source(args.directory / "input.smt2")
             if args.action == "produce":
-                report = produce(z3, exporter, source, args.directory, args.timeout)
+                if args.core == "clause-log":
+                    report = produce_clause_log(z3, exporter, source, args.directory, args.timeout, args.executable)
+                else:
+                    report = produce(z3, exporter, source, args.directory, args.timeout)
                 report["producer"] = identity
             else:
                 report = check(consumer, source, args.directory)
