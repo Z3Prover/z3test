@@ -114,6 +114,11 @@ and certificate hashes, the checked Lean file's hash, certificate byte size,
 DAG rule counts, native statistics for the legacy cell, and producer
 paths/version/parameters. The clause-log cell records the log path, hash, and
 inference count and identifies its producer interface as `smt2` rather than `z3py`.
+When the source checkout provides large-log reduction, the producer also keeps
+`clause-core.log` and its hash, inference count, and trimming time. Any native
+trimming diagnostics are retained in `trimming-diagnostics.txt`. The dependency
+core is an untrusted selection of the original log: its clauses are replayed
+and certified by Lean, not accepted on the trimmer's authority.
 The `time` field measures the actual producer subprocess, `solve_time` the
 native check, and `check_time` reconstruction and Lean checking. No timing or
 rule inventory is borrowed from a second executable proof run. The native
@@ -124,7 +129,8 @@ cell must be `lean-verified` for exit status zero. Sat/unknown, unsupported inpu
 rejections therefore fail the requested certification, even if a benchmark
 annotation would normally waive that failure. Other cells retain their usual
 classification and known-failure policy. A run collecting no benchmarks also
-fails. The checking budget is 600 seconds per cell; `--timeout` bounds
+fails. The checking budget defaults to 600 seconds per cell and can be set
+explicitly with `--lean-timeout`; `--timeout` bounds
 production. On timeout the subprocess group, including Lean, is terminated.
 
 Lean proves that the encoded original assertions imply False. Parsing and
@@ -133,6 +139,12 @@ does not certify SAT or provide a formally verified SMT-LIB parser.
 The arithmetic reconstructor encodes Real as Rat, justified only for linear
 constraints with rational coefficients. Arithmetic proofs may depend on Lean's
 three standard axioms through its Rat library.
+
+The industrial LassoRanker input under `regressions/proofs/lean/real/` is
+optional and manual-only. Neither PR CI nor scheduled/nightly builds run it;
+the fast Lean corpus uses only the small parent-directory fixtures. Its README
+records the upstream revision, unchanged input hash, license, observed cost,
+and an explicit opt-in command with `--timeout 300 --lean-timeout 1800`.
 
 ## Runner tests and CI
 

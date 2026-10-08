@@ -16,6 +16,7 @@ import subprocess
 import sys
 import tempfile
 import time
+import warnings
 
 
 def digest(data):
@@ -53,7 +54,7 @@ def _run(command, timeout):
 
 
 class LeanChecker:
-    def __init__(self, source, executable, artifacts, core="legacy"):
+    def __init__(self, source, executable, artifacts, core="legacy", check_timeout=600):
         if os.name != "posix":
             raise ValueError("--lean currently requires a POSIX host and a CMake build")
         self.source = Path(source).resolve()
@@ -62,6 +63,9 @@ class LeanChecker:
             raise ValueError("Z3 executable not found: %s" % executable)
         self.executable = Path(resolved).resolve()
         self.artifacts = Path(artifacts).resolve()
+        if not math.isfinite(check_timeout) or check_timeout <= 0:
+            raise ValueError("--lean-timeout must be finite and positive")
+        self.check_timeout = check_timeout
         self.command = [sys.executable, "-I", "-S", str(Path(__file__).resolve()),
                         str(self.source), str(self.executable), "--core", core]
         try:
@@ -115,7 +119,7 @@ class LeanChecker:
 
         start = time.perf_counter()
         try:
-            checked = _reply(self._call("check", directory))
+            checked = _reply(self._call("check", directory, self.check_timeout))
             record["check_time"] = round(time.perf_counter() - start, 6)
             if checked["status"] != "lean-verified":
                 record.update(status=checked["status"], error=checked["error"])
@@ -129,7 +133,7 @@ class LeanChecker:
             record.update(status="lean-verified", lean_proof=str(directory / "checked.lean"),
                           lean_sha256=checked["lean_sha256"])
         except subprocess.TimeoutExpired:
-            record.update(status="timeout", check_time=600, error="Lean checking timed out")
+            record.update(status="timeout", check_time=self.check_timeout, error="Lean checking timed out")
         except (OSError, ValueError) as error:
             record.update(status="checker-rejected", error=str(error))
         return record
@@ -253,7 +257,26 @@ def produce_clause_log(z3, exporter, source, directory, timeout, executable):
                   log_inferences=data.count(b"(infer"))
     replay = importlib.import_module("proof_clause_log")
     try:
-        certificate = replay.build_certificate(source, fragment, assertions, data.decode("utf-8"), context)
+        text = data.decode("utf-8")
+        if hasattr(replay, "trim_clause_log"):
+            start = time.perf_counter()
+            with warnings.catch_warnings(record=True) as diagnostics:
+                warnings.simplefilter("always")
+                core = replay.trim_clause_log(executable, text, timeout)
+            report["trim_time"] = time.perf_counter() - start
+            if diagnostics:
+                path = directory / "trimming-diagnostics.txt"
+                path.write_text("\n".join(str(w.message) for w in diagnostics), encoding="utf-8")
+                report["trim_diagnostics"] = str(path)
+            if core != text:
+                path = directory / "clause-core.log"
+                path.write_text(core, encoding="utf-8")
+                report.update(trimmed_log=str(path), trimmed_log_sha256=digest(path.read_bytes()),
+                              trimmed_inferences=core.count("(infer"))
+                text = core
+        certificate = replay.build_certificate(source, fragment, assertions, text, context)
+    except subprocess.TimeoutExpired:
+        return dict(report, status="timeout", error="native proof trimming timed out")
     except exporter.ProofExportError as error:
         return dict(report, status="unsupported", error=str(error))
     return _save_certificate(certificate, directory, report)

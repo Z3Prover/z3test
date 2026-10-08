@@ -1,5 +1,6 @@
 """Lean handoff tests; real replay requires Z3_SOURCE and Z3_EXE."""
 import json
+import importlib
 import os
 from pathlib import Path
 import subprocess
@@ -19,6 +20,24 @@ _INPUT = "(declare-const p Bool)\r\n(assert p)\r\n(assert (not p))\r\n(check-sat
 
 
 class TestLeanGate(unittest.TestCase):
+    def test_real_lra_benchmark_retains_the_upstream_input(self):
+        path = (Path(__file__).resolve().parents[2] / "regressions" / "proofs" / "lean"
+                / "real" / "lra_lassoranker.smt2")
+        data = path.read_bytes()
+        self.assertEqual(proof_lean.digest(data),
+                         "98d82ddb9c67d108fb2c5f0725924d6277ab8faee96adbc3d894be53c36be6a2")
+        self.assertEqual(data.count(b"(assert "), 105)
+        self.assertEqual(data.count(b"(declare-fun "), 1463)
+        self.assertIn(b"(set-logic QF_LRA)", data)
+        self.assertIn(b"(set-info :status unsat)", data)
+
+    def test_real_benchmark_is_outside_the_automatic_lean_corpus(self):
+        corpus = Path(__file__).resolve().parents[2] / "regressions" / "proofs" / "lean"
+        automatic = (set(corpus.glob("boolean_*.smt2")) | set(corpus.glob("lra_*.smt2"))
+                     | {corpus / "unit_resolution.smt2"})
+        self.assertEqual(len(automatic), 14)
+        self.assertNotIn(corpus / "real" / "lra_lassoranker.smt2", automatic)
+
     def test_requested_certification_cannot_be_skipped_or_annotated_away(self):
         for status in ("verified", "diagnostic", "unverified-fallback", "unsupported", "no-proof",
                        "no-checker", "timeout", "not-applicable", "checker-rejected", "crash"):
@@ -80,7 +99,7 @@ class TestLeanGate(unittest.TestCase):
             ]), patch.object(proof_matrix, "LeanChecker", return_value=Checker()) as factory, \
                     patch.object(proof_matrix, "run_z3", return_value=fake):
                 self.assertEqual(proof_matrix.main(), 0)
-            self.assertEqual(factory.call_args.kwargs, {"core": "clause-log"})
+            self.assertEqual(factory.call_args.kwargs, {"core": "clause-log", "check_timeout": 600})
 
 
 @unittest.skipUnless(_SOURCE and _Z3, "set Z3_SOURCE and Z3_EXE for real Lean replay")
@@ -200,6 +219,21 @@ class TestLeanIntegration(unittest.TestCase):
             self.assertTrue(Path(record["certificate"]).is_file())
             self.assertNotIn("lean_proof", record)
 
+    def test_explicit_checking_budget_is_enforced(self):
+        call = self.checker._call
+        timeouts = []
+        def fail_check(action, directory=None, timeout=600):
+            if action == "check":
+                timeouts.append(timeout)
+                raise subprocess.TimeoutExpired("checker", timeout)
+            return call(action, directory, timeout)
+        with patch.object(self.checker, "check_timeout", 45), \
+                patch.object(self.checker, "_call", side_effect=fail_check):
+            record = self.run_cell()
+        self.assertEqual(timeouts, [45])
+        self.assertEqual(record["status"], "timeout")
+        self.assertEqual(record["check_time"], 45)
+
     def test_cli_requires_real_certification_and_retains_artifacts(self):
         cases = [
             ("legacy-proof-object", _INPUT, 0),
@@ -280,6 +314,45 @@ class TestClauseLogLeanIntegration(unittest.TestCase):
                     patch.object(exporter, "export_clause_log_certificate", side_effect=AssertionError("re-export")):
                 checked = proof_lean.check(consumer, source, directory)
             self.assertEqual(checked["status"], "lean-verified")
+
+    def test_reduction_retains_the_exact_raw_and_core_logs(self):
+        z3, exporter, consumer, _ = proof_lean._load(Path(_SOURCE).resolve(), Path(_Z3).resolve(), "clause-log")
+        replay = importlib.import_module("proof_clause_log")
+        if not hasattr(replay, "trim_clause_log"):
+            self.skipTest("the Z3 checkout does not provide large-log reduction")
+        corpus = Path(__file__).resolve().parents[2] / "regressions" / "proofs" / "lean"
+        source = proof_lean.read_source(corpus / "lra_farkas.smt2")
+        with tempfile.TemporaryDirectory() as temporary:
+            directory = Path(temporary)
+            with patch.object(replay, "_TRIM_THRESHOLD", 0):
+                produced = proof_lean.produce_clause_log(z3, exporter, source, directory, 30, _Z3)
+            self.assertEqual(produced["status"], "produced", produced)
+            self.assertEqual(proof_lean.digest(Path(produced["clause_log"]).read_bytes()),
+                             produced["clause_log_sha256"])
+            self.assertEqual(proof_lean.digest(Path(produced["trimmed_log"]).read_bytes()),
+                             produced["trimmed_log_sha256"])
+            self.assertIn("(deps ", Path(produced["trimmed_log"]).read_text())
+            self.assertGreater(produced["trimmed_inferences"], 0)
+            self.assertEqual(proof_lean.check(consumer, source, directory)["status"], "lean-verified")
+
+    def test_satisfied_clause_does_not_create_a_spurious_trimmed_conflict(self):
+        z3, exporter, consumer, _ = proof_lean._load(Path(_SOURCE).resolve(), Path(_Z3).resolve(), "clause-log")
+        replay = importlib.import_module("proof_clause_log")
+        if not hasattr(replay, "trim_clause_log"):
+            self.skipTest("the Z3 checkout does not provide large-log reduction")
+        path = (Path(__file__).resolve().parents[2] / "regressions" / "proofs" / "lean"
+                / "real" / "trim_satisfied_clause.proof")
+        source = ("(declare-const p Bool)(declare-const q Bool)(declare-const r Bool)"
+                  "(assert p)(assert (not q))(assert (or p q r))(assert (not r))(assert (not p))")
+        with patch.object(replay, "_TRIM_THRESHOLD", 0):
+            core = replay.trim_clause_log(_Z3, path.read_text(), 30)
+        self.assertIn("(assume (not p)", core)
+        self.assertNotIn("(assume (not r)", core)
+        context = z3.Context()
+        assertions, fragment = exporter.parse_assertions(source, context)
+        certificate = replay.build_certificate(source, fragment, assertions, core, context)
+        with tempfile.TemporaryDirectory() as temporary:
+            consumer.check_and_write(source, certificate, Path(temporary) / "checked.lean")
 
     def test_unsupported_sat_and_disagreement_are_not_certified(self):
         for source, expected, status in [

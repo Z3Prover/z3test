@@ -329,6 +329,8 @@ def main():
     parser.add_argument("--timeout", type=float, default=60.0, help="seconds per solver invocation")
     parser.add_argument("--lean", action="store_true",
                         help="require Lean certification for legacy-proof-object and smt-clause-log-nopp cells")
+    parser.add_argument("--lean-timeout", type=float, default=600,
+                        help="seconds allowed for reconstruction and Lean checking per cell (default: 600)")
     parser.add_argument("--z3-source", type=Path, help="Z3 checkout containing the Lean tools (required with --lean)")
     parser.add_argument("--lean-artifacts", type=Path,
                         help="directory retaining input, native JSON, and checked Lean files (required with --lean)")
@@ -348,7 +350,8 @@ def main():
         if args.z3_source is None or args.lean_artifacts is None:
             parser.error("--lean requires --z3-source and --lean-artifacts")
         try:
-            lean = {cell: LeanChecker(args.z3_source, args.z3, args.lean_artifacts, core=core)
+            lean = {cell: LeanChecker(args.z3_source, args.z3, args.lean_artifacts, core=core,
+                                      check_timeout=args.lean_timeout)
                     for cell, core in LEAN_CORES.items() if cell in cells}
         except ValueError as error:
             parser.error(str(error))
