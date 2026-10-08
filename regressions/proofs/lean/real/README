@@ -1,0 +1,52 @@
+Optional real-input Lean certification benchmark
+================================================
+
+LassoRanker is manual-only. It is not part of PR CI, scheduled/nightly builds,
+or the fast Lean integration corpus. A measured run took about 109 seconds
+to produce the certificate and 830 seconds to check an approximately 89 MB
+Lean proof; hosted-runner performance has not been established.
+
+lra_lassoranker.smt2 is an unchanged copy of:
+
+  formulas/LassoRanker-CooperatingT2-efegp.t2.c_Iteration1_Lasso_3-pieceTemplate.smt2
+
+from jreeves3/SMT-Skeleton-Check at commit
+acfcc71fc920cf02122917d63599a71301d57296:
+
+  https://github.com/jreeves3/SMT-Skeleton-Check/blob/acfcc71fc920cf02122917d63599a71301d57296/formulas/LassoRanker-CooperatingT2-efegp.t2.c_Iteration1_Lasso_3-pieceTemplate.smt2
+
+The upstream MIT license is preserved in LICENSE. The input also retains its
+original Ultimate LassoRanker attribution and benchmark-generation metadata.
+
+SHA-256:
+  98d82ddb9c67d108fb2c5f0725924d6277ab8faee96adbc3d894be53c36be6a2
+
+The input declares QF_LRA and has 1,463 Real variables and 105 assertions.
+Its expected result is unsat. No options, assertions, declarations, or queries
+have been removed or rewritten. Upstream whitespace in the attribution block
+is also preserved so the file remains byte-for-byte identical.
+
+Unlike the small parent-directory fixtures, this input has a large search
+log. Certification needs the Z3 checkout's dependency-directed log reduction,
+EUF congruence-annotation support, and corrected native proof trimmer.
+The original log and its reduced dependency core are both retained; native
+trimming is not a trusted checker, and every retained inference must produce
+a Lean-checkable proof connected to the original assertions.
+
+To opt in explicitly, run from the z3test checkout:
+
+  python3 scripts/proofs/proof_matrix.py \
+    --z3 /path/to/z3/build/z3 --z3-source /path/to/z3 \
+    --lean --cells smt-clause-log-nopp --timeout 300 --lean-timeout 1800 \
+    --lean-artifacts /tmp/lra-real-artifacts --out /tmp/lra-real.jsonl \
+    regressions/proofs/lean/real/lra_lassoranker.smt2
+
+The manual command still requires lean-verified; a timeout, unsupported
+inference, or rejected proof is not a passing result. It does not raise the
+default budgets of other matrix runs.
+
+trim_satisfied_clause.proof is the minimized proof-trimming regression:
+with p true and q false, (p or q or r) is already satisfied and must not
+propagate r. The real contradiction uses the later assumption (not p).
+This tiny regression, unlike the full LassoRanker benchmark, is checked by
+the regular integration suite.

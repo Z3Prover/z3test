@@ -26,6 +26,12 @@ The smt-clause-log-nopp cell handles the QF_LRA inputs:
   lra_distinct.smt2          alldiff clauses bound to the original assertion
   lra_unary_minus.smt2       negative variable coefficients in scaling helpers
 
+The real/ subdirectory contains the unchanged industrial LassoRanker input,
+its upstream provenance and license, and a minimized proof-trimmer regression.
+LassoRanker is optional and manual-only: neither PR CI nor scheduled/nightly
+builds certify it automatically. The fast CI corpus remains the files listed
+above; it does not recurse into real/.
+
 Run from a z3 checkout with a POSIX CMake build in build/:
 
   python3 ../z3test/scripts/proofs/proof_matrix.py \
