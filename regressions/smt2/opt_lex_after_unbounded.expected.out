@@ -1,0 +1,41 @@
+sat
+(objectives
+ (x oo)
+ (y 10)
+)
+sat
+(objectives
+ (x oo)
+ (y 10)
+)
+sat
+(objectives
+ (x (* (- 1) oo))
+ (y 10)
+)
+sat
+(objectives
+ (x oo)
+ (y 10)
+ (z 7)
+)
+sat
+(objectives
+ (x oo)
+ (y 10)
+)
+sat
+(objectives
+ (x oo)
+ (y 10)
+)
+sat
+(objectives
+ (x oo)
+ (  (interval 0 1))
+)
+sat
+(objectives
+ (x oo)
+ (y  (interval (* (- 1) oo) oo))
+)
