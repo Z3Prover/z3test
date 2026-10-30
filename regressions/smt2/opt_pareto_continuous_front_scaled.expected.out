@@ -1,0 +1,15 @@
+sat
+(objectives
+ ((* 10.0 x) 9990)
+ (y 1)
+)
+sat
+(objectives
+ ((* 10.0 x) 9970)
+ (y 3)
+)
+sat
+(objectives
+ ((* 10.0 x) 9950)
+ (y 5)
+)
