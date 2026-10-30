@@ -1,0 +1,10 @@
+; An assumption whose negation holds at level 0 is a core by itself.
+(set-option :produce-unsat-cores true)
+(set-logic QF_FD)
+(declare-const x Bool)
+(declare-const y Bool)
+(assert (or x y))
+(check-sat-assuming (x y))
+(assert (not x))
+(check-sat-assuming ((not x) y x))
+(get-unsat-core)
