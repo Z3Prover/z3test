@@ -1,0 +1,13 @@
+sat
+(objectives
+ (x 1)
+)
+((x 1.0))
+sat
+(objectives
+ (x 6)
+)
+sat
+(objectives
+ ((- k n) 3)
+)
