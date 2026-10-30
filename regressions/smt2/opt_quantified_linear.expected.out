@@ -11,3 +11,19 @@ sat
 (objectives
  ((- k n) 3)
 )
+sat
+(objectives
+ (x 10)
+)
+sat
+(objectives
+ (x 2)
+)
+sat
+(objectives
+ (a 5)
+)
+sat
+(objectives
+ (x 7)
+)
