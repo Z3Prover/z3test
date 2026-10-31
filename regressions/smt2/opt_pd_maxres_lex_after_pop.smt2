@@ -1,0 +1,22 @@
+; Lexicographic MaxSMT with pd-maxres. Each objective is solved in its own
+; scope; the linear relaxation of o1 reads the assertions of the SAT solver
+; after the scope of o0 is popped. The optimum is 0 for every objective.
+(set-option :opt.priority lex)
+(set-option :opt.maxsat_engine pd-maxres)
+(set-option :opt.maxres.lp_relaxation true)
+(declare-const x0 Bool)
+(declare-const x1 Bool)
+(declare-const x2 Bool)
+(declare-const x3 Bool)
+(declare-const x4 Bool)
+(declare-const x5 Bool)
+(declare-const x6 Bool)
+(assert-soft (or (not x3) x0) :weight 7 :id o0)
+(assert-soft (or (not x4) (not x6)) :weight 7 :id o0)
+(assert-soft (or x0 (not x5)) :weight 2 :id o0)
+(assert-soft (not x0) :weight 5 :id o1)
+(assert-soft (not x1) :weight 1 :id o1)
+(assert-soft (not x5) :weight 0.2 :id o2)
+(assert-soft (or x1 (not x0)) :weight 5 :id o2)
+(check-sat)
+(get-objectives)
