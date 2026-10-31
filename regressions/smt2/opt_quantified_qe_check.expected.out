@@ -1,0 +1,14 @@
+WARNING: optimization with quantified constraints is not supported
+sat
+(objectives
+ ((+ a b) (- 8))
+)
+((a (- 4))
+ (b (- 4)))
+WARNING: optimization with quantified constraints is not supported
+sat
+(objectives
+ ((+ a b) (- 8))
+)
+((a (- 4))
+ (b (- 4)))
