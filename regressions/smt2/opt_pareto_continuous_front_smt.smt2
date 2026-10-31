@@ -1,0 +1,32 @@
+; Every point (x, y) with x + y = 1 and x, y >= 0 is Pareto-optimal for
+; maximizing x and y. An uninterpreted function, and in the second part an
+; assumption, keep the problem on the smt solver. Each check-sat must return
+; a point of the segment, distinct from the points returned before, instead
+; of climbing toward the segment by ever smaller steps.
+(set-option :opt.priority pareto)
+(declare-fun f (Real) Real)
+(declare-const x Real)
+(declare-const y Real)
+(assert (and (<= 0.0 x) (<= 0.0 y) (= (f x) y) (<= (+ x (f x)) 1.0)))
+(maximize x)
+(maximize y)
+(check-sat)
+(get-objectives)
+(check-sat)
+(get-objectives)
+(check-sat)
+(get-objectives)
+(reset)
+(set-option :opt.priority pareto)
+(declare-const x Real)
+(declare-const y Real)
+(declare-const p Bool)
+(assert (and (<= 0.0 x) (<= 0.0 y) (=> p (<= (+ x y) 1.0))))
+(maximize x)
+(maximize y)
+(check-sat-assuming (p))
+(get-objectives)
+(check-sat-assuming (p))
+(get-objectives)
+(check-sat-assuming (p))
+(get-objectives)
