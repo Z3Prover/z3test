@@ -33,13 +33,34 @@
 (reset)
 ; The same front x + y = 2 over half-open intervals of x, with the
 ; nlsat-backed solver disabled. The supremum of x in [1, 2) is not attained,
-; so each check-sat must move on to x = 2 instead of looping.
+; so the step that maximizes within the cone must move on to the branch
+; x = 2 and return points of the front, not a model below it.
 (set-option :opt.priority pareto)
 (set-option :opt.pareto_nlsat false)
 (declare-const x Real)
 (declare-const y Real)
 (assert (or (and (<= 0.0 x) (< x 1.0)) (and (<= 1.0 x) (< x 2.0)) (= x 2.0)))
 (assert (<= (+ x y) 2.0))
+(assert (<= 0.0 y))
+(maximize x)
+(maximize y)
+(check-sat)
+(get-objectives)
+(check-sat)
+(get-objectives)
+(check-sat)
+(get-objectives)
+(reset)
+; The front x + y = 3 with x in [0, 1), [1, 2) or [2, 3). The supremum 3 of
+; x is attained nowhere, so the step cannot maximize x, but it must still
+; maximize y and return points of the front instead of climbing toward x = 3
+; forever.
+(set-option :opt.priority pareto)
+(set-option :opt.pareto_nlsat false)
+(declare-const x Real)
+(declare-const y Real)
+(assert (or (and (<= 0.0 x) (< x 1.0)) (and (<= 1.0 x) (< x 2.0)) (and (<= 2.0 x) (< x 3.0))))
+(assert (<= (+ x y) 3.0))
 (assert (<= 0.0 y))
 (maximize x)
 (maximize y)
