@@ -4,6 +4,7 @@ import builtins
 import ctypes
 import hashlib
 import importlib
+import inspect
 import io
 import json
 import math
@@ -179,7 +180,8 @@ def _load(source, executable, core="legacy"):
     identity = {"interface": "z3py", "executable": str(executable),
                 "bindings": str(bindings), "library": str(library.resolve()),
                 "z3_version": z3.get_full_version(),
-                "parameters": {"sat.smt": False, "produce-proofs": True}}
+                "parameters": {"sat.smt": False, "produce-proofs": True,
+                                "combined_solver.ignore_solver1": True}}
     if core == "clause-log":
         identity.update(interface="smt2", parameters={
             "sat.smt": True, "solver.proof.log": "clause.log", "smt.solve_eqs": False,
@@ -188,19 +190,46 @@ def _load(source, executable, core="legacy"):
     return z3, exporter, consumer, identity
 
 
+def _integer_option(function):
+    """Opt in to the integer fragments where the source checkout's parser offers it."""
+    try:
+        return {"integer": True} if "integer" in inspect.signature(function).parameters else {}
+    except (TypeError, ValueError):
+        return {}
+
+
+def parse_snapshot(exporter, source, context, core):
+    """Parse the input as the source checkout's own exporter does for this core.
+
+    The exporter certifies the integer fragments by Lean alone and accepts them
+    only on an explicit integer=True, which its command-line tool passes; the
+    matrix certifies the same fragments. Older checkouts without the opt-in,
+    or whose legacy core handles propositional input only, keep their fragments.
+    """
+    if core == "clause-log":
+        return exporter.parse_assertions(source, context, **_integer_option(exporter.parse_assertions))
+    if not hasattr(exporter, "parse_legacy_assertions"):
+        return exporter.parse_propositional_assertions(source, context), "propositional"
+    return exporter.parse_legacy_assertions(source, context,
+                                            **_integer_option(exporter.parse_legacy_assertions))
+
+
 def produce(z3, exporter, source, directory, timeout):
     z3.set_param("sat.smt", False)
     context = z3.Context(proof=True)
     try:
-        assertions = exporter.parse_propositional_assertions(source, context)
+        assertions, fragment = parse_snapshot(exporter, source, context, "legacy")
     except exporter.ProofExportError as error:
         return {"result": None, "status": "unsupported", "error": str(error)}
     solver = z3.Solver(ctx=context)
+    # As in the exporter's export_certificate: the logic's tactic preamble would
+    # name unconstrained subterms by intro-def steps the certificate rejects.
+    solver.set("combined_solver.ignore_solver1", True)
     solver.set(timeout=max(1, int(timeout * 1000)))
     solver.add(assertions)
     start = time.perf_counter()
     result = solver.check()
-    report = {"result": str(result), "solve_time": time.perf_counter() - start,
+    report = {"result": str(result), "solve_time": time.perf_counter() - start, "fragment": fragment,
               "statistics": {key: value for key, value in solver.statistics()},
               "timeout_ms": max(1, int(timeout * 1000))}
     if result != z3.unsat:
@@ -228,7 +257,7 @@ def produce_clause_log(z3, exporter, source, directory, timeout, executable):
     """Reconstruct the retained log from a single executable run."""
     context = z3.Context()
     try:
-        assertions, fragment = exporter.parse_assertions(source, context)
+        assertions, fragment = parse_snapshot(exporter, source, context, "clause-log")
         assertion_text = exporter._assertion_commands(source)
     except exporter.ProofExportError as error:
         return {"result": None, "status": "unsupported", "error": str(error)}

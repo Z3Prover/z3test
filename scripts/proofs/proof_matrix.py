@@ -64,8 +64,10 @@ KNOWN_FAILURE_STATUSES = ("checker-rejected", "disagree", "crash")
 CELLS = {
     "smt-clause-log": "sat.smt=true, solver.proof.log; checked by replaying the log through the built-in checker",
     "smt-clause-log-nopp": "as smt-clause-log with solve-eqs, propagate-values, elim-unconstrained, and "
-                           "bound-simplifier disabled; Lean-checked for Boolean/QF_LRA input with --lean",
-    "legacy-proof-object": "sat.smt=false, produce-proofs; proof object inventoried, Lean-checked when propositional",
+                           "bound-simplifier disabled; with --lean, Lean-checked for every fragment the Z3 "
+                           "checkout's exporter certifies",
+    "legacy-proof-object": "sat.smt=false, produce-proofs; proof object inventoried; with --lean, Lean-checked "
+                           "for every fragment the Z3 checkout's exporter certifies",
     "legacy-clause-proof": "sat.smt=false, smt.clause_proof; proof trail inventoried (no checker yet)",
     "arith-validate": "smt.arith.validate self-validation oracle inside theory_lra",
 }
