@@ -91,8 +91,10 @@ errors. `proof_lean.py` is the binding-dependent subprocess adapter, not a
 replacement exporter or Lean implementation.
 
 For the legacy cell, one isolated Python process uses that build's native library,
-enables proofs before creating the context, sets `sat.smt=false`, solves once,
-and serializes that solver's proof. For the clause-log cell, the producer runs
+enables proofs before creating the context, sets `sat.smt=false`, sends the
+assertions to the smt core directly (`combined_solver.ignore_solver1`, as the
+exporter does, since the logic's tactic preamble introduces definitions the
+certificate rejects), solves once, and serializes that solver's proof. For the clause-log cell, the producer runs
 the executable once with `sat.smt=true` and the four preprocessing passes
 disabled, retains its `clause.log`, and rebuilds that exact log into the native
 certificate format using the source checkout's replayer. `bound_simplifier`
@@ -101,10 +103,13 @@ process reads the saved certificate and original input and invokes the Lean reco
 runs solver search. The proof-free reference run remains separate.
 
 The Lean cell validates the **original** input, without stripping its commands
-or replacing undecodable text. It currently supports the exporter's
-single-query propositional snapshots, plus linear real arithmetic in the
-clause-log cell. Unsupported commands, options, theories,
-or proof shapes are explicit failures, not silently changed problems.
+or replacing undecodable text. It accepts the single-query snapshots the Z3
+checkout's own exporter accepts for that core, including the integer fragments,
+which the exporter certifies by Lean alone and which the harness opts in to as
+the exporter's command-line tool does. A checkout without that opt-in keeps its
+earlier fragments (propositional input for the legacy cell). Unsupported
+commands, options, theories, or proof shapes are explicit failures, not silently
+changed problems.
 
 Each cell gets a fresh directory below `--lean-artifacts`, retaining
 `input.smt2`, the unverified `certificate.json` when available, and

@@ -17,6 +17,7 @@ _SOURCE = os.environ.get("Z3_SOURCE")
 _Z3 = os.environ.get("Z3_EXE")
 _CLAUSE_LOG = _SOURCE and (Path(_SOURCE) / "examples" / "python" / "proof_clause_log.py").is_file()
 _INPUT = "(declare-const p Bool)\r\n(assert p)\r\n(assert (not p))\r\n(check-sat)\r\n"
+_INTEGER = "(declare-const x Int)(assert (> x 0))(assert (< x 1))(check-sat)"
 
 
 class TestLeanGate(unittest.TestCase):
@@ -153,7 +154,7 @@ class TestLeanIntegration(unittest.TestCase):
 
     def test_unsupported_semantics_sat_and_mismatched_results_are_not_certified(self):
         cases = [
-            ("(declare-const x Int)(assert (> x 0))(assert (< x 0))(check-sat)", "unsat", "unsupported"),
+            ("(declare-const x (_ BitVec 4))(assert (bvult x x))(check-sat)", "unsat", "unsupported"),
             (_INPUT + "(check-sat)", "unsat", "unsupported"),
             ("(set-option :sat.smt true)" + _INPUT, "unsat", "unsupported"),
             ("(assert true)(check-sat)", "sat", "not-applicable"),
@@ -165,6 +166,14 @@ class TestLeanIntegration(unittest.TestCase):
                 self.assertEqual(record["status"], status, record)
                 self.assertEqual(proof_matrix.failures([record]), [record])
                 self.assertNotIn("lean_proof", record)
+
+    def test_integer_input_is_certified_as_the_exporter_certifies_it(self):
+        z3, exporter, _, _ = proof_lean._load(Path(_SOURCE).resolve(), Path(_Z3).resolve())
+        if not proof_lean._integer_option(getattr(exporter, "parse_legacy_assertions", None)):
+            self.skipTest("the Z3 checkout's legacy core does not certify integer input")
+        record = self.run_cell(_INTEGER)
+        self.assertEqual(record["status"], "lean-verified", record)
+        self.assertEqual(record["fragment"], "qf_lia")
 
     def test_changed_input_and_tampered_certificates_are_rejected(self):
         for target in ("input", "certificate"):
@@ -356,7 +365,7 @@ class TestClauseLogLeanIntegration(unittest.TestCase):
 
     def test_unsupported_sat_and_disagreement_are_not_certified(self):
         for source, expected, status in [
-            ("(declare-const x Int)(assert (> x 0))(assert (< x 0))", "unsat", "unsupported"),
+            ("(declare-const x (_ BitVec 4))(assert (bvult x x))", "unsat", "unsupported"),
             ("(declare-const x Real)(assert (= (* x x) 2.0))", "sat", "unsupported"),
             ("(declare-const x Real)(assert (> x 0.0))", "sat", "not-applicable"),
             ("(declare-const x Real)(assert (> x 0.0))", "unsat", "disagree"),
@@ -367,6 +376,14 @@ class TestClauseLogLeanIntegration(unittest.TestCase):
                 self.assertEqual(record["status"], status, record)
                 self.assertEqual(proof_matrix.failures([record]), [record])
                 self.assertNotIn("lean_proof", record)
+
+    def test_integer_input_is_certified_as_the_exporter_certifies_it(self):
+        _, exporter, _, _ = proof_lean._load(Path(_SOURCE).resolve(), Path(_Z3).resolve(), "clause-log")
+        if not proof_lean._integer_option(exporter.parse_assertions):
+            self.skipTest("the Z3 checkout's clause log does not certify integer input")
+        record = self.run_cell(_INTEGER)
+        self.assertEqual(record["status"], "lean-verified", record)
+        self.assertEqual(record["fragment"], "qf_lia")
 
     def test_changed_input_and_tampered_certificates_are_rejected(self):
         source = "(declare-const x Real)(assert (> x 1.0))(assert (< x 0.0))"
