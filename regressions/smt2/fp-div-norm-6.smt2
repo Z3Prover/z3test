@@ -5,4 +5,4 @@
 (set-info :status sat)
 (define-fun one () (_ FloatingPoint 2 5) ((_ to_fp 2 5) RNE 1.0))
 (assert (fp.eq one (fp.div RNE one one)))
-(check-sat)
+(check-sat-using qffp)
