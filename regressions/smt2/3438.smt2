@@ -75,4 +75,4 @@
 (assert (or v18))
 (assert (or v24 (<= i5 i9) v14 v6))
 (assert (or v17 v14 v21 v17))
-(check-sat-using (then qe_rec smt))
+(check-sat-using qe_rec)
