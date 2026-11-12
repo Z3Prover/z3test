@@ -1,0 +1,60 @@
+sat
+(objectives
+ (x (/ 3.0 4.0))
+ (y (/ 1.0 4.0))
+)
+sat
+(objectives
+ (x (/ 3.0 8.0))
+ (y (/ 5.0 8.0))
+)
+sat
+(objectives
+ (x (/ 7.0 8.0))
+ (y (/ 1.0 8.0))
+)
+sat
+(objectives
+ (x (/ 3.0 4.0))
+ (y (/ 1.0 4.0))
+)
+sat
+(objectives
+ (x (/ 3.0 8.0))
+ (y (/ 5.0 8.0))
+)
+sat
+(objectives
+ (x (/ 7.0 8.0))
+ (y (/ 1.0 8.0))
+)
+sat
+(objectives
+ (x 2)
+ (y 0)
+)
+sat
+(objectives
+ (x (/ 3.0 2.0))
+ (y (/ 1.0 2.0))
+)
+sat
+(objectives
+ (x (/ 7.0 4.0))
+ (y (/ 1.0 4.0))
+)
+sat
+(objectives
+ (x (/ 5.0 2.0))
+ (y (/ 1.0 2.0))
+)
+sat
+(objectives
+ (x (/ 1.0 2.0))
+ (y (/ 5.0 2.0))
+)
+sat
+(objectives
+ (x (/ 3.0 4.0))
+ (y (/ 9.0 4.0))
+)
