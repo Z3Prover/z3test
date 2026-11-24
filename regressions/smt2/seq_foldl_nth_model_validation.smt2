@@ -13,4 +13,4 @@
 (assert (= initial 0))
 (assert (= final 6))
 (check-sat)
-(get-model)
+;(get-model)
