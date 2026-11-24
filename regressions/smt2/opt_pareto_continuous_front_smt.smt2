@@ -1,0 +1,72 @@
+; Every point (x, y) with x + y = 1 and x, y >= 0 is Pareto-optimal for
+; maximizing x and y. An uninterpreted function, and in the second part an
+; assumption, keep the problem on the smt solver. Each check-sat must return
+; a point of the segment, distinct from the points returned before, instead
+; of climbing toward the segment by ever smaller steps.
+(set-option :opt.priority pareto)
+(declare-fun f (Real) Real)
+(declare-const x Real)
+(declare-const y Real)
+(assert (and (<= 0.0 x) (<= 0.0 y) (= (f x) y) (<= (+ x (f x)) 1.0)))
+(maximize x)
+(maximize y)
+(check-sat)
+(get-objectives)
+(check-sat)
+(get-objectives)
+(check-sat)
+(get-objectives)
+(reset)
+(set-option :opt.priority pareto)
+(declare-const x Real)
+(declare-const y Real)
+(declare-const p Bool)
+(assert (and (<= 0.0 x) (<= 0.0 y) (=> p (<= (+ x y) 1.0))))
+(maximize x)
+(maximize y)
+(check-sat-assuming (p))
+(get-objectives)
+(check-sat-assuming (p))
+(get-objectives)
+(check-sat-assuming (p))
+(get-objectives)
+(reset)
+; The same front x + y = 2 over half-open intervals of x, with the
+; nlsat-backed solver disabled. The supremum of x in [1, 2) is not attained,
+; so the step that maximizes within the cone must move on to the branch
+; x = 2 and return points of the front, not a model below it.
+(set-option :opt.priority pareto)
+(set-option :opt.pareto_nlsat false)
+(declare-const x Real)
+(declare-const y Real)
+(assert (or (and (<= 0.0 x) (< x 1.0)) (and (<= 1.0 x) (< x 2.0)) (= x 2.0)))
+(assert (<= (+ x y) 2.0))
+(assert (<= 0.0 y))
+(maximize x)
+(maximize y)
+(check-sat)
+(get-objectives)
+(check-sat)
+(get-objectives)
+(check-sat)
+(get-objectives)
+(reset)
+; The front x + y = 3 with x in [0, 1), [1, 2) or [2, 3). The supremum 3 of
+; x is attained nowhere, so the step cannot maximize x, but it must still
+; maximize y and return points of the front instead of climbing toward x = 3
+; forever.
+(set-option :opt.priority pareto)
+(set-option :opt.pareto_nlsat false)
+(declare-const x Real)
+(declare-const y Real)
+(assert (or (and (<= 0.0 x) (< x 1.0)) (and (<= 1.0 x) (< x 2.0)) (and (<= 2.0 x) (< x 3.0))))
+(assert (<= (+ x y) 3.0))
+(assert (<= 0.0 y))
+(maximize x)
+(maximize y)
+(check-sat)
+(get-objectives)
+(check-sat)
+(get-objectives)
+(check-sat)
+(get-objectives)
