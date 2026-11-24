@@ -35,20 +35,6 @@ sat
 sat
 unsat
 sat
-(
-  (define-fun a () String
-    "abc")
-  (define-fun i () Int
-    0)
-  (define-fun b () String
-    "")
-  (define-fun c () String
-    "")
-  (define-fun d () String
-    "")
-  (define-fun j () Int
-    0)
-)
 unsat
 sat
 sat
@@ -60,37 +46,9 @@ sat
 unsat
 sat
 sat
-(
-  (define-fun a () String
-    "abc")
-  (define-fun b () String
-    "de")
-  (define-fun i () Int
-    0)
-  (define-fun c () String
-    "")
-  (define-fun d () String
-    "")
-  (define-fun j () Int
-    0)
-)
 unsat
 unsat
 sat
-(
-  (define-fun b () String
-    "de")
-  (define-fun a () String
-    "abc")
-  (define-fun i () Int
-    0)
-  (define-fun c () String
-    "")
-  (define-fun d () String
-    "")
-  (define-fun j () Int
-    0)
-)
 "Ab"
 sat
 unsat

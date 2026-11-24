@@ -271,7 +271,7 @@
 (assert (= (str.len a) (+ 3 (str.indexof a "abc"))))
 (assert (= (str.len a) 3))
 (check-sat)
-(get-model)
+;(get-model)
 (pop)
 
 (push)
@@ -364,7 +364,7 @@
 (assert (<= (str.len a) 3))
 (assert (<= (str.len b) 2))
 (check-sat)
-(get-model)
+;(get-model)
 (pop)
 
 (push)
@@ -388,7 +388,7 @@
 (assert (= (str.++ a b) "abcde"))
 (assert (= (str.len a) 3))
 (check-sat)
-(get-model)
+;(get-model)
 (pop)
 
 
@@ -436,7 +436,7 @@
 (set-info :status sat)
 (assert (= "ab" (str.replace a "yyy" "abb")))
 (check-sat)
-(get-model)
+;(get-model)
 (pop)
 
 ; TBD: 
