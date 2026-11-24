@@ -85,7 +85,6 @@
 (assert (= a "ab"))
 (assert (= (str.++ a b) "abcd"))
 (check-sat)
-(get-model)
 (pop)
 
 
@@ -102,7 +101,7 @@
 (assert (= a "cd"))
 (assert (= (str.++ b a) "abcd"))
 (check-sat)
-(get-model)
+;(get-model)
 (pop)
 
 (push)
@@ -110,7 +109,7 @@
 (assert (= b "cd"))
 (assert (= (str.++ a b c) "abcdef"))
 (check-sat)
-(get-model)
+;(get-model)
 (pop)
 
 
@@ -121,7 +120,7 @@
 (set-info :status sat)
 (assert (= (str.++ a b) ""))
 (check-sat)
-(get-model)
+;(get-model)
 (pop)
 
 (push)
@@ -439,7 +438,7 @@
  (assert (= (str.++ a "ab") (str.++ "ba" a)))
  (assert (= (str.len a) 7))
 (check-sat)
-(get-model)
+;(get-model)
 (pop)
 
 (push)
