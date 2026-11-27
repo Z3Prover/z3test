@@ -6,4 +6,4 @@
 (assert (fp.eq ((_ to_fp 8 24) RNE 3.0)
                (fp.div RNE ((_ to_fp 8 24) RNE 6.0)
                            ((_ to_fp 8 24) RNE 2.0))))
-(check-sat)
+(check-sat-using qffp)

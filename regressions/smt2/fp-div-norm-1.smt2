@@ -8,4 +8,4 @@
 (define-fun c () (_ FloatingPoint 2 6) ((_ to_fp 2 6) RTZ (- 3.25)))
 (define-fun b () (_ FloatingPoint 2 6) ((_ to_fp 2 6) RTZ 0.0625))
 (assert (fp.eq (_ -oo 2 6) (fp.div RTZ c b)))
-(check-sat)
+(check-sat-using qffp)
