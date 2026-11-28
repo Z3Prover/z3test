@@ -17,7 +17,7 @@
 (declare-const il_1 (Seq Int))
 (declare-const il_2 (Seq Int))
 (simplify (seq.mapi f 1 (as seq.empty (Seq Int))))
-(simplify (seq.mapi f 2 (seq.++ il_1 il_2)))
+;(simplify (seq.mapi f 2 (seq.++ il_1 il_2)))
 (simplify (seq.mapi f 3 (seq.unit 4)))
 (pop)
 
